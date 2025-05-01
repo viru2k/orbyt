@@ -13,7 +13,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
+    "paths": {
+      "@orb-components": ["src/app/shared/orb/index.ts"],
+      "@orb-components/*": ["src/app/shared/orb/*"],
+      "@orb-services": ["src/app/services/index.ts"],
+    },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
