@@ -1,0 +1,19 @@
+@use 'bootstrap/scss/bootstrap';
+@use './variables';
+@use './mixins';
+@use './themes';
+
+
+
+/* Global Reset o estilos generales opcionales */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+

@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+// Importa Bootstrap
+@use 'bootstrap/scss/bootstrap';
+@use './styles/themes';
+
+// Tus propios archivos SCSS
+@use  './styles/variables';
+@use './styles/mixins';
+
+// Estilos globales (si deseas)
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}

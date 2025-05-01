@@ -1,0 +1,13 @@
+@use './variables' as vars;
+@use './mixins';
+
+body {
+  font-family: vars.$font-family;
+  background-color: vars.$color-gray-100;
+  color: vars.$color-gray-800;
+
+  @include mixins.dark-mode {
+    background-color: vars.$color-gray-800;
+    color: vars.$color-gray-100;
+  }
+}
