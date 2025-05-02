@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-const TOKEN_KEY = 'expvi_token';
+const TOKEN_KEY = 'access_token';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class LocalStorageService {
   }
 
   clearToken(): void {
-  //  localStorage.removeItem(TOKEN_KEY);
+   localStorage.removeItem(TOKEN_KEY);
   }
 
   isLoggedIn(): boolean {
