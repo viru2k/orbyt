@@ -14,8 +14,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@orb-components": ["src/app/shared/orb/index.ts"],
+      "@orb-components": ["src/app/shared/components/index.ts"],
+      "@orb-directives": ["src/app/shared/directives/index.ts"],
       "@orb-components/*": ["src/app/shared/orb/*"],
+      "@orb-api/*": ["src/app/api/*"],
+      "@orb-stores": ["src/app/store/index.ts"],
       "@orb-services": ["src/app/services/index.ts"],
     },
     "esModuleInterop": true,
