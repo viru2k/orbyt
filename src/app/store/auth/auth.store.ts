@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 
@@ -22,6 +23,7 @@ const DEFAULT_AUTH_STATE: AuthState = {
 
 @Injectable({ providedIn: 'root' })
 export class AuthStore extends ComponentStore<AuthState> {
+  private readonly router = inject(Router)
   constructor(
     private readonly authService: AuthService,
     private readonly storage: LocalStorageService
@@ -75,6 +77,7 @@ export class AuthStore extends ComponentStore<AuthState> {
               this.storage.setToken( token);
               this.setToken(token);
               this.loadUserProfile(); // no necesita token explícito
+            this.router.navigate(['/home'])
             },
             (error: any) => {
               this.setError(error?.message || 'Login failed');

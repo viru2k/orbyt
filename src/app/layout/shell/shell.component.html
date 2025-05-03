@@ -1,0 +1,6 @@
+<orb-topbar *ngIf="isMobile()" />
+<orb-sidebar *ngIf="!isMobile()" />
+
+<main class="content">
+  <router-outlet />
+</main>

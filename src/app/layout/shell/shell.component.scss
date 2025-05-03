@@ -1,0 +1,38 @@
+.shell-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--p-surface-ground);
+  }
+  
+  .sidebar {
+    display: none;
+  
+    @media (min-width: 1024px) {
+      display: block;
+      width: 250px;
+      border-right: 1px solid var(--p-border-color);
+    }
+  }
+  
+  .topbar {
+    display: block;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
+  
+  .content {
+    flex-grow: 1;
+    padding: 1rem;
+    margin-top: 4rem; // espacio para topbar
+    @media (min-width: 1024px) {
+      margin-top: 0;
+      margin-left: 250px; // espacio para sidebar
+    }
+  }
+  

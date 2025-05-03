@@ -8,3 +8,5 @@ export * from './orb-scrollPanel/orb-scrollPanel.component';
 export * from './orb-stepper/orb-stepper.component';
 export * from './orb-tabs/orb-tabs.component';
 export * from './orb-theme-toggle/orb-theme-toggle.component';
+export * from './orb-sidebar/orb-sidebar.component';
+export * from './orb-topbar/orb-topbar.component';

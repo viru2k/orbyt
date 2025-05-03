@@ -1,3 +1,5 @@
 export * from './storage/local-storage.service';
 export * from './core/spinner/spinner.service';
 export * from './core/theme/theme.service';
+export * from './core/viewport/viewport.service';
+export * from './core/notification/notification.service';

@@ -4,10 +4,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SpinnerService, ThemeService } from '@orb-services';
 import { PrimeNG } from 'primeng/config';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-
+import { ToastModule } from 'primeng/toast';
 
 @Component({
-  imports: [ RouterModule, ProgressSpinnerModule, ],
+  imports: [ RouterModule, ProgressSpinnerModule, ToastModule ],
   providers: [ThemeService, PrimeNG],
   selector: 'app-root',
   templateUrl: './app.component.html',

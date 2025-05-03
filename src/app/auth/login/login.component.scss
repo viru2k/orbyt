@@ -1,3 +1,4 @@
+
 .login-wrapper {
     display: flex;
     flex-direction: column;
@@ -46,6 +47,7 @@
   }
   
   .login-inputs{
+    width: 18vw;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
