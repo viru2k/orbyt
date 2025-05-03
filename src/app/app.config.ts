@@ -4,6 +4,10 @@ import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
+
+
+
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LocalStorageService } from './services/storage/local-storage.service';
 import { provideStore } from '@ngrx/store';
@@ -12,6 +16,7 @@ import { componentStateReducer } from './store/component-state.reducer';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideTranslateService } from '@ngx-translate/core';
+
 
 
 export const appConfig: ApplicationConfig = {
@@ -25,7 +30,7 @@ export const appConfig: ApplicationConfig = {
           preset: Aura,
           options: {
               prefix: 'p',
-              darkModeSelector: 'system',
+              darkModeSelector: '.my-app-dark',
               cssLayer: false
           }
       },

@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
    ngOnInit() {
     this.translateService.setDefaultLang('en');
     this.themeService.initTheme();
+    this.translate('en');
 }
 
 translate(lang: string) {
