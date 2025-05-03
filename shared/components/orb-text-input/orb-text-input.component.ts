@@ -7,8 +7,8 @@ import { InputTextModule } from 'primeng/inputtext';
   selector: 'orb-text-input',
   standalone: true,
   imports: [CommonModule, FormsModule, InputTextModule],
-  templateUrl: './orbyt-text-input.component.html',
-  styleUrls: ['./orbyt-text-input.component.scss'],
+  templateUrl: './orb-text-input.component.html',
+  styleUrls: ['./orb-text-input.component.scss'],
 })
 export class OrbTextInputComponent {
   @Input() label = '';

@@ -4,14 +4,15 @@ import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
-
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LocalStorageService } from './services/storage/local-storage.service';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { componentStateReducer } from './store/component-state.reducer';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { provideTranslateService } from '@ngx-translate/core';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,9 +22,23 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-          preset: Aura
+          preset: Aura,
+          options: {
+              prefix: 'p',
+              darkModeSelector: 'system',
+              cssLayer: false
+          }
+      },
+      zIndex: {
+        modal: 1100,
+        overlay: 1000,
+        menu: 1000,
+        tooltip: 1100
       }
+      ,
+      ripple: true
   }),
+  provideTranslateService(),
   {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,

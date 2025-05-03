@@ -6,12 +6,14 @@ import { ButtonModule } from 'primeng/button';
   selector: 'orb-button',
   standalone: true,
   imports: [CommonModule, ButtonModule],
-  templateUrl: './orbyt-button.component.html',
-  styleUrls: ['./orbyt-button.component.scss'],
+  templateUrl: './orb-button.component.html',
+  styleUrls: ['./orb-button.component.scss'],
 })
 export class OrbButtonComponent {
   @Input() label: string = '';
   @Input() icon?: string;
   @Input() disabled = false;
+  @Input() rounded = false;
   @Input() type: 'button' | 'submit' = 'button';
+  @Input() serverity: 'secondary' | 'success' | 'info'| 'warn'| 'help'| 'danger'| 'contrast'= 'success';
 }

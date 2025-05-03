@@ -5,28 +5,28 @@ import { AuthGuard } from './guards/auth.guard'; // ajusta la ruta según tu est
 export const appRoutes: Routes = [
   {
     path: 'auth',
-  /*   children: [
+    children: [
       {
         path: 'login',
         loadComponent: () =>
-          import('./auth/login/login.component').then((m) => m.LoginComponent)
+          import('./features/auth/login/login.component').then((m) => m.LoginComponent)
       },
-      {
+    /*   {
         path: 'register',
         loadComponent: () =>
           import('./auth/register/register.component').then((m) => m.RegisterComponent)
-      }
-    ] */
+      }*/
+    ] 
   },
   
 
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'home'
+    redirectTo: 'auth/login'
   },
   {
     path: '**',
-    redirectTo: 'home'
+    redirectTo: 'auth/login'
   }
 ];
