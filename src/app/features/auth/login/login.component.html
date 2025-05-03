@@ -1,18 +1,42 @@
-<orb-scrollpanel [style]="{ width: '100%', height: '100vh' }">
-    <div class="d-flex flex-column justify-content-center align-items-center p-4">
-      <orb-card class="w-100 max-w-sm shadow">
-        <div orbHeader>
-          <h2 class="text-center">Orbyt</h2>
-        </div>
-        <orb-text-input [label]="'Email'" />
-        <orb-text-input  [label]="'Contraseña'" type="password" />
-        <orb-button type="submit" label="Entrar" class="w-100 mt-3" />
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" orbBody>
-     
-        </form>
-      </orb-card>
-    </div>
-  <orb-text-input [label]="'Email'" />
-    <orb-button type="button" [label]="'toggle'" [rounded]="true" [serverity]="'info'" (click)="toggleTheme()" class="w-100 mt-3" />
-  </orb-scrollpanel>
-  
+<div class="login-wrapper">
+  <img class="logo" src="assets/logo/orbyt-logo.svg" alt="Orbyt Logo" />
+
+  <orb-card class="login-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" orbBody>
+      <h2 class="title">Iniciar sesión</h2>
+<div class="login-inputs">
+  <orb-text-input
+  formControlName="email"
+  placeholder="Email"
+  class="login-input"
+/>
+
+<orb-text-input
+  formControlName="password"
+  type="password"
+  placeholder="Contraseña"
+  class="login-input"
+/>
+
+<orb-button
+  label="Acceder"
+  type="submit"
+  severity="info"
+  class="login-button"
+/>
+</div>
+      
+
+      <div class="or-separator">O</div>
+
+      <div class="social-buttons">
+        <button class="social facebook">
+          <i class="pi pi-facebook"></i> Iniciar con Facebook
+        </button>
+        <button class="social google">
+          <i class="pi pi-google"></i> Iniciar con Google
+        </button>
+      </div>
+    </form>
+  </orb-card>
+</div>

@@ -15,7 +15,6 @@ import { ThemeService } from '@orb-services';
     OrbTextInputComponent,
     OrbCardComponent,
     OrbButtonComponent,
-    OrbScrollPanelComponent
   ],
   providers: [ThemeService],
   templateUrl: './login.component.html',

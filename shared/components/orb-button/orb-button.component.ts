@@ -15,5 +15,6 @@ export class OrbButtonComponent {
   @Input() disabled = false;
   @Input() rounded = false;
   @Input() type: 'button' | 'submit' = 'button';
-  @Input() serverity: 'secondary' | 'success' | 'info'| 'warn'| 'help'| 'danger'| 'contrast'= 'success';
+  @Input() severity: 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast' = 'primary';
+
 }

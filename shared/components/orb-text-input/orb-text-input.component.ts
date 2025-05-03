@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { FloatLabel } from 'primeng/floatlabel';
 
 @Component({
   selector: 'orb-text-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputTextModule],
+  imports: [FormsModule, InputTextModule, FloatLabel],
   templateUrl: './orb-text-input.component.html',
   styleUrls: ['./orb-text-input.component.scss'],
 })

@@ -1,11 +1,7 @@
-<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-    {{ label }}
-  </label>
-  <input
-    type="text"
-    pInputText
-    [(ngModel)]="model"
-    [placeholder]="placeholder"
-    class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
-  />
-  
+
+
+  <p-floatlabel variant="on">
+    <input pInputText id="on_label" [(ngModel)]="model"   autocomplete="off"   
+      class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary" />
+    <label for="on_label">  {{ placeholder }}</label>
+</p-floatlabel>
