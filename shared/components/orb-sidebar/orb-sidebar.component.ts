@@ -10,9 +10,10 @@ import { RouterModule } from '@angular/router';
 })
 export class OrbSidebarComponent {
   navItems = [
-    { label: 'Inicio', icon: 'pi pi-home', route: '/home' },
+    { label: 'Dashboard', icon: 'pi pi-home', route: '/home' },
     { label: 'Agenda', icon: 'pi pi-calendar', route: '/agenda' },
     { label: 'Stock', icon: 'pi pi-box', route: '/stock' },
     { label: 'Usuarios', icon: 'pi pi-users', route: '/users' }
   ];
+  
 }

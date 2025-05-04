@@ -1,9 +1,10 @@
+
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 
-import { AuthService, LoginDto, UserResponseDto } from '@orb-api/index';
+import { AuthService, LoginDto, SubscriptionPlanService, UserResponseDto } from '@orb-api/index';
 import { LocalStorageService } from '@orb-services';
 import { exhaustMap, of } from 'rxjs';
 
@@ -30,7 +31,8 @@ export class AuthStore extends ComponentStore<AuthState> {
   ) {
     super(DEFAULT_AUTH_STATE);
   }
-
+  
+  readonly isAuthenticated = () => !!this.get().token;
   // ---------------------------
   // Selectors
   // ---------------------------
@@ -70,7 +72,8 @@ export class AuthStore extends ComponentStore<AuthState> {
   readonly login = this.effect<LoginDto>((credentials$) =>
     credentials$.pipe(
       exhaustMap((credentials) =>
-        this.authService.authControllerLogin(credentials).pipe(
+        
+        this.authService.authControllerLogin(credentials ).pipe(
           tapResponse(
             (response) => {
               const token = response.access_token;
@@ -88,7 +91,7 @@ export class AuthStore extends ComponentStore<AuthState> {
       )
     )
   );
-  
+
 
   // ---------------------------
   // Effect: get user profile

@@ -5,24 +5,15 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" orbBody>
       <h2 class="title">Iniciar sesión</h2>
 <div class="login-inputs">
-  <orb-text-input
-  formControlName="email"
-  placeholder="Email"
-  class="login-input"
-/>
-
-<orb-text-input
-  formControlName="password"
-  type="password"
-  placeholder="Contraseña"
-  class="login-input"
-/>
+  <orb-text-input id="email" formControlName="email" placeholder="Correo electrónico" type="email"  class="login-input"/>
+<orb-text-input id="password" formControlName="password" placeholder="Contraseña" type="password"  class="login-input"/>
 
 <orb-button
   label="Acceder"
   type="submit"
   severity="info"
   class="login-button"
+  (click)="onSubmit()"
 />
 </div>
       

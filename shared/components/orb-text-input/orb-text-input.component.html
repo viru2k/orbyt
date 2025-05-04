@@ -1,7 +1,13 @@
-
-
-  <p-floatlabel variant="on">
-    <input pInputText id="on_label" [(ngModel)]="model"   autocomplete="off"   
-      class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary" />
-    <label for="on_label">  {{ placeholder }}</label>
-</p-floatlabel>
+<p-floatLabel variant="on">
+  <input
+    pInputText
+    [type]="type"
+    [value]="value"
+    [disabled]="disabled"
+    (input)="onInputChange($event)"
+    id="input"
+    autocomplete="off"
+    class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+  />
+  <label for="input">{{ placeholder }}</label>
+</p-floatLabel>

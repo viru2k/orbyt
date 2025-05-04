@@ -1,43 +1,42 @@
-import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { OrbScrollPanelComponent, OrbTextInputComponent } from '@orb-components'; // o tu ruta exacta
-import { OrbCardComponent } from '@orb-components';
-import { OrbButtonComponent } from '@orb-components';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '@orb-services';
+import { OrbTextInputComponent, OrbButtonComponent, OrbCardComponent } from '@orb-components';
+import { AuthStore } from '@orb-stores';
+import { LoginDto } from '@orb-api/index';
+
 
 @Component({
   selector: 'orb-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    OrbTextInputComponent,
-    OrbCardComponent,
-    OrbButtonComponent,
-  ],
-  providers: [ThemeService],
+  imports: [CommonModule, ReactiveFormsModule, OrbTextInputComponent, OrbButtonComponent, OrbCardComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private themeService = inject(ThemeService);
+  private authStore = inject(AuthStore);
+  private router = inject(Router);
+
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+    password: ['', Validators.required]
   });
 
-
-
-  onSubmit(): void {
-    if (this.form.valid) {
-      console.log(this.form.value);
-      // this.authStore.login(this.form.value);
+  ngOnInit() {
+    if (this.authStore.isAuthenticated()) {
+      this.router.navigate(['/home']);
     }
   }
 
-  toggleTheme():void {
-    this.themeService.toggleTheme();
+  onSubmit() {
+    if (this.form.invalid) return;
+    const login: LoginDto = {
+      email: this.form.value.email ?? '',
+      password: this.form.value.password ?? ''
+    };
+    this.authStore.login(login);
+  
   }
 }
