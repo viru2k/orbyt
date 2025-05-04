@@ -1,19 +1,87 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { PanelMenuModule } from 'primeng/panelmenu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'orb-sidebar',
   standalone: true,
-  imports: [RouterModule],
+  imports: [PanelMenuModule],
   templateUrl: './orb-sidebar.component.html',
-  styleUrls: ['./orb-sidebar.component.scss'],
+  styleUrls: ['./orb-sidebar.component.scss']
 })
 export class OrbSidebarComponent {
-  navItems = [
-    { label: 'Dashboard', icon: 'pi pi-home', route: '/home' },
-    { label: 'Agenda', icon: 'pi pi-calendar', route: '/agenda' },
-    { label: 'Stock', icon: 'pi pi-box', route: '/stock' },
-    { label: 'Usuarios', icon: 'pi pi-users', route: '/users' }
-  ];
-  
+  items: MenuItem[];
+
+  constructor(private router: Router) {
+    this.items = [
+      {
+        label: 'Panel',
+        icon: 'pi pi-fw pi-home',
+        command: () => this.router.navigate(['/home'])
+      },
+      // ---------- Agenda ----------
+      {
+        label: 'Agenda',
+        icon: 'pi pi-fw pi-calendar',
+        items: [
+          {
+            label: 'Calendario',
+            icon: 'pi pi-fw pi-calendar-plus',
+            command: () => this.router.navigate(['/agenda'])
+          },
+          {
+            label: 'Crear cita',
+            icon: 'pi pi-fw pi-user-plus',
+            command: () => this.router.navigate(['/agenda/create'])
+          }
+        ]
+      },
+      // ---------- Stock ----------
+      {
+        label: 'Stock',
+        icon: 'pi pi-fw pi-box',
+        items: [
+          {
+            label: 'Productos',
+            icon: 'pi pi-fw pi-list',
+            command: () => this.router.navigate(['/stock/products'])
+          },
+          {
+            label: 'Entradas',
+            icon: 'pi pi-fw pi-arrow-down',
+            command: () => this.router.navigate(['/stock/in'])
+          },
+          {
+            label: 'Salidas',
+            icon: 'pi pi-fw pi-arrow-up',
+            command: () => this.router.navigate(['/stock/out'])
+          }
+        ]
+      },
+      // ---------- Usuarios ----------
+      {
+        label: 'Usuarios',
+        icon: 'pi pi-fw pi-users',
+        items: [
+          {
+            label: 'Lista',
+            icon: 'pi pi-fw pi-list',
+            command: () => this.router.navigate(['/users'])
+          },
+          {
+            label: 'Nuevo usuario',
+            icon: 'pi pi-fw pi-user-plus',
+            command: () => this.router.navigate(['/users/create'])
+          }
+        ]
+      },
+      // ---------- Perfil ----------
+      {
+        label: 'Perfil',
+        icon: 'pi pi-fw pi-user',
+        command: () => this.router.navigate(['/profile'])
+      }
+    ];
+  }
 }

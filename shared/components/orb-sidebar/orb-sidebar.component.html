@@ -1,14 +1,7 @@
 <aside class="orb-sidebar">
-  <nav>
-    <ul>
-      @for (item of navItems; track item.route) {
-        <li>
-          <a [routerLink]="item.route" routerLinkActive="active">
-            <i class="{{ item.icon }}"></i>
-            <span>{{ item.label }}</span>
-          </a>
-        </li>
-      }
-    </ul>
-  </nav>
+  <p-panelMenu
+    [model]="items"
+    [style]="{ width: '100%' }"
+    [multiple]="false"
+  ></p-panelMenu>
 </aside>

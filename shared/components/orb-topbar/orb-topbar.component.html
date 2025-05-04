@@ -2,12 +2,17 @@
   <button (click)="toggleMenu()" class="menu-toggle">
     <i class="pi pi-bars"></i>
   </button>
-@if(isMenuOpen){  <nav class="dropdown-menu">
+@if(isMenuOpen){ <!--  <nav class="dropdown-menu">
   <a routerLink="/home">Inicio</a>
   <a routerLink="/agenda">Agenda</a>
   <a routerLink="/stock">Stock</a>
   <a routerLink="/users">Usuarios</a>
-</nav>
+</nav> -->
+<p-panelMenu
+[model]="items"
+[style]="{ width: '100%' }"
+[multiple]="false"
+></p-panelMenu>
 }
 <div class="topbar-user">
   <img class="avatar" src="assets/logo/orbyt-logo-icon.png" alt="User" />
