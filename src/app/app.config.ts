@@ -4,10 +4,6 @@ import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
-
-
-
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LocalStorageService } from './services/storage/local-storage.service';
 import { provideStore } from '@ngrx/store';
@@ -65,6 +61,7 @@ export const appConfig: ApplicationConfig = {
     logOnly: true
   })
   ],
+  
 };
 
 export function apiConfigFactory(localStorage: LocalStorageService): Configuration {

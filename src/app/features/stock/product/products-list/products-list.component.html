@@ -1,0 +1,43 @@
+<div class="flex justify-end mb-3">
+    <orb-button
+      label="Nuevo producto"
+      icon="pi pi-plus"
+      (click)="create()"
+    />
+  </div>
+  
+  <orb-table
+    [columns]="columns"
+    [data]="(products$ | async) ?? []"
+    [rows]="20"
+  >
+    <!-- plantilla para columna de acciones -->
+    <ng-template pTemplate="body" let-row let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns">
+          <!-- otras columnas -->
+          <ng-container *ngIf="col.field !== 'actions'">
+            {{ row[col.field] }}
+          </ng-container>
+  
+          <!-- acciones -->
+          <ng-container *ngIf="col.field === 'actions'">
+            <button pButton pRipple icon="pi pi-pencil" class="p-button-text p-1" (click)="edit(row.id)"></button>
+            <button pButton pRipple icon="pi pi-trash"  class="p-button-text p-1 text-red-500" (click)="delete(row.id)"></button>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </orb-table>
+  
+
+  <!-- Modal -->
+<!-- Modal -->
+<p-dialog [(visible)]="display" [modal]="true" [style]="{width:'40rem'}"
+          [header]="prodEdit ? 'Editar producto' : 'Nuevo producto'">
+  <orb-product-form
+      [product]="prodEdit ?? undefined"
+      (saved)="onSaved()"
+      (cancel)="display=false">
+  </orb-product-form>
+</p-dialog>

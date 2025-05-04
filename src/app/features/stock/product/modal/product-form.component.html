@@ -1,0 +1,23 @@
+<form [formGroup]="form" class="p-fluid">
+    <orb-form-field label="SKU" [required]="true">
+      <input pInputText formControlName="sku" />
+    </orb-form-field>
+  
+    <orb-form-field label="Nombre" [required]="true">
+      <input pInputText formControlName="name" />
+    </orb-form-field>
+  
+    <orb-form-field label="Stock" [required]="true">
+      <input pInputText type="number" formControlName="stock" />
+    </orb-form-field>
+  
+    <orb-form-field label="Precio" [required]="true">
+      <input pInputText type="number" formControlName="price" />
+    </orb-form-field>
+  
+    <div class="flex justify-end gap-2 pt-3">
+      <button pButton label="Cancelar" class="p-button-text" (click)="cancelForm()"></button>
+      <button pButton label="Guardar" icon="pi pi-check" [disabled]="form.invalid" (click)="accept()"></button>
+    </div>
+  </form>
+  

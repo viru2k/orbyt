@@ -1,0 +1,28 @@
+<p-table
+  [value]="data"
+  [paginator]="data.length > rows"
+  [rows]="rows"
+  [responsiveLayout]="'scroll'"
+  [scrollable]="true"
+>
+  <!-- Cabecera -->
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns"
+          [pSortableColumn]="col.sortable !== false ? col.field : null"
+          [style.width]="col.width">
+        {{ col.header }}
+        <p-sortIcon *ngIf="col.sortable !== false" [field]="col.field" />
+      </th>
+    </tr>
+  </ng-template>
+
+  <!-- Filas -->
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns">
+        {{ rowData[col.field] }}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -10,3 +10,5 @@ export * from './orb-tabs/orb-tabs.component';
 export * from './orb-theme-toggle/orb-theme-toggle.component';
 export * from './orb-sidebar/orb-sidebar.component';
 export * from './orb-topbar/orb-topbar.component';
+export * from './orb-table/orb-table.component';
+export * from './orb-form-field/orb-form-field.component';
