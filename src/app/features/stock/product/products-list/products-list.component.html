@@ -5,7 +5,7 @@
       (click)="create()"
     />
   </div>
-  
+  {{products$ |async | json}}
   <orb-table
     [columns]="columns"
     [data]="(products$ | async) ?? []"

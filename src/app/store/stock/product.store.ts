@@ -3,6 +3,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { ProductsService, CreateProductDto, UpdateProductDto, ProductResponseDto } from '@orb-api/index';
 import { tapResponse } from '@ngrx/operators';
 import { catchError, EMPTY, exhaustMap, of, tap } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { linkToGlobalState } from '../component-state.reducer';
 
 export interface ProductState {
   list: ProductResponseDto[];
@@ -18,8 +20,9 @@ const INITIAL_STATE: ProductState = {
 
 @Injectable({ providedIn: 'root' })
 export class ProductStore extends ComponentStore<ProductState> {
-  constructor(private productsService: ProductsService) {
+  constructor(private productsService: ProductsService,     private readonly globalStore: Store) {
     super(INITIAL_STATE);
+      linkToGlobalState(this.state$, 'ProductStore', this.globalStore);
   }
 
   /* ---------- selectors ---------- */

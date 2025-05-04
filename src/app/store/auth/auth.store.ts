@@ -7,6 +7,8 @@ import { tapResponse } from '@ngrx/operators';
 import { AuthService, LoginDto, SubscriptionPlanService, UserResponseDto } from '@orb-api/index';
 import { LocalStorageService } from '@orb-services';
 import { exhaustMap, of } from 'rxjs';
+import { linkToGlobalState } from '../component-state.reducer';
+import { Store } from '@ngrx/store';
 
 export interface AuthState {
     user: UserResponseDto | null;
@@ -27,9 +29,11 @@ export class AuthStore extends ComponentStore<AuthState> {
   private readonly router = inject(Router)
   constructor(
     private readonly authService: AuthService,
-    private readonly storage: LocalStorageService
+    private readonly storage: LocalStorageService,
+    private readonly globalStore: Store,
   ) {
     super(DEFAULT_AUTH_STATE);
+    linkToGlobalState(this.state$, 'AuthStore', this.globalStore);
   }
   
   readonly isAuthenticated = () => !!this.get().token;

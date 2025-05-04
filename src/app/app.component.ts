@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import {  TranslateService } from '@ngx-translate/core';
 import { SpinnerService, ThemeService } from '@orb-services';
 import { MessageService } from 'primeng/api';
@@ -8,7 +8,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
-  imports: [ RouterModule, ProgressSpinnerModule, ToastModule ],
+  imports: [ RouterModule, RouterOutlet,ProgressSpinnerModule, ToastModule ],
   providers: [ThemeService, PrimeNG, MessageService],
   selector: 'app-root',
   templateUrl: './app.component.html',
