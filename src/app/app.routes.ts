@@ -1,5 +1,6 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard'; // Asumo que este guard está correcto y funcionando
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -12,11 +13,20 @@ export const appRoutes: Routes = [
       {
         path: 'stock',
         children: [
-          { path: 'products', loadComponent: () => import('./features/stock/product/products-list/products-list.component').then(m => m.ProductsListComponent) }
+          { path: 'products', loadComponent: () => import('./features/stock/product/product-list/product-list.component').then(m => m.ProductListComponent) }
         ]
       },
-      // Agrega rutas para agenda y users si es necesario
-      { path: '**', redirectTo: 'home' }
+      {
+        path: 'client', 
+        children: [
+          { path: 'list', loadComponent: () => import('./features/client/client-list/client-list.component').then(m => m.ClientListComponent) }
+        ]
+      },
+  
+      // ... otras rutas ...
+      { path: '', redirectTo: 'home', pathMatch: 'full' }, // Redirección por defecto dentro del shell
+      { path: '**', redirectTo: 'home' } // Wildcard dentro del shell
     ]
   }
+
 ];

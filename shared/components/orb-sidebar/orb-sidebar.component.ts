@@ -42,11 +42,7 @@ export class OrbSidebarComponent {
         label: 'Stock',
         icon: 'pi pi-fw pi-box',
         items: [
-          {
-            label: 'Productos',
-            icon: 'pi pi-fw pi-list',
-            command: () => this.router.navigate(['/stock/products'])
-          },
+         
           {
             label: 'Entradas',
             icon: 'pi pi-fw pi-arrow-down',
@@ -57,6 +53,15 @@ export class OrbSidebarComponent {
             icon: 'pi pi-fw pi-arrow-up',
             command: () => this.router.navigate(['/stock/out'])
           }
+        ]
+      },
+
+       {
+        label: 'Gestión',
+        items: [
+          { label: 'Productos', icon: 'pi pi-hammer', routerLink: ['/stock/products'] },
+          { label: 'Clientes', icon: 'pi pi-users', routerLink: ['/client/list'] }, 
+          // ... otros items de gestión
         ]
       },
       // ---------- Usuarios ----------

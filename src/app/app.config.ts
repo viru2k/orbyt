@@ -1,3 +1,4 @@
+import { MessageService } from 'primeng/api';
 import { Configuration } from './api/configuration';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -59,9 +60,10 @@ export const appConfig: ApplicationConfig = {
   provideStoreDevtools({
     maxAge: 25,
     logOnly: true
-  })
+  }),
+    MessageService
   ],
-  
+
 };
 
 export function apiConfigFactory(localStorage: LocalStorageService): Configuration {
