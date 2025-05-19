@@ -1,28 +1,116 @@
-<p-table
-  [value]="data"
-  [paginator]="data.length > rows"
+<p-table #dt
+  [value]="value"
+  [columns]="columns"
+  [loading]="loading"
+  [totalRecords]="totalRecords"
   [rows]="rows"
-  [responsiveLayout]="'scroll'"
-  [scrollable]="true"
+  [first]="first"
+  [paginator]="paginator"
+  [rowHover]="true"
+  styleClass="p-datatable-sm orb-table"
+  [dataKey]="dataKey"
+  [selectionMode]="selectionMode"
+  [(selection)]="selection"
+  (selectionChange)="selectionChange.emit($event)"
+  (onRowSelect)="onRowSelect.emit($event)"
+  (onRowUnselect)="onRowUnselect.emit($event)"
+
+  responsiveLayout="scroll"
 >
-  <!-- Cabecera -->
-  <ng-template pTemplate="header" let-columns>
+  <ng-template pTemplate="caption">
+   
+      <div class="flex align-items-end">
+        @if (caption) {
+          <h5 class="m-0 mr-3">{{ caption }}</h5>
+        }
+         @if (tableFeatures.showGlobalSearch) {
+            <div class="flex">
+            <p-iconfield iconPosition="left" class="ml-auto">
+                <p-inputicon>
+                    <i class="pi pi-search"></i>
+                </p-inputicon>
+                <input
+                    pInputText
+                    type="text"
+                (input)="globalFilterValue = $any($event.target)?.value; dt.filterGlobal(globalFilterValue, 'contains')"
+                    placeholder="Buscar"
+                />
+            </p-iconfield>
+        </div>
+     
+        }
+      </div>
+
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    @if (headerTemplate) {
+      <ng-container *ngTemplateOutlet="headerTemplate; context: { $implicit: columns }"></ng-container>
+    } @else {
+      <tr>
+        @if (selectionMode === 'multiple') {
+          <th style="width: 3rem" class="p-checkbox-column">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+        }
+        @for (col of columns; track col.field) {
+          <th [style.width]="col.width"
+              [pSortableColumn]="sortable && col.sortable !== false ? col.field : undefined"
+              [class.actions-column-header]="isActionsColumn(col)">
+            {{ col.header }}
+            @if (sortable && col.sortable !== false && col.field) {
+              <p-sortIcon [field]="col.field!"></p-sortIcon>
+            }
+          </th>
+        }
+      </tr>
+    }
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex"> @if (bodyTemplate) {
+      <ng-container *ngTemplateOutlet="bodyTemplate; context: { $implicit: rowData, columns: columns, rowIndex: rowIndex }"></ng-container>
+    } @else {
+      <tr [pSelectableRow]="rowData">
+        @if (selectionMode === 'multiple') {
+          <td class="p-checkbox-column">
+            <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+          </td>
+        }
+        @for (col of columns; track col.field) {
+          <td [ngSwitch]="isActionsColumn(col)" [style.width]="col.width" [class.text-center]="isActionsColumn(col)">
+            @switch (true) {
+              @case (isActionsColumn(col)) {
+                @if (rowActions.length > 0) {
+                  <p-button type="button" icon="pi pi-ellipsis-v" styleClass="p-button-rounded p-button-text p-button-sm"
+                            (click)="toggleRowMenu(rowActionMenuRef, $event, rowData)"
+                            pTooltip="Acciones" tooltipPosition="left"></p-button>
+                }
+              }
+              @default {
+                {{ rowData[col.field!] }}
+              }
+            }
+          </td>
+        }
+      </tr>
+    }
+  </ng-template>
+
+  <p-menu #rowActionMenuRef [model]="currentRowMenuItems" [popup]="true" appendTo="body"></p-menu>
+
+  <ng-template pTemplate="emptymessage">
     <tr>
-      <th *ngFor="let col of columns"
-          [pSortableColumn]="col.sortable !== false ? col.field : null"
-          [style.width]="col.width">
-        {{ col.header }}
-        <p-sortIcon *ngIf="col.sortable !== false" [field]="col.field" />
-      </th>
+      <td [attr.colspan]="columns.length + (selectionMode === 'multiple' ? 1 : 0)" class="text-center p-4">
+        No hay registros disponibles.
+      </td>
     </tr>
   </ng-template>
 
-  <!-- Filas -->
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr>
-      <td *ngFor="let col of columns">
-        {{ rowData[col.field] }}
-      </td>
-    </tr>
+  <ng-template pTemplate="paginatorleft" let-state>
+    @if(state.totalRecords > 0) {
+      Mostrando {{(state.first || 0) + 1}} a {{ (state.first || 0) + (state.rows || 0) > state.totalRecords ? state.totalRecords : (state.first || 0) + (state.rows || 0) }} de {{state.totalRecords}}
+    } @else {
+      Mostrando 0 de 0
+    }
   </ng-template>
 </p-table>

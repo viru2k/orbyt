@@ -18,6 +18,7 @@
       "@orb-api/*": ["src/app/api/*"],
       "@orb-components": ["./shared/components/index.ts"],
       "@orb-directives": ["./shared/directives/index.ts"],
+      "@orb-models": ["./shared/models/index.ts"],
       "@orb-services": ["./src/app/services/index.ts"],
       "@orb-stores": ["./src/app/store/index.ts"],
     },

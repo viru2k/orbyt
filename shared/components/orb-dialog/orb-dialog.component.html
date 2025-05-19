@@ -1,0 +1,25 @@
+<p-dialog
+  [(visible)]="visible"
+  (visibleChange)="onInternalVisibleChange($event)"
+  [header]="header"
+  [modal]="modal"
+  [style]="dialogStyle"
+  [closable]="closable"
+  [draggable]="draggable"
+  [resizable]="resizable"
+  [dismissableMask]="dismissableMask"
+  [closeOnEscape]="closeOnEscape"
+  [blockScroll]="blockScroll"
+  [position]="position"
+  [maximizable]="maximizable"
+  (onShow)="onInternalShow($event)"
+  (onHide)="onInternalHide($event)"
+  (onMaximize)="onInternalMaximize($event)"
+>
+  <ng-content></ng-content>
+
+  <ng-template pTemplate="footer">
+    <ng-content select="[orbDialogFooter]"></ng-content>
+  </ng-template>
+
+  </p-dialog>
