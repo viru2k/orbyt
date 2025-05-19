@@ -1,0 +1,32 @@
+<div class="field" [ngClass]="fieldClass">
+  @if (label) {
+    <label [for]="inputId" class="block mb-2">
+      {{ label }}
+      @if (required) {
+        <span class="text-red-500">*</span>
+      }
+    </label>
+  }
+  <textarea
+    [id]="inputId"
+    pInputTextarea
+    [rows]="rows"
+    [cols]="cols"
+    [placeholder]="placeholder"
+    [value]="value"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    [disabled]="disabled"
+    [readonly]="readonly"
+    [pTooltip]="pTooltip"
+    [tooltipPosition]="tooltipPosition"
+    [autoResize]="autoResize"
+    [ngClass]="styleClass"
+    [required]="required"
+  ></textarea>
+  @if (helpText) {
+    <small [id]="inputId + '-help'" class="block mt-1 p-d-block">
+      {{ helpText }}
+    </small>
+  }
+  </div>

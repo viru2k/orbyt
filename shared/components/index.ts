@@ -1,6 +1,6 @@
 export * from './orb-button/orb-button.component';
 export * from './orb-label/orb-label.component';
-export * from './orb-text-input/orb-text-input.component';
+export * from './orb-text-input/orb-text-area.component';
 export * from './orb-card/orb-card.component';
 export * from './orb-accordion/orb-accordion.component';
 export * from './orb-divider/orb-divider.component';
@@ -12,3 +12,6 @@ export * from './orb-sidebar/orb-sidebar.component';
 export * from './orb-topbar/orb-topbar.component';
 export * from './orb-table/orb-table.component';
 export * from './orb-form-field/orb-form-field.component';
+export * from './orb-text-area/orb-text-input.component';
+export * from './orb-toolbar/orb-toolbar.component' ;
+export * from './orb-dialog/orb-dialog.component' ;
