@@ -1,0 +1,51 @@
+<orb-toolbar>
+ 
+  <div body>
+    </div>
+
+  <div footer>
+    <orb-button label="Nuevo Cliente" (click)="showClientForm()" />
+  </div>
+</orb-toolbar>
+
+
+
+<orb-card  >
+  <div class="grid" orbBody>
+
+      <orb-table
+        [value]="clients() || []"
+        [columns]="tableColumns"
+        [loading]="isLoading()"
+        [totalRecords]="clients()?.length || 0" [rows]="tableRows()"
+        [first]="tableFirst()"
+        [tableFeatures]="tableFeaturesConfig"
+        [globalFilterFields]="clientGlobalFilterFields"
+        [rowActions]="clientRowActions"
+        [tableHeaderActions]="clientTableHeaderActions"
+        dataKey="id"
+        paginatorPosition="both"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
+
+      >
+      </orb-table>
+    </div>
+  </orb-card>
+
+
+<orb-dialog
+  [(visible)]="displayClientModal"
+  [header]="isEditMode() ? 'Editar Cliente' : 'Nuevo Cliente'"
+  size="lg"
+  (onHide)="onClientFormCancel()"
+>
+  @if (displayClientModal()) {
+    <app-client-form
+      [client]="clientToEdit()" (saved)="onClientFormSaved()"
+      (cancel)="onClientFormCancel()">
+    </app-client-form>
+  }
+</orb-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
