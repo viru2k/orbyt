@@ -1,3 +1,31 @@
+
+:host {
+  display: block; // Comportamiento por defecto y para móvil
+  min-height: 100vh;
+  background: var(--p-surface-ground); // Opcional, para consistencia si es necesario
+
+  @media (min-width: 1024px) { // Estilos para escritorio
+    display: flex; // Convierte el host en un contenedor flex
+    flex-direction: row; // Los hijos se dispondrán en fila
+  }
+}
+
+.content {
+  flex-grow: 1; // Permite que el área de contenido ocupe el espacio restante
+  padding: 1rem;
+  overflow: auto; // Buena práctica para áreas de contenido que puedan exceder el tamaño
+
+  @media (max-width: 1023px) { // Estilos específicos para móvil
+    margin-top: 4rem; // Espacio para el orb-topbar
+    margin-left: 0; // Asegura que no haya margen izquierdo
+  }
+
+  @media (min-width: 1024px) { // Estilos específicos para escritorio
+    margin-top: 0;
+    margin-left: 0; // Quita el margen izquierdo, ya que flexbox se encargará del posicionamiento
+                    // al lado del sidebar. El sidebar ya ocupa sus 250px.
+  }
+}
 .shell-container {
     display: flex;
     min-height: 100vh;
@@ -25,7 +53,7 @@
       display: none;
     }
   }
-  
+/*   
   .content {
     flex-grow: 1;
     padding: 1rem;
@@ -34,5 +62,5 @@
       margin-top: 0;
       margin-left: 250px; // espacio para sidebar
     }
-  }
+  } */
   

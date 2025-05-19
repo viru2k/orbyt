@@ -6,9 +6,10 @@ import { FormControlName, ReactiveFormsModule } from "@angular/forms";
     selector: 'orb-form-field',
     standalone: true,
     imports: [ReactiveFormsModule, CommonModule],
+    styleUrls: ['./orb-form-field.component.scss'],
     template: `
-      <div class="mb-3">
-        <label class="block font-medium mb-1">
+      <div class="mb-3 container">
+        <label class="block font-medium  ">
           {{ label }}
           <span *ngIf="required" class="text-red-500">*</span>
         </label>
@@ -21,7 +22,8 @@ import { FormControlName, ReactiveFormsModule } from "@angular/forms";
         </small>
       </div>
     `
-  })
+  },)
+
   export class OrbFormFieldComponent {
     @Input() label = '';
     @Input() required = false;

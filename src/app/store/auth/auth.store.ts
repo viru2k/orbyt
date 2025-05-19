@@ -30,7 +30,7 @@ export class AuthStore extends ComponentStore<AuthState> {
   constructor(
     private readonly authService: AuthService,
     private readonly storage: LocalStorageService,
-    private readonly globalStore: Store,
+    private  globalStore: Store,
   ) {
     super(DEFAULT_AUTH_STATE);
     linkToGlobalState(this.state$, 'AuthStore', this.globalStore);
