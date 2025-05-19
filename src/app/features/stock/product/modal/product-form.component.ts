@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { OrbFormFieldComponent } from '@orb-components';
+import { OrbButtonComponent, OrbFormFieldComponent } from '@orb-components';
 
 import { ProductStore } from '@orb-stores';
 import {
@@ -13,7 +13,7 @@ import {
 @Component({
   selector: 'orb-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent],
+  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent, OrbButtonComponent],
   templateUrl: './product-form.component.html'
 })
 export class ProductFormComponent implements OnInit {

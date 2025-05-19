@@ -1,43 +1,53 @@
-<div class="flex justify-end mb-3">
-    <orb-button
-      label="Nuevo producto"
-      icon="pi pi-plus"
-      (click)="create()"
-    />
+
+
+
+<orb-toolbar>
+ 
+  <div body>
+    </div>
+
+  <div footer>
+    <orb-button label="Nuevo Producto" (click)="showProductForm()" />
   </div>
-  {{products$ |async | json}}
-  <orb-table
-    [columns]="columns"
-    [data]="(products$ | async) ?? []"
-    [rows]="20"
-  >
-    <!-- plantilla para columna de acciones -->
-    <ng-template pTemplate="body" let-row let-columns="columns">
-      <tr>
-        <td *ngFor="let col of columns">
-          <!-- otras columnas -->
-          <ng-container *ngIf="col.field !== 'actions'">
-            {{ row[col.field] }}
-          </ng-container>
-  
-          <!-- acciones -->
-          <ng-container *ngIf="col.field === 'actions'">
-            <button pButton pRipple icon="pi pi-pencil" class="p-button-text p-1" (click)="edit(row.id)"></button>
-            <button pButton pRipple icon="pi pi-trash"  class="p-button-text p-1 text-red-500" (click)="delete(row.id)"></button>
-          </ng-container>
-        </td>
-      </tr>
-    </ng-template>
-  </orb-table>
-  
+</orb-toolbar>
+
+
+<orb-card  >
+  <div class="grid" orbBody>
+    <div class="col-12">
+      <orb-table
+      [value]="(products$ | async) || []"
+      [columns]="tableColumns"
+
+      [rows]="tableRows()"
+      [first]="tableFirst()"
+      
+      (onFilterChange)="loadProducts($event)"
+      [tableFeatures]="tableFeaturesConfig"
+      [rowActions]="productRowActions"
+      [tableHeaderActions]="productTableHeaderActions"
+      dataKey="id"
+      paginatorPosition="both"
+    >
+      </orb-table>
+    </div>
+  </div>
+
+</orb-card>
+
 
   <!-- Modal -->
 <!-- Modal -->
-<p-dialog [(visible)]="display" [modal]="true" [style]="{width:'40rem'}"
-          [header]="prodEdit ? 'Editar producto' : 'Nuevo producto'">
+
+
+<orb-dialog
+ [(visible)]="display" [header]="productUnderEdit ? 'Editar producto' : 'Nuevo producto'"
+  size="sm" (onHide)="handleDialogClose()" >
   <orb-product-form
-      [product]="prodEdit ?? undefined"
-      (saved)="onSaved()"
-      (cancel)="display=false">
-  </orb-product-form>
-</p-dialog>
+        [product]="productUnderEdit ?? undefined"
+      (saved)="onSavedForm()"
+      (cancel)="onCancelForm()" >
+    </orb-product-form>
+  
+
+  </orb-dialog>

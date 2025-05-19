@@ -15,9 +15,9 @@
       <input pInputText type="number" formControlName="price" />
     </orb-form-field>
   
-    <div class="flex justify-end gap-2 pt-3">
-      <button pButton label="Cancelar" class="p-button-text" (click)="cancelForm()"></button>
-      <button pButton label="Guardar" icon="pi pi-check" [disabled]="form.invalid" (click)="accept()"></button>
+    <div class="flex justify-end footer">
+      <orb-button [severity]="'secondary'"  label="Cancelar" class="p-button-text" (click)="cancelForm()"/>
+      <orb-button [severity]="'info'" label="Guardar" icon="pi pi-check" [disabled]="form.invalid" (click)="accept()"/>
     </div>
   </form>
   
