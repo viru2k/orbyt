@@ -1,7 +1,10 @@
+// shared/directives/footer/footer.directive.ts
 import { Directive } from '@angular/core';
 
 @Directive({
-  selector: '[orbFooter]',
-  standalone: true
+  selector: '[footer]',
+  standalone: true,
 })
-export class OrbFooterDirective {}
+export class FooterDirective {
+  constructor() {}
+}
