@@ -1,6 +1,6 @@
-import { OrbDialogComponent } from './../../../../../../shared/components/orb-dialog/orb-dialog.component';
+import { OrbDialogComponent } from '../../../../../../shared/components/orb-dialog/orb-dialog.component';
 
-import { OrbToolbarComponent } from './../../../../../../shared/components/orb-toolbar/orb-toolbar.component';
+import { OrbToolbarComponent } from '../../../../../../shared/components/orb-toolbar/orb-toolbar.component';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrbTableComponent,  OrbButtonComponent } from '@orb-components';
@@ -20,11 +20,11 @@ import { SortEvent } from 'primeng/api';
   selector: 'orb-products',
   standalone: true,
   imports: [CommonModule, OrbTableComponent, ProductFormComponent, OrbButtonComponent, DialogModule, OrbCardComponent, OrbToolbarComponent, OrbDialogComponent],
-  templateUrl: './products-list.component.html',
-  styleUrls: ['./products-list.component.scss']
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.scss']
 })
-export class ProductsListComponent implements OnInit {
-  private store = inject(ProductStore);
+export class ProductListComponent implements OnInit {
+  private productStore = inject(ProductStore);
   private router = inject(Router);
   display  = false;
   product: ProductResponseDto  | null = null;
@@ -75,22 +75,14 @@ export class ProductsListComponent implements OnInit {
   tableFirst = signal(0);
 
 
-  products$ = this.store.products$;
+  products$ = this.productStore.products$;
 
   ngOnInit() {
-    this.store.load();
+    this.productStore.load();
   }
 
   showProductForm() {
     this.display = true;
-  }
-
-  edit(productId: number) {
-    this.router.navigate(['/stock/products/edit', productId]);
-  }
-
-  delete(productId: number) {
-    this.store.remove(productId);
   }
 
   open(product?: ProductResponseDto) {  
@@ -104,7 +96,7 @@ export class ProductsListComponent implements OnInit {
   
   onSavedForm() {
     this.display = false;
-    this.store.load();          // refresca tabla
+    this.productStore.load();          // refresca tabla
   }
 
   onCancelForm() {
@@ -119,25 +111,7 @@ export class ProductsListComponent implements OnInit {
   }
 
   handleDeleteProduct(product: ProductResponseDto) {
-  /*   this.confirmationService.confirm({
-      message: `¿Está seguro de que desea eliminar el producto "${product.name}"?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'No',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.productService.deleteProduct(product.id!) // Asume que product.id no es null
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: () => {
-              this.notificationService.showSuccess('Producto eliminado con éxito.');
-              this.loadProducts(); // Recargar
-            },
-            error: (err) => this.notificationService.showError('Error al eliminar el producto.')
-          });
-      }
-    }); */
+  this.productStore.remove(product.id);
   }
 
   handleAddNewProduct() {

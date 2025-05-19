@@ -58,6 +58,7 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
   @Input() selection?: T | T[];
   @Input() dataKey: string = 'id'; // dataKey sigue siendo string, T ahora lo permite
   @Input() caption?: string;
+ @Input() rowsPerPageOptions = [5, 10, 20, 50];
 
   // Salidas de eventos
   @Output() onPageChange = new EventEmitter<TablePageEvent>();

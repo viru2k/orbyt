@@ -18,10 +18,8 @@
       <orb-table
       [value]="(products$ | async) || []"
       [columns]="tableColumns"
-
       [rows]="tableRows()"
       [first]="tableFirst()"
-      
       (onFilterChange)="loadProducts($event)"
       [tableFeatures]="tableFeaturesConfig"
       [rowActions]="productRowActions"
