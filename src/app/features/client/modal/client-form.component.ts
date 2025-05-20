@@ -1,3 +1,4 @@
+
 // src/app/features/crm/client/modal/client-form.component.ts
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -8,12 +9,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button'; // Asumo que usarás p-button o tu orb-button
-import { OrbButtonComponent, OrbFormFieldComponent, OrbTextAreaComponent } from '@orb-components'; // Si usas OrbFormField
+import { OrbButtonComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent,  OrbTextAreaComponent,  OrbTextInputComponent } from '@orb-components'; // Si usas OrbFormField
 
 // Store, DTOs
 import { ClientStore } from '@orb-stores';
 import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '@orb-api/index';
-import { GenderOption, StatusOption } from '@orb-models';
+import { GenderOption, StatusOption,FormButtonAction } from '@orb-models';
+import { UtilsService } from '@orb-services';
 // NotificationService no se usa aquí si el store lo maneja, o si no hay notificaciones directas desde el form.
 
 // Tipos para los dropdowns (pueden ir en un archivo de tipos si se reutilizan)
@@ -29,10 +31,11 @@ import { GenderOption, StatusOption } from '@orb-models';
     OrbTextAreaComponent,
     DropdownModule,
     CalendarModule,
-    ButtonModule, // Para p-button
-    OrbButtonComponent, // Si usas orb-button para Aceptar/Cancelar
-    OrbFormFieldComponent // Si usas este wrapper para tus campos
-    // OrbTextareaComponent // Si creaste y quieres usarlo aquí
+    ButtonModule, 
+    OrbFormFieldComponent, 
+     OrbTextInputComponent,
+     OrbFormFooterComponent,
+     OrbSelectComponent 
   ],
   templateUrl: './client-form.component.html', // Crearemos este template
   styleUrls: ['./client-form.component.scss']
@@ -43,8 +46,9 @@ export class ClientFormComponent implements OnInit {
   @Output() cancel = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
-  private clientStore = inject(ClientStore); // Usamos ClientStore
-
+  private clientStore = inject(ClientStore); 
+  public utilsService = inject(UtilsService);
+   public footerActions: FormButtonAction[] = [];
   // isLoading se podría obtener del store si los botones necesitan mostrar un estado de carga
   // isLoading = this.store.isLoading; // Ejemplo
 
@@ -80,6 +84,7 @@ export class ClientFormComponent implements OnInit {
   }
 
   ngOnInit() {
+     this.setupFooterActions();
     if (this.client) {
       // Si hay un cliente, estamos en modo edición.
       // Mapeamos ClientResponseDto a los campos del formulario.
@@ -140,4 +145,30 @@ export class ClientFormComponent implements OnInit {
   cancelForm() {
     this.cancel.emit(); // Emitir evento para que el padre cierre el modal
   }
+
+   private setupFooterActions(): void {
+    this.footerActions = [
+      {
+        label: 'Cancelar',
+        action: 'cancel', 
+        styleType: 'text',
+        severity: 'secondary',
+        buttonType: 'button'
+      },
+      {
+        label: this.client?.id ? 'Guardar Cambios' : 'Crear Cliente',
+        action: 'submit', 
+        severity: 'info',
+        buttonType: 'submit', 
+      }
+    ];
+  }
+  handleFooterAction(action: string): void {
+    if (action === 'cancel') {
+      this.cancelForm();
+    } else if (action === 'submit') {
+   
+    }
+  }
+
 }

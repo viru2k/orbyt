@@ -1,6 +1,6 @@
 import { OrbDialogComponent } from '../../../../../../shared/components/orb-dialog/orb-dialog.component';
 
-import { OrbToolbarComponent } from '../../../../../../shared/components/orb-toolbar/orb-toolbar.component';
+import { OrbToolbarComponent } from '../../../../../../shared/components/application/orb-toolbar/orb-toolbar.component';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrbTableComponent,  OrbButtonComponent } from '@orb-components';

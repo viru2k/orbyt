@@ -1,74 +1,72 @@
-<form [formGroup]="form" (ngSubmit)="accept()" class="p-fluid">
-  <div class="formgrid grid">
+<form [formGroup]="form" (ngSubmit)="accept()" >
+  <div class="col-12">
 
+    <div class="field col-12">
+      <orb-form-field label="Nombre Completo" [required]="utilsService.isRequired(form.get('fullname'))">
+        <orb-text-input formControlName="fullname" inputId="fullname"></orb-text-input>
+      </orb-form-field>
+    </div>
     <div class="field col-12 md:col-4">
-      <label for="fullname">Nombre Completo<span class="text-red-500">*</span></label>
-      <input id="fullname" type="text" pInputText formControlName="fullname" />
-      @if (form.get('fullname')?.invalid && form.get('fullname')?.touched) {
-        <small class="p-error">Nombre completo es requerido.</small>
-      }
+      <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))" >
+        <orb-text-input formControlName="name" inputId="name"></orb-text-input>
+      </orb-form-field>
     </div>
 
     <div class="field col-12 md:col-4">
-      <label for="name">Nombre<span class="text-red-500">*</span></label>
-      <input id="name" type="text" pInputText formControlName="name" />
-      @if (form.get('name')?.invalid && form.get('name')?.touched) {
-        <small class="p-error">Nombre es requerido.</small>
-      }
-    </div>
-
-    <div class="field col-12 md:col-4">
-      <label for="lastName">Apellidos<span class="text-red-500">*</span></label>
-      <input id="lastName" type="text" pInputText formControlName="lastName" />
-      @if (form.get('lastName')?.invalid && form.get('lastName')?.touched) {
-        <small class="p-error">Apellidos son requeridos.</small>
-      }
+      <orb-form-field label="Apellidos" [required]="utilsService.isRequired(form.get('lastName'))" >
+        <orb-text-input formControlName="lastName" inputId="lastName"></orb-text-input>
+      </orb-form-field>
     </div>
 
     <div class="field col-12 md:col-6">
-      <label for="email">Email</label>
-      <input id="email" type="email" pInputText formControlName="email" />
-      @if (form.get('email')?.touched && form.get('email')?.errors?.['email']) {
-        <small class="p-error">Email inválido.</small>
-      }
+      <orb-form-field label="Email" [required]="utilsService.isRequired(form.get('email'))" >
+        <orb-text-input formControlName="email" inputId="email" type="email"></orb-text-input>
+      </orb-form-field>
     </div>
 
     <div class="field col-12 md:col-6">
-      <label for="phone">Teléfono</label>
-      <input id="phone" type="text" pInputText formControlName="phone" />
+      <orb-form-field label="Teléfono" [required]="utilsService.isRequired(form.get('phone'))" >
+        <orb-text-input formControlName="phone" inputId="phone" type="tel"></orb-text-input>
+      </orb-form-field>
     </div>
 
-    <div class="field col-12">
-      <label for="address">Dirección</label>
-      <input id="address" type="text" pInputText formControlName="address" />
+    <div class="field col-12 md:col-6">
+      <orb-form-field label="Dirección" [required]="utilsService.isRequired(form.get('address'))" >
+        <orb-text-input formControlName="address" inputId="address"></orb-text-input>
+      </orb-form-field>
     </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="birthDate">Fecha de Nacimiento</label>
-      <p-calendar id="birthDate" formControlName="birthDate" [showIcon]="true" dateFormat="yy-mm-dd" dataType="date" appendTo="body"></p-calendar>
-    </div>
-
-    <div class="field col-12 md:col-4">
-      <label for="gender">Género</label>
-      <p-dropdown id="gender" [options]="genderOptions" formControlName="gender" placeholder="Seleccionar género" optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></p-dropdown>
-    </div>
-
-    <div class="field col-12 md:col-4">
-      <label for="status">Estado<span class="text-red-500">*</span></label>
-      <p-dropdown id="status" [options]="statusOptions" formControlName="status" placeholder="Seleccionar estado" optionLabel="label" optionValue="value" appendTo="body"></p-dropdown>
-      @if (form.get('status')?.invalid && form.get('status')?.touched) {
-        <small class="p-error">Estado es requerido.</small>
-      }
-    </div>
-
-    <div class="field col-12">
-      <label for="notes">Notas</label>
-      <orb-text-area id="notes" pInputTextarea formControlName="notes" [rows]="3" [autoResize]="true"></orb-text-area>
+    <div class="field col-12 md:col-6">
+         <orb-form-field label="Fecha de Nacimiento" [required]="utilsService.isRequired(form.get('birthDate'))" >
+   <p-calendar id="birthDateClientForm" formControlName="birthDate" [showIcon]="true" dateFormat="yy-mm-dd" dataType="date" appendTo="body"></p-calendar>
+      </orb-form-field>
       </div>
+    <div class="field col-12 md:col-6">
+          <orb-form-field label="Género" [required]="utilsService.isRequired(form.get('gender'))" >
+          <orb-select id="genderClientForm" [options]="genderOptions" formControlName="gender" placeholder="Seleccionar género" optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
+      </orb-form-field>
+      </div>
+
+
+   <div class="field col-12">
+          <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))" >
+      <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" placeholder="Seleccionar estado" optionLabel="label" optionValue="value" appendTo="body" [styleClass]="'display-block'"></orb-select>
+      </orb-form-field>
+      </div>
+
+
+
+    <div class="field col-12">
+      <orb-form-field label="Notas" [required]="utilsService.isRequired(form.get('notes'))" >
+        <orb-text-area formControlName="notes" inputId="notesClientForm" [rows]="3" [autoResize]="true"></orb-text-area>
+      </orb-form-field>
+    </div>
   </div>
 
-  <div class="flex justify-content-end gap-2 mt-4">
-    <orb-button type="button" label="Cancelar" styleType="text" (click)="cancelForm()"></orb-button>
-    <orb-button type="submit" [label]="client?.id ? 'Guardar Cambios' : 'Crear Cliente'"></orb-button>
-    </div>
+
+<orb-form-footer
+    [buttons]="footerActions"
+    alignment="right" (actionClicked)="handleFooterAction($event)"
+  ></orb-form-footer>
+
 </form>

@@ -37,7 +37,7 @@
 <orb-dialog
   [(visible)]="displayClientModal"
   [header]="isEditMode() ? 'Editar Cliente' : 'Nuevo Cliente'"
-  size="lg"
+  size="md"
   (onHide)="onClientFormCancel()"
 >
   @if (displayClientModal()) {

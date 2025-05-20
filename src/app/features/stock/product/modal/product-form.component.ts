@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { OrbButtonComponent, OrbFormFieldComponent } from '@orb-components';
+import {  OrbFormFieldComponent, OrbFormFooterComponent } from '@orb-components';
 
 import { ProductStore } from '@orb-stores';
 import {
@@ -9,18 +9,19 @@ import {
   CreateProductDto,
   UpdateProductDto
 } from '@orb-api/index';
+import { FormButtonAction } from '@orb-models';
 
 @Component({
   selector: 'orb-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent, OrbButtonComponent],
+  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent,      OrbFormFooterComponent ],
   templateUrl: './product-form.component.html'
 })
 export class ProductFormComponent implements OnInit {
   @Input()  product?: ProductResponseDto = undefined;
   @Output() saved  = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
-
+     public footerActions: FormButtonAction[] = [];
   private fb    = inject(FormBuilder);
   private store = inject(ProductStore);
 
@@ -32,6 +33,7 @@ export class ProductFormComponent implements OnInit {
   });
 
   ngOnInit() {
+         this.setupFooterActions();
     if (this.product) this.form.patchValue(this.product);
   }
 
@@ -50,5 +52,30 @@ export class ProductFormComponent implements OnInit {
 
   cancelForm() {
     this.cancel.emit();
+  }
+
+     private setupFooterActions(): void {
+    this.footerActions = [
+      {
+        label: 'Cancelar',
+        action: 'cancel', 
+        styleType: 'text',
+        severity: 'secondary',
+        buttonType: 'button'
+      },
+      {
+        label: this.product?.id ? 'Guardar Cambios' : 'Crear Cliente',
+        action: 'submit', 
+        severity: 'info',
+        buttonType: 'submit', 
+      }
+    ];
+  }
+  handleFooterAction(action: string): void {
+    if (action === 'cancel') {
+      this.cancelForm();
+    } else if (action === 'submit') {
+   
+    }
   }
 }

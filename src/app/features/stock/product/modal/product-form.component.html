@@ -15,9 +15,10 @@
       <input pInputText type="number" formControlName="price" />
     </orb-form-field>
   
-    <div class="flex justify-end footer">
-      <orb-button [severity]="'secondary'"  label="Cancelar" class="p-button-text" (click)="cancelForm()"/>
-      <orb-button [severity]="'info'" label="Guardar" icon="pi pi-check" [disabled]="form.invalid" (click)="accept()"/>
-    </div>
+<orb-form-footer
+    [buttons]="footerActions"
+    alignment="right" (actionClicked)="handleFooterAction($event)"
+  ></orb-form-footer>
+
   </form>
   
