@@ -1,0 +1,15 @@
+<p-floatLabel>
+  <input
+    pInputText
+    [id]="inputId"
+    [type]="type"
+    [value]="_value"
+    [disabled]="_disabled"
+    (input)="onInputChange($event)"
+    (blur)="onInputBlur()"
+    autocomplete="off"
+    class="w-full" 
+    [ngClass]="{'ng-invalid ng-dirty': isInvalid}"
+  />
+  <label [attr.for]="inputId">{{ placeholder }}</label>
+</p-floatLabel>
