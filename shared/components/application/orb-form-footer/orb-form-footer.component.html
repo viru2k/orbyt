@@ -1,0 +1,16 @@
+<div  [ngClass]="alignmentClass">
+  @for (button of buttons; track button.action) {
+    <orb-button
+      [type]="button.buttonType ?? 'button'"
+      [label]="button.label"
+      [severity]="button.severity ?? 'primary'"
+      [styleType]="button.styleType"
+      [icon]="button.icon"
+      [loading]="button.loading || false"
+      [disabled]="button.disabled || false"
+      (click)="onButtonClick(button.action)"
+      [pTooltip]="button.tooltip"
+      [tooltipPosition]="button.tooltipPosition"
+    ></orb-button>
+  }
+</div>
