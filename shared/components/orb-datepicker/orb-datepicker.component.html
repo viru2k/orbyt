@@ -1,0 +1,25 @@
+<p-datepicker
+  [inputId]="inputId"
+  [placeholder]="placeholder"
+  [ngModel]="_value"
+  (ngModelChange)="onValueChange($event)"
+  (onBlur)="onCalendarBlur()"
+  [disabled]="disabled"
+  [ngClass]="{'p-invalid': isInvalid, 'w-full': !inline}"
+  [class]="styleClass ?? ''"
+  [dateFormat]="dateFormat"
+  [showIcon]="showIcon && !inline"
+  [appendTo]="appendTo"
+  [pTooltip]="pTooltip"
+  [tooltipPosition]="tooltipPosition"
+  [minDate]="minDate"
+  [maxDate]="maxDate"
+  [yearRange]="yearRange ?? ''"
+  [selectionMode]="selectionMode"
+  [inline]="inline"
+
+  [showButtonBar]="showButtonBar"
+  [dataType]="dataType" [style]="inline ? {border: 'none'} : null"
+  [inputStyleClass]="inline ? 'p-sr-only' : undefined"
+></p-datepicker>
+

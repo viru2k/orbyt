@@ -19,3 +19,17 @@ export type ButtonStyleType = 'text' | 'outlined' | 'raised' | 'rounded' | strin
 export type ButtonType = 'button' | 'submit' | 'reset';
 export type FooterAlignment = 'left' | 'center' | 'right';
 export type TooltipPosition = 'top' | 'left' | 'right' | 'bottom';
+
+
+ export const SPANISH_LOCALE = {
+  firstDayOfWeek: 1,
+  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+  dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+  dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+ monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+  today: 'Hoy',
+  clear: 'Borrar',
+    dateFormat: 'dd/mm/yy', 
+      weekHeader: 'Sm'
+};

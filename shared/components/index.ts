@@ -18,3 +18,6 @@ export * from './orb-text-input/orb-text-input.component';
 export * from './orb-dialog/orb-dialog.component' ;
 export * from './orb-multiselect/orb-multiselect.component' ;
 export * from './orb-select/orb-select.component' ;
+export * from './orb-datepicker/orb-datepicker.component' ;
+
+

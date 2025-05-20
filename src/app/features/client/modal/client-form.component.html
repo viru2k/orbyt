@@ -38,7 +38,7 @@
 
     <div class="field col-12 md:col-6">
          <orb-form-field label="Fecha de Nacimiento" [required]="utilsService.isRequired(form.get('birthDate'))" >
-   <p-calendar id="birthDateClientForm" formControlName="birthDate" [showIcon]="true" dateFormat="yy-mm-dd" dataType="date" appendTo="body"></p-calendar>
+   <orb-datepicker id="birthDateClientForm" formControlName="birthDate" [showIcon]="true" dateFormat="dd/mm/yy" dataType="date"  appendTo="body"></orb-datepicker>
       </orb-form-field>
       </div>
     <div class="field col-12 md:col-6">

@@ -1,3 +1,5 @@
+import { SPANISH_LOCALE } from '@orb-models';
+
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import {  TranslateService } from '@ngx-translate/core';
@@ -22,13 +24,13 @@ export class AppComponent implements OnInit {
    private themeService= inject(ThemeService);
 
    ngOnInit() {
-    this.translateService.setDefaultLang('en');
+    this.translateService.setDefaultLang('es');
     this.themeService.initTheme();
-    this.translate('en');
+    this.translate('es');
 }
 
 translate(lang: string) {
   this.translateService.use(lang);
-  this.translateService.get('primeng').subscribe(res => this.config.setTranslation(res));
+  this.translateService.get('primeng').subscribe(res => this.config.setTranslation(SPANISH_LOCALE));
 }
 }

@@ -9,7 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button'; // Asumo que usarás p-button o tu orb-button
-import { OrbButtonComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent,  OrbTextAreaComponent,  OrbTextInputComponent } from '@orb-components'; // Si usas OrbFormField
+import { OrbButtonComponent, OrbDatepickerComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent,  OrbTextAreaComponent,  OrbTextInputComponent } from '@orb-components'; // Si usas OrbFormField
 
 // Store, DTOs
 import { ClientStore } from '@orb-stores';
@@ -35,7 +35,7 @@ import { UtilsService } from '@orb-services';
     OrbFormFieldComponent, 
      OrbTextInputComponent,
      OrbFormFooterComponent,
-     OrbSelectComponent 
+     OrbSelectComponent, OrbDatepickerComponent
   ],
   templateUrl: './client-form.component.html', // Crearemos este template
   styleUrls: ['./client-form.component.scss']

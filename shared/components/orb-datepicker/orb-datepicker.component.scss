@@ -1,0 +1,9 @@
+
+// NOTA: PrimeNG v17+ con :host-context o ::ng-deep puede ser delicado con standalone.
+// Es mejor usar [ngClass]="{'w-full': true}" o [style]="{width: '100%'}" en el p-dropdown
+// o confiar en las clases del contenedor padre (ej. .field en PrimeFlex).
+// He añadido 'w-full' a [ngClass] en el HTML para un comportamiento por defecto.
+
+::ng-deep orb-datepicker{
+    display:block ;
+} 
