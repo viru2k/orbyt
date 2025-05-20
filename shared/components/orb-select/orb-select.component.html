@@ -1,0 +1,18 @@
+
+<p-select
+  [inputId]="inputId"
+  [options]="options"
+  [optionLabel]="optionLabel"
+  [optionValue]="optionValue"
+  [placeholder]="placeholder"
+  [ngModel]="_value" (ngModelChange)="onValueChange($event)" (onBlur)="onDropdownBlur()" [disabled]="disabled"
+  [ngClass]="{'p-invalid': isInvalid, 'w-full': true , }"
+   [class]="styleClass ?? ''" 
+   [panelStyleClass]="panelStyleClass" 
+   [showClear]="showClear"
+  [filter]="filter"
+  [filterBy]="filterBy"
+  [pTooltip]="pTooltip"
+  [tooltipPosition]="tooltipPosition"
+  [appendTo]="appendTo"
+></p-select>

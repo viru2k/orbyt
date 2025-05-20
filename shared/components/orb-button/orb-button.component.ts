@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { ButtonSeverity, ButtonStyleType } from '@orb-models';
 
 @Component({
   selector: 'orb-button',
@@ -14,7 +15,9 @@ export class OrbButtonComponent {
   @Input() icon?: string;
   @Input() disabled = false;
   @Input() rounded = false;
-  @Input() type: 'button' | 'submit' = 'button';
-  @Input() severity: 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'help' | 'danger' | 'contrast' = 'primary';
+  @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() severity: ButtonSeverity = 'primary';
+   @Input()  styleType?: ButtonStyleType | 'text';
+   @Input() loading= false;
 
 }
