@@ -36,6 +36,8 @@ import { CreateHolidayDto } from '../model/createHolidayDto';
 import { HolidayResponseDto } from '../model/holidayResponseDto';
 // @ts-ignore
 import { UpdateAgendaConfigDto } from '../model/updateAgendaConfigDto';
+// @ts-ignore
+import { UpdateAppointmentDto } from '../model/updateAppointmentDto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -54,18 +56,23 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Agregar feriado para bloquear ese día
+     * Agregar feriado para un profesional
      * @param createHolidayDto 
+     * @param professionalId ID del profesional (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HolidayResponseDto>;
-    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<HolidayResponseDto>>;
-    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<HolidayResponseDto>>;
-    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HolidayResponseDto>;
+    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<HolidayResponseDto>>;
+    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<HolidayResponseDto>>;
+    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createHolidayDto === null || createHolidayDto === undefined) {
             throw new Error('Required parameter createHolidayDto was null or undefined when calling agendaControllerAddHoliday.');
         }
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -109,6 +116,7 @@ export class AgendaService extends BaseService {
             {
                 context: localVarHttpContext,
                 body: createHolidayDto,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -120,7 +128,7 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Reservar un turno en un slot disponible
+     * Reservar un turno en un slot disponible (cliente o profesional)
      * @param bookAppointmentDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -252,18 +260,75 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Obtener turnos por fecha, rango o estado
-     * @param date 
-     * @param from 
-     * @param to 
-     * @param status 
+     * Eliminar un turno (o marcarlo como cancelado)
+     * @param id 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'cancelled' | 'completed' | 'no_show', observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
-    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'cancelled' | 'completed' | 'no_show', observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'cancelled' | 'completed' | 'no_show', observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'cancelled' | 'completed' | 'no_show', observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerDeleteAppointment(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentResponseDto>;
+    public agendaControllerDeleteAppointment(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentResponseDto>>;
+    public agendaControllerDeleteAppointment(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentResponseDto>>;
+    public agendaControllerDeleteAppointment(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling agendaControllerDeleteAppointment.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (bearer) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        return this.httpClient.request<AppointmentResponseDto>('delete', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Obtener turnos por diversos filtros (fecha, rango, estado, profesional)
+     * @param date Fecha específica (YYYY-MM-DD)
+     * @param from Fecha de inicio del rango (YYYY-MM-DD)
+     * @param to Fecha de fin del rango (YYYY-MM-DD)
+     * @param status Estado del turno
+     * @param professionalId ID del profesional para filtrar (admin)
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled', professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
+    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled', professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
+    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled', professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
+    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, status?: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled', professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -274,6 +339,8 @@ export class AgendaService extends BaseService {
           <any>to, 'to');
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>status, 'status');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -319,15 +386,16 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Ver slots disponibles para un día
-     * @param date 
+     * Ver slots disponibles para un día y profesional
+     * @param date Fecha para consultar (YYYY-MM-DD)
+     * @param professionalId ID del profesional (si es diferente al logueado)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetAvailable(date: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AvailableSlotResponseDto>>;
-    public agendaControllerGetAvailable(date: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AvailableSlotResponseDto>>>;
-    public agendaControllerGetAvailable(date: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AvailableSlotResponseDto>>>;
-    public agendaControllerGetAvailable(date: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetAvailable(date: string, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AvailableSlotResponseDto>;
+    public agendaControllerGetAvailable(date: string, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AvailableSlotResponseDto>>;
+    public agendaControllerGetAvailable(date: string, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AvailableSlotResponseDto>>;
+    public agendaControllerGetAvailable(date: string, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (date === null || date === undefined) {
             throw new Error('Required parameter date was null or undefined when calling agendaControllerGetAvailable.');
         }
@@ -335,6 +403,8 @@ export class AgendaService extends BaseService {
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>date, 'date');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -365,7 +435,7 @@ export class AgendaService extends BaseService {
         }
 
         let localVarPath = `/agenda/available`;
-        return this.httpClient.request<Array<AvailableSlotResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<AvailableSlotResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 params: localVarQueryParameters,
@@ -380,14 +450,19 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Obtener configuración personalizada de agenda
+     * Obtener configuración de agenda del profesional actual (o especificado)
+     * @param professionalId ID del profesional (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetConfig(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
-    public agendaControllerGetConfig(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
-    public agendaControllerGetConfig(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
-    public agendaControllerGetConfig(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetConfig(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
+    public agendaControllerGetConfig(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
+    public agendaControllerGetConfig(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
+    public agendaControllerGetConfig(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -421,6 +496,7 @@ export class AgendaService extends BaseService {
         return this.httpClient.request<AgendaConfigResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -432,14 +508,19 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Listar feriados configurados por el usuario
+     * Listar feriados de un profesional
+     * @param professionalId ID del profesional (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetHolidays(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<HolidayResponseDto>>;
-    public agendaControllerGetHolidays(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<HolidayResponseDto>>>;
-    public agendaControllerGetHolidays(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<HolidayResponseDto>>>;
-    public agendaControllerGetHolidays(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetHolidays(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<HolidayResponseDto>>;
+    public agendaControllerGetHolidays(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<HolidayResponseDto>>>;
+    public agendaControllerGetHolidays(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<HolidayResponseDto>>>;
+    public agendaControllerGetHolidays(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -473,6 +554,7 @@ export class AgendaService extends BaseService {
         return this.httpClient.request<Array<HolidayResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -540,16 +622,17 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Resumen de citas por estado y por día
-     * @param from 
-     * @param to 
+     * Resumen de citas por estado y día para un profesional
+     * @param from Fecha de inicio (YYYY-MM-DD)
+     * @param to Fecha de fin (YYYY-MM-DD)
+     * @param professionalId ID del profesional (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetSummary(from: string, to: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentSummaryResponseDto>;
-    public agendaControllerGetSummary(from: string, to: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentSummaryResponseDto>>;
-    public agendaControllerGetSummary(from: string, to: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentSummaryResponseDto>>;
-    public agendaControllerGetSummary(from: string, to: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentSummaryResponseDto>;
+    public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentSummaryResponseDto>>;
+    public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentSummaryResponseDto>>;
+    public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (from === null || from === undefined) {
             throw new Error('Required parameter from was null or undefined when calling agendaControllerGetSummary.');
         }
@@ -562,6 +645,8 @@ export class AgendaService extends BaseService {
           <any>from, 'from');
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
           <any>to, 'to');
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -607,14 +692,19 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Turnos del día actual
+     * Turnos del día actual del profesional logueado (o especificado)
+     * @param professionalId ID del profesional (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetToday(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
-    public agendaControllerGetToday(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetToday(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetToday(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetToday(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
+    public agendaControllerGetToday(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
+    public agendaControllerGetToday(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
+    public agendaControllerGetToday(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -648,6 +738,7 @@ export class AgendaService extends BaseService {
         return this.httpClient.request<Array<AppointmentResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -659,14 +750,19 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Turnos de la semana actual
+     * Turnos de la semana actual del profesional logueado (o especificado)
+     * @param professionalId ID del profesional (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerGetWeek(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
-    public agendaControllerGetWeek(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetWeek(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetWeek(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetWeek(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
+    public agendaControllerGetWeek(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
+    public agendaControllerGetWeek(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
+    public agendaControllerGetWeek(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -700,6 +796,7 @@ export class AgendaService extends BaseService {
         return this.httpClient.request<Array<AppointmentResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -717,10 +814,10 @@ export class AgendaService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public agendaControllerRegisterProductsUsed(id: number, body: object, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public agendaControllerRegisterProductsUsed(id: number, body: object, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling agendaControllerRegisterProductsUsed.');
         }
@@ -734,7 +831,6 @@ export class AgendaService extends BaseService {
         localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -781,17 +877,21 @@ export class AgendaService extends BaseService {
     }
 
     /**
-     * Actualizar configuración de agenda
-     * @param updateAgendaConfigDto 
+     * Actualizar un turno existente
+     * @param id 
+     * @param updateAppointmentDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (updateAgendaConfigDto === null || updateAgendaConfigDto === undefined) {
-            throw new Error('Required parameter updateAgendaConfigDto was null or undefined when calling agendaControllerUpdateConfig.');
+    public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentResponseDto>;
+    public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentResponseDto>>;
+    public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentResponseDto>>;
+    public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling agendaControllerUpdate.');
+        }
+        if (updateAppointmentDto === null || updateAppointmentDto === undefined) {
+            throw new Error('Required parameter updateAppointmentDto was null or undefined when calling agendaControllerUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -800,6 +900,78 @@ export class AgendaService extends BaseService {
         localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        return this.httpClient.request<AppointmentResponseDto>('patch', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: updateAppointmentDto,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Actualizar configuración de agenda del profesional actual (o especificado)
+     * @param updateAgendaConfigDto 
+     * @param professionalId ID del profesional a configurar (admin)
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
+    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
+    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
+    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (updateAgendaConfigDto === null || updateAgendaConfigDto === undefined) {
+            throw new Error('Required parameter updateAgendaConfigDto was null or undefined when calling agendaControllerUpdateConfig.');
+        }
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+          <any>professionalId, 'professionalId');
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (bearer) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -831,10 +1003,11 @@ export class AgendaService extends BaseService {
         }
 
         let localVarPath = `/agenda/config`;
-        return this.httpClient.request<any>('patch', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<AgendaConfigResponseDto>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: updateAgendaConfigDto,
+                params: localVarQueryParameters,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

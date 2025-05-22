@@ -24,6 +24,8 @@
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/interaction": "^6.1.17",
     "@fullcalendar/list": "^6.1.17",
+    "@fullcalendar/resource-daygrid": "^6.1.17",
+    "@fullcalendar/resource-timegrid": "^6.1.17",
     "@fullcalendar/timegrid": "^6.1.17",
     "@ngrx/component-store": "^19.1.0",
     "@ngrx/operators": "^19.1.0",

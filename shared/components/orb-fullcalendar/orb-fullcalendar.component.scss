@@ -1,0 +1,30 @@
+// Es MUY IMPORTANTE importar los estilos de FullCalendar.
+// Puedes hacerlo aquí o, preferiblemente, de forma global en tu `styles.scss`
+// o en la sección `styles` de tu `angular.json`.
+
+// Si lo haces aquí (menos recomendado para estilos de librería):
+// @import '@fullcalendar/common/main.css'; // Nombre del archivo puede variar ligeramente con la versión v5/v6
+// @import '@fullcalendar/daygrid/main.css';
+// @import '@fullcalendar/timegrid/main.css';
+// @import '@fullcalendar/list/main.css';
+// Considera usar ~ para referenciar node_modules si tu preprocesador SCSS lo soporta:
+// @import '~@fullcalendar/core/main.css'; // O la ruta correcta a los CSS de los plugins
+
+// Estilos específicos para tu contenedor si los necesitas
+.orb-fullcalendar-container {
+  width: 100%;
+  height: 700px; // Ajusta la altura según tus necesidades, o hazla dinámica
+  // Es importante que el contenedor tenga una altura definida para que FullCalendar se renderice correctamente.
+}
+
+// Puedes añadir más personalizaciones de estilo aquí,
+// por ejemplo, para sobreescribir algunos estilos de FullCalendar.
+// Ejemplo:
+// :host ::ng-deep .fc-event {
+//   font-size: 0.85em;
+//   cursor: pointer;
+// }
+
+// :host ::ng-deep .fc-toolbar-title {
+//   font-size: 1.5em;
+// }

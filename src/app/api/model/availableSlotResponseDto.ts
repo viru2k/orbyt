@@ -7,10 +7,21 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { SlotDetailDto } from './slotDetailDto';
 
 
 export interface AvailableSlotResponseDto { 
-    start: string;
-    end: string;
+    /**
+     * Fecha para la cual se listan los slots
+     */
+    date: string;
+    /**
+     * Lista de slots disponibles y no disponibles para el día
+     */
+    slots: Array<SlotDetailDto>;
+    /**
+     * Mensaje adicional (ej. si el día está bloqueado)
+     */
+    message?: string;
 }
 

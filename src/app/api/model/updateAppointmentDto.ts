@@ -9,15 +9,15 @@
  */
 
 
-export interface CreateAppointmentDto { 
+export interface UpdateAppointmentDto { 
     /**
      * Título del turno
      */
-    title: string;
+    title?: string;
     /**
      * Fecha y hora de inicio del turno (ISO 8601)
      */
-    startDateTime: string;
+    startDateTime?: string;
     /**
      * Fecha y hora de fin del turno (ISO 8601)
      */
@@ -41,7 +41,7 @@ export interface CreateAppointmentDto {
     /**
      * Estado inicial del turno
      */
-    status?: CreateAppointmentDto.StatusEnum;
+    status?: UpdateAppointmentDto.StatusEnum;
     /**
      * ID del servicio (opcional)
      */
@@ -51,7 +51,7 @@ export interface CreateAppointmentDto {
      */
     roomId?: number;
 }
-export namespace CreateAppointmentDto {
+export namespace UpdateAppointmentDto {
     export type StatusEnum = 'pending' | 'confirmed' | 'cancelled';
     export const StatusEnum = {
         Pending: 'pending' as StatusEnum,

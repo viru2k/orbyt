@@ -18,5 +18,6 @@ export interface AppointmentSummaryResponseDto {
     completed: number;
     cancelled: number;
     noShow: number;
+    byDate: { [key: string]: number; };
 }
 

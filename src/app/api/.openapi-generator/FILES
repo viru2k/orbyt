@@ -18,7 +18,9 @@ encoder.ts
 git_push.sh
 index.ts
 model/agendaConfigResponseDto.ts
+model/appointmentClientResponseDto.ts
 model/appointmentProductLogResponseDto.ts
+model/appointmentProfessionalResponseDto.ts
 model/appointmentResponseDto.ts
 model/appointmentSummaryResponseDto.ts
 model/availableSlotResponseDto.ts
@@ -33,6 +35,8 @@ model/createStockMovementDto.ts
 model/createSubUserDto.ts
 model/createSubscriptionPlanDto.ts
 model/createSubscriptionPlanFeatureDto.ts
+model/extendedPropsDto.ts
+model/extendedPropsDtoResourceId.ts
 model/holidayResponseDto.ts
 model/loginDto.ts
 model/models.ts
@@ -41,12 +45,14 @@ model/notificationSummaryResponseDto.ts
 model/productOwnerResponseDto.ts
 model/productResponseDto.ts
 model/registerUserDto.ts
+model/slotDetailDto.ts
 model/stockMovementResponseDto.ts
 model/stockSummaryResponseDto.ts
 model/subscriptionPlanFeatureResponseDto.ts
 model/subscriptionPlanResponseDto.ts
 model/subscriptionResponseDto.ts
 model/updateAgendaConfigDto.ts
+model/updateAppointmentDto.ts
 model/updateClientDto.ts
 model/updateProductDto.ts
 model/userResponseDto.ts

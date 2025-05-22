@@ -2,7 +2,7 @@
 
 API del sistema SaaS modular de backoffice
 
-The version of the OpenAPI document: 1.1.0
+The version of the OpenAPI document: 1.2.0
 
 ## Building
 

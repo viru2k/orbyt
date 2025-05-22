@@ -7,26 +7,81 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ExtendedPropsDto } from './extendedPropsDto';
+import { AppointmentProfessionalResponseDto } from './appointmentProfessionalResponseDto';
+import { AppointmentClientResponseDto } from './appointmentClientResponseDto';
 
 
 export interface AppointmentResponseDto { 
-    id: number;
+    /**
+     * ID del turno (string para FullCalendar)
+     */
+    id: string;
+    /**
+     * Título del turno
+     */
     title: string;
-    description?: string;
-    date: string;
+    /**
+     * Fecha y hora de inicio del turno (ISO 8601)
+     */
+    start: string;
+    /**
+     * Fecha y hora de fin del turno (ISO 8601)
+     */
+    end?: string;
+    /**
+     * Indica si el evento dura todo el día
+     */
+    allDay?: boolean;
+    /**
+     * Color del evento en el calendario
+     */
+    color?: string;
+    /**
+     * Estado del turno
+     */
     status: AppointmentResponseDto.StatusEnum;
-    clientId?: number;
+    /**
+     * Notas adicionales sobre el turno
+     */
+    notes?: string;
+    /**
+     * Información del cliente asociado al turno
+     */
+    client?: AppointmentClientResponseDto;
+    /**
+     * Información del profesional asignado
+     */
+    professional?: AppointmentProfessionalResponseDto;
+    /**
+     * ID del servicio (si aplica)
+     */
+    serviceId?: number;
+    /**
+     * ID de la sala/recurso (si aplica)
+     */
+    roomId?: number;
+    /**
+     * Fecha de creación del turno
+     */
     createdAt: string;
+    /**
+     * Fecha de última actualización del turno
+     */
     updatedAt: string;
+    /**
+     * Propiedades extendidas para FullCalendar
+     */
+    extendedProps?: ExtendedPropsDto;
 }
 export namespace AppointmentResponseDto {
-    export type StatusEnum = 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'cancelled' | 'completed' | 'no_show';
+    export type StatusEnum = 'pending' | 'confirmed' | 'cancelled' | 'checked_in' | 'in_progress' | 'completed' | 'no_show';
     export const StatusEnum = {
         Pending: 'pending' as StatusEnum,
         Confirmed: 'confirmed' as StatusEnum,
+        Cancelled: 'cancelled' as StatusEnum,
         CheckedIn: 'checked_in' as StatusEnum,
         InProgress: 'in_progress' as StatusEnum,
-        Cancelled: 'cancelled' as StatusEnum,
         Completed: 'completed' as StatusEnum,
         NoShow: 'no_show' as StatusEnum
     };

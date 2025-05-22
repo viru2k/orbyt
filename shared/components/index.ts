@@ -19,5 +19,4 @@ export * from './orb-dialog/orb-dialog.component' ;
 export * from './orb-multiselect/orb-multiselect.component' ;
 export * from './orb-select/orb-select.component' ;
 export * from './orb-datepicker/orb-datepicker.component' ;
-
-
+export * from './orb-fullcalendar/orb-fullcalendar.component' ;
