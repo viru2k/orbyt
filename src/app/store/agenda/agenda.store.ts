@@ -25,6 +25,7 @@ import { CalendarDisplayEvent } from '@orb-components'; // Tu interfaz para even
 
 // App Services
 import { NotificationService, SpinnerService } from '@orb-services';
+import { NotificationSeverity } from '@orb-models';
 
 // Interfaz para Salas (basada en AgendaConfigResponseDto, si es necesario un mapeo o tipo específico)
 export interface Room { // Esta interfaz es local al store si necesitas una estructura particular.
@@ -89,7 +90,7 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
     // Decide cómo manejar esto: filtrar, lanzar error, o crear un ID temporal (no recomendado para datos reales)
     // Por ahora, lo filtramos en el computed signal si es necesario, o aseguramos que la API siempre devuelva ID.
   }
-  if (!appointment.startDateTime || !appointment.endDateTime) {
+  if (!appointment.start || !appointment.end) {
       console.warn('Appointment sin startDateTime o endDateTime:', appointment.title, appointment.id);
       // Un evento de calendario necesita al menos un 'start'. Si 'end' falta, FullCalendar podría tratarlo como de duración cero o un día completo.
       // Es mejor asegurar que la API provea ambos para eventos con duración.
@@ -130,14 +131,11 @@ export const AgendaStore = signalStore(
         .filter(app => app.id != null && app.start && app.end) // Filtra turnos sin datos esenciales
         .map(mapAppointmentToCalendarEvent)
     ),
-    professionals: computed(() => (agendaConfig()?.professionals as UserResponseDto[]) || []), // Asume que professionals es UserResponseDto[]
-    rooms: computed(() => (agendaConfig()?.rooms as Room[]) || []), // Asume que rooms es Room[] o similar
     slotDurationMinutes: computed(() => agendaConfig()?.slotDurationMinutes),
-    slotMinTime: computed(() => agendaConfig()?.slotMinTime),
-    slotMaxTime: computed(() => agendaConfig()?.slotMaxTime),
-    daysOff: computed(() => agendaConfig()?.daysOff || []),
-    appointmentStatusOptions: computed(() => agendaConfig()?.appointmentStatus || []),
-    appointmentTypeOptions: computed(() => agendaConfig()?.appointmentTypes || []),
+    workingDays: computed(() => agendaConfig()?.workingDays || []),
+      workStart: computed(() => agendaConfig()?.workStart || []),
+          workEnd: computed(() => agendaConfig()?.workEnd || []),
+    allowOverbooking: computed(() => agendaConfig()?.allowOverbooking || []),
     currentSelection: computed(() => selectedAppointment()),
     isLoading: computed(() => loadingAppointments() || loadingConfig() || loadingMutation()),
     lastError: computed(() => error()),
@@ -157,14 +155,15 @@ export const AgendaStore = signalStore(
           patchState(store, { loadingConfig: true, error: null });
         }),
         switchMap(() =>
-          agendaService.agendaControllerGetAgendaConfig().pipe(
+          //agendaService.agendaControllerGetAgendaConfig().pipe(
+            agendaService.agendaControllerGetConfig().pipe(
             tap((config: AgendaConfigResponseDto) => {
               patchState(store, { agendaConfig: config, loadingConfig: false });
               spinner.hide();
             }),
             catchError((err: HttpErrorResponse) => {
               patchState(store, { error: err, loadingConfig: false });
-              notification.showError('Error al cargar la configuración de la agenda.');
+              notification.showError(NotificationSeverity.Error,'Error al cargar la configuración de la agenda.');
               spinner.hide();
               return of(null);
             })
@@ -180,11 +179,10 @@ export const AgendaStore = signalStore(
           patchState(store, { loadingAppointments: true, error: null, currentDateRange: { start: params.startDate, end: params.endDate } });
         }),
         switchMap((params: LoadAppointmentsParams) =>
-          agendaService.agendaControllerFindAllAppointments( // Este método usa los DTOs de @api
+         // agendaService.agendaControllerFindAllAppointments( // Este método usa los DTOs de @api
+         agendaService.agendaControllerGetAppointments(
             params.startDate.toISOString(),
             params.endDate.toISOString(),
-            params.professionalId,
-            params.roomId,
             params.status?.join(',')
           ).pipe(
             tap((loadedAppointments: AppointmentResponseDto[]) => { // Recibe AppointmentResponseDto[]
@@ -193,7 +191,7 @@ export const AgendaStore = signalStore(
             }),
             catchError((err: HttpErrorResponse) => {
               patchState(store, { error: err, loadingAppointments: false, appointments: [] });
-              notification.showError('Error al cargar los turnos.');
+              notification.showError(NotificationSeverity.Error,'Error al cargar los turnos.');
               spinner.hide();
               return of([]);
             })
@@ -202,28 +200,7 @@ export const AgendaStore = signalStore(
       )
     ),
 
-    loadAppointmentById: rxMethod<number>(
-      pipe(
-        tap(() => {
-          spinner.show();
-          patchState(store, { loadingMutation: true, selectedAppointment: null, error: null });
-        }),
-        switchMap((id: number) =>
-          agendaService.agendaControllerFindOneAppointment(id).pipe( // Usa DTO de @api
-            tap((appointment: AppointmentResponseDto) => { // Recibe AppointmentResponseDto
-              patchState(store, { selectedAppointment: appointment, loadingMutation: false });
-              spinner.hide();
-            }),
-            catchError((err: HttpErrorResponse) => {
-              patchState(store, { error: err, loadingMutation: false });
-              notification.showError(`Error al cargar el turno con ID: ${id}.`);
-              spinner.hide();
-              return of(null);
-            })
-          )
-        )
-      )
-    ),
+
 
     createAppointment: rxMethod<CreateAppointmentDto>( // Espera CreateAppointmentDto de @api
       pipe(
@@ -232,19 +209,19 @@ export const AgendaStore = signalStore(
           patchState(store, { loadingMutation: true, error: null });
         }),
         switchMap((createDto: CreateAppointmentDto) =>
-          agendaService.agendaControllerCreateAppointment(createDto).pipe( // Usa DTO de @api
+        agendaService.agendaControllerCreate(createDto).pipe(
             tap((newAppointment: AppointmentResponseDto) => { // Recibe AppointmentResponseDto
               if (store.currentDateRange()) {
-                (store as any).loadAppointments(store.currentDateRange() as LoadAppointmentsParams); // Llama al método del store
+                (store as any).loadAppointments(store.currentDateRange() ); // Llama al método del store
               } else {
                  patchState(store, { loadingMutation: false });
                  spinner.hide();
               }
-              notification.showSuccess('Turno creado con éxito.');
+              notification.showSuccess(NotificationSeverity.Success,'Turno creado con éxito.');
             }),
             catchError((err: HttpErrorResponse) => {
               patchState(store, { error: err, loadingMutation: false });
-              notification.showError('Error al crear el turno.');
+              notification.showError(NotificationSeverity.Error,'Error al crear el turno.');
               spinner.hide();
               return of(null);
             })
@@ -261,22 +238,22 @@ export const AgendaStore = signalStore(
           patchState(store, { loadingMutation: true, error: null });
         }),
         switchMap(({ id, dto }) =>
-          agendaService.agendaControllerUpdateAppointment(id, dto).pipe( // Usa DTO de @api
+          agendaService.agendaControllerUpdate(id, dto).pipe( // Usa DTO de @api
             tap((updatedAppointment: AppointmentResponseDto) => { // Recibe AppointmentResponseDto
               if (store.currentDateRange()) {
-                (store as any).loadAppointments(store.currentDateRange() as LoadAppointmentsParams); // Llama al método del store
+                (store as any).loadAppointments(store.currentDateRange() ); // Llama al método del store
               } else {
                 patchState(store, { loadingMutation: false });
                 spinner.hide();
               }
-              if (store.selectedAppointment()?.id === id) {
+              if (Number(store.selectedAppointment()?.id) === id) {
                 patchState(store, { selectedAppointment: updatedAppointment });
               }
-              notification.showSuccess('Turno actualizado con éxito.');
+              notification.showSuccess(NotificationSeverity.Success,'Turno actualizado con éxito.');
             }),
             catchError((err: HttpErrorResponse) => {
               patchState(store, { error: err, loadingMutation: false });
-              notification.showError('Error al actualizar el turno.');
+              notification.showError(NotificationSeverity.Error,'Error al actualizar el turno.');
               spinner.hide();
               return of(null);
             })
@@ -292,22 +269,22 @@ export const AgendaStore = signalStore(
           patchState(store, { loadingMutation: true, error: null });
         }),
         switchMap((id: number) =>
-          agendaService.agendaControllerRemoveAppointment(id).pipe(
+          agendaService.agendaControllerDeleteAppointment(id).pipe(
             tap(() => {
               if (store.currentDateRange()) {
-                (store as any).loadAppointments(store.currentDateRange() as LoadAppointmentsParams); // Llama al método del store
+                (store as any).loadAppointments(store.currentDateRange() ); // Llama al método del store
               } else {
                 patchState(store, { loadingMutation: false });
                 spinner.hide();
               }
-              if (store.selectedAppointment()?.id === id) {
+              if (Number(store.selectedAppointment()?.id) === id) {
                 patchState(store, { selectedAppointment: null });
               }
-              notification.showSuccess('Turno eliminado con éxito.');
+              notification.showSuccess(NotificationSeverity.Success,'Turno eliminado con éxito.');
             }),
             catchError((err: HttpErrorResponse) => {
               patchState(store, { error: err, loadingMutation: false });
-              notification.showError('Error al eliminar el turno.');
+              notification.showError(NotificationSeverity.Error,'Error al eliminar el turno.');
               spinner.hide();
               return of(null);
             })
