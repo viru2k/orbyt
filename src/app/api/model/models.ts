@@ -18,6 +18,7 @@ export * from './holidayResponseDto';
 export * from './loginDto';
 export * from './notificationResponseDto';
 export * from './notificationSummaryResponseDto';
+export * from './productOwnerResponseDto';
 export * from './productResponseDto';
 export * from './registerUserDto';
 export * from './stockMovementResponseDto';

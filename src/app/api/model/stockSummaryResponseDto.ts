@@ -11,7 +11,21 @@
 
 export interface StockSummaryResponseDto { 
     productId: number;
-    productNameAtTime: string;
-    totalStock: number;
+    productName: string;
+    productDescription?: string;
+    productCurrentPrice: number;
+    productStatus: StockSummaryResponseDto.ProductStatusEnum;
+    availableStock: number;
 }
+export namespace StockSummaryResponseDto {
+    export type ProductStatusEnum = 'activo' | 'inactivo' | 'descatalogado' | 'agotado' | 'suspendido';
+    export const ProductStatusEnum = {
+        Activo: 'activo' as ProductStatusEnum,
+        Inactivo: 'inactivo' as ProductStatusEnum,
+        Descatalogado: 'descatalogado' as ProductStatusEnum,
+        Agotado: 'agotado' as ProductStatusEnum,
+        Suspendido: 'suspendido' as ProductStatusEnum
+    };
+}
+
 

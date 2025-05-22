@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 README.md
 api.base.service.ts
 api.module.ts
@@ -39,6 +38,7 @@ model/loginDto.ts
 model/models.ts
 model/notificationResponseDto.ts
 model/notificationSummaryResponseDto.ts
+model/productOwnerResponseDto.ts
 model/productResponseDto.ts
 model/registerUserDto.ts
 model/stockMovementResponseDto.ts

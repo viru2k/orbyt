@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ProductOwnerResponseDto } from './productOwnerResponseDto';
 
 
 export interface ProductResponseDto { 
@@ -17,6 +18,7 @@ export interface ProductResponseDto {
     currentPrice: number;
     createdAt: string;
     updatedAt: string;
+    owner: ProductOwnerResponseDto;
 }
 export namespace ProductResponseDto {
     export type StatusEnum = 'activo' | 'inactivo' | 'descatalogado' | 'agotado' | 'suspendido';
