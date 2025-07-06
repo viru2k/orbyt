@@ -11,6 +11,12 @@ export const appRoutes: Routes = [
     children: [
       { path: 'home', loadComponent: () => import('./features/dashboard/orb-dashboard.component').then(m => m.DashboardComponent) },
       {
+        path: 'agenda', 
+        children: [
+          { path: 'scheldule', loadComponent: () => import('./features/agenda/agenda-new/agenda-new.component').then(m => m.AgendaNewComponent) }
+        ]
+      },
+      {
         path: 'stock',
         children: [
           { path: 'products', loadComponent: () => import('./features/stock/product/product-list/product-list.component').then(m => m.ProductListComponent) }

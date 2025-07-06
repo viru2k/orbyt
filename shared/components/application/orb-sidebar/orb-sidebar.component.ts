@@ -21,20 +21,16 @@ export class OrbSidebarComponent {
         command: () => this.router.navigate(['/home'])
       },
       // ---------- Agenda ----------
+
+      
       {
         label: 'Agenda',
         icon: 'pi pi-fw pi-calendar',
-        items: [
-          {
-            label: 'Calendario',
-            icon: 'pi pi-fw pi-calendar-plus',
-            command: () => this.router.navigate(['/agenda'])
-          },
-          {
-            label: 'Crear cita',
-            icon: 'pi pi-fw pi-user-plus',
-            command: () => this.router.navigate(['/agenda/create'])
-          }
+          items: [
+          { label: 'Calendario',      icon: 'pi pi-fw pi-calendar-plus', routerLink: ['/agenda'] },
+          {    label: 'Crear cita',
+            icon: 'pi pi-fw pi-user-plus', routerLink: ['/agenda/scheldule'] }, 
+          // ... otros items de gestión
         ]
       },
       // ---------- Stock ----------
