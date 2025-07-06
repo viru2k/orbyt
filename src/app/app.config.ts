@@ -2,7 +2,7 @@
 import { MessageService } from 'primeng/api';
 import { Configuration } from './api/configuration';
 
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -15,11 +15,15 @@ import { componentStateReducer } from './store/component-state.reducer';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideTranslateService } from '@ngx-translate/core';
+import { DatePipe, registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
+
+registerLocaleData(localeEs, 'es-ES');
 
 
 export const appConfig: ApplicationConfig = {
-  providers: [
+  providers: [    
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
     provideHttpClient(withInterceptorsFromDi()),
@@ -76,7 +80,9 @@ export const appConfig: ApplicationConfig = {
     maxAge: 25,
     logOnly: true
   }),
-    MessageService
+    MessageService,
+     DatePipe,
+    { provide: LOCALE_ID, useValue: 'es-ES' }
   ],
 
 };

@@ -12,11 +12,12 @@ api/products.service.ts
 api/stock.service.ts
 api/subscription.service.ts
 api/subscriptionPlan.service.ts
-api/user.service.ts
+api/users.service.ts
 configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/adminUpdateUserDto.ts
 model/agendaConfigResponseDto.ts
 model/appointmentClientResponseDto.ts
 model/appointmentProductLogResponseDto.ts

@@ -12,6 +12,7 @@
 export interface UserResponseDto { 
     id: number;
     email: string;
+    fullName: string;
     isAdmin: boolean;
     active: boolean;
     createdAt: string;

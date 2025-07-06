@@ -1,3 +1,4 @@
+export * from './adminUpdateUserDto';
 export * from './agendaConfigResponseDto';
 export * from './appointmentClientResponseDto';
 export * from './appointmentProductLogResponseDto';

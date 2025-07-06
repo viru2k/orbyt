@@ -1,174 +1,128 @@
-
-// src/app/features/crm/client/modal/client-form.component.ts
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-// PrimeNG Modules & Orb Components (ajusta según tu HTML final para el client form)
-import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
-import { ButtonModule } from 'primeng/button'; // Asumo que usarás p-button o tu orb-button
-import { OrbButtonComponent, OrbDatepickerComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent,  OrbTextAreaComponent,  OrbTextInputComponent } from '@orb-components'; // Si usas OrbFormField
+// PrimeNG y Componentes Orb
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent } from '@orb-components';
 
-// Store, DTOs
+// Store y DTOs
 import { ClientStore } from '@orb-stores';
 import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '@orb-api/index';
-import { GenderOption, StatusOption,FormButtonAction } from '@orb-models';
-import { UtilsService } from '@orb-services';
-// NotificationService no se usa aquí si el store lo maneja, o si no hay notificaciones directas desde el form.
 
-// Tipos para los dropdowns (pueden ir en un archivo de tipos si se reutilizan)
-
+// Servicios y Modelos
+import { NotificationService, UtilsService } from '@orb-services';
+import { NotificationSeverity, FormButtonAction } from '@orb-models';
 
 @Component({
-  selector: 'app-client-form', // Mantener el selector que habíamos definido
+  selector: 'app-client-form',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    OrbTextAreaComponent,
-    DropdownModule,
-    CalendarModule,
-    ButtonModule, 
-    OrbFormFieldComponent, 
-     OrbTextInputComponent,
-     OrbFormFooterComponent,
-     OrbSelectComponent, OrbDatepickerComponent
+    ReactiveFormsModule,    
+    OrbTextInputComponent,
+    OrbFormFieldComponent,
+    OrbFormFooterComponent,
+    OrbSelectComponent,
+    OrbDatepickerComponent,
+    OrbTextAreaComponent
   ],
-  templateUrl: './client-form.component.html', // Crearemos este template
-  styleUrls: ['./client-form.component.scss']
+  templateUrl: './client-form.component.html',
 })
 export class ClientFormComponent implements OnInit {
-  @Input() client?: ClientResponseDto = undefined; // Recibe el objeto cliente completo para edición
+  @Input() client?: ClientResponseDto;
   @Output() saved = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
-  private clientStore = inject(ClientStore); 
-  public utilsService = inject(UtilsService);
-   public footerActions: FormButtonAction[] = [];
-  // isLoading se podría obtener del store si los botones necesitan mostrar un estado de carga
-  // isLoading = this.store.isLoading; // Ejemplo
+  private clientStore = inject(ClientStore);
+  private notificationService = inject(NotificationService);
+  public utilsService = inject(UtilsService); // Se hace público para el template
 
-  form!: FormGroup; // Se inicializará en el constructor o ngOnInit
+  form!: FormGroup;
+  isEditMode = false;
 
-  genderOptions: GenderOption[] = [
-    { label: 'Masculino', value: CreateClientDto.GenderEnum.Male },
-    { label: 'Femenino', value: CreateClientDto.GenderEnum.Female },
-    { label: 'Otro', value: CreateClientDto.GenderEnum.Other },
+  // Opciones para los menús desplegables
+  genderOptions = [
+    { label: 'Masculino', value: 'MALE' },
+    { label: 'Femenino', value: 'FEMALE' },
+    { label: 'Otro', value: 'OTHER' },
   ];
 
-  statusOptions: StatusOption[] = [
-    { label: 'Activo', value: CreateClientDto.StatusEnum.Active },
-    { label: 'Inactivo', value: CreateClientDto.StatusEnum.Inactive },
-    { label: 'Creado', value: CreateClientDto.StatusEnum.Created },
+  statusOptions = [
+    { label: 'Activo', value: 'ACTIVE' },
+    { label: 'Inactivo', value: 'INACTIVE' },
   ];
 
-  constructor() {
-    this.form = this.fb.group({
-      // Los campos deben coincidir con CreateClientDto y UpdateClientDto,
-      // y ser compatibles con ClientResponseDto para patchValue.
-      fullname: ['', Validators.required],
-      name: ['', Validators.required],
-      lastName: ['', Validators.required],
-      address: [''],
-      email: ['', [Validators.email]],
-      phone: [''],
-      gender: [null as CreateClientDto.GenderEnum | null], // Tipado explícito para el valor inicial
-      birthDate: [null as Date | null], // pCalendar trabajará con Date
-      status: [CreateClientDto.StatusEnum.Active, Validators.required], // Valor por defecto
-      notes: [''],
-    });
-  }
+  // Configuración para el pie de página del formulario
+  footerActions: FormButtonAction[] = [
+    { label: 'Cancelar', action: 'cancel', styleType: 'text' },
+    { label: 'Guardar', action: 'save', styleType: 'rounded' },
+  ];
 
-  ngOnInit() {
-     this.setupFooterActions();
-    if (this.client) {
-      // Si hay un cliente, estamos en modo edición.
-      // Mapeamos ClientResponseDto a los campos del formulario.
-      this.form.patchValue({
-        ...this.client,
-        // pCalendar espera un objeto Date. ClientResponseDto.birthDate es string.
-        birthDate: this.client.birthDate ? new Date(this.client.birthDate) : null,
-        // Asegurarse de que el status del response sea compatible con el enum del form si es necesario
-        status: this.client.status as CreateClientDto.StatusEnum,
-        gender: this.client.gender as CreateClientDto.GenderEnum | null
-      });
-    } else {
-      // Modo creación, se podrían poner valores por defecto si no se hizo en la definición del form.
-      // this.form.reset({ status: CreateClientDto.StatusEnum.Active }); // Ejemplo
+  ngOnInit(): void {
+    this.isEditMode = !!this.client;
+    this.initForm();
+
+    if (this.isEditMode && this.client) {
+      this.form.patchValue(this.client);
     }
   }
 
-  accept() {
+  private initForm(): void {
+    this.form = this.fb.group({
+      fullname: [{ value: '', disabled: true }], // Campo deshabilitado, se calcula automáticamente
+      name: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: [''],
+      address: [''],
+      birthDate: [null],
+      gender: [null],
+      status: ['ACTIVE', Validators.required],
+      notes: ['']
+    });
+
+    // Lógica para actualizar 'fullname' cuando 'name' o 'lastName' cambian
+    this.form.get('name')?.valueChanges.subscribe(() => this.updateFullname());
+    this.form.get('lastName')?.valueChanges.subscribe(() => this.updateFullname());
+  }
+
+  private updateFullname(): void {
+    const name = this.form.get('name')?.value || '';
+    const lastName = this.form.get('lastName')?.value || '';
+    this.form.get('fullname')?.setValue(`${name} ${lastName}`.trim(), { emitEvent: false });
+  }
+  
+  // Se llama con (ngSubmit) o desde el footer
+  accept(): void {
     if (this.form.invalid) {
-      // Opcional: Marcar campos como tocados para mostrar errores
-      Object.values(this.form.controls).forEach(control => control.markAsTouched());
-      // this.notificationService.showError('Formulario inválido'); // Si el form debe notificar
+      this.form.markAllAsTouched();
+      this.notificationService.showWarn(NotificationSeverity.Warn, 'Por favor, completa todos los campos requeridos.');
       return;
     }
 
-    const formValues = this.form.value;
+    // Obtenemos los valores, incluyendo los deshabilitados como 'fullname'
+    const formValue = this.form.getRawValue();
 
-    // Preparar el DTO
-    const clientData = {
-      fullname: formValues.fullname,
-      name: formValues.name,
-      lastName: formValues.lastName,
-      address: formValues.address || undefined, // Enviar undefined si está vacío para campos opcionales
-      email: formValues.email || undefined,
-      phone: formValues.phone || undefined,
-      gender: formValues.gender || undefined,
-      birthDate: formValues.birthDate
-        ? (formValues.birthDate as Date).toISOString().split('T')[0] // Formato YYYY-MM-DD
-        : undefined,
-      status: formValues.status, // Status es requerido en CreateClientDto
-      notes: formValues.notes || undefined,
-    };
-
-    if (this.client && this.client.id !== undefined) { // Modo edición si hay this.client con id
-      const updateDto: UpdateClientDto = clientData; // UpdateClientDto tiene todos los campos opcionales
-      this.clientStore.updateClient({ id: this.client.id, updateDto });
-      this.clientStore
-    } else { // Modo creación
-      const createDto: CreateClientDto = {
-        ...clientData,
-        status: formValues.status || CreateClientDto.StatusEnum.Created, // Asegurar que status tiene un valor válido para creación
-      };
-      this.clientStore.createClient(createDto);
+    if (this.isEditMode && this.client?.id) {
+      const updateDto: UpdateClientDto = formValue;
+      this.clientStore.update({ id: this.client.id, clientDto: updateDto });
+      this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente actualizado con éxito.');
+    } else {
+      const createDto: CreateClientDto = formValue;
+      this.clientStore.create(createDto);
+      this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente creado con éxito.');
     }
-    this.saved.emit(); // Emitir evento para que el padre cierre el modal y recargue
+
+    this.saved.emit();
   }
 
-  cancelForm() {
-    this.cancel.emit(); // Emitir evento para que el padre cierre el modal
-  }
-
-   private setupFooterActions(): void {
-    this.footerActions = [
-      {
-        label: 'Cancelar',
-        action: 'cancel', 
-        styleType: 'text',
-        severity: 'secondary',
-        buttonType: 'button'
-      },
-      {
-        label: this.client?.id ? 'Guardar Cambios' : 'Crear Cliente',
-        action: 'submit', 
-        severity: 'info',
-        buttonType: 'submit', 
-      }
-    ];
-  }
+  // Maneja los clics del componente orb-form-footer
   handleFooterAction(action: string): void {
-    if (action === 'cancel') {
-      this.cancelForm();
-    } else if (action === 'submit') {
-   
+    if (action === 'save') {
+      this.accept();
+    } else if (action === 'cancel') {
+      this.cancel.emit();
     }
   }
-
 }

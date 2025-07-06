@@ -19,7 +19,10 @@ export interface ClientResponseDto {
     phone?: string;
     gender?: ClientResponseDto.GenderEnum;
     birthDate?: string;
-    status: string;
+    /**
+     * Estado actual del cliente
+     */
+    status: ClientResponseDto.StatusEnum;
     notes?: string;
     createdAt: string;
     updatedAt: string;
@@ -30,6 +33,13 @@ export namespace ClientResponseDto {
         Male: 'male' as GenderEnum,
         Female: 'female' as GenderEnum,
         Other: 'other' as GenderEnum
+    };
+    export type StatusEnum = 'ACTIVE' | 'INACTIVE' | 'CREATED' | 'UNUSED';
+    export const StatusEnum = {
+        Active: 'ACTIVE' as StatusEnum,
+        Inactive: 'INACTIVE' as StatusEnum,
+        Created: 'CREATED' as StatusEnum,
+        Unused: 'UNUSED' as StatusEnum
     };
 }
 

@@ -28,11 +28,12 @@ export namespace UpdateClientDto {
         Female: 'female' as GenderEnum,
         Other: 'other' as GenderEnum
     };
-    export type StatusEnum = 'ACTIVE' | 'INACTIVE' | 'CREATED';
+    export type StatusEnum = 'ACTIVE' | 'INACTIVE' | 'CREATED' | 'UNUSED';
     export const StatusEnum = {
         Active: 'ACTIVE' as StatusEnum,
         Inactive: 'INACTIVE' as StatusEnum,
-        Created: 'CREATED' as StatusEnum
+        Created: 'CREATED' as StatusEnum,
+        Unused: 'UNUSED' as StatusEnum
     };
 }
 

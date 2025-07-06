@@ -16,3 +16,30 @@ html, body {
   padding: 0;
   min-height: 100vh;
 }
+
+
+/* En src/styles.scss */
+
+.status-active {
+  background-color: #d4edda; /* Verde suave */
+  color: #155724;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.status-inactive {
+  background-color: #f8d7da; /* Rojo suave */
+  color: #721c24;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.status-undefined,
+.status-unknown {
+  background-color: #e2e3e5; /* Gris */
+  color: #383d41;
+  padding: 4px 8px;
+  border-radius: 12px;
+}

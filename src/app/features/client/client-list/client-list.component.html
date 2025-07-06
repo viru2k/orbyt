@@ -1,38 +1,54 @@
-<orb-toolbar>
- 
-  <div body>
+<orb-card>
+  <orb-toolbar title="Gestión de Clientes">
+    <div footer>
+      <orb-button label="Nuevo Cliente" (click)="showClientForm()" />
     </div>
+  </orb-toolbar>
+  <div class="grid" orbBody>    
+    <orb-table
+      [value]="clients() || []"
+      [columns]="tableColumns"
+      [loading]="isLoading()"
+      [totalRecords]="clients().length || 0"
+      [rows]="tableRows()"
+      [first]="tableFirst()"
+      [tableFeatures]="tableFeaturesConfig"
+      [globalFilterFields]="clientGlobalFilterFields"
+      [rowActions]="clientRowActions"
+      [tableHeaderActions]="clientTableHeaderActions"
+      dataKey="id"
+      paginatorPosition="both"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
+    >
+      <ng-template pTemplate="body" let-client let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            <ng-container [ngSwitch]="col.field">
+              <!-- Caso para el estado -->
+              <ng-container *ngSwitchCase="'statusText'">
+                <span [ngClass]="client.statusClass">
+                  {{ client.statusText }}
+                </span>
+              </ng-container>
 
-  <div footer>
-    <orb-button label="Nuevo Cliente" (click)="showClientForm()" />
+              <!-- --- CAMBIO CLAVE AQUÍ --- -->
+              <!-- Caso para la fecha de creación -->
+              <ng-container *ngSwitchCase="'createdAt'">
+                {{ client.displayCreatedAt.displayValue }}
+              </ng-container>
+
+              <!-- Caso por defecto para el resto de columnas -->
+              <ng-container *ngSwitchDefault>
+                {{ client[col.field] }}
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </orb-table>
   </div>
-</orb-toolbar>
-
-
-
-<orb-card  >
-  <div class="grid" orbBody>
-
-      <orb-table
-        [value]="clients() || []"
-        [columns]="tableColumns"
-        [loading]="isLoading()"
-        [totalRecords]="clients().length || 0" [rows]="tableRows()"
-        [first]="tableFirst()"
-        [tableFeatures]="tableFeaturesConfig"
-        [globalFilterFields]="clientGlobalFilterFields"
-        [rowActions]="clientRowActions"
-        [tableHeaderActions]="clientTableHeaderActions"
-        dataKey="id"
-        paginatorPosition="both"
-        [rowsPerPageOptions]="[5, 10, 20, 50]"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
-
-      >
-      </orb-table>
-    </div>
-  </orb-card>
-
+</orb-card>
 
 <orb-dialog
   [(visible)]="displayClientModal"
@@ -42,8 +58,10 @@
 >
   @if (displayClientModal()) {
     <app-client-form
-      [client]="clientToEdit()" (saved)="onClientFormSaved()"
-      (cancel)="onClientFormCancel()">
+      [client]="clientToEdit()"
+      (saved)="onClientFormSaved()"
+      (cancel)="onClientFormCancel()"
+    >
     </app-client-form>
   }
 </orb-dialog>

@@ -1,30 +1,22 @@
-
-// src/app/features/crm/client/client-list/client-list.component.ts
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-
 // Store y DTOs
-
 import { ClientStore } from '@orb-stores';
 import { ClientResponseDto } from '@orb-api/index';
 
 // Componentes Orb y PrimeNG
-import {  OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent } from '@orb-components';
 import { ClientFormComponent } from '../modal/client-form.component';
-
-import { ConfirmationService, SortEvent } from 'primeng/api'; // SortEvent de PrimeNG
+import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
-
-
-// Servicios
+// Servicios y Modelos
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } from '@orb-models';
 
-
 @Component({
-  selector: 'app-client-list', // Cambiado de 'orb-clients' para seguir un patrón de feature
+  selector: 'app-client-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -41,27 +33,25 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
   providers: [ConfirmationService],
 })
 export class ClientListComponent implements OnInit {
-  public clientStore = inject(ClientStore);
+  readonly clientStore = inject(ClientStore);
   private confirmationService = inject(ConfirmationService);
   private notificationService = inject(NotificationService);
 
-  // Señales para el estado del modal y el cliente en edición/creación
   displayClientModal = signal(false);
-  // selectedClient se usará para pasar el cliente al formulario, o undefined para nuevo
- clientToEdit = signal<ClientResponseDto | undefined>(undefined);
+  clientToEdit = signal<ClientResponseDto | undefined>(undefined);
   isEditMode = signal(false);
 
+  clients = this.clientStore.selectClientsWithMappedData;
+  isLoading = this.clientStore.loading;
 
-  // Señales del store
-  clients = this.clientStore.allClients;
-  isLoading = this.clientStore.isLoading;
-
-  // Configuración de la Tabla
+  // --- CAMBIO CLAVE AQUÍ ---
+  // La columna apunta al campo 'createdAt' para la ordenación.
+  // La visualización se manejará en el template HTML.
   tableColumns: TableColumn[] = [
     { field: 'fullname', header: 'Nombre Completo', sortable: true },
     { field: 'email', header: 'Email', sortable: true },
     { field: 'phone', header: 'Teléfono', sortable: false },
-    { field: 'status', header: 'Estado', sortable: true, width: '120px' },
+    { field: 'statusText', header: 'Estado', sortable: true, width: '120px' },
     { field: 'createdAt', header: 'Fecha Creación', sortable: true, width: '180px' },
     { field: 'actions', header: 'Acciones', width: '100px', sortable: false }
   ];
@@ -71,18 +61,18 @@ export class ClientListComponent implements OnInit {
     globalSearchPlaceholder: 'Buscar clientes...'
   };
 
-  clientGlobalFilterFields: string[] = ['fullname', 'name', 'lastName', 'email', 'phone', 'status'];
+  clientGlobalFilterFields: string[] = ['fullname', 'name', 'lastName', 'email', 'phone', 'statusText'];
 
-  clientRowActions: OrbActionItem<ClientResponseDto>[] = [
+  clientRowActions: OrbActionItem<any>[] = [
     {
       label: 'Editar',
       icon: 'pi pi-pencil',
-      action: (client) => this.openClientModal(client) // Llama a un método unificado para abrir el modal
+      action: (client) => this.openClientModal(client)
     },
     {
       label: 'Eliminar',
       icon: 'pi pi-trash',
-      action: (client) => this.confirmDeleteClient(client ?? {} as ClientResponseDto),
+      action: (client) => this.confirmDeleteClient(client),
       styleClass: 'p-button-danger'
     }
   ];
@@ -91,39 +81,31 @@ export class ClientListComponent implements OnInit {
     {
       label: 'Nuevo Cliente',
       icon: 'pi pi-plus',
-      action: () => this.openClientModal() // Llama al mismo método sin cliente para "nuevo"
+      action: () => this.openClientModal()
     }
   ];
 
-  // Propiedades para paginación y carga inicial de la tabla (si se implementa en el store)
-  // Por ahora, loadClients() del store no toma parámetros.
-  tableRows = signal(10);  // Estos son para la configuración de p-table
-  tableFirst = signal(0); // y su evento onPageChange
+  tableRows = signal(10);
+  tableFirst = signal(0);
 
   ngOnInit() {
-    this.clientStore.loadClients();
+    this.clientStore.load();
   }
 
-  // Método unificado para abrir el modal, sea para nuevo o edición
   openClientModal(client?: ClientResponseDto): void {
     if (client) {
-     this.isEditMode.set(true);
-      this.clientToEdit.set({ ...client }); // Pasa una copia para evitar mutaciones directas si el form edita el objeto
+      this.isEditMode.set(true);
+      this.clientToEdit.set({ ...client });
     } else {
       this.isEditMode.set(false);
-      this.clientToEdit.set(undefined); // Para un cliente nuevo
+      this.clientToEdit.set(undefined);
     }
     this.displayClientModal.set(true);
   }
 
-  // Método para el botón "Nuevo Cliente" del toolbar, si se mantiene separado
-  handleAddNewClientButton(): void {
-    this.openClientModal();
-  }
-
   confirmDeleteClient(client: ClientResponseDto): void {
     if (!client || client.id === undefined) {
-      this.notificationService.showError(NotificationSeverity.Error,'No se puede eliminar el cliente: ID no válido.');
+      this.notificationService.showWarn(NotificationSeverity.Error, 'No se puede eliminar el cliente: ID no válido.');
       return;
     }
     this.confirmationService.confirm({
@@ -134,31 +116,23 @@ export class ClientListComponent implements OnInit {
       rejectLabel: 'No',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.clientStore.deleteClient(client.id!); // El store ahora llama a loadClients() internamente
-      }
+        this.clientStore.delete(client.id!);
+      } 
     });
   }
 
-  // Cuando el formulario emite 'saved'
   onClientFormSaved(): void {
-     this.displayClientModal.set(false);
+    console.log('Cliente guardado');
+    this.displayClientModal.set(false);
     this.clientToEdit.set(undefined);
   }
 
-  // Cuando el formulario emite 'cancel' o se cierra el diálogo
   onClientFormCancel(): void {
     this.displayClientModal.set(false);
-    this.clientToEdit.set(undefined); // Limpia el cliente seleccionado
+    this.clientToEdit.set(undefined);
   }
-
   
-  showClientForm() {
-    this.displayClientModal.set(true);
+  showClientForm(): void {
+    this.openClientModal();
   }
-
-  hideClientForm() {
-    this.displayClientModal.set(false);
-
-  }
-
 }
