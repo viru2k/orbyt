@@ -22,6 +22,7 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
     CommonModule,
     OrbCardComponent,
     OrbTableComponent,
+    OrbButtonComponent,
     OrbDialogComponent,
     ClientFormComponent,
     ConfirmDialogModule,
@@ -44,9 +45,6 @@ export class ClientListComponent implements OnInit {
   clients = this.clientStore.selectClientsWithMappedData;
   isLoading = this.clientStore.loading;
 
-  // --- CAMBIO CLAVE AQUÍ ---
-  // La columna apunta al campo 'createdAt' para la ordenación.
-  // La visualización se manejará en el template HTML.
   tableColumns: TableColumn[] = [
     { field: 'fullname', header: 'Nombre Completo', sortable: true },
     { field: 'email', header: 'Email', sortable: true },
@@ -63,6 +61,8 @@ export class ClientListComponent implements OnInit {
 
   clientGlobalFilterFields: string[] = ['fullname', 'name', 'lastName', 'email', 'phone', 'statusText'];
 
+  // --- ACCIONES RESTAURADAS ---
+  // Acciones para cada fila de la tabla (Editar, Eliminar)
   clientRowActions: OrbActionItem<any>[] = [
     {
       label: 'Editar',
@@ -77,6 +77,7 @@ export class ClientListComponent implements OnInit {
     }
   ];
 
+  // Acción para la cabecera de la tabla (Nuevo Cliente)
   clientTableHeaderActions: OrbActionItem[] = [
     {
       label: 'Nuevo Cliente',
@@ -84,6 +85,7 @@ export class ClientListComponent implements OnInit {
       action: () => this.openClientModal()
     }
   ];
+  // -------------------------
 
   tableRows = signal(10);
   tableFirst = signal(0);
@@ -117,12 +119,11 @@ export class ClientListComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.clientStore.delete(client.id!);
-      } 
+      }
     });
   }
 
   onClientFormSaved(): void {
-    console.log('Cliente guardado');
     this.displayClientModal.set(false);
     this.clientToEdit.set(undefined);
   }
@@ -132,6 +133,7 @@ export class ClientListComponent implements OnInit {
     this.clientToEdit.set(undefined);
   }
   
+  // Método para el botón del toolbar, que llama a la lógica unificada
   showClientForm(): void {
     this.openClientModal();
   }

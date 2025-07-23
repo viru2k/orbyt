@@ -14,6 +14,8 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 export class OrbTopbarComponent {
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
+  
+    userInitials = this.authStore.userInitials$ ;
   items: MenuItem[] = [
     {
       label: 'Panel',

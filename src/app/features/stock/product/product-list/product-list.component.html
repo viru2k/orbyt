@@ -1,51 +1,44 @@
-
-
-
 <orb-toolbar>
- 
-  <div body>
-    </div>
+  <div body></div>
 
   <div footer>
     <orb-button label="Nuevo Producto" (click)="showProductForm()" />
   </div>
 </orb-toolbar>
 
-
-<orb-card  >
+<orb-card>
   <div class="grid" orbBody>
     <div class="col-12">
       <orb-table
-      [value]="(products$ | async) || []"
-      [columns]="tableColumns"
-      [rows]="tableRows()"
-      [first]="tableFirst()"
-      (onFilterChange)="loadProducts($event)"
-      [tableFeatures]="tableFeaturesConfig"
-      [rowActions]="productRowActions"
-      [tableHeaderActions]="productTableHeaderActions"
-      dataKey="id"
-      paginatorPosition="both"
-    >
+        [value]="(products$ | async) || []"
+        [columns]="tableColumns"
+        [rows]="tableRows()"
+        [first]="tableFirst()"
+        (onFilterChange)="loadProducts($event)"
+        [tableFeatures]="tableFeaturesConfig"
+        [rowActions]="productRowActions"
+        [tableHeaderActions]="productTableHeaderActions"
+        dataKey="id"
+        paginatorPosition="both"
+      >
       </orb-table>
     </div>
   </div>
-
 </orb-card>
 
-
-  <!-- Modal -->
 <!-- Modal -->
 
 
 <orb-dialog
- [(visible)]="display" [header]="productUnderEdit ? 'Editar producto' : 'Nuevo producto'"
-  size="sm" (onHide)="handleDialogClose()" >
+  [(visible)]="display"
+  [header]="productUnderEdit ? 'Editar producto' : 'Nuevo producto'"
+  size="sm"
+  (onHide)="handleDialogClose()"
+>
   <orb-product-form
-        [product]="productUnderEdit ?? undefined"
-      (saved)="onSavedForm()"
-      (cancel)="onCancelForm()" >
-    </orb-product-form>
-  
-
-  </orb-dialog>
+    [product]="productUnderEdit ?? undefined"
+    (saved)="onSavedForm()"
+    (cancel)="onCancelForm()"
+  >
+  </orb-product-form>
+</orb-dialog>
