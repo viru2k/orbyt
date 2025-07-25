@@ -45,7 +45,9 @@ model/notificationResponseDto.ts
 model/notificationSummaryResponseDto.ts
 model/productOwnerResponseDto.ts
 model/productResponseDto.ts
+model/profileResponseDto.ts
 model/registerUserDto.ts
+model/roleDto.ts
 model/slotDetailDto.ts
 model/stockMovementResponseDto.ts
 model/stockSummaryResponseDto.ts

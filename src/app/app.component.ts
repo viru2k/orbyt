@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   private config = inject(PrimeNG);
    private translateService = inject( TranslateService);
    private themeService= inject(ThemeService);
-
+   
    ngOnInit() {
     this.translateService.setDefaultLang('es');
     this.themeService.initTheme();

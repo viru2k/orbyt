@@ -1,47 +1,41 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { LocalStorageService } from '../../storage/local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private themeKey = 'orbyt-theme';
+  private renderer: Renderer2;
+  private static readonly THEME_STORAGE_KEY = 'app-theme';
 
-  private themes = {
-    light: {
-      '--p-color-primary': '#7c3aed',
-      '--p-color-primary-text': '#ffffff',
-      '--p-surface-ground': '#f5f5f5',
-      '--p-surface-card': '#ffffff',
-      '--p-surface-border': '#cccccc',
-    },
-    dark: {
-      '--p-color-primary': '#7c3aed',
-      '--p-color-primary-text': '#ffffff',
-      '--p-surface-ground': '#1e1e1e',
-      '--p-surface-card': '#2a2a2a',
-      '--p-surface-border': '#444444',
+    constructor(
+    @Inject(DOCUMENT) private document: Document,
+    private rendererFactory: RendererFactory2,
+    private storageService: LocalStorageService
+  ) {
+    this.renderer = this.rendererFactory.createRenderer(null, null);
+  }
+
+
+
+  initTheme(): void {
+    const savedTheme = this.storageService.getItem(ThemeService.THEME_STORAGE_KEY) || 'lara-light-blue';
+    this.switchTheme(savedTheme);
+  }
+
+  switchTheme(theme: string): void {
+    const themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
+    if (themeLink) {
+      themeLink.href = `${theme}.css`;
+      this.storageService.setItem(ThemeService.THEME_STORAGE_KEY, theme);
+      if (theme.includes('dark')) {
+        this.renderer.addClass(this.document.body, 'dark-theme');
+        this.renderer.removeClass(this.document.body, 'light-theme');
+      } else {
+        this.renderer.addClass(this.document.body, 'light-theme');
+        this.renderer.removeClass(this.document.body, 'dark-theme');
+      }
     }
-  };
-
-  setTheme(themeName: 'light' | 'dark') {
-    const theme = this.themes[themeName];
-    Object.entries(theme).forEach(([key, value]) => {
-      document.documentElement.style.setProperty(key, value);
-    });
-    document.body.classList.remove('light', 'dark');
-    document.body.classList.add(themeName);
-    localStorage.setItem(this.themeKey, themeName);
   }
 
-  initTheme() {
-    const saved = localStorage.getItem(this.themeKey) as 'light' | 'dark';
-    this.setTheme(saved || 'dark');
-  }
-
-  toggleTheme() {
-    const current = localStorage.getItem(this.themeKey) === 'dark' ? 'light' : 'dark';
-    this.setTheme(current as 'light' | 'dark');
-  }
-
-  getCurrentTheme(): 'light' | 'dark' {
-    return (localStorage.getItem(this.themeKey) as 'light' | 'dark') || 'light';
-  }
 }

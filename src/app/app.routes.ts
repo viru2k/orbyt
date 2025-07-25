@@ -1,38 +1,53 @@
-// src/app/app.routes.ts
-import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard'; // Asumo que este guard está correcto y funcionando
+import { Route } from '@angular/router';
 
-export const appRoutes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent) },
+import { ShellComponent } from './layout/shell/shell.component';
+import { AuthGuard } from './guards/auth.guard';
+
+export const appRoutes: Route[] = [
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./auth/login/login.component').then((m) => m.LoginComponent),
+  },
   {
     path: '',
-    loadComponent: () => import('./layout/shell/shell.component').then(m => m.ShellComponent),
+    component: ShellComponent,
+    canActivate: [AuthGuard],
     children: [
-      { path: 'home', loadComponent: () => import('./features/dashboard/orb-dashboard.component').then(m => m.DashboardComponent) },
       {
-        path: 'agenda', 
-        children: [
-          { path: 'scheldule', loadComponent: () => import('./features/agenda/agenda-new/agenda-new.component').then(m => m.AgendaNewComponent) }
-        ]
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard',
       },
       {
-        path: 'stock',
-        children: [
-          { path: 'products', loadComponent: () => import('./features/stock/product/product-list/product-list.component').then(m => m.ProductListComponent) }
-        ]
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/orb-dashboard.component').then(
+            (m) => m.DashboardComponent
+          ),
       },
       {
-        path: 'client', 
-        children: [
-          { path: 'list', loadComponent: () => import('./features/client/client-list/client-list.component').then(m => m.ClientListComponent) }
-        ]
+        path: 'management/client',
+        loadComponent: () =>
+          import('./features/client/client-list/client-list.component').then(
+            (m) => m.ClientListComponent
+          ),
       },
-  
-      // ... otras rutas ...
-      { path: '', redirectTo: 'home', pathMatch: 'full' }, // Redirección por defecto dentro del shell
-      { path: '**', redirectTo: 'home' } // Wildcard dentro del shell
-    ]
-  }
-
+       {
+        path: 'management/product',
+        loadComponent: () =>
+          import('./features/stock/product/product-list/product-list.component').then(
+            (m) => m.ProductListComponent
+          ),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile.component').then(
+            (m) => m.ProfileComponent
+          ),
+      },
+    ],
+  },
+  { path: '**', redirectTo: 'dashboard' },
 ];

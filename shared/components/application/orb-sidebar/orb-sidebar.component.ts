@@ -55,8 +55,8 @@ export class OrbSidebarComponent {
        {
         label: 'Gestión',
         items: [
-          { label: 'Productos', icon: 'pi pi-hammer', routerLink: ['/stock/products'] },
-          { label: 'Clientes', icon: 'pi pi-users', routerLink: ['/client/list'] }, 
+          { label: 'Productos', icon: 'pi pi-hammer', command: () => this.router.navigate(['/management/product'] ) }, 
+          { label: 'Clientes', icon: 'pi pi-users',command: () => this.router.navigate(['/management/client'] )  }, 
           // ... otros items de gestión
         ]
       },

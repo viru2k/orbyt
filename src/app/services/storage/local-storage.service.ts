@@ -22,4 +22,16 @@ export class LocalStorageService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  getItem(key: string): any {
+    return localStorage.getItem(key);
+  }
+
+  setItem(key: string, value: any): void {
+    localStorage.setItem(key, value);
+  }
+
+  removeItem(key: string): void {
+    localStorage.removeItem(key);
+  }
 }

@@ -1,15 +1,19 @@
+<orb-toolbar>
+  <div body>
+    <!-- Este espacio puede ser para filtros avanzados en el futuro -->
+  </div>
+  <div footer>
+    <orb-button label="Nuevo Cliente" (click)="showClientForm()" />
+  </div>
+</orb-toolbar>
+
 <orb-card>
-  <orb-toolbar title="Gestión de Clientes">
-    <div footer>
-      <orb-button label="Nuevo Cliente" (click)="showClientForm()" />
-    </div>
-  </orb-toolbar>
-  <div class="grid" orbBody>    
+  <div class="grid" orbBody>
     <orb-table
       [value]="clients() || []"
       [columns]="tableColumns"
       [loading]="isLoading()"
-      [totalRecords]="clients().length || 0"
+      [totalRecords]="clients()?.length || 0"
       [rows]="tableRows()"
       [first]="tableFirst()"
       [tableFeatures]="tableFeaturesConfig"
@@ -21,31 +25,50 @@
       [rowsPerPageOptions]="[5, 10, 20, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
     >
+      <!--
+        Usamos una plantilla personalizada para tener control total sobre cómo se muestra cada celda.
+      -->
       <ng-template pTemplate="body" let-client let-columns="columns">
         <tr>
           <td *ngFor="let col of columns">
             <ng-container [ngSwitch]="col.field">
-              <!-- Caso para el estado -->
+
+              <!-- Caso para la columna de fecha: mostramos el valor formateado -->
+              <ng-container *ngSwitchCase="'createdAt'">
+                {{ client.displayCreatedAt.displayValue }}
+              </ng-container>
+
+              <!-- Caso para la columna de estado: aplicamos la clase CSS -->
               <ng-container *ngSwitchCase="'statusText'">
                 <span [ngClass]="client.statusClass">
                   {{ client.statusText }}
                 </span>
               </ng-container>
 
-              <!-- --- CAMBIO CLAVE AQUÍ --- -->
-              <!-- Caso para la fecha de creación -->
-              <ng-container *ngSwitchCase="'createdAt'">
-                {{ client.displayCreatedAt.displayValue }}
+              <!-- Caso para la columna de acciones: dibujamos los botones -->
+              <ng-container *ngSwitchCase="'actions'">
+                <div class="flex gap-2">
+                  
+                  <orb-button
+                    *ngFor="let action of clientRowActions"
+                    [icon]="action.icon"                    
+                    tooltipPosition="top"
+                  
+                    (click)="action.action">
+                  </orb-button>
+                </div>
               </ng-container>
 
-              <!-- Caso por defecto para el resto de columnas -->
+              <!-- Caso por defecto para todas las demás columnas -->
               <ng-container *ngSwitchDefault>
                 {{ client[col.field] }}
               </ng-container>
+              
             </ng-container>
           </td>
         </tr>
       </ng-template>
+
     </orb-table>
   </div>
 </orb-card>
