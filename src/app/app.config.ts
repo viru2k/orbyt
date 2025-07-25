@@ -13,7 +13,7 @@ import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { componentStateReducer } from './store/component-state.reducer';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
+import Lara from '@primeng/themes/lara';
 import { provideTranslateService } from '@ngx-translate/core';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -30,10 +30,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-          preset: Aura,
-          options: {
+          preset: Lara,
+      options: {
               prefix: 'p',
-              darkModeSelector: '.my-app-dark',
+              darkModeSelector: '.ligth-theme', 
               cssLayer: false
           }
       },

@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { AuthStore } from '@orb-stores';
 import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { OrbThemeToggleComponent } from '../orb-theme-toggle/orb-theme-toggle.component';
 
 @Component({
   selector: 'orb-topbar',
   standalone: true,
-    imports: [PanelMenuModule],
+    imports: [PanelMenuModule, OrbThemeToggleComponent],
   templateUrl: './orb-topbar.component.html',
   styleUrls: ['./orb-topbar.component.scss']
 })

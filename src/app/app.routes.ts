@@ -27,13 +27,19 @@ export const appRoutes: Route[] = [
           ),
       },
       {
-        path: 'clients',
+        path: 'management/client',
         loadComponent: () =>
           import('./features/client/client-list/client-list.component').then(
             (m) => m.ClientListComponent
           ),
       },
-      // --- NUEVA RUTA DE PERFIL ---
+       {
+        path: 'management/product',
+        loadComponent: () =>
+          import('./features/stock/product/product-list/product-list.component').then(
+            (m) => m.ProductListComponent
+          ),
+      },
       {
         path: 'profile',
         loadComponent: () =>

@@ -6,40 +6,50 @@
 
   <div *ngIf="data.user as user" class="profile-page">
     <div class="grid">
-      <!-- Columna de Información -->
-      <div class="col-12 md:col-5 lg:col-4">
+      <div class="col-12 md:col-5 lg:col-4 card-profile">
         <orb-card>
-          <div header class="text-center p-4">
+          <div orbHeader class="text-center p-4 header-profile">
             <p-avatar [label]="data.initials || 'U'" styleClass="p-avatar-xl" shape="circle"></p-avatar>
             <h3 class="mt-3 mb-1">{{ user.name }} {{ user.lastName }}</h3>
             <p class="mt-0 text-color-secondary">{{ user.email }}</p>
             <p-tag [value]="user.isActive ? 'Activo' : 'Inactivo'" [severity]="user.isActive ? 'success' : 'danger'"></p-tag>
           </div>
-          <div body class="p-4">
+          <div orbBody class="p-4">
             <p-fieldset legend="Roles y Permisos" [toggleable]="true">
               <strong>Roles:</strong>
-              <div class="flex flex-wrap gap-2 mt-2 mb-3">
+              <div class="flex flex-wrap gap-2 roles-list">
                 <p-chip *ngFor="let role of user.roles" [label]="role.name" icon="pi pi-shield"></p-chip>
               </div>
               <strong>Permisos:</strong>
-              <ul class="list-none p-0 m-0 mt-2">
-                 <li class="flex align-items-center py-1"><i [class]="'pi ' + (user.canManageAgenda ? 'pi-check text-green-500' : 'pi-times text-red-500')" class="mr-2"></i> Gestionar Agenda</li>
-                 <li class="flex align-items-center py-1"><i [class]="'pi ' + (user.canManageClients ? 'pi-check text-green-500' : 'pi-times text-red-500')" class="mr-2"></i> Gestionar Clientes</li>
-                 <li class="flex align-items-center py-1"><i [class]="'pi ' + (user.canManageProducts ? 'pi-check text-green-500' : 'pi-times text-red-500')" class="mr-2"></i> Gestionar Productos</li>
-                 <li class="flex align-items-center py-1"><i [class]="'pi ' + (user.canManageUsers ? 'pi-check text-green-500' : 'pi-times text-red-500')" class="mr-2"></i> Gestionar Usuarios</li>
+              <ul class="permissions-list">
+                 <li class=" flex align-items-center py-1">
+                    <i class="pi" [ngClass]="{'pi-check text-green': user.canManageAgenda, 'pi-times text-red': !user.canManageAgenda}"></i>
+                    <span class="ml-2">Gestionar Agenda</span>
+                 </li>
+                 <li class="flex align-items-center py-1">
+                    <i class="pi" [ngClass]="{'pi-check text-green': user.canManageClients, 'pi-times text-red': !user.canManageClients}"></i>
+                    <span class="ml-2">Gestionar Clientes</span>
+                 </li>
+                 <li class="flex align-items-center py-1">
+                    <i class="pi" [ngClass]="{'pi-check text-green': user.canManageProducts, 'pi-times text-red': !user.canManageProducts}"></i>
+                    <span class="ml-2">Gestionar Productos</span>
+                 </li>
+                 <li class="flex align-items-center py-1">
+                    <i class="pi" [ngClass]="{'pi-check text-green': user.canManageUsers, 'pi-times text-red': !user.canManageUsers}"></i>
+                    <span class="ml-2">Gestionar Usuarios</span>
+                 </li>
               </ul>
             </p-fieldset>
           </div>
         </orb-card>
       </div>
 
-      <!-- Columna del Formulario de Edición -->
-      <div class="col-12 md:col-7 lg:col-8">
-        <orb-card>
-          <div header class="p-4 border-bottom-1 surface-border">
+      <div class="col-12 md:col-7 lg:col-8 card-profile" >
+        <orb-card >
+          <div orbHeader class="p-4 border-bottom-1 surface-border">
             <h3 class="m-0">Editar Información</h3>
           </div>
-          <div body class="p-4">
+          <div orbBody class="p-4">
             <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
               <div class="grid formgrid">
                 <div class="field col-12 md:col-6">
