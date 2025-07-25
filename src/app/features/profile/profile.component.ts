@@ -1,11 +1,13 @@
+
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { take } from 'rxjs';
+import { filter, take } from 'rxjs';
 
 // Store y DTOs
 import { AuthStore } from '@orb-stores';
-import { AdminUpdateUserDto } from '@orb-api/index';
+
 
 // Componentes Orb y PrimeNG
 import { OrbCardComponent, OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent } from '@orb-components';
@@ -46,21 +48,22 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.user$.pipe(take(1)).subscribe(user => {
-      if (user) {
-        this.profileForm.patchValue(user);
-      }
+    // Suscripción única para rellenar el formulario cuando el usuario esté disponible
+    this.user$.pipe(
+      filter(user => !!user), // Nos aseguramos de que el usuario no sea nulo
+      take(1)
+    ).subscribe(user => {
+      this.profileForm.patchValue(user!);
     });
   }
 
   private initForm(): void {
     this.profileForm = this.fb.group({
-        id: [''],
-      fullName: ['', Validators.required],
       name: ['', Validators.required],
       lastName: ['', Validators.required],
-      email: [{ value: '', disabled: true }, [Validators.required, Validators.email]] // El email no se puede editar
-    }); 
+      // El email no se puede editar, por eso está deshabilitado
+      email: [{ value: '', disabled: true }, [Validators.required, Validators.email]]
+    });
   }
 
   onSubmit(): void {
@@ -69,7 +72,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    const updateDto: AdminUpdateUserDto = this.profileForm.getRawValue();
-    this.authStore.patchUserProfile({id:this.profileForm.value.id, request:updateDto});
+  //  const updateDto: UpdateProfileDto = this.profileForm.getRawValue();
+    //this.authStore.patchUserProfile(updateDto);
   }
 }
