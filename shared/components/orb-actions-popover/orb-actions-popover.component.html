@@ -1,0 +1,30 @@
+<!-- Este es el botón que siempre está visible en la tabla -->
+<orb-button
+  icon="pi pi-ellipsis-v"
+
+  pTooltip="Más acciones"
+  tooltipPosition="top"
+  styleClass="p-button-text p-button-secondary p-button-sm">
+</orb-button>
+<p-button icon="pi pi-ellipsis-v" [rounded]="true" severity="secondary" [outlined]="true"   pTooltip="Más acciones"   (click)="popover.toggle($event)"
+  tooltipPosition="top" />
+<!-- El popover que se muestra al hacer clic -->
+<p-popover #popover >
+  <div class="flex flex-column gap-2 p-2">
+
+     <ul class="action-list p-0 m-0 flex flex-col">
+                <li *ngFor="let action of actions" class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border" >
+                  <p-button      
+      [icon]="action.icon"
+      [pTooltip]="action.label"
+      tooltipPosition="left"
+      [label] = "action.label"
+      [styleClass]="'p-button-sm ' + (action.styleClass || 'p-button-secondary')"
+      class="w-full"
+       variant="text"
+      (click)="action?.action(itemData); popover.hide()">
+    </p-button>
+                </li>
+            </ul>
+  </div>
+</p-popover>

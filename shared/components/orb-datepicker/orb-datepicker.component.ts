@@ -28,7 +28,7 @@ let nextIdDatepicker = 0;
   ]
 })
 export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
-  @Input() placeholder: string = 'Seleccionar fecha';
+  @Input() placeholder: string = '';
   @Input() inputId: string = `orb-datepicker-${nextIdDatepicker++}`;
   @Input() disabled: boolean = false;
   @Input() styleClass?: string;

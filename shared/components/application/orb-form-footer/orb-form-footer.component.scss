@@ -1,7 +1,7 @@
 // src/app/shared/components/orb-form-footer/orb-form-footer.component.scss
-// :host {
-//   display: block; // Asegura que el componente ocupe su espacio.
-// }
+ :host {
+   display: block; // Asegura que el componente ocupe su espacio.
+ }
 
  .orb-form-footer-actions {
     display: flex;
@@ -17,7 +17,6 @@
         justify-content: center;
     }
        
-//justify-content: end;
 
 
 //   // Si necesitas más control sobre el espaciado o el layout que no se pueda

@@ -6,7 +6,7 @@ import { ClientStore } from '@orb-stores';
 import { ClientResponseDto } from '@orb-api/index';
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
 import { ClientFormComponent } from '../modal/client-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -27,7 +27,8 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
     ClientFormComponent,
     ConfirmDialogModule,
     OrbToolbarComponent,
-    OrbButtonComponent
+    OrbButtonComponent,
+    OrbActionsPopoverComponent
   ],
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.scss'],

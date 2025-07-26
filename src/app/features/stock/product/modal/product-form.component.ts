@@ -10,11 +10,12 @@ import {
   UpdateProductDto
 } from '@orb-api/index';
 import { FormButtonAction } from '@orb-models';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
   selector: 'orb-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent,      OrbFormFooterComponent ],
+  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent, FloatLabelModule,     OrbFormFooterComponent ],
   templateUrl: './product-form.component.html'
 })
 export class ProductFormComponent implements OnInit {
