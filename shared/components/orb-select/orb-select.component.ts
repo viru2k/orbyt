@@ -44,7 +44,7 @@ export class OrbSelectComponent implements ControlValueAccessor, OnInit {
   /**
    * Texto que se muestra cuando no hay ningún valor seleccionado.
    */
-  @Input() placeholder: string = 'Seleccionar una opción';
+  @Input() placeholder: string = '';
   /**
    * ID único para el input, se genera automáticamente si no se provee.
    */

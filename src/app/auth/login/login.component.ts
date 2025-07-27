@@ -12,8 +12,7 @@ import { MessageModule } from 'primeng/message';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    AsyncPipe,
+    ReactiveFormsModule,    
     OrbTextInputComponent,
     OrbButtonComponent,
     OrbCardComponent,

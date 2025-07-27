@@ -43,14 +43,14 @@
       </div>
     <div class="field col-12 md:col-6">
           <orb-form-field label="Género" [required]="utilsService.isRequired(form.get('gender'))" >
-          <orb-select id="genderClientForm" [options]="genderOptions" formControlName="gender" placeholder="Seleccionar género" optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
+          <orb-select id="genderClientForm" [options]="genderOptions" formControlName="gender"  optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
       </orb-form-field>
       </div>
 
 
    <div class="field col-12">
           <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))" >
-      <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" placeholder="Seleccionar estado" optionLabel="label" optionValue="value" appendTo="body" [styleClass]="'display-block'"></orb-select>
+      <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status"  optionLabel="label" optionValue="value" appendTo="body" [styleClass]="'display-block'"></orb-select>
       </orb-form-field>
       </div>
 

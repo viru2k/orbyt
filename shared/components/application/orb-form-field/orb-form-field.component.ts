@@ -1,36 +1,39 @@
 // orb-form-field.component.ts
-import { CommonModule } from "@angular/common";
-import { Component, ContentChild, Input, inject } from "@angular/core";
-import { AbstractControl, FormControlName, ReactiveFormsModule } from "@angular/forms";
-import { UtilsService } from "@orb-services";
-
+import { CommonModule } from '@angular/common';
+import { Component, ContentChild, Input, inject } from '@angular/core';
+import { AbstractControl, FormControlName, ReactiveFormsModule } from '@angular/forms';
+import { UtilsService } from '@orb-services';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
   selector: 'orb-form-field',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FloatLabelModule],
   styleUrls: ['./orb-form-field.component.scss'],
   template: `
-    <div class="mb-3 container">
-      <label class="block font-medium">
-        {{ label }}
-        <span *ngIf="showRequiredAsterisk()" class="text-red-500">*</span>
-      </label>
-      <ng-content></ng-content>
+    <div class="container">
+      <p-floatLabel variant="on">
+        <ng-content></ng-content>
+
+        <label [for]="inputId">
+          {{ label }}
+          <span *ngIf="showRequiredAsterisk()" class="text-red">*</span>
+        </label>
+      </p-floatLabel>
       @if (errorMessages().length > 0) {
-        <small class="p-error block mt-1">
-          {{ errorMessages()[0] }}
-        </small>
+      <small class="p-error  text-red block mt-1">
+        {{ errorMessages()[0] }}
+      </small>
       }
     </div>
-  `
+  `,
 })
 export class OrbFormFieldComponent {
   @Input() label = '';
-  @Input() required?: boolean; // Para el asterisco si se pasa explícitamente
-@Input() errorMsg = 'Campo obligatorio';
-  // Ya no necesitamos @Input() errorMsg si lo generamos dinámicamente
-
+  @Input() required?: boolean; 
+  @Input() errorMsg = 'Campo obligatorio';
+  @Input() showLabel?: boolean;
+  inputId = '';
   @ContentChild(FormControlName) ctrlName?: FormControlName;
   private utilsService = inject(UtilsService);
 
@@ -38,8 +41,6 @@ export class OrbFormFieldComponent {
     return this.ctrlName?.control;
   }
 
-  // Para el asterisco, podemos usar el 'required' del validador del control
-  // o el 'requiredProp' si se pasa explícitamente.
   showRequiredAsterisk(): boolean {
     if (this.required !== undefined) {
       return this.required;

@@ -13,7 +13,7 @@
       [value]="clients() || []"
       [columns]="tableColumns"
       [loading]="isLoading()"
-      [totalRecords]="clients()?.length || 0"
+      [totalRecords]="clients().length || 0"
       [rows]="tableRows()"
       [first]="tableFirst()"
       [tableFeatures]="tableFeaturesConfig"
@@ -49,15 +49,13 @@
               <ng-container *ngSwitchCase="'actions'">
                 <div class="flex gap-2">
                   
-                  <orb-button
-                    *ngFor="let action of clientRowActions"
-                    [icon]="action.icon"                    
-                    tooltipPosition="top"
-                  
-                    (click)="action.action">
-                  </orb-button>
+                <orb-actions-popover
+                  [actions]="clientRowActions"
+                  [itemData]="client">
+                </orb-actions-popover>
                 </div>
               </ng-container>
+              
 
               <!-- Caso por defecto para todas las demás columnas -->
               <ng-container *ngSwitchDefault>

@@ -1,89 +1,116 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { ProductsService, CreateProductDto, UpdateProductDto, ProductResponseDto } from '@orb-api/index';
+import { exhaustMap, tap } from 'rxjs';
+import { ProductsService, ProductResponseDto, CreateProductDto, UpdateProductDto } from '@orb-api/index';
+import { NotificationService } from '@orb-services';
+import { NotificationSeverity } from '@orb-models';
+import { ConfirmationService } from 'primeng/api';
 import { tapResponse } from '@ngrx/operators';
-import { catchError, EMPTY, exhaustMap, of, tap } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { linkToGlobalState } from '../component-state.reducer';
-
-export interface ProductState {
-  list: ProductResponseDto[];
-  loading: boolean;
-  error: string | null;
-}
-
-const INITIAL_STATE: ProductState = {
-  list: [],
-  loading: false,
-  error: null
-};
 
 @Injectable({ providedIn: 'root' })
-export class ProductStore extends ComponentStore<ProductState> {
-  constructor(private productsService: ProductsService,     private readonly globalStore: Store) {
-    super(INITIAL_STATE);
-      linkToGlobalState(this.state$, 'ProductStore', this.globalStore);
+export class ProductStore extends ComponentStore<{
+  products: ProductResponseDto[];
+  loading: boolean;
+  error: any | null;
+}> {
+  private readonly productsService = inject(ProductsService);
+  private readonly notificationService = inject(NotificationService);  
+
+  constructor() {
+    super({ products: [], loading: false, error: null });
   }
 
-  /* ---------- selectors ---------- */
-  readonly products$ = this.select((s) => s.list);
-  readonly loading$  = this.select((s) => s.loading);
-  readonly error$    = this.select((s) => s.error);
+  // Selectores
+  readonly products$ = this.select((state) => state.products);
+  readonly loading$ = this.select((state) => state.loading);
 
-  /* ---------- updaters ---------- */
-  private setLoading  = this.updater((s, l: boolean) => ({ ...s, loading: l }));
-  private setError    = this.updater((s, e: string | null) => ({ ...s, error: e }));
-  private setProducts = this.updater((s, p: ProductResponseDto[]) => ({ ...s, list: p }));
+  // Updaters
+  readonly setLoading = this.updater((state, loading: boolean) => ({ ...state, loading }));
+  readonly setProducts = this.updater((state, products: ProductResponseDto[]) => ({ ...state, products, loading: false }));
+  readonly addProduct = this.updater((state, product: ProductResponseDto) => ({ ...state, products: [...state.products, product], loading: false }));
+  readonly updateProduct = this.updater((state, product: ProductResponseDto) => ({
+    ...state,
+    products: state.products.map(p => p.id === product.id ? product : p),
+    loading: false
+  }));
+  readonly removeProduct = this.updater((state, productId: number) => ({
+    ...state,
+    products: state.products.filter(p => p.id !== productId),
+    loading: false
+  }));
+  readonly setError = this.updater((state, error: any) => ({ ...state, error, loading: false }));
 
-  /* ---------- effects ---------- */
-  /** GET /products */
+  // Effects
   readonly load = this.effect<void>((trigger$) =>
     trigger$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(() =>
         this.productsService.productControllerFindAll().pipe(
           tapResponse(
-            (resp) => this.setProducts(resp),
-            (err:any)   => this.setError(err?.message ?? 'Error cargando productos')
-          ),
-          catchError(() => EMPTY),
-          tap(() => this.setLoading(false))
+            (products: Array<ProductResponseDto>) => this.setProducts(products),
+            (error: any) => this.setError(error)
+          )
+        )
+      )
+    )
+  );
+  
+  readonly create = this.effect<CreateProductDto>((productDto$) =>
+    productDto$.pipe(
+      tap(() => this.setLoading(true)),
+      exhaustMap((productDto) =>
+        this.productsService.productControllerCreate(productDto).pipe(
+          tapResponse(
+            (newProduct: ProductResponseDto) => {
+              this.addProduct(newProduct);
+              
+              this.notificationService.showInfo(NotificationSeverity.Success, 'Producto creado con éxito.');
+            },
+            (error: any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al crear el producto.');
+            }
+          )
         )
       )
     )
   );
 
-  /** POST /products */
-  readonly create = this.effect<CreateProductDto>((dto$) =>
-    dto$.pipe(
-      exhaustMap((dto) =>
-        this.productsService.productControllerCreate(dto).pipe(
-          tapResponse(() => this.load(), (err:any) => this.setError(err?.message)),
-          catchError(() => EMPTY)
-        )
-      )
-    )
-  );
-
-  /** PUT /products/:id */
-  readonly update = this.effect<{ id: number; dto: UpdateProductDto }>((stream$) =>
-    stream$.pipe(
+  readonly update = this.effect<{ id: number; dto: UpdateProductDto }>((params$) =>
+    params$.pipe(
+      tap(() => this.setLoading(true)),
       exhaustMap(({ id, dto }) =>
         this.productsService.productControllerUpdate(id, dto).pipe(
-          tapResponse(() => this.load(), (err:any) => this.setError(err?.message)),
-          catchError(() => EMPTY)
+          tapResponse(
+            (updatedProduct: ProductResponseDto) => {
+              this.updateProduct(updatedProduct);
+              this.notificationService.showInfo(NotificationSeverity.Success, 'Producto actualizado con éxito.');
+            },
+            (error:any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al actualizar el producto.');
+            }
+          )
         )
       )
     )
   );
 
-  /** DELETE /products/:id */
-  readonly remove = this.effect<number>((id$) =>
-    id$.pipe(
+  readonly remove = this.effect<number>((productId$) =>
+    productId$.pipe(
+      tap(() => this.setLoading(true)),
       exhaustMap((id) =>
         this.productsService.productControllerRemove(id).pipe(
-          tapResponse(() => this.load(), (err:any) => this.setError(err?.message)),
-          catchError(() => EMPTY)
+          tapResponse(
+            () => {
+              this.removeProduct(id);
+              this.notificationService.showInfo(NotificationSeverity.Success, 'Producto eliminado con éxito.');
+            },
+            (error: any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al eliminar el producto.');
+            }
+          )
         )
       )
     )

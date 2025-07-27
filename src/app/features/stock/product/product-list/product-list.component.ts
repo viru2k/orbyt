@@ -3,7 +3,7 @@ import { OrbDialogComponent } from '../../../../../../shared/components/orb-dial
 import { OrbToolbarComponent } from '../../../../../../shared/components/application/orb-toolbar/orb-toolbar.component';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrbTableComponent,  OrbButtonComponent } from '@orb-components';
+import { OrbTableComponent,  OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
 import { ProductStore } from '@orb-stores';
 import { Router } from '@angular/router';
 import { ProductResponseDto } from '@orb-api/index';
@@ -19,7 +19,7 @@ import { SortEvent } from 'primeng/api';
 @Component({
   selector: 'orb-products',
   standalone: true,
-  imports: [CommonModule, OrbTableComponent, ProductFormComponent, OrbButtonComponent, DialogModule, OrbCardComponent, OrbToolbarComponent, OrbDialogComponent],
+  imports: [CommonModule, OrbTableComponent, ProductFormComponent, OrbButtonComponent, DialogModule, OrbCardComponent, OrbToolbarComponent, OrbDialogComponent, OrbActionsPopoverComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
@@ -29,7 +29,7 @@ export class ProductListComponent implements OnInit {
   display  = false;
   product: ProductResponseDto  | null = null;
   productUnderEdit: ProductResponseDto | null = null;
-  
+    isLoading$ = this.productStore.loading$;
   // Configuración de la Tabla
   tableColumns: TableColumn[] = [
     { field: 'name', header: 'Nombre', sortable: true },

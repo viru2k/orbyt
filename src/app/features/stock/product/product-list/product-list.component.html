@@ -9,19 +9,47 @@
 <orb-card>
   <div class="grid" orbBody>
     <div class="col-12">
-      <orb-table
-        [value]="(products$ | async) || []"
-        [columns]="tableColumns"
-        [rows]="tableRows()"
-        [first]="tableFirst()"
-        (onFilterChange)="loadProducts($event)"
-        [tableFeatures]="tableFeaturesConfig"
-        [rowActions]="productRowActions"
-        [tableHeaderActions]="productTableHeaderActions"
-        dataKey="id"
-        paginatorPosition="both"
-      >
-      </orb-table>
+       <orb-table
+      [value]="(products$ | async) || []"
+      [columns]="tableColumns"
+      [loading]="(isLoading$ | async) || false"
+      [totalRecords]="(products$ | async)?.length || 0"
+      [rows]="tableRows()"
+      [first]="tableFirst()"
+      [tableFeatures]="tableFeaturesConfig"
+      [globalFilterFields]="['name', 'description']"
+      [rowActions]="productRowActions"
+      [tableHeaderActions]="productTableHeaderActions"
+      dataKey="id"
+      paginatorPosition="both"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
+    >
+      <ng-template pTemplate="body" let-product let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            <ng-container [ngSwitch]="col.field">
+              
+              <ng-container *ngSwitchCase="'currentPrice'">
+                {{ product.currentPrice | currency:'EUR' }}
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'actions'">
+                <orb-actions-popover
+                  [actions]="productRowActions"
+                  [itemData]="product">
+                </orb-actions-popover>
+              </ng-container>
+
+              <ng-container *ngSwitchDefault>
+                {{ product[col.field] }}
+              </ng-container>
+              
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </orb-table>
     </div>
   </div>
 </orb-card>
