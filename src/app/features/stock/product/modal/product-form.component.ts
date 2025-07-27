@@ -1,82 +1,113 @@
-import { Component, Input, Output, EventEmitter, inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import {  OrbFormFieldComponent, OrbFormFooterComponent } from '@orb-components';
-
+import { UtilsService } from '@orb-services';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { ProductStore } from '@orb-stores';
-import {
-  ProductResponseDto,
-  CreateProductDto,
-  UpdateProductDto
-} from '@orb-api/index';
+import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '@orb-api/index';
 import { FormButtonAction } from '@orb-models';
+
+// PrimeNG & Orb Components
+import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTextAreaComponent } from '@orb-components';
+import { TextareaModule } from 'primeng/textarea';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'orb-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, OrbFormFieldComponent, FloatLabelModule,     OrbFormFooterComponent ],
-  templateUrl: './product-form.component.html'
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    FloatLabelModule,
+TextareaModule, 
+    OrbFormFooterComponent,
+    OrbFormFieldComponent,
+        ReactiveFormsModule,    
+        OrbTextInputComponent,
+        OrbFormFieldComponent,
+        OrbFormFooterComponent,
+        OrbTextAreaComponent
+      , ToastModule
+    
+  ],
+  templateUrl: './product-form.component.html',
 })
 export class ProductFormComponent implements OnInit {
-  @Input()  product?: ProductResponseDto = undefined;
-  @Output() saved  = new EventEmitter<void>();
+  @Input() product?: ProductResponseDto;
+  @Output() saved = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
-     public footerActions: FormButtonAction[] = [];
-  private fb    = inject(FormBuilder);
-  private store = inject(ProductStore);
 
-  form = this.fb.group({
-    sku:   ['', Validators.required],
-    name:  ['', Validators.required],
-    stock: [0,  Validators.required],
-    price: [0,  Validators.required]
-  });
+  private fb = inject(FormBuilder);
+  private productStore = inject(ProductStore);
+  public utilsService = inject(UtilsService);
 
-  ngOnInit() {
-         this.setupFooterActions();
-    if (this.product) this.form.patchValue(this.product);
-  }
 
-  accept() {
-    if (this.form.invalid) return;
+  form!: FormGroup;
+  isEditMode = false;
 
-    if (this.product) {
-      const dto = this.form.value as UpdateProductDto;
-      this.store.update({ id: this.product.id, dto });
-    } else {
-      const dto = this.form.value as CreateProductDto;
-      this.store.create(dto);
+  footerActions: FormButtonAction[] = [
+    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text' , severity: 'secondary'},
+    { label: 'Guardar', action: 'save', styleType: 'p-button-success' , buttonType: 'submit' ,severity: 'info'},
+  ];
+
+  ngOnInit(): void {
+    this.isEditMode = !!this.product;
+    this.initForm();
+
+    if (this.isEditMode && this.product) {
+      this.form.patchValue({
+        name: this.product.name,
+        description: this.product.description,
+        price: this.product.currentPrice 
+      });
     }
-    this.saved.emit();
   }
 
-  cancelForm() {
-    this.cancel.emit();
+  private initForm(): void {
+    // El formulario coincide con los campos del CreateProductDto
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      description: [''],
+      price: [0, [Validators.required, Validators.min(0.01)]],
+    });
   }
 
-     private setupFooterActions(): void {
-    this.footerActions = [
-      {
-        label: 'Cancelar',
-        action: 'cancel', 
-        styleType: 'text',
-        severity: 'secondary',
-        buttonType: 'button'
-      },
-      {
-        label: this.product?.id ? 'Guardar Cambios' : 'Crear Cliente',
-        action: 'submit', 
-        severity: 'info',
-        buttonType: 'submit', 
-      }
-    ];
-  }
   handleFooterAction(action: string): void {
-    if (action === 'cancel') {
-      this.cancelForm();
-    } else if (action === 'submit') {
-   
+    if (action === 'save') {
+      this.onSubmit();
+    } else if (action === 'cancel') {
+      this.cancel.emit();
     }
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.form.getRawValue();
+
+    if (this.isEditMode && this.product?.id) {
+      // --- MODO EDICIÓN ---
+      const updateDto: UpdateProductDto = {
+        name: formValue.name,
+        description: formValue.description,
+        price: formValue.price,
+      };
+      this.productStore.update({ id: this.product.id, dto: updateDto });
+    } else {
+      // --- MODO CREACIÓN ---
+      const createDto: CreateProductDto = {
+        name: formValue.name,
+        description: formValue.description,
+        price: formValue.price,
+      };
+      this.productStore.create(createDto);
+    }
+
+    this.saved.emit();
   }
 }

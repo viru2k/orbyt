@@ -1,6 +1,5 @@
 <orb-toolbar>
   <div body></div>
-
   <div footer>
     <orb-button label="Nuevo Producto" (click)="showProductForm()" />
   </div>
@@ -8,8 +7,7 @@
 
 <orb-card>
   <div class="grid" orbBody>
-    <div class="col-12">
-       <orb-table
+    <orb-table
       [value]="(products$ | async) || []"
       [columns]="tableColumns"
       [loading]="(isLoading$ | async) || false"
@@ -50,23 +48,23 @@
         </tr>
       </ng-template>
     </orb-table>
-    </div>
   </div>
 </orb-card>
 
-<!-- Modal -->
-
-
 <orb-dialog
-  [(visible)]="display"
-  [header]="productUnderEdit ? 'Editar producto' : 'Nuevo producto'"
-  size="sm"
-  (onHide)="handleDialogClose()"
+  [visible]="displayProductModal()"
+  [header]="isEditMode() ? 'Editar Producto' : 'Nuevo Producto'"
+  size="md"
+  (onHide)="onCancelForm()"
 >
-  <orb-product-form
-    [product]="productUnderEdit ?? undefined"
-    (saved)="onSavedForm()"
-    (cancel)="onCancelForm()"
-  >
-  </orb-product-form>
+  @if (displayProductModal()) {
+    <orb-product-form
+      [product]="productToEdit() ?? undefined"
+      (saved)="onSavedForm()"
+      (cancel)="onCancelForm()"
+    >
+    </orb-product-form>
+  }
 </orb-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

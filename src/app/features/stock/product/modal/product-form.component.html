@@ -1,24 +1,39 @@
-<form [formGroup]="form" class="p-fluid">
-    <orb-form-field label="SKU" [required]="true">
-      <input pInputText formControlName="sku" />
-    </orb-form-field>
-  
-    <orb-form-field label="Nombre" [required]="true">
-      <input pInputText formControlName="name" />
-    </orb-form-field>
-  
-    <orb-form-field label="Stock" [required]="true">
-      <input pInputText type="number" formControlName="stock" />
-    </orb-form-field>
-  
-    <orb-form-field label="Precio" [required]="true">
-      <input pInputText type="number" formControlName="price" />
-    </orb-form-field>
-  
-<orb-form-footer
-    [buttons]="footerActions"
-    alignment="right" (actionClicked)="handleFooterAction($event)"
-  ></orb-form-footer>
+<p-toast />
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="col-12">
 
-  </form>
-  
+    <!-- Nombre -->
+    <div class="field col-12 md:col-6">
+       <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))" >
+                <orb-text-input formControlName="name"   inputId="name"></orb-text-input>
+      </orb-form-field>
+    </div>
+
+    <!-- Precio -->
+    <div class="col-12">
+        <orb-form-field label="Precio" [required]="utilsService.isRequired(form.get('price'))" >
+        <orb-text-input formControlName="price" type="number"  inputId="price"></orb-text-input>
+      </orb-form-field>
+    </div>
+    
+    <!-- Descripción -->
+         <div class="col-12">
+      <orb-form-field label="Descripción" [required]="utilsService.isRequired(form.get('name'))">
+        <orb-text-input  id="name" formControlName="name"></orb-text-input>
+      </orb-form-field>
+    </div>
+
+    <div class="col-12">
+      <orb-form-field label="Descripción" [required]="utilsService.isRequired(form.get('description'))">
+        <orb-text-area pInputTextarea id="description" formControlName="description" [rows]="3" [autoResize]="true"></orb-text-area>
+      </orb-form-field>
+    </div>
+
+  </div>
+
+  <orb-form-footer
+    [buttons]="footerActions"
+    alignment="right"
+    (actionClicked)="handleFooterAction($event)">
+  </orb-form-footer>
+</form>

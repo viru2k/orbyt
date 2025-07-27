@@ -1,41 +1,54 @@
-import { OrbDialogComponent } from '../../../../../../shared/components/orb-dialog/orb-dialog.component';
-
-import { OrbToolbarComponent } from '../../../../../../shared/components/application/orb-toolbar/orb-toolbar.component';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { OrbTableComponent,  OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { CommonModule, AsyncPipe, CurrencyPipe } from '@angular/common';
 import { ProductStore } from '@orb-stores';
-import { Router } from '@angular/router';
 import { ProductResponseDto } from '@orb-api/index';
-import { DialogModule } from 'primeng/dialog';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
 import { ProductFormComponent } from '../modal/product-form.component';
-import { OrbActionItem, OrbTableFeatures, TableColumn } from '@orb-models';
-
-import { OrbCardComponent } from "@orb-components";
-import { TableFilterEvent, TablePageEvent } from 'primeng/table';
-import { SortEvent } from 'primeng/api';
-
+import { NotificationService } from '@orb-services';
+import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } from '@orb-models';
 
 @Component({
-  selector: 'orb-products',
+  selector: 'orb-product-list',
   standalone: true,
-  imports: [CommonModule, OrbTableComponent, ProductFormComponent, OrbButtonComponent, DialogModule, OrbCardComponent, OrbToolbarComponent, OrbDialogComponent, OrbActionsPopoverComponent],
+  imports: [
+    CommonModule,
+    AsyncPipe,
+    CurrencyPipe,
+    OrbTableComponent,
+    ProductFormComponent,
+    OrbButtonComponent,
+    OrbCardComponent,
+    OrbToolbarComponent,
+    OrbDialogComponent,
+    OrbActionsPopoverComponent,
+    ConfirmDialogModule
+  ],
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.scss']
+  styleUrls: ['./product-list.component.scss'],
+  providers: [ConfirmationService]
 })
 export class ProductListComponent implements OnInit {
   private productStore = inject(ProductStore);
-  private router = inject(Router);
-  display  = false;
-  product: ProductResponseDto  | null = null;
-  productUnderEdit: ProductResponseDto | null = null;
-    isLoading$ = this.productStore.loading$;
-  // Configuración de la Tabla
+  private confirmationService = inject(ConfirmationService);
+  private notificationService = inject(NotificationService);
+
+  displayProductModal = signal(false);
+  productToEdit = signal<ProductResponseDto | null>(null);
+  isEditMode = signal(false);
+
+  // Usamos el nuevo selector con los datos mapeados
+  products$ = this.productStore.selectProductsWithMappedData;
+  isLoading$ = this.productStore.loading$;
+
+  // Columnas actualizadas para reflejar el DTO
   tableColumns: TableColumn[] = [
     { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'description', header: 'Descripción', width: '300px',  },
-    { field: 'currentPrice', header: 'Precio', width: '120px', sortable: true /*, format: 'currency' si lo implementas */ },
-    { field: 'actions', header: '', width: '70px', sortable: false } // Columna para el botón de elipsis
+    { field: 'currentPrice', header: 'Precio', sortable: true },
+    { field: 'statusText', header: 'Estado', sortable: true },
+    { field: 'ownerName', header: 'Propietario', sortable: true },
+    { field: 'actions', header: 'Acciones', sortable: false }
   ];
 
   tableFeaturesConfig: OrbTableFeatures = {
@@ -43,100 +56,70 @@ export class ProductListComponent implements OnInit {
     globalSearchPlaceholder: 'Buscar productos...'
   };
 
-  // Acciones para cada fila (Editar, Eliminar)
   productRowActions: OrbActionItem<ProductResponseDto>[] = [
     {
       label: 'Editar',
       icon: 'pi pi-pencil',
-      action: (product) => this.handleEditProduct(product ?? {} as ProductResponseDto)
+      action: (product) => this.openProductModal(product)
     },
     {
       label: 'Eliminar',
       icon: 'pi pi-trash',
-      action: (product) => this.handleDeleteProduct(product ?? {} as ProductResponseDto),
-      styleClass: 'p-button-danger' // Opcional: para dar estilo al item del menú
+      action: (product) => this.confirmDeleteProduct(product as ProductResponseDto),
+      styleClass: 'p-button-danger'
     }
-    // Puedes añadir más acciones aquí si es necesario
   ];
 
-  // Acciones para la cabecera de la tabla (ej. "Agregar Nuevo Producto")
   productTableHeaderActions: OrbActionItem[] = [
     {
       label: 'Nuevo Producto',
       icon: 'pi pi-plus',
-      action: () => this.handleAddNewProduct()
+      action: () => this.openProductModal()
     }
-    // Si "Agregar" debe estar en el popover de la fila, necesitas aclarar qué haría exactamente
-    // para una fila existente. Si es un error y "Agregar" es global, esta es la forma correcta.
   ];
 
-  // Propiedades para paginación y carga inicial
   tableRows = signal(10);
   tableFirst = signal(0);
-
-
-  products$ = this.productStore.products$;
 
   ngOnInit() {
     this.productStore.load();
   }
 
   showProductForm() {
-    this.display = true;
+    this.openProductModal();
   }
 
-  open(product?: ProductResponseDto) {  
-    this.productUnderEdit = product ?? {} as ProductResponseDto;
-    this.display = true;
+  openProductModal(product?: ProductResponseDto) {
+    this.isEditMode.set(!!product);
+    this.productToEdit.set(product ? { ...product } : null);
+    this.displayProductModal.set(true);
   }
 
-  handleDialogClose() {
-    this.display = false;
+  confirmDeleteProduct(product: ProductResponseDto) {
+    if (!product?.id) {
+      this.notificationService.showError(NotificationSeverity.Error, 'ID de producto no válido.');
+      return;
+    }
+    this.confirmationService.confirm({
+      message: `¿Estás seguro de que quieres eliminar el producto "${product.name}"?`,
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'No',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.productStore.remove(product.id);
+      }
+    });
   }
-  
+
   onSavedForm() {
-    this.display = false;
-    this.productStore.load();          // refresca tabla
+    this.displayProductModal.set(false);
+    this.productToEdit.set(null);
   }
 
   onCancelForm() {
-    this.display = false;
-  }
-
-
-  handleEditProduct(product: ProductResponseDto) {
-    console.log(product)
-    this.productUnderEdit = {...product}
-    this.display = true;
-  }
-
-  handleDeleteProduct(product: ProductResponseDto) {
-  this.productStore.remove(product.id);
-  }
-
-  handleAddNewProduct() {
- /*    this.selectedProductId.set(undefined); // Limpiar ID para nuevo producto
-    this.displayProductForm.set(true); */
-  }
-
-  onProductFormClose(saved: boolean) {
-  /*   this.displayProductForm.set(false);
-    if (saved) {
-      this.loadProducts();
-    } */
-  }
-
-  loadProducts(event?: TablePageEvent | SortEvent | TableFilterEvent) {
-    if (event && 'first' in event && 'rows' in event) { // PageEvent
-        this.tableFirst.set(event.first);
-        this.tableRows.set(event.rows);
-    }
-    // Adapta para pasar la paginación, ordenación y filtros a tu servicio
-  /*   this.productService.getAllProducts({
-        page: this.tableFirst() / this.tableRows() + 1,
-        limit: this.tableRows(),
-        // sort: event && 'sortField' in event ? `${event.sortField}:${event.sortOrder === 1 ? 'asc' : 'desc'}` : undefined,
-        // filter: event && 'filters' in event ? event.filters : undefined // Adapta cómo manejas filtros
-    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(); */
+    this.displayProductModal.set(false);
+    this.productToEdit.set(null);
   }
 }

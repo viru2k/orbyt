@@ -4,14 +4,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import {  TranslateService } from '@ngx-translate/core';
 import { SpinnerService, ThemeService } from '@orb-services';
-import { MessageService } from 'primeng/api';
 import { PrimeNG } from 'primeng/config';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 
 @Component({
   imports: [ RouterModule, RouterOutlet,ProgressSpinnerModule, ToastModule ],
-  providers: [ThemeService, PrimeNG, MessageService],
+  providers: [ThemeService, PrimeNG],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

@@ -55,8 +55,8 @@ export class ClientFormComponent implements OnInit {
 
   // Configuración para el pie de página del formulario
   footerActions: FormButtonAction[] = [
-    { label: 'Cancelar', action: 'cancel', styleType: 'text' },
-    { label: 'Guardar', action: 'save', styleType: 'rounded' },
+    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text' , severity: 'secondary'},
+    { label: 'Guardar', action: 'save', styleType: 'p-button-success' , buttonType: 'submit' ,severity: 'info'},
   ];
 
   ngOnInit(): void {

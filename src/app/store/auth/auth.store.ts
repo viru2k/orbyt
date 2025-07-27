@@ -16,7 +16,7 @@ export interface AuthState {
   error: string | null;
 }
 
-const DEFAULT_AUTH_STATE: AuthState = {
+const initialState: AuthState = {
   user: null,
   token: null,
   loading: false,
@@ -34,7 +34,7 @@ export class AuthStore extends ComponentStore<AuthState> {
     private readonly storage: LocalStorageService,
     private readonly globalStore: Store
   ) {
-    super(DEFAULT_AUTH_STATE);
+    super(initialState);
     linkToGlobalState(this.state$, 'AuthStore', this.globalStore);
     this.checkAuth();
   }
@@ -65,7 +65,7 @@ export class AuthStore extends ComponentStore<AuthState> {
     ...state, user: { ...state.user, ...updatedUser }, loading: false,
   }));
   readonly setError = this.updater((state, error: string | null) => ({ ...state, error, loading: false }));
-  readonly clearState = this.updater(() => DEFAULT_AUTH_STATE);
+  readonly clearState = this.updater(() => initialState);
 
   // Effects
   readonly login = this.effect<LoginDto>((credentials$) =>

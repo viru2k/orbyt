@@ -4,41 +4,66 @@ import { exhaustMap, tap } from 'rxjs';
 import { ProductsService, ProductResponseDto, CreateProductDto, UpdateProductDto } from '@orb-api/index';
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
-import { ConfirmationService } from 'primeng/api';
 import { tapResponse } from '@ngrx/operators';
+import { linkToGlobalState } from '../component-state.reducer';
+import { Store } from '@ngrx/store';
 
-@Injectable({ providedIn: 'root' })
-export class ProductStore extends ComponentStore<{
+export interface ProductState {
   products: ProductResponseDto[];
   loading: boolean;
   error: any | null;
-}> {
-  private readonly productsService = inject(ProductsService);
-  private readonly notificationService = inject(NotificationService);  
+}
 
-  constructor() {
-    super({ products: [], loading: false, error: null });
+const initialState: ProductState = {
+  products: [],
+  loading: false,
+  error: null,
+};
+
+@Injectable({ providedIn: 'root' })
+export class ProductStore extends ComponentStore<ProductState> {
+  private readonly productsService = inject(ProductsService);
+  private readonly notificationService = inject(NotificationService);
+
+  constructor(    private readonly globalStore: Store) {
+    super(initialState);
+        linkToGlobalState(this.state$, 'ProductStore', this.globalStore);
   }
 
   // Selectores
   readonly products$ = this.select((state) => state.products);
   readonly loading$ = this.select((state) => state.loading);
 
+  readonly selectProductsWithMappedData = this.select(
+    this.products$,
+    (products) => products.map(product => {
+        let statusText = product.status.charAt(0).toUpperCase() + product.status.slice(1);
+        let statusClass = `status-${product.status}`;
+
+        return {
+            ...product,
+            statusText,
+            statusClass,
+            ownerName: product.owner?.fullName || 'N/A'
+        };
+    })
+  );
+
   // Updaters
-  readonly setLoading = this.updater((state, loading: boolean) => ({ ...state, loading }));
-  readonly setProducts = this.updater((state, products: ProductResponseDto[]) => ({ ...state, products, loading: false }));
-  readonly addProduct = this.updater((state, product: ProductResponseDto) => ({ ...state, products: [...state.products, product], loading: false }));
-  readonly updateProduct = this.updater((state, product: ProductResponseDto) => ({
+  private readonly setLoading = this.updater((state, loading: boolean) => ({ ...state, loading }));
+  private readonly setProducts = this.updater((state, products: ProductResponseDto[]) => ({ ...state, products, loading: false }));
+  private readonly addProduct = this.updater((state, product: ProductResponseDto) => ({ ...state, products: [...state.products, product], loading: false }));
+  private readonly updateProduct = this.updater((state, product: ProductResponseDto) => ({
     ...state,
     products: state.products.map(p => p.id === product.id ? product : p),
     loading: false
   }));
-  readonly removeProduct = this.updater((state, productId: number) => ({
+  private readonly removeProduct = this.updater((state, productId: number) => ({
     ...state,
     products: state.products.filter(p => p.id !== productId),
     loading: false
   }));
-  readonly setError = this.updater((state, error: any) => ({ ...state, error, loading: false }));
+  private readonly setError = this.updater((state, error: any) => ({ ...state, error, loading: false }));
 
   // Effects
   readonly load = this.effect<void>((trigger$) =>
@@ -63,8 +88,7 @@ export class ProductStore extends ComponentStore<{
           tapResponse(
             (newProduct: ProductResponseDto) => {
               this.addProduct(newProduct);
-              
-              this.notificationService.showInfo(NotificationSeverity.Success, 'Producto creado con éxito.');
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Producto creado con éxito.');
             },
             (error: any) => {
               this.setError(error);
@@ -84,9 +108,9 @@ export class ProductStore extends ComponentStore<{
           tapResponse(
             (updatedProduct: ProductResponseDto) => {
               this.updateProduct(updatedProduct);
-              this.notificationService.showInfo(NotificationSeverity.Success, 'Producto actualizado con éxito.');
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Producto actualizado con éxito.');
             },
-            (error:any) => {
+            (error: any) => {
               this.setError(error);
               this.notificationService.showError(NotificationSeverity.Error, 'Error al actualizar el producto.');
             }
@@ -104,7 +128,7 @@ export class ProductStore extends ComponentStore<{
           tapResponse(
             () => {
               this.removeProduct(id);
-              this.notificationService.showInfo(NotificationSeverity.Success, 'Producto eliminado con éxito.');
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Producto eliminado con éxito.');
             },
             (error: any) => {
               this.setError(error);
