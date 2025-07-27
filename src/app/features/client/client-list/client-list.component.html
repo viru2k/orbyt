@@ -13,7 +13,7 @@
       [value]="clients() || []"
       [columns]="tableColumns"
       [loading]="isLoading()"
-      [totalRecords]="clients()?.length || 0"
+      [totalRecords]="clients().length || 0"
       [rows]="tableRows()"
       [first]="tableFirst()"
       [tableFeatures]="tableFeaturesConfig"
