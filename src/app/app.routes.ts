@@ -2,6 +2,7 @@ import { Route } from '@angular/router';
 
 import { ShellComponent } from './layout/shell/shell.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -42,6 +43,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'management/users', // Nueva ruta para usuarios
+        canActivate: [AdminGuard],
         loadComponent: () =>
           import('./features/users/users-list/users-list.component').then(
             (m) => m.UsersListComponent

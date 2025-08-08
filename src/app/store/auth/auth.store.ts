@@ -57,6 +57,12 @@ export class AuthStore extends ComponentStore<AuthState> {
     return '';
   });
 
+  // Permission selectors
+  readonly canManageUsers$ = this.select(this.user$, (user) => user?.canManageUsers ?? false);
+  readonly canManageClients$ = this.select(this.user$, (user) => user?.canManageClients ?? false);
+  readonly canManageProducts$ = this.select(this.user$, (user) => user?.canManageProducts ?? false);
+  readonly canManageAgenda$ = this.select(this.user$, (user) => user?.canManageAgenda ?? false);
+
   // Updaters
   readonly setLoading = this.updater((state, loading: boolean) => ({ ...state, loading }));
   readonly setAuthSuccess = this.updater((state, { user, token }: { user: ProfileResponseDto, token: string }) => ({

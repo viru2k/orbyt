@@ -65,6 +65,8 @@ export class UsersListComponent implements OnInit {
   onUserFormSaved(): void {
     this.displayUserEditModal.set(false);
     this.userToEdit.set(undefined);
+    // Recargar la lista de usuarios para reflejar los cambios
+    this.usersStore.loadUsers();
   }
 
   onUserFormCancel(): void {
