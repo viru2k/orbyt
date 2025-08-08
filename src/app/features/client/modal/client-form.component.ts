@@ -7,7 +7,7 @@ import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFo
 
 // Store y DTOs
 import { ClientStore } from '@orb-stores';
-import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '@orb-api/index';
+import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '../../../api/model/models';
 
 // Servicios y Modelos
 import { NotificationService, UtilsService } from '@orb-services';

@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProductStore } from '@orb-stores';
-import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '@orb-api/index';
+import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '../../../../api/model/models';
 import { FormButtonAction } from '@orb-models';
 
 // PrimeNG & Orb Components

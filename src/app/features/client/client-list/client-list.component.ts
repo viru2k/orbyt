@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 // Store y DTOs
 import { ClientStore } from '@orb-stores';
-import { ClientResponseDto } from '@orb-api/index';
+import { ClientResponseDto } from '../../../api/model/models';
 
 // Componentes Orb y PrimeNG
 import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
