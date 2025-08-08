@@ -1,0 +1,56 @@
+<orb-card>
+  <div orbHeader>
+    <h2>Gestión de Usuarios</h2>
+  </div>
+
+  <div orbBody>
+    <p-message *ngIf="error$ | async as error" severity="error" [text]="error"></p-message>
+
+    <orb-table
+      [value]="(users$ | async) || []"
+      [columns]="columns"
+      [loading]="(loading$ | async) || false"
+      [rowActions]="actions"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template pTemplate="rowexpansion" let-user>
+        <div class="user-details-expansion">
+          <div class="detail-section">
+            <h3>Roles Asignados:</h3>
+            <div class="roles-container">
+              <p-tag *ngFor="let role of user.roles" [value]="role.name" severity="info"></p-tag>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Permisos por Rol:</h3>
+            <div *ngFor="let role of user.roles" class="role-permissions">
+              <h4>{{ role.name }}</h4>
+              <div class="permissions-container">
+                <p-chip *ngFor="let permission of role.permissions" [label]="permission.name"></p-chip>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </orb-table>
+  </div>
+</orb-card>
+
+<orb-dialog
+  [(visible)]="displayUserEditModal"
+  header="Editar Usuario"
+  size="md"
+  (onHide)="onUserFormCancel()"
+>
+  @if (displayUserEditModal()) {
+    <app-user-edit-form
+      [user]="userToEdit()"
+      (saved)="onUserFormSaved()"
+      (cancel)="onUserFormCancel()"
+    >
+    </app-user-edit-form>
+  }
+</orb-dialog>

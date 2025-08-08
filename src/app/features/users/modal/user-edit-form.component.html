@@ -1,0 +1,47 @@
+<form [formGroup]="form" (ngSubmit)="accept()">
+  <!-- Nombre Completo -->
+  <orb-form-field>
+    <orb-text-input
+      formControlName="fullName"
+      label="Nombre Completo"
+      placeholder="Ingresa el nombre completo del usuario"
+      [required]="true"
+    />
+  </orb-form-field>
+
+  <!-- Estado Activo/Inactivo -->
+  <orb-form-field>
+    <label for="isActive" class="form-label">Estado del Usuario</label>
+    <div class="checkbox-container">
+      <p-checkbox
+        formControlName="isActive"
+        inputId="isActive"
+        [binary]="true"
+        label="Usuario Activo"
+      ></p-checkbox>
+    </div>
+  </orb-form-field>
+
+  <!-- Selección de Roles -->
+  <orb-form-field>
+    <label for="roles" class="form-label">Roles Asignados *</label>
+    <div class="roles-selection">
+      <ng-container *ngFor="let role of (availableRoles$ | async)">
+        <div class="role-checkbox">
+          <p-checkbox
+            [inputId]="'role-' + role.id"
+            [value]="role.id"
+            (onChange)="onRoleChange(role.id, $event)"
+            [checked]="isRoleSelected(role.id)"
+            [label]="role.name + ' - ' + role.description"
+          ></p-checkbox>
+        </div>
+      </ng-container>
+    </div>
+  </orb-form-field>
+
+  <!-- Footer con botones -->
+  <orb-form-footer
+    (actionClicked)="handleFooterAction($event)"
+  ></orb-form-footer>
+</form>

@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+.user-details-expansion {
+  padding: 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .detail-section {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+      color: var(--p-text-color);
+      font-size: 1.1rem;
+    }
+
+    .roles-container,
+    .permissions-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+
+  .role-permissions {
+    margin-top: 1rem;
+    h4 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--p-text-color-secondary);
+      font-size: 1rem;
+    }
+  }
+}
