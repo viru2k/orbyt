@@ -88,8 +88,8 @@ export const appConfig: ApplicationConfig = {
 };
 
 export function apiConfigFactory(localStorage: LocalStorageService): Configuration {
-  return new Configuration({
-    basePath: 'http://127.0.0.1:3000',
-    accessToken: () => localStorage.getToken() || '',
+  const config = new Configuration({
+    basePath: 'http://127.0.0.1:3000'
   });
+  return config;
 }

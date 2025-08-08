@@ -22,7 +22,7 @@ export const appRoutes: Route[] = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/dashboard/orb-dashboard.component').then(
+          import('./features/dashboard/dashboard.component').then(
             (m) => m.DashboardComponent
           ),
       },
@@ -41,10 +41,24 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'management/users', // Nueva ruta para usuarios
+        loadComponent: () =>
+          import('./features/users/users-list/users-list.component').then(
+            (m) => m.UsersListComponent
+          ),
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/profile.component').then(
             (m) => m.ProfileComponent
+          ),
+      },
+      {
+        path: 'agenda',
+        loadComponent: () =>
+          import('./features/agenda/agenda.component').then(
+            (m) => m.AgendaComponent
           ),
       },
     ],

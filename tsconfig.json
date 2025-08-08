@@ -17,10 +17,13 @@
     "paths": {
       "@orb-api/*": ["src/app/api/*"],
       "@orb-components": ["./shared/components/index.ts"],
+      "@orb-shared-components/*": ["./shared/components/*"],
       "@orb-directives": ["./shared/directives/index.ts"],
       "@orb-models": ["./shared/models/index.ts"],
+      "@orb-shared-models/*": ["./shared/models/*"],
       "@orb-services": ["./src/app/services/index.ts"],
-      "@orb-stores": ["./src/app/store/index.ts"]
+      "@orb-stores": ["./src/app/store/index.ts"],
+      "@orb-stores/*": ["./src/app/store/*"]
     },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

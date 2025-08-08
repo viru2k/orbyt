@@ -46,9 +46,9 @@ export class AuthInterceptor implements HttpInterceptor {
         } else if (error.status === 403) {          
           notificationService.showError(NotificationSeverity.Error, error.error.message || 'No tienes permiso para realizar esta acción.');
         } else if (error.status === 404) {
-          this.router.navigate(['/not-found']);
+          this.router.navigate(['/dashboard']);
         } else if (error.status >= 500) {
-          this.router.navigate(['/server-error']);
+          this.router.navigate(['/dashboard']);
         }
         
         return throwError(() => error);

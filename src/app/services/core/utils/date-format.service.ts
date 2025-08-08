@@ -14,7 +14,7 @@ export class DateFormatService {
    * @param locale El locale opcional a usar para el formato. Por defecto es 'es-ES'.
    * @returns La cadena de fecha formateada, o una cadena vacía si el valor no es válido.
    */
-  format(value: string | number | Date | null | undefined, format: string, locale: string = 'es-ES'): string {
+  format(value: string | number | Date | null | undefined, format: string, locale = 'es-ES'): string {
     if (!value) {
       return 'N/A'; // Devuelve 'N/A' si la fecha es nula, como en el original
     }
