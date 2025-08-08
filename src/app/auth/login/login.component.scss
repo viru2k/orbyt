@@ -1,84 +1,86 @@
 
+:host {
+  --p-shadow-4: 0px 4px 10px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .login-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: var(--p-surface-ground);
-    padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--p-surface-ground);
+  padding: 1rem;
+  font-family: 'Roboto', sans-serif; // Google uses Roboto
+}
+
+.logo {
+  width: 90px;
+  margin-bottom: 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 8px;
+  padding: 48px 40px 36px;
+  box-shadow: none;
+  border: 1px solid #dadce0;
+  background-color: var(--p-surface-card);
+}
+
+.title {
+  font-size: 1.5rem; // 24px
+  font-weight: 400;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  color: #202124;
+}
+
+.subtitle {
+  font-size: 1rem; // 16px
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #202124;
+}
+
+.login-inputs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.login-input {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.forgot-password {
+  font-size: 0.875rem; // 14px
+  font-weight: 600;
+  color: var(--p-primary-color);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
   }
-  
-  .logo {
-    width: 120px;
-    margin-bottom: 2rem;
+}
+
+.login-button {
+  // The orb-button component might have its own styles,
+  // but we can try to influence it.
+  // Let's assume it's a button element that can be targeted.
+  ::ng-deep button {
+    border-radius: 4px;
   }
-  
-  .login-card {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: var(--p-shadow-4);
-    background-color: var(--p-surface-card);
-  }
-  
-  .title {
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .login-input {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .login-button {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .or-separator {
-    text-align: center;
-    font-weight: bold;
-    color: var(--p-text-secondary);
-    margin: 1rem 0;
-  }
-  
-  .login-inputs{
-    width: 18vw;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .social-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .social {
-    padding: 0.75rem 1rem;
-    border: none;
-    font-weight: bold;
-    border-radius: 0.5rem;
-    color: white;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    i {
-      margin-right: 0.5rem;
-    }
-  }
-  
-  .facebook {
-    background-color: #3b5998;
-  }
-  
-  .google {
-    background-color: #db4437;
-  }
+}
   

@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { exhaustMap, tap } from 'rxjs';
-import { ProductsService, ProductResponseDto, CreateProductDto, UpdateProductDto } from '@orb-api/index';
+import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '../../api/model/models';
+import { ProductsService } from '../../api/api/api';
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
 import { tapResponse } from '@ngrx/operators';
@@ -37,8 +38,8 @@ export class ProductStore extends ComponentStore<ProductState> {
   readonly selectProductsWithMappedData = this.select(
     this.products$,
     (products) => products.map(product => {
-        let statusText = product.status.charAt(0).toUpperCase() + product.status.slice(1);
-        let statusClass = `status-${product.status}`;
+        const statusText = product.status.charAt(0).toUpperCase() + product.status.slice(1);
+        const statusClass = `status-${product.status}`;
 
         return {
             ...product,

@@ -1,311 +1,353 @@
-// src/app/store/agenda/agenda.store.ts
-import { computed, inject } from '@angular/core';
-import {
-  patchState,
-  signalStore,
-  withComputed,
-  withMethods,
-  withState,
-} from '@ngrx/signals';
-import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, catchError, of, map } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { ComponentStore } from '@ngrx/component-store';
+import { exhaustMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { tapResponse } from '@ngrx/operators';
+import { Store } from '@ngrx/store';
 
-// API Services and DTOs from @api (src/app/api/model/ and src/app/api/api/)
+// API Services and DTOs
 import {
-  AgendaService,
-  AppointmentResponseDto, // Este es el DTO que tu API devuelve para las citas
-  CreateAppointmentDto,   // Este es el DTO para crear (y actualizar, según tu AgendaService) citas
+  AppointmentResponseDto,
+  CreateAppointmentDto,
+  UpdateAppointmentDto,
   AgendaConfigResponseDto,
-  UserResponseDto,        // Asumo que se usa para los profesionales en AgendaConfigResponseDto
-} from '@orb-api/index';
+  HolidayResponseDto,
+  AvailableSlotResponseDto,
+  AppointmentSummaryResponseDto,
+} from '../../api/model/models';
+import { AgendaService } from '../../api/api/api';
 
-// Component-specific DTOs or Interfaces for FullCalendar
-import { CalendarDisplayEvent } from '@orb-components'; // Tu interfaz para eventos de FullCalendar
-
-// App Services
+// App Services and Models
 import { NotificationService, SpinnerService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
+import { CalendarDisplayEvent } from '@orb-components';
 
-// Interfaz para Salas (basada en AgendaConfigResponseDto, si es necesario un mapeo o tipo específico)
-export interface Room { // Esta interfaz es local al store si necesitas una estructura particular.
-  id: number;          // Si AgendaConfigResponseDto.rooms ya tiene la estructura deseada, puedes usarla directamente.
-  name: string;
-}
+// Global State
+import { linkToGlobalState } from '../component-state.reducer';
 
-// Interfaz para los parámetros de carga de turnos
+// Interaces
 export interface LoadAppointmentsParams {
   startDate: Date;
   endDate: Date;
   professionalId?: number;
   roomId?: number;
-  status?: string[]; // Array de estados de turno a filtrar
+  status?: string[];
 }
 
-// Estado del Store de Agenda
+export interface LoadAvailableTimesParams {
+  date: string;
+  professionalId?: number;
+}
+
+export interface LoadSummaryParams {
+  from: string;
+  to: string;
+  professionalId?: number;
+}
+
 export interface AgendaState {
-  appointments: AppointmentResponseDto[]; // Almacena los turnos originales de la API
+  appointments: AppointmentResponseDto[];
   agendaConfig: AgendaConfigResponseDto | null;
+  agendaHolydays: HolidayResponseDto[];
+  availableTimes: AvailableSlotResponseDto | null;
+  summary: AppointmentSummaryResponseDto | null;
   selectedAppointment: AppointmentResponseDto | null;
   currentDateRange: { start: Date; end: Date } | null;
-  loadingAppointments: boolean;
-  loadingConfig: boolean;
-  loadingMutation: boolean;
+  loading: boolean;
   error: HttpErrorResponse | string | null;
 }
 
+// Initial State
 export const initialAgendaState: AgendaState = {
   appointments: [],
   agendaConfig: null,
+  agendaHolydays: [],
+  availableTimes: null,
+  summary: null,
   selectedAppointment: null,
   currentDateRange: null,
-  loadingAppointments: false,
-  loadingConfig: false,
-  loadingMutation: false,
+  loading: false,
   error: null,
 };
 
-// Helper function para mapear AppointmentResponseDto (de tu API) a CalendarDisplayEvent (para FullCalendar)
+// Helper function
 function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): CalendarDisplayEvent {
-  // El AppointmentResponseDto de tu API tiene:
-  // id: number;
-  // title?: string;
-  // startDateTime: string;
-  // endDateTime: string;
-  // allDay?: boolean;
-  // color?: string;
-  // status?: string;
-  // notes?: string;
-  // professionalId?: number;
-  // clientId?: number;
-  // serviceId?: number;
-  // roomId?: number;
-
-  // El ejemplo que diste: { "id": 1, "title": "Corte de cabello", "date": "...", "status": "confirmed", ... }
-  // Usaremos los campos del AppointmentResponseDto definido en tu API.
-  // 'date' de tu ejemplo se mapea a 'startDateTime'. Es crucial que 'endDateTime' esté presente en la respuesta de la API.
-
   if (!appointment.id) {
     console.error('Appointment sin ID encontrado:', appointment);
-    // Decide cómo manejar esto: filtrar, lanzar error, o crear un ID temporal (no recomendado para datos reales)
-    // Por ahora, lo filtramos en el computed signal si es necesario, o aseguramos que la API siempre devuelva ID.
   }
   if (!appointment.start || !appointment.end) {
       console.warn('Appointment sin startDateTime o endDateTime:', appointment.title, appointment.id);
-      // Un evento de calendario necesita al menos un 'start'. Si 'end' falta, FullCalendar podría tratarlo como de duración cero o un día completo.
-      // Es mejor asegurar que la API provea ambos para eventos con duración.
   }
 
-
   return {
-    id: appointment.id!.toString(), // FullCalendar espera IDs de string. 'id' es number en el DTO.
-    title: appointment.title || 'Turno sin título', // Usa el title del DTO, o un default si es undefined/null
-    start: appointment.start, // Este es el campo correcto de tu AppointmentResponseDto
-    end: appointment.end,     // Este es el campo correcto de tu AppointmentResponseDto
+    id: appointment.id!.toString(),
+    title: appointment.title || 'Turno sin título',
+    start: appointment.start,
+    end: appointment.end,
     allDay: appointment.allDay || false,
     color: appointment.color,
-    editable: true, // Puedes hacerlo condicional basado en appointment.status u otra lógica
+    editable: true,
     extendedProps: {
-      resourceId: appointment.extendedProps?.resourceId || appointment.roomId, // Asigna un resourceId si aplica
+      resourceId: appointment.extendedProps?.resourceId || appointment.roomId,
       clientId: appointment.extendedProps?.clientId,
       serviceId: appointment.serviceId,
       notes: appointment.notes,
       status: appointment.status,
-      originalAppointment: appointment, // Guardar el objeto original es útil para modales de edición
+      originalAppointment: appointment,
       professionalId: appointment.professional?.id,
       roomId: appointment.roomId,
-      // Los campos 'name', 'description', 'reminderSentAt' de tu ejemplo no están
-      // en el AppointmentResponseDto de tu API, por lo que no se pueden mapear aquí.
     },
   };
 }
 
+@Injectable({ providedIn: 'root' })
+export class AgendaStore extends ComponentStore<AgendaState> {
+  private readonly agendaService = inject(AgendaService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly spinner = inject(SpinnerService);
 
-export const AgendaStore = signalStore(
-  { providedIn: 'root' },
-  withState(initialAgendaState),
+  constructor(private readonly globalStore: Store) {
+    super(initialAgendaState);
+    linkToGlobalState(this.state$, 'AgendaStore', this.globalStore);
+  }
 
-  withComputed(({ appointments, agendaConfig, selectedAppointment, loadingAppointments, loadingConfig, loadingMutation, error, currentDateRange }) => ({
-    calendarEvents: computed(() =>
-      appointments()
-        .filter(app => app.id != null && app.start && app.end) // Filtra turnos sin datos esenciales
-        .map(mapAppointmentToCalendarEvent)
-    ),
-    slotDurationMinutes: computed(() => agendaConfig()?.slotDurationMinutes),
-    workingDays: computed(() => agendaConfig()?.workingDays || []),
-      workStart: computed(() => agendaConfig()?.workStart || []),
-          workEnd: computed(() => agendaConfig()?.workEnd || []),
-    allowOverbooking: computed(() => agendaConfig()?.allowOverbooking || []),
-    currentSelection: computed(() => selectedAppointment()),
-    isLoading: computed(() => loadingAppointments() || loadingConfig() || loadingMutation()),
-    lastError: computed(() => error()),
-    activeDateRange: computed(() => currentDateRange()),
-  })),
+  // SELECTORS
+  readonly appointments$ = this.select((state) => state.appointments);
+  readonly agendaConfig$ = this.select((state) => state.agendaConfig);
+  readonly availableTimes$ = this.select((state) => state.availableTimes);
+  readonly summary$ = this.select((state) => state.summary);
+  readonly selectedAppointment$ = this.select((state) => state.selectedAppointment);
+  readonly currentDateRange$ = this.select((state) => state.currentDateRange);
+  readonly loading$ = this.select((state) => state.loading);
+  readonly error$ = this.select((state) => state.error);
 
-  withMethods((
-    store,
-    agendaService = inject(AgendaService),
-    spinner = inject(SpinnerService),
-    notification = inject(NotificationService)
-  ) => ({
-    loadAgendaConfig: rxMethod<void>(
-      pipe(
-        tap(() => {
-          spinner.show();
-          patchState(store, { loadingConfig: true, error: null });
-        }),
-        switchMap(() =>
-          //agendaService.agendaControllerGetAgendaConfig().pipe(
-            agendaService.agendaControllerGetConfig().pipe(
-            tap((config: AgendaConfigResponseDto) => {
-              patchState(store, { agendaConfig: config, loadingConfig: false });
-              spinner.hide();
-            }),
-            catchError((err: HttpErrorResponse) => {
-              patchState(store, { error: err, loadingConfig: false });
-              notification.showError(NotificationSeverity.Error,'Error al cargar la configuración de la agenda.');
-              spinner.hide();
-              return of(null);
-            })
+  readonly calendarEvents$ = this.select(
+    this.appointments$,
+    (appointments) => appointments
+      .filter(app => app.id != null && app.start && app.end)
+      .map(mapAppointmentToCalendarEvent)
+  );
+
+  // UPDATERS
+  private readonly setLoading = this.updater((state, loading: boolean) => ({ ...state, loading }));
+  private readonly setError = this.updater((state, error: HttpErrorResponse | string | null) => ({ ...state, error, loading: false }));
+  private readonly setAgendaConfig = this.updater((state, config: AgendaConfigResponseDto) => ({ ...state, agendaConfig: config, loading: false }));
+  private readonly setAgendaHolidays = this.updater((state, holydays: Array<HolidayResponseDto>) => ({ ...state, agendaHolydays: holydays, loading: false }));
+  private readonly setAvailableTimes = this.updater((state, availableTimes: AvailableSlotResponseDto) => ({ ...state, availableTimes, loading: false }));
+  private readonly setSummary = this.updater((state, summary: AppointmentSummaryResponseDto) => ({ ...state, summary, loading: false }));
+  private readonly setAppointments = this.updater((state, appointments: AppointmentResponseDto[]) => ({ ...state, appointments, loading: false }));
+  private readonly addAppointment = this.updater((state, appointment: AppointmentResponseDto) => ({ ...state, appointments: [...state.appointments, appointment], loading: false }));
+  private readonly updateAppointmentState = this.updater((state, appointment: AppointmentResponseDto) => ({
+    ...state,
+    appointments: state.appointments.map(a => a.id === appointment.id ? appointment : a),
+    loading: false
+  }));
+  private readonly removeAppointment = this.updater((state, appointmentId: number) => ({
+    ...state,
+    appointments: state.appointments.filter((a:any) => a.id !== appointmentId),
+    loading: false
+  }));
+
+  readonly setSelectedAppointment = this.updater((state, appointment: AppointmentResponseDto | null) => ({ ...state, selectedAppointment: appointment }));
+  readonly setCurrentDateRange = this.updater((state, dateRange: { start: Date; end: Date } | null) => ({ ...state, currentDateRange: dateRange }));
+
+
+  // EFFECTS
+
+  readonly loadAgendaConfig = this.effect<number>((professionalId$) =>
+    professionalId$.pipe(
+      tap(() => this.setLoading(true)),
+      exhaustMap((professionalId) =>
+        this.agendaService.agendaControllerGetConfig(professionalId).pipe(
+          tapResponse(
+            (config : AgendaConfigResponseDto) => {
+                  this.setAgendaConfig(config);              
+            },
+            (error: any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar la configuración de la agenda.');
+            }
           )
         )
       )
-    ),
-
-    loadAppointments: rxMethod<LoadAppointmentsParams>(
-      pipe(
-        tap((params) => {
-          spinner.show();
-          patchState(store, { loadingAppointments: true, error: null, currentDateRange: { start: params.startDate, end: params.endDate } });
-        }),
-        switchMap((params: LoadAppointmentsParams) =>
-         // agendaService.agendaControllerFindAllAppointments( // Este método usa los DTOs de @api
-         agendaService.agendaControllerGetAppointments(
-            params.startDate.toISOString(),
-            params.endDate.toISOString(),
-            params.status?.join(',')
-          ).pipe(
-            tap((loadedAppointments: AppointmentResponseDto[]) => { // Recibe AppointmentResponseDto[]
-              patchState(store, { appointments: loadedAppointments, loadingAppointments: false });
-              spinner.hide();
-            }),
-            catchError((err: HttpErrorResponse) => {
-              patchState(store, { error: err, loadingAppointments: false, appointments: [] });
-              notification.showError(NotificationSeverity.Error,'Error al cargar los turnos.');
-              spinner.hide();
-              return of([]);
-            })
+    )
+  );
+  
+  readonly loadAgendaHolidays = this.effect<number>((professionalId$) =>
+    professionalId$.pipe(
+      tap(() => this.setLoading(true)),
+      exhaustMap((professionalId) =>
+        this.agendaService.agendaControllerGetHolidays(professionalId).pipe(
+          tapResponse(
+            (holydays : Array<HolidayResponseDto>) => {
+                  this.setAgendaHolidays(holydays);              
+            },
+            (error: any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar los feriados de la agenda.');
+            }
           )
         )
       )
-    ),
+    )
+  );
 
-
-
-    createAppointment: rxMethod<CreateAppointmentDto>( // Espera CreateAppointmentDto de @api
-      pipe(
-        tap(() => {
-          spinner.show();
-          patchState(store, { loadingMutation: true, error: null });
-        }),
-        switchMap((createDto: CreateAppointmentDto) =>
-        agendaService.agendaControllerCreate(createDto).pipe(
-            tap((newAppointment: AppointmentResponseDto) => { // Recibe AppointmentResponseDto
-              if (store.currentDateRange()) {
-                (store as any).loadAppointments(store.currentDateRange() ); // Llama al método del store
-              } else {
-                 patchState(store, { loadingMutation: false });
-                 spinner.hide();
-              }
-              notification.showSuccess(NotificationSeverity.Success,'Turno creado con éxito.');
-            }),
-            catchError((err: HttpErrorResponse) => {
-              patchState(store, { error: err, loadingMutation: false });
-              notification.showError(NotificationSeverity.Error,'Error al crear el turno.');
-              spinner.hide();
-              return of(null);
-            })
+  readonly loadAvailableTimes = this.effect<LoadAvailableTimesParams>((params$) =>
+    params$.pipe(
+      tap(() => this.setLoading(true)),
+      exhaustMap((params) =>
+        this.agendaService.agendaControllerGetAvailable(params.date, params.professionalId).pipe(
+          tapResponse(
+            (availableTimes: AvailableSlotResponseDto) => {
+              this.setAvailableTimes(availableTimes);
+            },
+            (error: any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar los horarios disponibles.');
+            }
           )
         )
       )
-    ),
+    )
+  );
 
-    // API usa CreateAppointmentDto para actualizar
-    updateAppointment: rxMethod<{ id: number; dto: CreateAppointmentDto }>( // Espera CreateAppointmentDto de @api para 'dto'
-      pipe(
-        tap(() => {
-          spinner.show();
-          patchState(store, { loadingMutation: true, error: null });
-        }),
-        switchMap(({ id, dto }) =>
-          agendaService.agendaControllerUpdate(id, dto).pipe( // Usa DTO de @api
-            tap((updatedAppointment: AppointmentResponseDto) => { // Recibe AppointmentResponseDto
-              if (store.currentDateRange()) {
-                (store as any).loadAppointments(store.currentDateRange() ); // Llama al método del store
-              } else {
-                patchState(store, { loadingMutation: false });
-                spinner.hide();
-              }
-              if (Number(store.selectedAppointment()?.id) === id) {
-                patchState(store, { selectedAppointment: updatedAppointment });
-              }
-              notification.showSuccess(NotificationSeverity.Success,'Turno actualizado con éxito.');
-            }),
-            catchError((err: HttpErrorResponse) => {
-              patchState(store, { error: err, loadingMutation: false });
-              notification.showError(NotificationSeverity.Error,'Error al actualizar el turno.');
-              spinner.hide();
-              return of(null);
-            })
+  readonly loadSummary = this.effect<LoadSummaryParams>((params$) =>
+    params$.pipe(
+      tap(() => this.setLoading(true)),
+      exhaustMap((params) =>
+        this.agendaService.agendaControllerGetSummary(params.from, params.to, params.professionalId).pipe(
+          tapResponse(
+            (summary: AppointmentSummaryResponseDto) => {
+              this.setSummary(summary);
+            },
+            (error: any) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar el resumen de la agenda.');
+            }
           )
         )
       )
-    ),
+    )
+  );
 
-    deleteAppointment: rxMethod<number>(
-      pipe(
-        tap(() => {
-          spinner.show();
-          patchState(store, { loadingMutation: true, error: null });
-        }),
-        switchMap((id: number) =>
-          agendaService.agendaControllerDeleteAppointment(id).pipe(
-            tap(() => {
-              if (store.currentDateRange()) {
-                (store as any).loadAppointments(store.currentDateRange() ); // Llama al método del store
-              } else {
-                patchState(store, { loadingMutation: false });
-                spinner.hide();
-              }
-              if (Number(store.selectedAppointment()?.id) === id) {
-                patchState(store, { selectedAppointment: null });
-              }
-              notification.showSuccess(NotificationSeverity.Success,'Turno eliminado con éxito.');
-            }),
-            catchError((err: HttpErrorResponse) => {
-              patchState(store, { error: err, loadingMutation: false });
-              notification.showError(NotificationSeverity.Error,'Error al eliminar el turno.');
-              spinner.hide();
-              return of(null);
-            })
+  readonly loadAppointments = this.effect<LoadAppointmentsParams>((params$) =>
+    params$.pipe(
+      tap((params) => {
+        this.setLoading(true);
+        this.spinner.show();
+        this.setCurrentDateRange({ start: params.startDate, end: params.endDate });
+      }),
+      exhaustMap((params) =>
+        this.agendaService.agendaControllerGetAppointments(
+          undefined, // date 
+          params.startDate.toISOString(), // from
+          params.endDate.toISOString(), // to
+          params.status?.[0] as any, // status - cast temporal
+          params.professionalId // professionalId
+        ).pipe(
+          tapResponse(
+            (appointments: AppointmentResponseDto[]) => {
+              this.setAppointments(appointments);
+              this.spinner.hide();
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al cargar los turnos.');
+              this.spinner.hide();
+            }
           )
         )
       )
-    ),
+    )
+  );
 
-    selectAppointment(appointment: AppointmentResponseDto | null): void {
-      patchState(store, { selectedAppointment: appointment });
-    },
-    clearSelectedAppointment(): void {
-      patchState(store, { selectedAppointment: null });
-    },
-    setCurrentDateRange(startDate: Date, endDate: Date): void {
-        patchState(store, { currentDateRange: { start: startDate, end: endDate } });
-    },
-    clearError(): void {
-      patchState(store, { error: null });
-    }
-  }))
-  // import { withDevtools } from '@ngrx/signals/devtools';
-  // export const AgendaStore = signalStore( /* ... */, withDevtools({ name: 'Agenda Store' }) );
-);
+  readonly createAppointment = this.effect<CreateAppointmentDto>((createDto$) =>
+    createDto$.pipe(
+      tap(() => {
+        this.setLoading(true);
+        this.spinner.show();
+      }),
+      exhaustMap((createDto) =>
+        this.agendaService.agendaControllerCreate(createDto).pipe(
+          tapResponse(
+            (newAppointment: AppointmentResponseDto) => {
+              this.addAppointment(newAppointment);
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno creado con éxito.');
+              this.spinner.hide();
+              // Optionally reload all appointments for the current range
+              const range = this.get().currentDateRange;
+              if (range) {
+                this.loadAppointments({ startDate: range.start, endDate: range.end });
+              }
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al crear el turno.');
+              this.spinner.hide();
+            }
+          )
+        )
+      )
+    )
+  );
+
+  readonly updateAppointment = this.effect<{ id: string; dto: UpdateAppointmentDto }>((params$) =>
+    params$.pipe(
+      tap(() => {
+        this.setLoading(true);
+        this.spinner.show();
+      }),
+      exhaustMap(({ id, dto }) =>
+        this.agendaService.agendaControllerUpdate(Number(id), dto).pipe(
+          tapResponse(
+            (updatedAppointment: AppointmentResponseDto) => {
+              this.updateAppointmentState(updatedAppointment);
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno actualizado con éxito.');
+              this.spinner.hide();
+               // Optionally reload all appointments for the current range
+               const range = this.get().currentDateRange;
+               if (range) {
+                 this.loadAppointments({ startDate: range.start, endDate: range.end });
+               }
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al actualizar el turno.');
+              this.spinner.hide();
+            }
+          )
+        )
+      )
+    )
+  );
+
+  readonly deleteAppointment = this.effect<number>((appointmentId$) =>
+    appointmentId$.pipe(
+      tap(() => {
+        this.setLoading(true);
+        this.spinner.show();
+      }),
+      exhaustMap((id) =>
+        this.agendaService.agendaControllerDeleteAppointment(id).pipe(
+          tapResponse(
+            () => {
+              this.removeAppointment(id);
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno eliminado con éxito.');
+              this.spinner.hide();
+               // Optionally reload all appointments for the current range
+               const range = this.get().currentDateRange;
+               if (range) {
+                 this.loadAppointments({ startDate: range.start, endDate: range.end });
+               }
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al eliminar el turno.');
+              this.spinner.hide();
+            }
+          )
+        )
+      )
+    )
+  );
+}

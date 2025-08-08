@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { OrbTextInputComponent, OrbButtonComponent, OrbCardComponent } from '@orb-components';
 import { AuthStore } from '@orb-stores';
-import { LoginDto } from '@orb-api/index';
+import { LoginDto } from '../../api/model/models';
 import { MessageModule } from 'primeng/message';
 
 @Component({

@@ -10,11 +10,11 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import {
-  ClientsService,
   ClientResponseDto,
   CreateClientDto,
   UpdateClientDto,
-} from '@orb-api/index';
+} from '../../api/model/models';
+import { ClientsService } from '../../api/api/api';
 import { DateFormatService } from 'src/app/services/core/utils/date-format.service';
 
 

@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import { AuthService, LoginDto, UserResponseDto, UsersService, AdminUpdateUserDto, ProfileResponseDto } from '@orb-api/index';
+import { LoginDto, UserResponseDto, AdminUpdateUserDto, ProfileResponseDto } from '../../api/model/models';
+import { AuthService, UsersService } from '../../api/api/api';
 import { LocalStorageService, NotificationService } from '@orb-services';
 import { exhaustMap, Observable, of, tap, withLatestFrom } from 'rxjs';
 import { linkToGlobalState } from '../component-state.reducer';
@@ -74,12 +75,23 @@ export class AuthStore extends ComponentStore<AuthState> {
       exhaustMap((credentials) =>
         this.authService.authControllerLogin(credentials).pipe(
           tapResponse(
-            (response) => {
-              const token = response.access_token; 
-              this.storage.setToken(token);
-              this.loadUserProfile(token);
+            (response: any) => {
+              console.log(response);
+              // Extract the access_token from the response object
+              const access_token = response?.access_token;
+              if (access_token) {
+                this.storage.setToken(access_token);
+                this.loadUserProfile(access_token);
+                this.notificationService.show(NotificationSeverity.Success, 'Inicio de sesión exitoso');
+              } else {
+                this.setError('No se pudo obtener el token de acceso.');
+              }
             },
-            (error: any) => this.setError(error?.message || 'El email o la contraseña son incorrectos.')
+            (error: any) => {
+              const errorMessage = error?.error?.message || 'El email o la contraseña son incorrectos.';
+              this.setError(errorMessage);
+              this.notificationService.show(NotificationSeverity.Error, errorMessage);
+            }
           )
         )
       )
@@ -96,7 +108,9 @@ export class AuthStore extends ComponentStore<AuthState> {
               this.router.navigate(['/']);
             },
             (error: any) => {
-              this.setError(error?.message || 'No se pudo cargar el perfil');
+              const errorMessage = error?.error?.message || 'No se pudo cargar el perfil';
+              this.setError(errorMessage);
+              this.notificationService.show(NotificationSeverity.Error, errorMessage);
               this.logout();
             }
           )
