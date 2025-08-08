@@ -1,8 +1,141 @@
 
-<div class="p-grid">
-  <div class="p-col-12">
-    <p-card title="Monthly Appointment Summary">
-      <p-chart type="line" [data]="data" [options]="options"></p-chart>
-    </p-card>
+<div class="beauty-dashboard">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-card beauty-card">
+      <div class="welcome-content">
+        <h1 class="welcome-title">¡Bienvenido de vuelta!</h1>
+        <p class="welcome-subtitle">Gestiona tu salón de belleza con elegancia</p>
+      </div>
+      <div class="welcome-decoration">
+        <div class="gradient-orb"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card beauty-card stat-card--appointments">
+      <div class="stat-icon">
+        <i class="pi pi-calendar"></i>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">24</h3>
+        <p class="stat-label">Citas Hoy</p>
+      </div>
+    </div>
+    
+    <div class="stat-card beauty-card stat-card--clients">
+      <div class="stat-icon">
+        <i class="pi pi-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">156</h3>
+        <p class="stat-label">Clientes Totales</p>
+      </div>
+    </div>
+    
+    <div class="stat-card beauty-card stat-card--revenue">
+      <div class="stat-icon">
+        <i class="pi pi-dollar"></i>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">$2,450</h3>
+        <p class="stat-label">Ingresos del Mes</p>
+      </div>
+    </div>
+    
+    <div class="stat-card beauty-card stat-card--services">
+      <div class="stat-icon">
+        <i class="pi pi-star"></i>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-number">12</h3>
+        <p class="stat-label">Servicios Activos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="dashboard-content">
+    <!-- Chart Section -->
+    <div class="chart-section beauty-card">
+      <div class="chart-header">
+        <h3>Resumen Mensual de Citas</h3>
+        <div class="chart-filters">
+          <button class="filter-btn active">Este Mes</button>
+          <button class="filter-btn">Último Mes</button>
+          <button class="filter-btn">Este Año</button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <p-chart type="line" [data]="data" [options]="options"></p-chart>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions beauty-card">
+      <h3>Acciones Rápidas</h3>
+      <div class="actions-grid">
+        <button class="action-btn beauty-button beauty-button--beauty">
+          <i class="pi pi-plus"></i>
+          Nueva Cita
+        </button>
+        <button class="action-btn beauty-button beauty-button--wellness">
+          <i class="pi pi-user-plus"></i>
+          Nuevo Cliente
+        </button>
+        <button class="action-btn beauty-button beauty-button--soft">
+          <i class="pi pi-calendar-plus"></i>
+          Ver Agenda
+        </button>
+        <button class="action-btn beauty-button">
+          <i class="pi pi-chart-line"></i>
+          Reportes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="recent-activity beauty-card">
+    <h3>Actividad Reciente</h3>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-avatar beauty-avatar">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">
+            <strong>María González</strong> reservó una cita para <strong>Corte y Peinado</strong>
+          </p>
+          <span class="activity-time">Hace 10 minutos</span>
+        </div>
+      </div>
+      
+      <div class="activity-item">
+        <div class="activity-avatar beauty-avatar">
+          <i class="pi pi-calendar"></i>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">
+            Cita con <strong>Ana Martín</strong> completada - <strong>Tratamiento Facial</strong>
+          </p>
+          <span class="activity-time">Hace 1 hora</span>
+        </div>
+      </div>
+      
+      <div class="activity-item">
+        <div class="activity-avatar beauty-avatar">
+          <i class="pi pi-star"></i>
+        </div>
+        <div class="activity-content">
+          <p class="activity-text">
+            <strong>Cliente VIP</strong> - Laura Pérez cumple 1 año con nosotros
+          </p>
+          <span class="activity-time">Hace 2 horas</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

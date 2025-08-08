@@ -1,37 +1,243 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
 :host {
   display: block;
-  padding: 1rem;
+  padding: var(--space-6, 1.5rem);
 }
 
+/* Enhanced table expansion styles */
 .user-details-expansion {
-  padding: 1rem 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  padding: var(--space-6, 1.5rem);
+  background: linear-gradient(135deg, 
+    rgba(variables.$beauty-cream, 0.3) 0%, 
+    rgba(variables.$beauty-lavender, 0.2) 100%
+  );
+  border-radius: var(--radius-lg, 0.75rem);
+  margin: var(--space-4, 1rem) 0;
+}
 
-  .detail-section {
-    h3 {
-      margin-top: 0;
-      margin-bottom: 0.8rem;
-      color: var(--p-text-color);
-      font-size: 1.1rem;
-    }
-
-    .roles-container,
-    .permissions-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+.detail-section {
+  margin-bottom: var(--space-6, 1.5rem);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  h3 {
+    color: var(--text-primary);
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: var(--font-semibold, 600);
+    margin-bottom: var(--space-4, 1rem);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-full, 9999px);
     }
   }
+  
+  h4 {
+    color: var(--beauty-rose);
+    font-size: var(--text-base, 1rem);
+    font-weight: var(--font-medium, 500);
+    margin-bottom: var(--space-3, 0.75rem);
+  }
+}
 
-  .role-permissions {
-    margin-top: 1rem;
-    h4 {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      color: var(--p-text-color-secondary);
-      font-size: 1rem;
+.roles-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.5rem);
+  
+  ::ng-deep p-tag {
+    .p-tag {
+      background: var(--gradient-wellness) !important;
+      border: none !important;
+      color: white !important;
+      padding: var(--space-2, 0.5rem) var(--space-4, 1rem) !important;
+      border-radius: var(--radius-full, 9999px) !important;
+      font-weight: var(--font-medium, 500) !important;
+      font-size: var(--text-sm, 0.875rem) !important;
+      box-shadow: var(--shadow-sm) !important;
     }
+  }
+}
+
+.role-permissions {
+  margin-bottom: var(--space-4, 1rem);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.permissions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2, 0.5rem);
+  
+  ::ng-deep p-chip {
+    .p-chip {
+      background: rgba(variables.$beauty-rose, 0.1) !important;
+      color: var(--beauty-rose) !important;
+      border: 1px solid rgba(variables.$beauty-rose, 0.2) !important;
+      padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem) !important;
+      border-radius: var(--radius-md, 0.5rem) !important;
+      font-size: var(--text-xs, 0.75rem) !important;
+      font-weight: var(--font-medium, 500) !important;
+      text-transform: capitalize !important;
+    }
+  }
+}
+
+/* Enhanced card styling */
+::ng-deep orb-card {
+  .card-content {
+    @include mixins.beauty-card(lg);
+  }
+}
+
+/* Enhanced table styling */
+::ng-deep orb-table {
+  .p-datatable {
+    .p-datatable-header {
+      background: linear-gradient(135deg, 
+        variables.$gray-50 0%, 
+        rgba(variables.$beauty-cream, 0.5) 100%
+      ) !important;
+      border: none !important;
+      padding: var(--space-5, 1.25rem) !important;
+      border-radius: var(--radius-lg, 0.75rem) var(--radius-lg, 0.75rem) 0 0 !important;
+    }
+    
+    .p-datatable-thead > tr > th {
+      background: transparent !important;
+      border: none !important;
+      border-bottom: 2px solid var(--border-light) !important;
+      color: var(--text-primary) !important;
+      font-weight: var(--font-semibold, 600) !important;
+      padding: var(--space-4, 1rem) !important;
+      font-size: var(--text-sm, 0.875rem) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.025em !important;
+    }
+    
+    .p-datatable-tbody > tr {
+      &:hover {
+        background: rgba(variables.$beauty-lavender, 0.1) !important;
+      }
+      
+      > td {
+        border: none !important;
+        border-bottom: 1px solid var(--border-light) !important;
+        padding: var(--space-4, 1rem) !important;
+        color: var(--text-primary) !important;
+        
+        &:first-child {
+          padding-left: var(--space-5, 1.25rem) !important;
+        }
+        
+        &:last-child {
+          padding-right: var(--space-5, 1.25rem) !important;
+        }
+      }
+    }
+    
+    .p-datatable-row-expansion {
+      background: rgba(variables.$beauty-cream, 0.2) !important;
+      border: none !important;
+    }
+  }
+  
+  // Enhanced action buttons
+  .action-button {
+    @include mixins.beauty-button(soft);
+    padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem) !important;
+    font-size: var(--text-xs, 0.75rem) !important;
+    
+    i {
+      font-size: 12px !important;
+    }
+  }
+}
+
+/* Enhanced dialog styling */
+::ng-deep orb-dialog {
+  .p-dialog {
+    border-radius: var(--radius-xl, 1rem) !important;
+    box-shadow: var(--shadow-xl) !important;
+    overflow: hidden !important;
+    
+    .p-dialog-header {
+      background: var(--gradient-primary) !important;
+      color: white !important;
+      border: none !important;
+      padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) !important;
+      
+      .p-dialog-title {
+        color: white !important;
+        font-weight: var(--font-semibold, 600) !important;
+        font-size: var(--text-xl, 1.25rem) !important;
+      }
+      
+      .p-dialog-header-close {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: var(--radius-md, 0.5rem) !important;
+        width: 32px !important;
+        height: 32px !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.3) !important;
+        }
+      }
+    }
+    
+    .p-dialog-content {
+      background: var(--background-primary) !important;
+      border: none !important;
+      padding: var(--space-6, 1.5rem) !important;
+    }
+  }
+}
+
+/* Error message styling */
+::ng-deep p-message {
+  .p-message {
+    border-radius: var(--radius-md, 0.5rem) !important;
+    margin-bottom: var(--space-4, 1rem) !important;
+    
+    &.p-message-error {
+      background: rgba(variables.$error, 0.1) !important;
+      border: 1px solid rgba(variables.$error, 0.2) !important;
+      color: var(--error) !important;
+    }
+  }
+}
+
+/* Mobile responsiveness */
+@include mixins.mobile {
+  :host {
+    padding: var(--space-4, 1rem);
+  }
+  
+  .user-details-expansion {
+    padding: var(--space-4, 1rem);
+  }
+  
+  .detail-section {
+    margin-bottom: var(--space-4, 1rem);
+  }
+  
+  .roles-container,
+  .permissions-container {
+    gap: var(--space-1, 0.25rem);
   }
 }
