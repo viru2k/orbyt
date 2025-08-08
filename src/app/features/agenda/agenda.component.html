@@ -1,0 +1,27 @@
+<orb-card>
+  <div class="flex justify-content-between align-items-center mb-4">
+    <h2>Gestión de Citas</h2>
+    <orb-button label="Nueva Cita" icon="pi pi-plus" (onClick)="openNewAppointmentForm()"></orb-button>
+  </div>
+
+  <app-agenda-list
+    [appointments]="(agendaStore.appointments$ | async) || []"
+    [isLoading]="(agendaStore.loading$ | async) || false"
+    (edit)="editAppointment($event)"
+    (delete)="deleteAppointment($event)"
+  ></app-agenda-list>
+
+  <orb-dialog
+    [(visible)]="displayAgendaForm"
+    [header]="selectedAppointment ? 'Editar Cita' : 'Nueva Cita'"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    (onHide)="onFormClose()"
+  >
+    <app-agenda-form
+      [appointment]="selectedAppointment"
+      (save)="onFormClose()"
+      (cancel)="onFormClose()"
+    ></app-agenda-form>
+  </orb-dialog>
+</orb-card>

@@ -1,0 +1,78 @@
+<form [formGroup]="agendaForm" (ngSubmit)="onSubmit()">
+  <div class="p-fluid grid">
+    <div class="col-12">
+      <orb-form-field label="Título">
+        <orb-text-input formControlName="title"></orb-text-input>
+      </orb-form-field>
+    </div>
+    <div class="col-12">
+      <orb-form-field label="Notas">
+        <orb-text-area formControlName="description" [rows]="3"></orb-text-area>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Fecha">
+        <orb-datepicker formControlName="date" [showIcon]="true"></orb-datepicker>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-3">
+      <orb-form-field label="Hora Inicio">
+        <orb-text-input formControlName="startTime" type="time"></orb-text-input>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-3">
+      <orb-form-field label="Hora Fin" >
+        <orb-text-input formControlName="endTime" type="time"></orb-text-input>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Cliente" >
+        <orb-select
+          formControlName="clientId"
+          [options]="(clients$ | async) || []"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Seleccione un cliente"
+        ></orb-select>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Profesional" >
+        <orb-select
+          formControlName="professionalId"
+          [options]="(professionals$ | async) || []"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Seleccione un profesional"
+        ></orb-select>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Servicio" >
+        <orb-select
+          formControlName="serviceId"
+          [options]="(services$ | async) || []"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Seleccione un servicio"
+        ></orb-select>
+      </orb-form-field>
+    </div>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Sala" >
+        <orb-select
+          formControlName="roomId"
+          [options]="(rooms$ | async) || []"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Seleccione una sala"
+        ></orb-select>
+      </orb-form-field>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end gap-2 mt-4">
+    <orb-button label="Cancelar" styleClass="p-button-secondary" (onClick)="onCancel()"></orb-button>
+    <orb-button label="Guardar" type="submit" [loading]="(agendaStore.loading$ | async) || false"></orb-button>
+  </div>
+</form>
