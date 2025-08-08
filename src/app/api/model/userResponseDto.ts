@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { RoleResponseDto } from './roleResponseDto';
 
 
 export interface UserResponseDto { 
@@ -17,5 +18,9 @@ export interface UserResponseDto {
     active: boolean;
     createdAt: string;
     updatedAt: string;
+    /**
+     * Roles asignados al usuario
+     */
+    roles: Array<RoleResponseDto>;
 }
 

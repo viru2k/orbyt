@@ -948,15 +948,18 @@ export class AgendaService extends BaseService {
 
     /**
      * Actualizar configuración de agenda del profesional actual (o especificado)
+     * @param professionalId 
      * @param updateAgendaConfigDto 
-     * @param professionalId ID del profesional a configurar (admin)
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
-    public agendaControllerUpdateConfig(updateAgendaConfigDto: UpdateAgendaConfigDto, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
+    public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
+    public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
+    public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (professionalId === null || professionalId === undefined) {
+            throw new Error('Required parameter professionalId was null or undefined when calling agendaControllerUpdateConfig.');
+        }
         if (updateAgendaConfigDto === null || updateAgendaConfigDto === undefined) {
             throw new Error('Required parameter updateAgendaConfigDto was null or undefined when calling agendaControllerUpdateConfig.');
         }

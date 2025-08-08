@@ -14,5 +14,13 @@ export interface BookAppointmentDto {
     time: string;
     title: string;
     description?: string;
+    /**
+     * ID del profesional para quien se reserva el turno (opcional, si no es el usuario logueado)
+     */
+    professionalId?: number;
+    /**
+     * ID del cliente para quien se reserva el turno (opcional)
+     */
+    clientId?: number;
 }
 

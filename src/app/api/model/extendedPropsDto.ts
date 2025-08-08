@@ -24,6 +24,18 @@ export interface ExtendedPropsDto {
      * ID del cliente
      */
     clientId?: number;
+    /**
+     * ID del profesional asociado al turno
+     */
+    professionalId?: number;
+    /**
+     * ID del servicio asociado al turno
+     */
+    serviceId?: number;
+    /**
+     * ID de la sala asociada al turno
+     */
+    roomId?: number;
 }
 export namespace ExtendedPropsDto {
     export type OriginalStatusEnum = 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';

@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { RoleDto } from './roleDto';
 
 
 export interface AdminUpdateUserDto { 
@@ -19,16 +20,8 @@ export interface AdminUpdateUserDto {
      */
     isActive?: boolean;
     /**
-     * Permiso para gestionar la agenda
+     * Array de objetos de rol a asignar al usuario
      */
-    canManageAgenda?: boolean;
-    /**
-     * Permiso para gestionar clientes
-     */
-    canManageClients?: boolean;
-    /**
-     * Permiso para gestionar productos
-     */
-    canManageProducts?: boolean;
+    roles?: Array<RoleDto>;
 }
 

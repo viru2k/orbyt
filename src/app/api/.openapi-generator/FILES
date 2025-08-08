@@ -1,4 +1,5 @@
 .gitignore
+.openapi-generator-ignore
 README.md
 api.base.service.ts
 api.module.ts
@@ -8,7 +9,9 @@ api/app.service.ts
 api/auth.service.ts
 api/clients.service.ts
 api/notifications.service.ts
+api/permissions.service.ts
 api/products.service.ts
+api/roles.service.ts
 api/stock.service.ts
 api/subscription.service.ts
 api/subscriptionPlan.service.ts
@@ -32,6 +35,7 @@ model/createClientDto.ts
 model/createHolidayDto.ts
 model/createNotificationDto.ts
 model/createProductDto.ts
+model/createRoleDto.ts
 model/createStockMovementDto.ts
 model/createSubUserDto.ts
 model/createSubscriptionPlanDto.ts
@@ -43,11 +47,13 @@ model/loginDto.ts
 model/models.ts
 model/notificationResponseDto.ts
 model/notificationSummaryResponseDto.ts
+model/permissionResponseDto.ts
 model/productOwnerResponseDto.ts
 model/productResponseDto.ts
 model/profileResponseDto.ts
 model/registerUserDto.ts
 model/roleDto.ts
+model/roleResponseDto.ts
 model/slotDetailDto.ts
 model/stockMovementResponseDto.ts
 model/stockSummaryResponseDto.ts
@@ -58,6 +64,7 @@ model/updateAgendaConfigDto.ts
 model/updateAppointmentDto.ts
 model/updateClientDto.ts
 model/updateProductDto.ts
+model/updateRoleDto.ts
 model/userResponseDto.ts
 param.ts
 variables.ts
