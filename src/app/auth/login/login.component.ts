@@ -6,6 +6,9 @@ import { OrbTextInputComponent, OrbButtonComponent, OrbCardComponent } from '@or
 import { AuthStore } from '@orb-stores';
 import { LoginDto } from '../../api/model/models';
 import { MessageModule } from 'primeng/message';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'orb-login',
@@ -16,7 +19,10 @@ import { MessageModule } from 'primeng/message';
     OrbTextInputComponent,
     OrbButtonComponent,
     OrbCardComponent,
-    MessageModule
+    MessageModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],

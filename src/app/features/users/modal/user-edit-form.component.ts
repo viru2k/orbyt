@@ -41,6 +41,21 @@ export class UserEditFormComponent implements OnInit {
   availableRoles$ = this.usersStore.roles$;
   loading$ = this.usersStore.loading$;
 
+  footerButtons: FormButtonAction[] = [
+    {
+      label: 'Cancelar',
+      action: 'cancel',
+      severity: 'secondary',
+      styleType: 'text'
+    },
+    {
+      label: 'Guardar',
+      action: 'save',
+      severity: 'success',
+      buttonType: 'submit'
+    }
+  ];
+
 
   ngOnInit(): void {
     this.initForm();

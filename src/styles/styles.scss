@@ -3,8 +3,9 @@
 @use './mixins';
 @use './themes';
 
-/* Import Google Fonts for Beauty Theme */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800&display=swap');
+/* Import Google Fonts for Beauty Theme - More elegant fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
 /* Global Reset and Beauty Theme Styles */
 * {
@@ -195,6 +196,7 @@ body {
 
 /* Enhanced Typography */
 h1, h2, h3, h4, h5, h6 {
+  font-family: variables.$font-family-display; // Use elegant display font for headings
   font-weight: variables.$font-semibold;
   line-height: variables.$leading-tight;
   color: variables.$text-primary;
@@ -265,6 +267,262 @@ button, input, select, textarea, a {
   
   &:hover {
     background: variables.$gray-400;
+  }
+}
+
+/* Override PrimeNG ugly button styles globally */
+::ng-deep {
+  /* Primary buttons - replace green with beauty gradients */
+  .p-button {
+    font-family: variables.$font-family !important;
+    font-weight: variables.$font-medium !important;
+    border-radius: var(--radius-md, 0.5rem) !important;
+    padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem) !important;
+    transition: var(--transition-fast) !important;
+    border: none !important;
+    text-transform: none !important;
+    letter-spacing: 0.025em !important;
+    
+    &:not(.p-button-text):not(.p-button-outlined) {
+      background: var(--gradient-primary) !important;
+      color: white !important;
+      box-shadow: var(--shadow-sm) !important;
+      
+      &:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: var(--shadow-lg) !important;
+        background: var(--gradient-primary) !important;
+      }
+      
+      &:active {
+        transform: translateY(0) !important;
+      }
+    }
+    
+    /* Success buttons (like "Guardar") */
+    &.p-button-success {
+      background: var(--gradient-wellness) !important;
+      
+      &:hover {
+        background: var(--gradient-wellness) !important;
+        box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.25) !important;
+      }
+    }
+    
+    /* Secondary/Cancel buttons */
+    &.p-button-secondary,
+    &.p-button-text {
+      background: transparent !important;
+      color: var(--text-secondary) !important;
+      border: 1px solid var(--border-color) !important;
+      
+      &:hover {
+        background: var(--gray-50) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--gray-300) !important;
+      }
+    }
+    
+    /* Danger/Delete buttons */
+    &.p-button-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+      
+      &:hover {
+        box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.25) !important;
+      }
+    }
+    
+    /* Beauty themed buttons */
+    &.beauty-themed {
+      background: var(--gradient-beauty) !important;
+      
+      &:hover {
+        box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.25) !important;
+      }
+    }
+    
+    /* Soft themed buttons */
+    &.soft-themed {
+      background: var(--gradient-soft) !important;
+      color: var(--gray-800) !important;
+      
+      &:hover {
+        box-shadow: 0 10px 25px -5px rgba(196, 181, 253, 0.25) !important;
+      }
+    }
+  }
+  
+  /* Fix dialog buttons specifically */
+  .p-dialog-footer {
+    .p-button {
+      margin: 0 var(--space-2, 0.5rem) !important;
+      
+      &:first-child {
+        margin-left: 0 !important;
+      }
+      
+      &:last-child {
+        margin-right: 0 !important;
+      }
+    }
+  }
+  
+  /* Input styling to match beauty theme */
+  .p-inputtext,
+  .p-dropdown,
+  .p-multiselect,
+  .p-inputtextarea {
+    font-family: variables.$font-family !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md, 0.5rem) !important;
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+    transition: var(--transition-fast) !important;
+    
+    &:focus {
+      border-color: var(--primary-blue) !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    }
+  }
+  
+  /* Enhanced table styling */
+  .p-datatable {
+    font-family: variables.$font-family !important;
+    border-radius: var(--radius-lg, 0.75rem) !important;
+    overflow: hidden !important;
+    box-shadow: var(--shadow-md) !important;
+    
+    .p-datatable-thead > tr > th {
+      background: linear-gradient(135deg, 
+        variables.$gray-50 0%, 
+        rgba(variables.$beauty-cream, 0.5) 100%
+      ) !important;
+      font-family: variables.$font-family !important;
+      font-weight: variables.$font-semibold !important;
+      color: var(--text-primary) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.025em !important;
+      font-size: var(--text-sm, 0.875rem) !important;
+    }
+    
+    .p-datatable-tbody > tr {
+      &:hover {
+        background: rgba(variables.$beauty-lavender, 0.05) !important;
+      }
+    }
+  }
+  
+  /* Card styling */
+  .p-card {
+    border-radius: var(--radius-lg, 0.75rem) !important;
+    box-shadow: var(--shadow-md) !important;
+    border: none !important;
+    
+    .p-card-title {
+      font-family: variables.$font-family-display !important;
+      color: var(--text-primary) !important;
+    }
+    
+    .p-card-content {
+      color: var(--text-secondary) !important;
+    }
+  }
+  
+  /* Dropdown and select styling */
+  .p-dropdown-panel,
+  .p-multiselect-panel {
+    border-radius: var(--radius-md, 0.5rem) !important;
+    box-shadow: var(--shadow-lg) !important;
+    border: 1px solid var(--border-light) !important;
+    
+    .p-dropdown-items .p-dropdown-item {
+      &:hover {
+        background: rgba(variables.$beauty-lavender, 0.1) !important;
+        color: var(--text-primary) !important;
+      }
+      
+      &.p-highlight {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+      }
+    }
+  }
+  
+  /* Message/Toast styling */
+  .p-toast .p-toast-message {
+    border-radius: var(--radius-md, 0.5rem) !important;
+    box-shadow: var(--shadow-lg) !important;
+    
+    &.p-toast-message-success {
+      background: linear-gradient(135deg, 
+        rgba(variables.$primary-teal, 0.9) 0%, 
+        rgba(variables.$beauty-mint, 0.9) 100%
+      ) !important;
+    }
+    
+    &.p-toast-message-error {
+      background: linear-gradient(135deg, 
+        rgba(variables.$error, 0.9) 0%, 
+        rgba(#dc2626, 0.9) 100%
+      ) !important;
+    }
+  }
+  
+  /* Pagination styling - Enhanced beauty theme */
+  .p-paginator {
+    background: transparent !important;
+    border: none !important;
+    padding: var(--space-4, 1rem) !important;
+    
+    // All paginator buttons
+    .p-paginator-first,
+    .p-paginator-prev, 
+    .p-paginator-next,
+    .p-paginator-last {
+      background: transparent !important;
+      border: 1px solid var(--border-color) !important;
+      border-radius: var(--radius-md, 0.5rem) !important;
+      color: var(--text-secondary) !important;
+      margin: 0 var(--space-1, 0.25rem) !important;
+      
+      &:hover:not(.p-disabled) {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+        border-color: transparent !important;
+        transform: translateY(-1px) !important;
+      }
+      
+      &.p-disabled {
+        opacity: 0.4 !important;
+        cursor: not-allowed !important;
+      }
+    }
+    
+    // Page numbers
+    .p-paginator-pages .p-paginator-page {
+      border-radius: var(--radius-md, 0.5rem) !important;
+      border: 1px solid var(--border-color) !important;
+      margin: 0 var(--space-1, 0.25rem) !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-weight: var(--font-medium, 500) !important;
+      
+      &.p-highlight {
+        background: var(--gradient-primary) !important;
+        color: white !important;
+        border-color: transparent !important;
+        box-shadow: var(--shadow-sm) !important;
+      }
+      
+      &:hover:not(.p-highlight) {
+        background: rgba(variables.$beauty-lavender, 0.15) !important;
+        color: var(--primary-blue) !important;
+        border-color: var(--primary-blue) !important;
+        transform: translateY(-1px) !important;
+      }
+    }
   }
 }
 

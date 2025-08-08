@@ -1,18 +1,18 @@
-// Beauty Salon Theme Variables
-// Inspired by modern beauty and wellness interfaces
+// Professional Services Theme Variables
+// Inspired by modern professional and wellness interfaces
 
 // Primary Colors - Elegant and professional
 $primary-blue: #6366f1;        // Main brand color (indigo)
 $primary-purple: #8b5cf6;      // Secondary brand color
 $primary-teal: #14b8a6;        // Accent for success states
 
-// Beauty & Wellness Palette
-$beauty-rose: #f472b6;         // Soft pink for femininity
-$beauty-coral: #fb7185;        // Warm coral for highlights  
-$beauty-mint: #6ee7b7;         // Mint green for wellness
-$beauty-lavender: #c4b5fd;     // Soft lavender for calm
-$beauty-peach: #fed7aa;        // Warm peach for warmth
-$beauty-cream: #fef3c7;        // Cream for subtle backgrounds
+// Professional & Wellness Palette
+$professional-rose: #f472b6;         // Soft pink for accents
+$professional-coral: #fb7185;        // Warm coral for highlights  
+$professional-mint: #6ee7b7;         // Mint green for wellness
+$professional-lavender: #c4b5fd;     // Soft lavender for calm
+$professional-peach: #fed7aa;        // Warm peach for warmth
+$professional-cream: #fef3c7;        // Cream for subtle backgrounds
 
 // Neutral Palette - Professional and clean
 $white: #ffffff;
@@ -84,9 +84,10 @@ $space-10: 2.5rem;   // 40px
 $space-12: 3rem;     // 48px
 $space-16: 4rem;     // 64px
 
-// Typography
-$font-family: 'Inter', 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+// Typography - Elegant fonts for beauty industry
+$font-family: 'Poppins', 'Inter', 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
 $font-family-sans: $font-family;
+$font-family-display: 'Playfair Display', 'Georgia', serif; // For headings and elegant titles
 $font-family-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
 
 // Font Sizes
@@ -137,11 +138,14 @@ $transition-fast: 150ms ease-in-out;
 $transition-normal: 250ms ease-in-out;
 $transition-slow: 350ms ease-in-out;
 
-// Gradients for beauty theme
+// Gradients for professional theme
 $gradient-primary: linear-gradient(135deg, $primary-blue 0%, $primary-purple 100%);
-$gradient-beauty: linear-gradient(135deg, $beauty-rose 0%, $beauty-coral 100%);
-$gradient-wellness: linear-gradient(135deg, $primary-teal 0%, $beauty-mint 100%);
-$gradient-soft: linear-gradient(135deg, $beauty-lavender 0%, $beauty-peach 100%);
+$gradient-professional: linear-gradient(135deg, $professional-rose 0%, $professional-coral 100%);
+$gradient-wellness: linear-gradient(135deg, $primary-teal 0%, $professional-mint 100%);
+$gradient-soft: linear-gradient(135deg, $professional-lavender 0%, $professional-peach 100%);
+
+// Legacy beauty aliases for backward compatibility
+$gradient-beauty: $gradient-professional;
 
 
 

@@ -1,24 +1,242 @@
-.orb-sidebar {
-  width: 250px;
-  height: 100vh;
-  background: var(--p-surface-card);
-  border-right: 1px solid var(--p-border-color);
-  padding: 0.5rem 5px;
+@use '../../../../src/styles/variables';
+@use '../../../../src/styles/mixins';
 
-  // Ocultar en móviles (lo muestra orb-topbar con menú hamb.)
+.orb-sidebar {
+  width: 280px;
+  height: 100vh;
+  background: linear-gradient(180deg, 
+    rgba(variables.$gray-900, 0.95) 0%, 
+    variables.$gray-900 100%
+  );
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(variables.$beauty-lavender, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  // Hide on mobile (shown by orb-topbar with hamburger menu)
   @media (max-width: 1023px) {
     display: none;
   }
+}
 
-  ::ng-deep .p-panelmenu {
-    gap: 1px;
-    border: none;
-    .p-menuitem-link {
-      padding: 0.75rem 1rem;
+/* User header section */
+.sidebar-header {
+  padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
+  border-bottom: 1px solid rgba(variables.$beauty-lavender, 0.1);
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3, 0.75rem);
+    
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+      
+      .user-initials {
+        font-family: variables.$font-family;
+        font-size: variables.$text-lg;
+        font-weight: variables.$font-bold;
+        color: white;
+        text-transform: uppercase;
+      }
     }
-    .pi {
-      font-size: 1rem;
-      margin-right: 0.5rem;
+    
+    .user-details {
+      flex: 1;
+      min-width: 0;
+      
+      .user-name {
+        font-family: variables.$font-family;
+        font-size: variables.$text-base;
+        font-weight: variables.$font-semibold;
+        color: white;
+        margin: 0 0 var(--space-1, 0.25rem) 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .user-role {
+        font-size: variables.$text-sm;
+        color: rgba(white, 0.7);
+        margin: 0;
+        font-weight: variables.$font-normal;
+      }
+    }
+  }
+}
+
+/* Navigation section */
+.sidebar-nav {
+  flex: 1;
+  padding: var(--space-4, 1rem) 0;
+  overflow-y: auto;
+  
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(variables.$beauty-lavender, 0.3);
+    border-radius: var(--radius-full);
+    
+    &:hover {
+      background: rgba(variables.$beauty-lavender, 0.5);
+    }
+  }
+}
+
+/* Logout footer section */
+.sidebar-footer {
+  padding: var(--space-4, 1rem);
+  border-top: 1px solid rgba(variables.$beauty-lavender, 0.1);
+  
+  .logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3, 0.75rem);
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+    background: transparent;
+    border: 1px solid rgba(variables.$beauty-coral, 0.3);
+    border-radius: var(--radius-lg, 0.75rem);
+    color: rgba(white, 0.9);
+    font-family: variables.$font-family;
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    
+    i {
+      font-size: variables.$text-base;
+      color: var(--beauty-coral);
+    }
+    
+    &:hover {
+      background: rgba(variables.$beauty-coral, 0.1);
+      border-color: var(--beauty-coral);
+      color: white;
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Enhanced PanelMenu styling */
+::ng-deep .p-panelmenu {
+  background: transparent !important;
+  border: none !important;
+  
+  .p-panelmenu-panel {
+    margin-bottom: var(--space-1, 0.25rem) !important;
+    
+    .p-panelmenu-header {
+      border: none !important;
+      border-radius: var(--radius-lg, 0.75rem) !important;
+      margin: 0 var(--space-4, 1rem) !important;
+      
+      .p-panelmenu-header-content {
+        border: none !important;
+        border-radius: var(--radius-lg, 0.75rem) !important;
+        background: transparent !important;
+        padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+        transition: var(--transition-fast) !important;
+        
+        &:hover {
+          background: rgba(variables.$beauty-lavender, 0.1) !important;
+        }
+        
+        &:focus {
+          box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.3) !important;
+        }
+        
+        .p-menuitem-text {
+          color: rgba(white, 0.9) !important;
+          font-family: variables.$font-family !important;
+          font-weight: variables.$font-medium !important;
+          font-size: variables.$text-sm !important;
+        }
+        
+        .p-menuitem-icon {
+          color: var(--beauty-lavender) !important;
+          margin-right: var(--space-3, 0.75rem) !important;
+          font-size: variables.$text-base !important;
+        }
+        
+        .p-submenu-icon {
+          color: rgba(white, 0.6) !important;
+        }
+      }
+      
+      &.p-highlight .p-panelmenu-header-content {
+        background: rgba(variables.$primary-blue, 0.15) !important;
+        
+        .p-menuitem-text {
+          color: white !important;
+        }
+        
+        .p-menuitem-icon {
+          color: var(--primary-blue) !important;
+        }
+      }
+    }
+    
+    .p-panelmenu-content {
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 var(--space-4, 1rem) !important;
+      
+      .p-panelmenu-root-list {
+        padding: var(--space-2, 0.5rem) 0 !important;
+        background: rgba(variables.$gray-800, 0.5) !important;
+        border-radius: var(--radius-lg, 0.75rem) !important;
+        
+        .p-menuitem {
+          .p-menuitem-link {
+            padding: var(--space-2, 0.5rem) var(--space-6, 1.5rem) !important;
+            border-radius: var(--radius-md, 0.5rem) !important;
+            margin: var(--space-1, 0.25rem) var(--space-3, 0.75rem) !important;
+            transition: var(--transition-fast) !important;
+            
+            &:hover {
+              background: rgba(variables.$beauty-lavender, 0.1) !important;
+            }
+            
+            &:focus {
+              box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.3) !important;
+            }
+            
+            .p-menuitem-text {
+              color: rgba(white, 0.8) !important;
+              font-size: variables.$text-xs !important;
+              font-weight: variables.$font-normal !important;
+            }
+            
+            .p-menuitem-icon {
+              color: rgba(variables.$beauty-lavender, 0.7) !important;
+              margin-right: var(--space-2, 0.5rem) !important;
+              font-size: variables.$text-sm !important;
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -15,7 +15,7 @@ import { combineLatest, map } from 'rxjs';
 })
 export class OrbSidebarComponent implements OnInit {
   items: MenuItem[] = [];
-  private readonly authStore = inject(AuthStore);
+  readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
 
   ngOnInit(): void {
@@ -124,5 +124,9 @@ export class OrbSidebarComponent implements OnInit {
     });
 
     return menuItems;
+  }
+
+  logout(): void {
+    this.authStore.logout();
   }
 }
