@@ -1,86 +1,257 @@
+@use '../../../styles/variables';
+@use '../../../styles/mixins';
 
 :host {
-  --p-shadow-4: 0px 4px 10px rgba(0, 0, 0, 0.05), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  display: block;
 }
 
 .login-wrapper {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: var(--p-surface-ground);
-  padding: 1rem;
-  font-family: 'Roboto', sans-serif; // Google uses Roboto
+  padding: var(--space-4, 1rem);
+  font-family: variables.$font-family;
+  background: linear-gradient(135deg, 
+    #e0e7ff 0%,
+    #f3e8ff 50%,
+    #fce7f3 100%
+  );
 }
 
-.logo {
-  width: 90px;
-  margin-bottom: 1.5rem;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 380px;
-  border-radius: 8px;
-  padding: 48px 40px 36px;
-  box-shadow: none;
-  border: 1px solid #dadce0;
-  background-color: var(--p-surface-card);
-}
-
-.title {
-  font-size: 1.5rem; // 24px
-  font-weight: 400;
-  text-align: center;
-  margin: 0 0 0.5rem 0;
-  color: #202124;
-}
-
-.subtitle {
-  font-size: 1rem; // 16px
-  font-weight: 400;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #202124;
-}
-
-.login-inputs {
-  width: 100%;
+.login-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.login-input {
-  width: 100%;
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 480px;
 }
 
-.forgot-password {
-  font-size: 0.875rem; // 14px
-  font-weight: 600;
-  color: var(--p-primary-color);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.login-button {
-  // The orb-button component might have its own styles,
-  // but we can try to influence it.
-  // Let's assume it's a button element that can be targeted.
-  ::ng-deep button {
-    border-radius: 4px;
-  }
-}
+/* Header section */
+.login-header {
+  text-align: center;
+  margin-bottom: var(--space-8, 2rem);
   
+  .logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--space-4, 1rem);
+  }
+  
+  .brand-tagline {
+    font-size: variables.$text-lg;
+    color: var(--text-primary);
+    font-weight: variables.$font-medium;
+    margin: 0;
+  }
+}
+
+/* Login card */
+.login-card {
+  width: 100%;
+  padding: var(--space-8, 2rem);
+  background: white;
+  border-radius: var(--radius-2xl, 1.5rem);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  
+  .form-header {
+    text-align: center;
+    margin-bottom: var(--space-8, 2rem);
+    
+    .title {
+      font-family: variables.$font-family;
+      font-size: variables.$text-3xl;
+      font-weight: variables.$font-bold;
+      color: var(--text-primary);
+      margin: 0 0 var(--space-2, 0.5rem) 0;
+    }
+    
+    .subtitle {
+      font-size: variables.$text-base;
+      color: var(--text-secondary);
+      font-weight: variables.$font-normal;
+      margin: 0;
+    }
+  }
+}
+
+/* Input styling with PrimeNG InputGroup */
+.login-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.input-field {
+  .input-label {
+    display: block;
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2, 0.5rem);
+  }
+}
+
+/* PrimeNG InputGroup Styling */
+::ng-deep .p-inputgroup {
+  .p-inputgroup-addon {
+    background: var(--gray-50) !important;
+    border: 2px solid var(--border-color) !important;
+    border-right: none !important;
+    border-radius: var(--radius-lg, 0.75rem) 0 0 var(--radius-lg, 0.75rem) !important;
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+    
+    i {
+      color: var(--text-muted) !important;
+      font-size: variables.$text-base !important;
+    }
+  }
+  
+  .p-inputtext {
+    border: 2px solid var(--border-color) !important;
+    border-left: none !important;
+    border-radius: 0 var(--radius-lg, 0.75rem) var(--radius-lg, 0.75rem) 0 !important;
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+    font-size: variables.$text-base !important;
+    font-family: variables.$font-family !important;
+    transition: var(--transition-fast) !important;
+    background: white !important;
+    
+    &:focus {
+      outline: none !important;
+      border-color: var(--primary-blue) !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    }
+    
+    &::placeholder {
+      color: var(--text-muted) !important;
+    }
+  }
+  
+  &:focus-within {
+    .p-inputgroup-addon {
+      border-color: var(--primary-blue) !important;
+      background: rgba(99, 102, 241, 0.05) !important;
+      
+      i {
+        color: var(--primary-blue) !important;
+      }
+    }
+  }
+}
+
+/* Error message styling */
+.error-message {
+  margin: var(--space-4, 1rem) 0;
+  
+  ::ng-deep .p-message {
+    border-radius: var(--radius-lg, 0.75rem) !important;
+    border-left: 4px solid #ef4444 !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    color: #dc2626 !important;
+  }
+}
+
+/* Login Button */
+.login-button {
+  width: 100%;
+  padding: var(--space-4, 1rem);
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg, 0.75rem);
+  font-size: variables.$text-lg;
+  font-weight: variables.$font-semibold;
+  font-family: variables.$font-family;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  margin-bottom: var(--space-6, 1.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2, 0.5rem);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.25);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  i {
+    font-size: variables.$text-base;
+  }
+}
+
+/* Form actions */
+.form-actions {
+  text-align: center;
+  margin-bottom: var(--space-6, 1.5rem);
+  
+  .forgot-password {
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+    color: var(--text-primary);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Footer help text */
+.login-footer {
+  text-align: center;
+  padding-top: var(--space-4, 1rem);
+  border-top: 1px solid var(--border-light);
+  
+  .help-text {
+    font-size: variables.$text-sm;
+    color: var(--text-muted);
+    margin: 0;
+    
+    .help-link {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: variables.$font-semibold;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+/* Mobile responsive design */
+@include mixins.mobile {
+  .login-wrapper {
+    padding: var(--space-2, 0.5rem);
+  }
+  
+  .login-header {
+    .logo {
+      width: 60px;
+      height: 60px;
+    }
+    
+    .brand-tagline {
+      font-size: variables.$text-base;
+    }
+  }
+  
+  .login-card {
+    padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
+    
+    .form-header {
+      .title {
+        font-size: variables.$text-2xl;
+      }
+    }
+  }
+}

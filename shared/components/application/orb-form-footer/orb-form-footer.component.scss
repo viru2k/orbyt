@@ -1,31 +1,103 @@
-// src/app/shared/components/orb-form-footer/orb-form-footer.component.scss
- :host {
-   display: block; // Asegura que el componente ocupe su espacio.
- }
+@use '../../../../src/styles/variables';
+@use '../../../../src/styles/mixins';
 
- .orb-form-footer-actions {
-    display: flex;
-    align-items: end;
-     &.justify-content-end{
-        justify-content: end;
-    }
-//   // El `mt-4` también está en el template.
-    &.justify-content-start{
-        justify-content: start;
-    }
-        &.justify-content-center{
-        justify-content: center;
-    }
-       
-
-
-//   // Si necesitas más control sobre el espaciado o el layout que no se pueda
-//   // lograr con clases de utilidad, puedes añadirlo aquí.
-//   // El 'gap' ya está aplicado con `gap-2` en el template.
-
-
-orb-button{
-
-padding: 8px;
+:host {
+  display: block;
 }
+
+.orb-form-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding-top: var(--space-6, 1.5rem);
+  border-top: 1px solid var(--border-light);
+  margin-top: var(--space-4, 1rem);
+  
+  &.justify-content-end {
+    justify-content: flex-end;
+  }
+  
+  &.justify-content-start {
+    justify-content: flex-start;
+  }
+  
+  &.justify-content-center {
+    justify-content: center;
+  }
+}
+
+// Enhanced styling for orb-button in footer context
+::ng-deep orb-button {
+  min-width: 100px;
+  
+  .p-button {
+    font-family: variables.$font-family !important;
+    font-weight: variables.$font-medium !important;
+    border-radius: var(--radius-md, 0.5rem) !important;
+    padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem) !important;
+    transition: var(--transition-fast) !important;
+    border: none !important;
+    letter-spacing: 0.025em !important;
+    
+    // Beauty theme primary buttons
+    &.p-button-primary {
+      background: var(--gradient-primary) !important;
+      color: white !important;
+      box-shadow: var(--shadow-sm) !important;
+      
+      &:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: var(--shadow-lg) !important;
+      }
+    }
+    
+    // Success buttons (Guardar) - Wellness theme
+    &.p-button-success {
+      background: var(--gradient-wellness) !important;
+      color: white !important;
+      
+      &:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.25) !important;
+      }
+      
+      &:disabled {
+        opacity: 0.6 !important;
+        transform: none !important;
+        box-shadow: none !important;
+        cursor: not-allowed !important;
+      }
+    }
+    
+    // Secondary/Cancel buttons  
+    &.p-button-secondary,
+    &.p-button-text {
+      background: transparent !important;
+      color: var(--text-secondary) !important;
+      border: 1px solid var(--border-color) !important;
+      
+      &:hover {
+        background: var(--gray-50) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--gray-300) !important;
+        transform: none !important;
+      }
+    }
+  }
+}
+
+// Mobile responsive layout
+@include mixins.mobile {
+  .orb-form-footer-actions {
+    flex-direction: column-reverse;
+    gap: var(--space-2, 0.5rem);
+    
+    ::ng-deep orb-button {
+      width: 100%;
+      
+      .p-button {
+        width: 100%;
+      }
+    }
+  }
 }

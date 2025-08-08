@@ -10,11 +10,8 @@ import { AuthStore } from '@orb-stores';
 
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent } from '@orb-components';
-import { AvatarModule } from 'primeng/avatar';
-import { TagModule } from 'primeng/tag';
-import { FieldsetModule } from 'primeng/fieldset';
-import { ChipModule } from 'primeng/chip';
+import { OrbCardComponent, OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent } from '@orb-components';
+import { FormButtonAction } from '@orb-models';
 
 @Component({
   selector: 'app-profile',
@@ -27,10 +24,7 @@ import { ChipModule } from 'primeng/chip';
     OrbButtonComponent,
     OrbTextInputComponent,
     OrbFormFieldComponent,
-    AvatarModule,
-    TagModule,
-    FieldsetModule,
-    ChipModule
+    OrbFormFooterComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
@@ -45,6 +39,22 @@ export class ProfileComponent implements OnInit {
   userInitials$ = this.authStore.userInitials$;
 
   profileForm!: FormGroup;
+  isEditMode = false;
+
+  formButtons: FormButtonAction[] = [
+    {
+      label: 'Cancelar',
+      action: 'cancel',
+      severity: 'secondary',
+      styleType: 'text'
+    },
+    {
+      label: 'Guardar',
+      action: 'save',
+      severity: 'success',
+      buttonType: 'submit'
+    }
+  ];
 
   ngOnInit(): void {
     this.initForm();
@@ -66,13 +76,38 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  toggleEditMode(): void {
+    this.isEditMode = !this.isEditMode;
+    if (!this.isEditMode) {
+      // Reset form when canceling edit mode
+      this.user$.pipe(
+        filter(user => !!user),
+        take(1)
+      ).subscribe(user => {
+        this.profileForm.patchValue(user!);
+      });
+    }
+  }
+
+  handleFormAction(action: string): void {
+    if (action === 'save') {
+      this.onSubmit();
+    } else if (action === 'cancel') {
+      this.toggleEditMode();
+    }
+  }
+
   onSubmit(): void {
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       return;
     }
 
-  //  const updateDto: UpdateProfileDto = this.profileForm.getRawValue();
-    //this.authStore.patchUserProfile(updateDto);
+    // TODO: Implement profile update
+    // const updateDto: UpdateProfileDto = this.profileForm.getRawValue();
+    // this.authStore.patchUserProfile(updateDto);
+    
+    console.log('Profile update:', this.profileForm.getRawValue());
+    this.isEditMode = false;
   }
 }

@@ -40,8 +40,10 @@
     </div>
   </orb-form-field>
 
-  <!-- Footer con botones -->
-  <orb-form-footer
+  <!-- Footer con orb-form-footer -->
+  <orb-form-footer 
+    [buttons]="footerButtons" 
+    alignment="right"
     (actionClicked)="handleFooterAction($event)"
   ></orb-form-footer>
 </form>

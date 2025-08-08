@@ -1,41 +1,71 @@
 <div class="login-wrapper">
-  <img class="logo" src="assets/logo/orbyt-logo.svg" alt="Orbyt Logo" />
+  <div class="login-container">
+    <!-- Logo and brand section -->
+    <div class="login-header">
+      <img class="logo" src="/shared/styles/assets/orbyt-logo.png" alt="Orbyt Logo" />
+      <p class="brand-tagline">Tu plataforma de gestión profesional</p>
+    </div>
 
-  <orb-card class="login-card">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" orbBody>
-      <h2 class="title">Iniciar sesión</h2>
-      <p class="subtitle">Usa tu cuenta de Orbyt</p>
+    <!-- Login form card -->
+    <div class="login-card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-header">
+          <h2 class="title">Bienvenido de vuelta</h2>
+          <p class="subtitle">Accede a tu cuenta profesional</p>
+        </div>
 
-      <div class="login-inputs">
-        <orb-text-input
-          id="email"
-          formControlName="email"
-          placeholder="Correo electrónico"
-          type="email"
-          class="login-input"
-        />
-        <orb-text-input
-          id="password"
-          formControlName="password"
-          placeholder="Contraseña"
-          type="password"
-          class="login-input"
-        />
-      </div>
+        <div class="login-inputs">
+          <div class="input-field">
+            <label class="input-label">Correo electrónico</label>
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                <i class="pi pi-envelope"></i>
+              </p-inputGroupAddon>
+              <input 
+                type="email"
+                formControlName="email"
+                pInputText 
+                placeholder="nombre@ejemplo.com"
+              />
+            </p-inputGroup>
+          </div>
+          
+          <div class="input-field">
+            <label class="input-label">Contraseña</label>
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                <i class="pi pi-lock"></i>
+              </p-inputGroupAddon>
+              <input 
+                type="password"
+                formControlName="password"
+                pInputText 
+                placeholder="••••••••"
+              />
+            </p-inputGroup>
+          </div>
+        </div>
 
-      <p-message *ngIf="authStore.error$ | async as error" severity="error" [text]="error"></p-message>
-
-      <div class="actions">
-        <a href="#" class="forgot-password">¿Has olvidado tu contraseña?</a>
-        <orb-button
-          label="Acceder"
-          type="submit"
-          severity="info"
+        <p-message *ngIf="authStore.error$ | async as error" severity="error" [text]="error" class="error-message"></p-message>
+         <orb-button   type="submit" [label]="'Ingresar'">  <span *ngIf="!(authStore.loading$ | async)">Acceder</span>
+          <i *ngIf="authStore.loading$ | async" class="pi pi-spinner pi-spin"></i></orb-button>
+        <button 
+          type="submit" 
           class="login-button"
-          [loading]="(authStore.loading$ | async) || false"
-          (click)="onSubmit()"
-        />
-      </div>
-    </form>
-  </orb-card>
+          [disabled]="form.invalid || (authStore.loading$ | async)"
+        >
+          <span *ngIf="!(authStore.loading$ | async)">Acceder</span>
+          <i *ngIf="authStore.loading$ | async" class="pi pi-spinner pi-spin"></i>
+        </button>
+
+        <div class="form-actions">
+          <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+        
+        <div class="login-footer">
+          <p class="help-text">¿Necesitas ayuda? <a href="#" class="help-link">Contacta soporte</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

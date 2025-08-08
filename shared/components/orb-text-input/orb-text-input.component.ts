@@ -25,6 +25,7 @@ export class OrbTextInputComponent implements ControlValueAccessor, OnInit {
   @Input() placeholder: string = '';
   @Input() type: string = 'text';
   @Input() inputId: string = `orb-text-input-${nextId++}`;
+  @Input() readOnly: boolean = false;
 
   _value: string = '';
   _disabled: boolean = false;

@@ -1,24 +1,210 @@
+// Responsive Breakpoints
 @mixin mobile {
-    @media (max-width: 599px) {
-      @content;
-    }
+  @media (max-width: 599px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 600px) and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin dark-mode {
+  html.dark & {
+    @content;
+  }
+}
+
+// Orbyt Theme Mixins
+@mixin orbyt-card($shadow: md) {
+  background: var(--background-card, #ffffff);
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  transition: var(--transition-normal, 250ms ease-in-out);
+  
+  @if $shadow == sm {
+    box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+  } @else if $shadow == md {
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06));
+  } @else if $shadow == lg {
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05));
   }
   
-  @mixin tablet {
-    @media (min-width: 600px) and (max-width: 1023px) {
-      @content;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05));
+  }
+}
+
+@mixin orbyt-button($variant: primary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem);
+  border-radius: var(--radius-md, 0.5rem);
+  font-weight: var(--font-medium, 500);
+  font-size: var(--text-sm, 0.875rem);
+  line-height: var(--leading-tight, 1.25);
+  transition: var(--transition-fast, 150ms ease-in-out);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  
+  @if $variant == primary {
+    background: var(--gradient-primary, linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%));
+    color: white;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05));
     }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  } @else if $variant == orbyt {
+    background: var(--gradient-orbyt, linear-gradient(135deg, #f472b6 0%, #fb7185 100%));
+    color: white;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.25);
+    }
+  } @else if $variant == wellness {
+    background: var(--gradient-wellness, linear-gradient(135deg, #14b8a6 0%, #6ee7b7 100%));
+    color: white;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.25);
+    }
+  } @else if $variant == soft {
+    background: var(--gradient-soft, linear-gradient(135deg, #c4b5fd 0%, #fed7aa 100%));
+    color: var(--gray-800, #1f2937);
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px -5px rgba(196, 181, 253, 0.25);
+    }
+  }
+}
+
+// Legacy orbyt aliases for backward compatibility
+@mixin orbyt-card($shadow: md) {
+  @include orbyt-card($shadow);
+}
+
+@mixin orbyt-button($variant: primary) {
+  // Map orbyt variant to orbyt
+  @if $variant == orbyt {
+    @include orbyt-button(orbyt);
+  } @else {
+    @include orbyt-button($variant);
+  }
+}
+
+@mixin orbyt-input {
+  width: 100%;
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: var(--radius-md, 0.5rem);
+  font-size: var(--text-base, 1rem);
+  line-height: var(--leading-normal, 1.5);
+  color: var(--text-primary, #111827);
+  background: var(--background-primary, #ffffff);
+  transition: var(--transition-fast, 150ms ease-in-out);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--primary-blue, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
   
-  @mixin desktop {
-    @media (min-width: 1024px) {
-      @content;
-    }
+  &::placeholder {
+    color: var(--text-muted, #9ca3af);
   }
+}
+
+@mixin orbyt-avatar($size: md) {
+  border-radius: var(--radius-full, 9999px);
+  object-fit: cover;
+  border: 2px solid var(--background-primary, #ffffff);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
   
-  @mixin dark-mode {
-    html.dark & {
-      @content;
-    }
+  @if $size == sm {
+    width: 2rem;
+    height: 2rem;
+  } @else if $size == md {
+    width: 2.5rem;
+    height: 2.5rem;
+  } @else if $size == lg {
+    width: 3rem;
+    height: 3rem;
+  } @else if $size == xl {
+    width: 4rem;
+    height: 4rem;
   }
+}
+
+@mixin orbyt-status-badge($status: active) {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--font-medium, 500);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  
+  @if $status == active {
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--primary-teal, #14b8a6);
+  } @else if $status == inactive {
+    background: rgba(156, 163, 175, 0.1);
+    color: var(--gray-500, #6b7280);
+  } @else if $status == pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning, #f59e0b);
+  } @else if $status == orbyt {
+    background: rgba(244, 114, 182, 0.1);
+    color: var(--orbyt-rose, #f472b6);
+  }
+}
+
+@mixin glass-effect($opacity: 0.8) {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, $opacity);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@mixin floating-animation {
+  animation: floating 3s ease-in-out infinite;
+  
+  @keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+// Utility mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin text-gradient($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
   

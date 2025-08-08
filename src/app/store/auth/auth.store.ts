@@ -15,6 +15,7 @@ export interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  returnUrl: string | null;
 }
 
 const initialState: AuthState = {
@@ -22,6 +23,7 @@ const initialState: AuthState = {
   token: null,
   loading: false,
   error: null,
+  returnUrl: null,
 };
 
 @Injectable({ providedIn: 'root' })
@@ -72,6 +74,7 @@ export class AuthStore extends ComponentStore<AuthState> {
     ...state, user: { ...state.user, ...updatedUser }, loading: false,
   }));
   readonly setError = this.updater((state, error: string | null) => ({ ...state, error, loading: false }));
+  readonly setReturnUrl = this.updater((state, returnUrl: string) => ({ ...state, returnUrl }));
   readonly clearState = this.updater(() => initialState);
 
   // Effects
@@ -111,7 +114,10 @@ export class AuthStore extends ComponentStore<AuthState> {
           tapResponse(
             (user) => {
               this.setAuthSuccess({ user, token });
-              this.router.navigate(['/']);
+              // Navigate to return URL or dashboard
+              const returnUrl = this.get().returnUrl || '/dashboard';
+              this.router.navigate([returnUrl]);
+              this.setReturnUrl(''); // Clear after use
             },
             (error: any) => {
               const errorMessage = error?.error?.message || 'No se pudo cargar el perfil';

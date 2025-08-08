@@ -1,7 +1,31 @@
 <aside class="orb-sidebar">
-  <p-panelMenu
-    [model]="items"
-    [style]="{ width: '100%' }"
-    [multiple]="false"
-  ></p-panelMenu>
+  <!-- User header section -->
+  <div class="sidebar-header">
+    <div class="user-info">
+      <div class="user-avatar">
+        <span class="user-initials">{{ authStore.userInitials$ | async }}</span>
+      </div>
+      <div class="user-details">
+        <p class="user-name">{{ authStore.userFullName$ | async }}</p>
+        <p class="user-role">Profesional</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation menu -->
+  <nav class="sidebar-nav">
+    <p-panelMenu
+      [model]="items"
+      [style]="{ width: '100%' }"
+      [multiple]="true"
+    ></p-panelMenu>
+  </nav>
+
+  <!-- Logout section -->
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <i class="pi pi-sign-out"></i>
+      <span>Cerrar sesión</span>
+    </button>
+  </div>
 </aside>
