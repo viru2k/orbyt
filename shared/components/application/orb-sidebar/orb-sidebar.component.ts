@@ -57,24 +57,7 @@ export class OrbSidebarComponent {
         items: [
           { label: 'Productos', icon: 'pi pi-hammer', command: () => this.router.navigate(['/management/product'] ) }, 
           { label: 'Clientes', icon: 'pi pi-users',command: () => this.router.navigate(['/management/client'] )  }, 
-          // ... otros items de gestión
-        ]
-      },
-      // ---------- Usuarios ----------
-      {
-        label: 'Usuarios',
-        icon: 'pi pi-fw pi-users',
-        items: [
-          {
-            label: 'Lista',
-            icon: 'pi pi-fw pi-list',
-            command: () => this.router.navigate(['/users'])
-          },
-          {
-            label: 'Nuevo usuario',
-            icon: 'pi pi-fw pi-user-plus',
-            command: () => this.router.navigate(['/users/create'])
-          }
+          { label: 'Usuarios', icon: 'pi pi-user-cog', command: () => this.router.navigate(['/management/users'] )  }, 
         ]
       },
       // ---------- Perfil ----------
