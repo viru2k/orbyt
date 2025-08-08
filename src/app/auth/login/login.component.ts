@@ -2,28 +2,27 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule, AsyncPipe } from '@angular/common';
-import { OrbTextInputComponent, OrbButtonComponent, OrbCardComponent } from '@orb-components';
+// Removed unused Orb components imports
 import { AuthStore } from '@orb-stores';
 import { LoginDto } from '../../api/model/models';
 import { MessageModule } from 'primeng/message';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
+import { OrbButtonComponent } from "@orb-components";
 
 @Component({
   selector: 'orb-login',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,    
-    OrbTextInputComponent,
-    OrbButtonComponent,
-    OrbCardComponent,
+    ReactiveFormsModule,
     MessageModule,
     InputGroupModule,
     InputGroupAddonModule,
-    InputTextModule
-  ],
+    InputTextModule,
+    OrbButtonComponent
+],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })

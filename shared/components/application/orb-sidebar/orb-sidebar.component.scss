@@ -9,7 +9,7 @@
     variables.$gray-900 100%
   );
   backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(variables.$beauty-lavender, 0.1);
+  border-right: 1px solid rgba(variables.$orbyt-lavender, 0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -23,7 +23,7 @@
 /* User header section */
 .sidebar-header {
   padding: var(--space-6, 1.5rem) var(--space-4, 1rem);
-  border-bottom: 1px solid rgba(variables.$beauty-lavender, 0.1);
+  border-bottom: 1px solid rgba(variables.$orbyt-lavender, 0.1);
   
   .user-info {
     display: flex;
@@ -90,11 +90,11 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba(variables.$beauty-lavender, 0.3);
+    background: rgba(variables.$orbyt-lavender, 0.3);
     border-radius: var(--radius-full);
     
     &:hover {
-      background: rgba(variables.$beauty-lavender, 0.5);
+      background: rgba(variables.$orbyt-lavender, 0.5);
     }
   }
 }
@@ -102,7 +102,7 @@
 /* Logout footer section */
 .sidebar-footer {
   padding: var(--space-4, 1rem);
-  border-top: 1px solid rgba(variables.$beauty-lavender, 0.1);
+  border-top: 1px solid rgba(variables.$orbyt-lavender, 0.1);
   
   .logout-btn {
     width: 100%;
@@ -111,7 +111,7 @@
     gap: var(--space-3, 0.75rem);
     padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
     background: transparent;
-    border: 1px solid rgba(variables.$beauty-coral, 0.3);
+    border: 1px solid rgba(variables.$orbyt-coral, 0.3);
     border-radius: var(--radius-lg, 0.75rem);
     color: rgba(white, 0.9);
     font-family: variables.$font-family;
@@ -122,12 +122,12 @@
     
     i {
       font-size: variables.$text-base;
-      color: var(--beauty-coral);
+      color: var(--orbyt-coral);
     }
     
     &:hover {
-      background: rgba(variables.$beauty-coral, 0.1);
-      border-color: var(--beauty-coral);
+      background: rgba(variables.$orbyt-coral, 0.1);
+      border-color: var(--orbyt-coral);
       color: white;
       transform: translateY(-1px);
     }
@@ -144,7 +144,10 @@
   border: none !important;
   
   .p-panelmenu-panel {
-    margin-bottom: var(--space-1, 0.25rem) !important;
+
+    .p-panelmenu-header-link {
+      padding: 0px;
+    }
     
     .p-panelmenu-header {
       border: none !important;
@@ -159,7 +162,7 @@
         transition: var(--transition-fast) !important;
         
         &:hover {
-          background: rgba(variables.$beauty-lavender, 0.1) !important;
+          background: rgba(variables.$orbyt-lavender, 0.1) !important;
         }
         
         &:focus {
@@ -216,7 +219,7 @@
             transition: var(--transition-fast) !important;
             
             &:hover {
-              background: rgba(variables.$beauty-lavender, 0.1) !important;
+              background: rgba(variables.$orbyt-lavender, 0.1) !important;
             }
             
             &:focus {
@@ -230,7 +233,7 @@
             }
             
             .p-menuitem-icon {
-              color: rgba(variables.$beauty-lavender, 0.7) !important;
+              color: rgba(variables.$orbyt-lavender, 0.7) !important;
               margin-right: var(--space-2, 0.5rem) !important;
               font-size: variables.$text-sm !important;
             }

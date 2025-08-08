@@ -2,7 +2,7 @@
   <div class="login-container">
     <!-- Logo and brand section -->
     <div class="login-header">
-      <img class="logo" src="../../../shared/styles/assets/orbyt-logo.png" alt="Orbyt Logo" />
+      <img class="logo" src="/shared/styles/assets/orbyt-logo.png" alt="Orbyt Logo" />
       <p class="brand-tagline">Tu plataforma de gestión profesional</p>
     </div>
 
@@ -47,6 +47,16 @@
         </div>
 
         <p-message *ngIf="authStore.error$ | async as error" severity="error" [text]="error" class="error-message"></p-message>
+         <orb-button   type="submit" [label]="'Ingresar'">  <span *ngIf="!(authStore.loading$ | async)">Acceder</span>
+          <i *ngIf="authStore.loading$ | async" class="pi pi-spinner pi-spin"></i></orb-button>
+        <button 
+          type="submit" 
+          class="login-button"
+          [disabled]="form.invalid || (authStore.loading$ | async)"
+        >
+          <span *ngIf="!(authStore.loading$ | async)">Acceder</span>
+          <i *ngIf="authStore.loading$ | async" class="pi pi-spinner pi-spin"></i>
+        </button>
 
         <div class="form-actions">
           <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>

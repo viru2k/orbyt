@@ -3,11 +3,11 @@
 @use './mixins';
 @use './themes';
 
-/* Import Google Fonts for Beauty Theme - More elegant fonts */
+/* Import Google Fonts for orbyt Theme - More elegant fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
-/* Global Reset and Beauty Theme Styles */
+/* Global Reset and orbyt Theme Styles */
 * {
   box-sizing: border-box;
 }
@@ -38,12 +38,12 @@ body {
   --primary-purple: #{variables.$primary-purple};
   --primary-teal: #{variables.$primary-teal};
   
-  --beauty-rose: #{variables.$beauty-rose};
-  --beauty-coral: #{variables.$beauty-coral};
-  --beauty-mint: #{variables.$beauty-mint};
-  --beauty-lavender: #{variables.$beauty-lavender};
-  --beauty-peach: #{variables.$beauty-peach};
-  --beauty-cream: #{variables.$beauty-cream};
+  --orbyt-rose: #{variables.$orbyt-rose};
+  --orbyt-coral: #{variables.$orbyt-coral};
+  --orbyt-mint: #{variables.$orbyt-mint};
+  --orbyt-lavender: #{variables.$orbyt-lavender};
+  --orbyt-peach: #{variables.$orbyt-peach};
+  --orbyt-cream: #{variables.$orbyt-cream};
   
   --white: #{variables.$white};
   --gray-50: #{variables.$gray-50};
@@ -123,74 +123,74 @@ body {
   
   // Gradients
   --gradient-primary: #{variables.$gradient-primary};
-  --gradient-beauty: #{variables.$gradient-beauty};
+  --gradient-orbyt: #{variables.$gradient-orbyt};
   --gradient-wellness: #{variables.$gradient-wellness};
   --gradient-soft: #{variables.$gradient-soft};
 }
 
-/* Global Beauty Theme Styles */
-.beauty-page-container {
+/* Global orbyt Theme Styles */
+.orbyt-page-container {
   min-height: 100vh;
   background: linear-gradient(135deg, 
     variables.$gray-50 0%, 
-    rgba(variables.$beauty-cream, 0.3) 50%, 
+    rgba(variables.$orbyt-cream, 0.3) 50%, 
     variables.$gray-50 100%
   );
 }
 
-.beauty-card {
-  @include mixins.beauty-card();
+.orbyt-card {
+  @include mixins.orbyt-card();
 }
 
-.beauty-button {
-  @include mixins.beauty-button();
+.orbyt-button {
+  @include mixins.orbyt-button();
   
-  &.beauty-button--beauty {
-    @include mixins.beauty-button(beauty);
+  &.orbyt-button--orbyt {
+    @include mixins.orbyt-button(orbyt);
   }
   
-  &.beauty-button--wellness {
-    @include mixins.beauty-button(wellness);
+  &.orbyt-button--wellness {
+    @include mixins.orbyt-button(wellness);
   }
   
-  &.beauty-button--soft {
-    @include mixins.beauty-button(soft);
-  }
-}
-
-.beauty-input {
-  @include mixins.beauty-input();
-}
-
-.beauty-avatar {
-  @include mixins.beauty-avatar();
-  
-  &.beauty-avatar--sm {
-    @include mixins.beauty-avatar(sm);
-  }
-  
-  &.beauty-avatar--lg {
-    @include mixins.beauty-avatar(lg);
-  }
-  
-  &.beauty-avatar--xl {
-    @include mixins.beauty-avatar(xl);
+  &.orbyt-button--soft {
+    @include mixins.orbyt-button(soft);
   }
 }
 
-.beauty-status-badge {
-  @include mixins.beauty-status-badge();
+.orbyt-input {
+  @include mixins.orbyt-input();
+}
+
+.orbyt-avatar {
+  @include mixins.orbyt-avatar();
   
-  &.beauty-status-badge--inactive {
-    @include mixins.beauty-status-badge(inactive);
+  &.orbyt-avatar--sm {
+    @include mixins.orbyt-avatar(sm);
   }
   
-  &.beauty-status-badge--pending {
-    @include mixins.beauty-status-badge(pending);
+  &.orbyt-avatar--lg {
+    @include mixins.orbyt-avatar(lg);
   }
   
-  &.beauty-status-badge--beauty {
-    @include mixins.beauty-status-badge(beauty);
+  &.orbyt-avatar--xl {
+    @include mixins.orbyt-avatar(xl);
+  }
+}
+
+.orbyt-status-badge {
+  @include mixins.orbyt-status-badge();
+  
+  &.orbyt-status-badge--inactive {
+    @include mixins.orbyt-status-badge(inactive);
+  }
+  
+  &.orbyt-status-badge--pending {
+    @include mixins.orbyt-status-badge(pending);
+  }
+  
+  &.orbyt-status-badge--orbyt {
+    @include mixins.orbyt-status-badge(orbyt);
   }
 }
 
@@ -246,7 +246,7 @@ button, input, select, textarea, a {
 
 /* Selection styles */
 ::selection {
-  background: rgba(variables.$beauty-rose, 0.3);
+  background: rgba(variables.$orbyt-rose, 0.3);
   color: variables.$text-primary;
 }
 
@@ -272,7 +272,7 @@ button, input, select, textarea, a {
 
 /* Override PrimeNG ugly button styles globally */
 ::ng-deep {
-  /* Primary buttons - replace green with beauty gradients */
+  /* Primary buttons - replace green with orbyt gradients */
   .p-button {
     font-family: variables.$font-family !important;
     font-weight: variables.$font-medium !important;
@@ -332,9 +332,9 @@ button, input, select, textarea, a {
       }
     }
     
-    /* Beauty themed buttons */
-    &.beauty-themed {
-      background: var(--gradient-beauty) !important;
+    /* orbyt themed buttons */
+    &.orbyt-themed {
+      background: var(--gradient-orbyt) !important;
       
       &:hover {
         box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.25) !important;
@@ -367,7 +367,7 @@ button, input, select, textarea, a {
     }
   }
   
-  /* Input styling to match beauty theme */
+  /* Input styling to match orbyt theme */
   .p-inputtext,
   .p-dropdown,
   .p-multiselect,
@@ -394,7 +394,7 @@ button, input, select, textarea, a {
     .p-datatable-thead > tr > th {
       background: linear-gradient(135deg, 
         variables.$gray-50 0%, 
-        rgba(variables.$beauty-cream, 0.5) 100%
+        rgba(variables.$orbyt-cream, 0.5) 100%
       ) !important;
       font-family: variables.$font-family !important;
       font-weight: variables.$font-semibold !important;
@@ -406,7 +406,7 @@ button, input, select, textarea, a {
     
     .p-datatable-tbody > tr {
       &:hover {
-        background: rgba(variables.$beauty-lavender, 0.05) !important;
+        background: rgba(variables.$orbyt-lavender, 0.05) !important;
       }
     }
   }
@@ -436,7 +436,7 @@ button, input, select, textarea, a {
     
     .p-dropdown-items .p-dropdown-item {
       &:hover {
-        background: rgba(variables.$beauty-lavender, 0.1) !important;
+        background: rgba(variables.$orbyt-lavender, 0.1) !important;
         color: var(--text-primary) !important;
       }
       
@@ -455,7 +455,7 @@ button, input, select, textarea, a {
     &.p-toast-message-success {
       background: linear-gradient(135deg, 
         rgba(variables.$primary-teal, 0.9) 0%, 
-        rgba(variables.$beauty-mint, 0.9) 100%
+        rgba(variables.$orbyt-mint, 0.9) 100%
       ) !important;
     }
     
@@ -467,7 +467,7 @@ button, input, select, textarea, a {
     }
   }
   
-  /* Pagination styling - Enhanced beauty theme */
+  /* Pagination styling - Enhanced orbyt theme */
   .p-paginator {
     background: transparent !important;
     border: none !important;
@@ -517,7 +517,7 @@ button, input, select, textarea, a {
       }
       
       &:hover:not(.p-highlight) {
-        background: rgba(variables.$beauty-lavender, 0.15) !important;
+        background: rgba(variables.$orbyt-lavender, 0.15) !important;
         color: var(--primary-blue) !important;
         border-color: var(--primary-blue) !important;
         transform: translateY(-1px) !important;

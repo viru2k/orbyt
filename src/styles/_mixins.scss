@@ -23,8 +23,8 @@
   }
 }
 
-// Beauty Theme Mixins
-@mixin beauty-card($shadow: md) {
+// Orbyt Theme Mixins
+@mixin orbyt-card($shadow: md) {
   background: var(--background-card, #ffffff);
   border-radius: var(--radius-lg, 0.75rem);
   padding: var(--space-6, 1.5rem);
@@ -44,7 +44,7 @@
   }
 }
 
-@mixin beauty-button($variant: primary) {
+@mixin orbyt-button($variant: primary) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -70,8 +70,8 @@
     &:active {
       transform: translateY(0);
     }
-  } @else if $variant == beauty {
-    background: var(--gradient-beauty, linear-gradient(135deg, #f472b6 0%, #fb7185 100%));
+  } @else if $variant == orbyt {
+    background: var(--gradient-orbyt, linear-gradient(135deg, #f472b6 0%, #fb7185 100%));
     color: white;
     
     &:hover {
@@ -97,7 +97,21 @@
   }
 }
 
-@mixin beauty-input {
+// Legacy orbyt aliases for backward compatibility
+@mixin orbyt-card($shadow: md) {
+  @include orbyt-card($shadow);
+}
+
+@mixin orbyt-button($variant: primary) {
+  // Map orbyt variant to orbyt
+  @if $variant == orbyt {
+    @include orbyt-button(orbyt);
+  } @else {
+    @include orbyt-button($variant);
+  }
+}
+
+@mixin orbyt-input {
   width: 100%;
   padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
   border: 1px solid var(--border-color, #e5e7eb);
@@ -119,7 +133,7 @@
   }
 }
 
-@mixin beauty-avatar($size: md) {
+@mixin orbyt-avatar($size: md) {
   border-radius: var(--radius-full, 9999px);
   object-fit: cover;
   border: 2px solid var(--background-primary, #ffffff);
@@ -140,7 +154,7 @@
   }
 }
 
-@mixin beauty-status-badge($status: active) {
+@mixin orbyt-status-badge($status: active) {
   display: inline-flex;
   align-items: center;
   padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
@@ -159,9 +173,9 @@
   } @else if $status == pending {
     background: rgba(245, 158, 11, 0.1);
     color: var(--warning, #f59e0b);
-  } @else if $status == beauty {
+  } @else if $status == orbyt {
     background: rgba(244, 114, 182, 0.1);
-    color: var(--beauty-rose, #f472b6);
+    color: var(--orbyt-rose, #f472b6);
   }
 }
 

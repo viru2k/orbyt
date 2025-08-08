@@ -1,20 +1,20 @@
-// Professional Services Theme Variables
-// Inspired by modern professional and wellness interfaces
+// Orbyt Theme Variables
+// Inspired by modern orbyt and wellness interfaces
 
-// Primary Colors - Elegant and professional
+// Primary Colors - Elegant and orbyt
 $primary-blue: #6366f1;        // Main brand color (indigo)
 $primary-purple: #8b5cf6;      // Secondary brand color
 $primary-teal: #14b8a6;        // Accent for success states
 
-// Professional & Wellness Palette
-$professional-rose: #f472b6;         // Soft pink for accents
-$professional-coral: #fb7185;        // Warm coral for highlights  
-$professional-mint: #6ee7b7;         // Mint green for wellness
-$professional-lavender: #c4b5fd;     // Soft lavender for calm
-$professional-peach: #fed7aa;        // Warm peach for warmth
-$professional-cream: #fef3c7;        // Cream for subtle backgrounds
+// Orbyt Brand Palette
+$orbyt-rose: #f472b6;         // Soft pink for accents
+$orbyt-coral: #fb7185;        // Warm coral for highlights  
+$orbyt-mint: #6ee7b7;         // Mint green for wellness
+$orbyt-lavender: #c4b5fd;     // Soft lavender for calm
+$orbyt-peach: #fed7aa;        // Warm peach for warmth
+$orbyt-cream: #fef3c7;        // Cream for subtle backgrounds
 
-// Neutral Palette - Professional and clean
+// Neutral Palette - orbyt and clean
 $white: #ffffff;
 $gray-50: #f9fafb;
 $gray-100: #f3f4f6;
@@ -84,7 +84,7 @@ $space-10: 2.5rem;   // 40px
 $space-12: 3rem;     // 48px
 $space-16: 4rem;     // 64px
 
-// Typography - Elegant fonts for beauty industry
+// Typography - Elegant fonts for orbyt industry
 $font-family: 'Poppins', 'Inter', 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
 $font-family-sans: $font-family;
 $font-family-display: 'Playfair Display', 'Georgia', serif; // For headings and elegant titles
@@ -138,14 +138,15 @@ $transition-fast: 150ms ease-in-out;
 $transition-normal: 250ms ease-in-out;
 $transition-slow: 350ms ease-in-out;
 
-// Gradients for professional theme
+// Gradients for orbyt theme
 $gradient-primary: linear-gradient(135deg, $primary-blue 0%, $primary-purple 100%);
-$gradient-professional: linear-gradient(135deg, $professional-rose 0%, $professional-coral 100%);
-$gradient-wellness: linear-gradient(135deg, $primary-teal 0%, $professional-mint 100%);
-$gradient-soft: linear-gradient(135deg, $professional-lavender 0%, $professional-peach 100%);
+$gradient-orbyt: linear-gradient(135deg, $orbyt-rose 0%, $orbyt-coral 100%);
+$gradient-wellness: linear-gradient(135deg, $primary-teal 0%, $orbyt-mint 100%);
+$gradient-soft: linear-gradient(135deg, $orbyt-lavender 0%, $orbyt-peach 100%);
 
-// Legacy beauty aliases for backward compatibility
-$gradient-beauty: $gradient-professional;
+// Legacy aliases for backward compatibility
+$gradient-orbyt: $gradient-orbyt;
+$gradient-orbyt: $gradient-orbyt;
 
 
 
