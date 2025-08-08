@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npx nx run:*)",
+      "Bash(sed:*)",
+      "Bash(npm run openapi:generate:*)",
+      "Bash(openapi-generator-cli generate:*)",
+      "Bash(npx openapi-generator-cli generate:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(nx run:*)",
+      "Bash(npm run start:*)"
+    ],
+    "deny": []
+  }
+}
