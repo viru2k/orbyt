@@ -17,8 +17,8 @@
         formControlName="isActive"
         inputId="isActive"
         [binary]="true"
-        label="Usuario Activo"
       ></p-checkbox>
+      <label for="isActive">Usuario Activo</label>
     </div>
   </orb-form-field>
 
@@ -32,9 +32,9 @@
             [inputId]="'role-' + role.id"
             [value]="role.id"
             (onChange)="onRoleChange(role.id, $event)"
-            [checked]="isRoleSelected(role.id)"
-            [label]="role.name + ' - ' + role.description"
+            [ngModel]="isRoleSelected(role.id)"
           ></p-checkbox>
+          <label [for]="'role-' + role.id">{{ role.name }} - {{ role.description }}</label>
         </div>
       </ng-container>
     </div>

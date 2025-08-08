@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
@@ -19,7 +19,8 @@ import { NotificationSeverity, FormButtonAction } from '@orb-models';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,    
+    ReactiveFormsModule,
+    FormsModule,
     OrbTextInputComponent,
     OrbFormFieldComponent,
     OrbFormFooterComponent,

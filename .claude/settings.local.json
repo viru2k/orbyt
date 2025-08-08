@@ -16,7 +16,9 @@
       "Bash(npm install:*)",
       "Bash(mkdir:*)",
       "Bash(nx run:*)",
-      "Bash(npm run start:*)"
+      "Bash(npm run start:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
