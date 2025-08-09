@@ -15,7 +15,7 @@ import {
   AvailableSlotResponseDto,
   AppointmentSummaryResponseDto,
 } from '../../api/model/models';
-import { AgendaService } from '../../api/api/api';
+import { AgendaService } from '../../api/services/agenda.service';
 
 // App Services and Models
 import { NotificationService, SpinnerService } from '@orb-services';
@@ -27,11 +27,11 @@ import { linkToGlobalState } from '../component-state.reducer';
 
 // Interaces
 export interface LoadAppointmentsParams {
-  startDate: Date;
-  endDate: Date;
-  professionalId?: number;
-  roomId?: number;
-  status?: string[];
+  from?: string; // Fecha de inicio ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
+  to?: string; // Fecha de fin ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
+  date?: string; // Fecha específica (YYYY-MM-DD)
+  professionalId?: Array<number>; // IDs de profesionales (array)
+  status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>; // Estados (array)
 }
 
 export interface LoadAvailableTimesParams {
@@ -142,7 +142,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     appointments: state.appointments.map(a => a.id === appointment.id ? appointment : a),
     loading: false
   }));
-  private readonly removeAppointment = this.updater((state, appointmentId: number) => ({
+  private readonly removeAppointment = this.updater((state, appointmentId: string) => ({
     ...state,
     appointments: state.appointments.filter((a:any) => a.id !== appointmentId),
     loading: false
@@ -158,7 +158,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     professionalId$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((professionalId) =>
-        this.agendaService.agendaControllerGetConfig(professionalId).pipe(
+        this.agendaService.agendaControllerGetConfig({ professionalId }).pipe(
           tapResponse(
             (config : AgendaConfigResponseDto) => {
                   this.setAgendaConfig(config);              
@@ -177,7 +177,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     professionalId$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((professionalId) =>
-        this.agendaService.agendaControllerGetHolidays(professionalId).pipe(
+        this.agendaService.agendaControllerGetHolidays({ professionalId }).pipe(
           tapResponse(
             (holydays : Array<HolidayResponseDto>) => {
                   this.setAgendaHolidays(holydays);              
@@ -196,7 +196,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetAvailable(params.date, params.professionalId).pipe(
+        this.agendaService.agendaControllerGetAvailable({ date: params.date, professionalId: params.professionalId }).pipe(
           tapResponse(
             (availableTimes: AvailableSlotResponseDto) => {
               this.setAvailableTimes(availableTimes);
@@ -215,7 +215,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetSummary(params.from, params.to, params.professionalId).pipe(
+        this.agendaService.agendaControllerGetSummary({ from: params.from, to: params.to, professionalId: params.professionalId }).pipe(
           tapResponse(
             (summary: AppointmentSummaryResponseDto) => {
               this.setSummary(summary);
@@ -235,16 +235,22 @@ export class AgendaStore extends ComponentStore<AgendaState> {
       tap((params) => {
         this.setLoading(true);
         this.spinner.show();
-        this.setCurrentDateRange({ start: params.startDate, end: params.endDate });
+        // Actualizar el rango de fechas solo si tenemos from/to
+        if (params.from && params.to) {
+          this.setCurrentDateRange({ 
+            start: new Date(params.from), 
+            end: new Date(params.to) 
+          });
+        }
       }),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetAppointments(
-          undefined, // date 
-          params.startDate.toISOString(), // from
-          params.endDate.toISOString(), // to
-          params.status?.[0] as any, // status - cast temporal
-          params.professionalId // professionalId
-        ).pipe(
+        this.agendaService.agendaControllerGetAppointments({
+          date: params.date,
+          from: params.from,
+          to: params.to,
+          status: params.status,
+          professionalId: params.professionalId
+        }).pipe(
           tapResponse(
             (appointments: AppointmentResponseDto[]) => {
               this.setAppointments(appointments);
@@ -268,7 +274,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
         this.spinner.show();
       }),
       exhaustMap((createDto) =>
-        this.agendaService.agendaControllerCreate(createDto).pipe(
+        this.agendaService.agendaControllerCreate({ body: createDto }).pipe(
           tapResponse(
             (newAppointment: AppointmentResponseDto) => {
               this.addAppointment(newAppointment);
@@ -277,7 +283,10 @@ export class AgendaStore extends ComponentStore<AgendaState> {
               // Optionally reload all appointments for the current range
               const range = this.get().currentDateRange;
               if (range) {
-                this.loadAppointments({ startDate: range.start, endDate: range.end });
+                this.loadAppointments({ 
+                  from: range.start.toISOString(), 
+                  to: range.end.toISOString()
+                });
               }
             },
             (error: HttpErrorResponse) => {
@@ -298,7 +307,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
         this.spinner.show();
       }),
       exhaustMap(({ id, dto }) =>
-        this.agendaService.agendaControllerUpdate(Number(id), dto).pipe(
+        this.agendaService.agendaControllerUpdate({ id: Number(id), body: dto }).pipe(
           tapResponse(
             (updatedAppointment: AppointmentResponseDto) => {
               this.updateAppointmentState(updatedAppointment);
@@ -307,7 +316,10 @@ export class AgendaStore extends ComponentStore<AgendaState> {
                // Optionally reload all appointments for the current range
                const range = this.get().currentDateRange;
                if (range) {
-                 this.loadAppointments({ startDate: range.start, endDate: range.end });
+                 this.loadAppointments({ 
+                   from: range.start.toISOString().split('T')[0], 
+                   to: range.end.toISOString().split('T')[0]
+                 });
                }
             },
             (error: HttpErrorResponse) => {
@@ -321,14 +333,14 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     )
   );
 
-  readonly deleteAppointment = this.effect<number>((appointmentId$) =>
+  readonly deleteAppointment = this.effect<string>((appointmentId$) =>
     appointmentId$.pipe(
       tap(() => {
         this.setLoading(true);
         this.spinner.show();
       }),
       exhaustMap((id) =>
-        this.agendaService.agendaControllerDeleteAppointment(id).pipe(
+        this.agendaService.agendaControllerDeleteAppointment({ id: Number(id) }).pipe(
           tapResponse(
             () => {
               this.removeAppointment(id);
@@ -337,7 +349,10 @@ export class AgendaStore extends ComponentStore<AgendaState> {
                // Optionally reload all appointments for the current range
                const range = this.get().currentDateRange;
                if (range) {
-                 this.loadAppointments({ startDate: range.start, endDate: range.end });
+                 this.loadAppointments({ 
+                   from: range.start.toISOString().split('T')[0], 
+                   to: range.end.toISOString().split('T')[0]
+                 });
                }
             },
             (error: HttpErrorResponse) => {

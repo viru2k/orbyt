@@ -2,7 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { UserResponseDto, AdminUpdateUserDto, RoleDto } from '../../api/model/models';
-import { UsersService, RolesService } from '../../api/api/api';
+import { UsersService } from '../../api/services/users.service';
+import { RolesService } from '../../api/services/roles.service';
 import { NotificationService } from '@orb-services';
 import { exhaustMap, tap, withLatestFrom } from 'rxjs';
 import { linkToGlobalState } from '../component-state.reducer';
@@ -103,7 +104,7 @@ export class UsersStore extends ComponentStore<UsersState> {
     update$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(({ userId, updateData }) =>
-        this.usersService.userControllerUpdateSubUser(userId, updateData).pipe(
+        this.usersService.userControllerUpdateSubUser({ id: userId, body: updateData }).pipe(
           tapResponse(
             (updatedUser) => {
               this.updateUserInList(updatedUser);

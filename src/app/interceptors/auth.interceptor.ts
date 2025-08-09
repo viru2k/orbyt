@@ -23,10 +23,14 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = localStorage.getToken();
     let modifiedReq = req;
     
+    console.log(`Interceptor - ${req.method} ${req.url}`);
+    console.log('Interceptor - Token disponible:', !!token);
+    
     if (token) {
       modifiedReq = req.clone({
         setHeaders: { Authorization: `Bearer ${token}` }
       });
+      console.log('Interceptor - Header Authorization agregado');
     }
 
     return next.handle(modifiedReq).pipe(
@@ -41,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
           } else {
             // Si el error 401 ocurre en cualquier otra petición, significa que el token es inválido o ha expirado.
             notificationService.showError(NotificationSeverity.Error, 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
-            authStore.logout(); 
+            authStore.performLogout(); 
           }
         } else if (error.status === 403) {          
           notificationService.showError(NotificationSeverity.Error, error.error.message || 'No tienes permiso para realizar esta acción.');
