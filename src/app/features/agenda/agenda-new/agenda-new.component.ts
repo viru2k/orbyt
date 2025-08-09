@@ -1,49 +1,43 @@
-import { CalendarOptions } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-
-// src/app/features/crm/client/client-list/client-list.component.ts
-import { Component} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
-
-// Componentes Orb y PrimeNG
-import {  OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent } from '@orb-components';
-
-import { ConfirmationService } from 'primeng/api'; // SortEvent de PrimeNG
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
-
-
-// Servicios
-import { FullCalendarModule } from '@fullcalendar/angular';
+import { Router } from '@angular/router';
+import { AgendaStore } from '../../../store/agenda/agenda.store';
+import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
+import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
+import { AgendaFormComponent } from '../components/agenda-form/agenda-form.component';
 
 
 
 @Component({
-  selector: 'app-client-new', // Cambiado de 'orb-clients' para seguir un patrón de feature
+  selector: 'app-agenda-new',
   standalone: true,
   imports: [
     CommonModule,
     OrbCardComponent,
-    ConfirmDialogModule,
-    OrbToolbarComponent,
-    FullCalendarModule 
+    OrbButtonComponent,
+    AgendaFormComponent
   ],
   templateUrl: './agenda-new.component.html',
   styleUrls: ['./agenda-new.component.scss'],
-  providers: [ConfirmationService],
 })
-export class AgendaNewComponent   {
+export class AgendaNewComponent implements OnInit {
 
- calendarOptions: CalendarOptions = {
-    plugins: [dayGridPlugin],
-    initialView: 'dayGridMonth',
-    weekends: false,
-    events: [
-      { title: 'Meeting', start: new Date() }
-    ]
-  };
+  constructor(
+    private router: Router,
+    private agendaStore: AgendaStore
+  ) {}
 
+  ngOnInit(): void {
+    // Inicializar cualquier dato necesario para el formulario
+  }
 
+  onFormClose(): void {
+    // Navegar de vuelta a la agenda principal
+    this.router.navigate(['/agenda']);
+  }
+
+  onAppointmentCreated(): void {
+    // Después de crear exitosamente, regresar a la agenda
+    this.router.navigate(['/agenda']);
+  }
 }

@@ -1,7 +1,7 @@
 // src/app/shared/components/orb-fullcalendar/orb-fullcalendar.component.ts
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Calendar, CalendarOptions, EventInput, DateSelectArg, EventClickArg, EventApi, DatesSetArg } from '@fullcalendar/core';
+import { Calendar, CalendarOptions, EventInput, DateSelectArg, EventClickArg, EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -31,6 +31,7 @@ export class OrbFullcalendarComponent implements OnInit, AfterViewInit, OnChange
   @Output() eventClick = new EventEmitter<EventClickArg>();
   @Output() eventsSet = new EventEmitter<EventApi[]>();
   @Output() datesSetRange = new EventEmitter<DatesSetArg>();
+  @Output() eventDrop = new EventEmitter<EventDropArg>();
 
   private calendarInstance?: Calendar;
   public calendarOptions!: CalendarOptions;
@@ -101,6 +102,9 @@ export class OrbFullcalendarComponent implements OnInit, AfterViewInit, OnChange
       },
       datesSet: (dateInfo: DatesSetArg) => {
         this.datesSetRange.emit(dateInfo);
+      },
+      eventDrop: (dropInfo: EventDropArg) => {
+        this.eventDrop.emit(dropInfo);
       }
       // slotEventOverlap: true,
       // eventOverlap: function(stillEvent, movingEvent) {

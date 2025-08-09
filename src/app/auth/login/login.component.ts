@@ -9,7 +9,7 @@ import { MessageModule } from 'primeng/message';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
-import { OrbButtonComponent } from "@orb-components";
+// import { OrbButtonComponent } from "@orb-components";
 
 @Component({
   selector: 'orb-login',
@@ -20,8 +20,7 @@ import { OrbButtonComponent } from "@orb-components";
     MessageModule,
     InputGroupModule,
     InputGroupAddonModule,
-    InputTextModule,
-    OrbButtonComponent
+    InputTextModule
 ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -45,6 +44,9 @@ export class LoginComponent {
       this.form.markAllAsTouched();
       return;
     }
+    
+    // Limpiar error anterior
+    this.authStore.setError(null);
     
     const login: LoginDto = {
       email: this.form.value.email ?? '',

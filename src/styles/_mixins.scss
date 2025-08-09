@@ -97,14 +97,14 @@
   }
 }
 
-// Legacy orbyt aliases for backward compatibility
-@mixin orbyt-card($shadow: md) {
+// Legacy beauty aliases for backward compatibility
+@mixin beauty-card($shadow: md) {
   @include orbyt-card($shadow);
 }
 
-@mixin orbyt-button($variant: primary) {
-  // Map orbyt variant to orbyt
-  @if $variant == orbyt {
+@mixin beauty-button($variant: primary) {
+  // Map beauty variant to orbyt
+  @if $variant == beauty {
     @include orbyt-button(orbyt);
   } @else {
     @include orbyt-button($variant);

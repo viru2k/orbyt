@@ -1,14 +1,5 @@
-// Es MUY IMPORTANTE importar los estilos de FullCalendar.
-// Puedes hacerlo aquí o, preferiblemente, de forma global en tu `styles.scss`
-// o en la sección `styles` de tu `angular.json`.
-
-// Si lo haces aquí (menos recomendado para estilos de librería):
-// @import '@fullcalendar/common/main.css'; // Nombre del archivo puede variar ligeramente con la versión v5/v6
-// @import '@fullcalendar/daygrid/main.css';
-// @import '@fullcalendar/timegrid/main.css';
-// @import '@fullcalendar/list/main.css';
-// Considera usar ~ para referenciar node_modules si tu preprocesador SCSS lo soporta:
-// @import '~@fullcalendar/core/main.css'; // O la ruta correcta a los CSS de los plugins
+// Los estilos de FullCalendar deben importarse en angular.json o styles.scss globalmente
+// No se pueden importar aquí debido a problemas de resolución de módulos
 
 // Estilos específicos para tu contenedor si los necesitas
 .orb-fullcalendar-container {

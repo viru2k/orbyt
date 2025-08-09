@@ -1,6 +1,7 @@
 
 import { MessageService } from 'primeng/api';
-import { Configuration } from './api/configuration';
+import { ApiConfiguration } from './api/api-configuration';
+import { ActivityTrackerService } from './services/activity-tracker.service';
 
 import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -66,7 +67,7 @@ export const appConfig: ApplicationConfig = {
     multi: true
   },
   {
-    provide: Configuration,
+    provide: ApiConfiguration,
     useFactory: apiConfigFactory,
     deps: [LocalStorageService],
   },
@@ -81,15 +82,15 @@ export const appConfig: ApplicationConfig = {
     logOnly: true
   }),
     MessageService,
-     DatePipe,
+    DatePipe,
+    ActivityTrackerService,
     { provide: LOCALE_ID, useValue: 'es-ES' }
   ],
 
 };
 
-export function apiConfigFactory(localStorage: LocalStorageService): Configuration {
-  const config = new Configuration({
-    basePath: 'http://127.0.0.1:3000'
-  });
+export function apiConfigFactory(localStorage: LocalStorageService): ApiConfiguration {
+  const config = new ApiConfiguration();
+  config.rootUrl = 'http://127.0.0.1:3000';
   return config;
 }

@@ -63,6 +63,13 @@ export const appRoutes: Route[] = [
             (m) => m.AgendaComponent
           ),
       },
+      {
+        path: 'agenda/new',
+        loadComponent: () =>
+          import('./features/agenda/agenda-new/agenda-new.component').then(
+            (m) => m.AgendaNewComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },

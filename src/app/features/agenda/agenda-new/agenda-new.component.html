@@ -1,24 +1,21 @@
-<orb-toolbar>
- 
-  <div body>
+<orb-card>
+  <ng-container orb-card-header>
+    <div class="flex justify-between items-center">
+      <h2>Crear Nueva Cita</h2>
+      <orb-button
+        label="Volver a Agenda"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        (click)="onFormClose()"
+      ></orb-button>
     </div>
+  </ng-container>
 
-  <div footer>
-       <h2>Agenda</h2>
-  </div>
-</orb-toolbar>
-
-
-
-<orb-card  >
-
-   
-  <div class="grid" orbBody>
-<div>
-  
-      <full-calendar [options]="calendarOptions"></full-calendar>
-    </div>
-
-    </div>
-  </orb-card>
+  <ng-container orb-card-body>
+    <app-agenda-form
+      (close)="onFormClose()"
+      (appointmentCreated)="onAppointmentCreated()"
+    ></app-agenda-form>
+  </ng-container>
+</orb-card>
 

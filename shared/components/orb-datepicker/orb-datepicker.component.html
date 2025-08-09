@@ -17,9 +17,13 @@
   [yearRange]="yearRange ?? ''"
   [selectionMode]="selectionMode"
   [inline]="inline"
-
+  [showTime]="showTime"
+  [timeOnly]="timeOnly"
+  [hourFormat]="hourFormat"
   [showButtonBar]="showButtonBar"
-  [dataType]="dataType" [style]="inline ? {border: 'none'} : null"
+  [dataType]="dataType" 
+  [locale]="localeConfig"
+  [style]="inline ? {border: 'none'} : null"
   [inputStyleClass]="inline ? 'p-sr-only' : undefined"
 ></p-datepicker>
 

@@ -127,6 +127,6 @@ export class OrbSidebarComponent implements OnInit {
   }
 
   logout(): void {
-    this.authStore.logout();
+    this.authStore.performLogout();
   }
 }
