@@ -79,6 +79,10 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
       console.warn('Appointment sin startDateTime o endDateTime:', appointment.title, appointment.id);
   }
 
+  // Generate CSS classes based on status
+  const statusClass = appointment.status ? `status-${appointment.status.toLowerCase()}` : '';
+  const cssClasses = ['fc-event-modern', statusClass].filter(Boolean).join(' ');
+
   return {
     id: appointment.id!.toString(),
     title: appointment.title || 'Turno sin título',
@@ -87,6 +91,7 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
     allDay: appointment.allDay || false,
     color: appointment.color,
     editable: true,
+    className: cssClasses,
     extendedProps: {
       resourceId: appointment.extendedProps?.resourceId || appointment.roomId,
       clientId: appointment.extendedProps?.clientId,
