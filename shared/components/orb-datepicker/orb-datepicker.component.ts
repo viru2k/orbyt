@@ -1,5 +1,5 @@
 // src/app/shared/components/orb-datepicker/orb-datepicker.component.ts
-import { Component, forwardRef, Input, OnInit, Injector } from '@angular/core';
+import { Component, forwardRef, Input, OnInit, Injector, LOCALE_ID, Inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DatePickerModule } from 'primeng/datepicker'; // Usando DatePickerModule
@@ -37,6 +37,10 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
    * Si no se especifica, p-datepicker usará el formato definido en la configuración global de PrimeNGConfig.
    * Si tampoco hay uno global, PrimeNG usa su propio default (usualmente 'mm/dd/yy').
    */
+  /**
+   * Modo de visualización: 'date' solo fecha, 'datetime' fecha y hora
+   */
+  @Input() mode: 'date' | 'datetime' = 'date';
   @Input() dateFormat: string | undefined = undefined;
   @Input() showIcon: boolean = true;
   @Input() appendTo: any = null;
@@ -49,6 +53,9 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   @Input() inline: boolean = false;
   @Input() showButtonBar: boolean = true;
   @Input() dataType: string = 'date'; // Para que p-datepicker devuelva objetos Date
+  @Input() showTime: boolean = false;
+  @Input() timeOnly: boolean = false;
+  @Input() hourFormat: '12' | '24' = '24';
 
   // El input 'locale' se elimina, ya que confiamos en la configuración global de PrimeNG.
 
@@ -57,7 +64,15 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   _onTouched: () => void = () => {};
   public ngControl: NgControl | null = null;
 
-  constructor(private injector: Injector) {}
+  // Configuración de idiomas para PrimeNG DatePicker
+  localeConfig: any = {};
+
+  constructor(
+    private injector: Injector,
+    @Inject(LOCALE_ID) private locale: string
+  ) {
+    this.setupLocale();
+  }
 
   ngOnInit(): void {
     try {
@@ -68,8 +83,53 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
     } catch (e) {
       console.warn('OrbDatepickerComponent: NgControl could not be found. Form binding might not work.', e);
     }
-    // El dateFormat se pasará directamente a p-datepicker.
-    // Si es undefined, p-datepicker usará el global o su default.
+    
+    // Configurar propiedades basadas en el modo
+    this.setupModeProperties();
+  }
+
+  private setupLocale(): void {
+    if (this.locale.startsWith('es')) {
+      this.localeConfig = {
+        firstDayOfWeek: 1,
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                         'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        today: 'Hoy',
+        clear: 'Limpiar'
+      };
+    } else {
+      this.localeConfig = {
+        firstDayOfWeek: 0,
+        dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        dayNamesMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'],
+        monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        today: 'Today',
+        clear: 'Clear'
+      };
+    }
+  }
+
+  private setupModeProperties(): void {
+    if (this.mode === 'datetime') {
+      this.showTime = true;
+      if (!this.dateFormat) {
+        this.dateFormat = this.locale.startsWith('es') ? 'dd/mm/yy' : 'mm/dd/yy';
+      }
+    } else {
+      this.showTime = false;
+      if (!this.dateFormat) {
+        this.dateFormat = this.locale.startsWith('es') ? 'dd/mm/yy' : 'mm/dd/yy';
+      }
+    }
   }
 
   writeValue(value: any): void {
