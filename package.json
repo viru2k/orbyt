@@ -8,8 +8,7 @@
     "build": "nx build",
     "lint": "nx lint",
     "test": "nx test",
-    "openapi:generate": "npx ng-openapi-gen",
-    "gemini-agent": "npx https://github.com/google-gemini/gemini-cli"
+    "openapi:generate": "npx ng-openapi-gen"
   },
   "dependencies": {
     "@angular/animations": "~19.2.0",
