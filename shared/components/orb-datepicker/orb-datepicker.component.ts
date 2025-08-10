@@ -56,6 +56,7 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   @Input() showTime: boolean = false;
   @Input() timeOnly: boolean = false;
   @Input() hourFormat: '12' | '24' = '24';
+  @Input() disabledDays: number[] | null = null;
 
   // El input 'locale' se elimina, ya que confiamos en la configuración global de PrimeNG.
 
