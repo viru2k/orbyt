@@ -41,7 +41,7 @@
             id="users-filter"
             placeholder="Seleccionar profesionales"
             [options]="(usersStore.users$ | async) || []"
-            optionLabel="name"
+            optionLabel="fullName"
             [ngModel]="selectedUsers"
             (ngModelChange)="onUsersChange($event)"
             styleClass="w-52"
@@ -70,7 +70,7 @@
       </div>
       
       <!-- Botones de acción -->
-      <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
         <orb-button
           label="Buscar"
           icon="pi pi-search"
@@ -91,6 +91,24 @@
           (click)="openNewAppointmentDialog()"
           size="small"
         ></orb-button>
+        
+        <!-- New configuration buttons -->
+        <div style="border-left: 1px solid #e5e7eb; margin-left: 0.5rem; padding-left: 0.5rem; display: flex; gap: 0.5rem;">
+          <orb-button
+            label="Configurar Horarios"
+            icon="pi pi-cog"
+            severity="info"
+            (click)="openConfigModal()"
+            size="small"
+          ></orb-button>
+          <orb-button
+            label="Gestionar Feriados"
+            icon="pi pi-ban"
+            severity="help"
+            (click)="openHolidaysModal()"
+            size="small"
+          ></orb-button>
+        </div>
       </div>
     </div>
   </div>
@@ -99,13 +117,13 @@
 <!-- Card del calendario -->
 <orb-card style="margin-top: 1rem;">
   <div orbBody>
-    <orb-fullcalendar
+    <orb-modern-calendar
       [events]="(agendaStore.calendarEvents$ | async) || []"
       (datesSetRange)="handleDatesSet($event)"
       (eventClick)="handleEventClick($event)"
       (dateSelect)="handleDateSelect($event)"
       (eventDrop)="handleEventDrop($event)"
-    ></orb-fullcalendar>
+    ></orb-modern-calendar>
   </div>
 </orb-card>
 
@@ -118,3 +136,14 @@
     (delete)="handleDelete($event)"
   ></app-agenda-form>
 </orb-dialog>
+
+<!-- Configuration Modals -->
+<app-agenda-config-modal
+  [(visible)]="displayConfigModal"
+  (close)="closeConfigModal()"
+></app-agenda-config-modal>
+
+<app-holidays-modal
+  [(visible)]="displayHolidaysModal"
+  (close)="closeHolidaysModal()"
+></app-holidays-modal>
