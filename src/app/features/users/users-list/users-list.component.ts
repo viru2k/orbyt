@@ -1,5 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
 import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent } from '@orb-components';
 import { UsersStore } from '@orb-stores/users/users.store';
 import { AuthStore } from '@orb-stores';
@@ -31,13 +32,16 @@ import { AgendaConfigModalComponent } from '../../agenda/components/agenda-confi
   styleUrls: ['./users-list.component.scss'],
   providers: [UsersStore], // Provee el store a este componente y sus hijos
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, OnDestroy {
   public readonly usersStore = inject(UsersStore);
   private readonly authStore = inject(AuthStore);
+  private readonly destroy$ = new Subject<void>();
 
   public users$ = this.usersStore.users$;
   public loading$ = this.usersStore.loading$;
   public error$ = this.usersStore.error$;
+  
+  private canManageAgendaValue = false;
 
   displayUserEditModal = signal(false);
   userToEdit = signal<UserResponseDto | undefined>(undefined);
@@ -69,10 +73,7 @@ export class UsersListComponent implements OnInit {
   ];
 
   private canManageAgenda(): boolean {
-    // Suscribirse al observable para obtener el valor actual
-    let canManage = false;
-    this.authStore.canManageAgenda$.subscribe(value => canManage = value).unsubscribe();
-    return canManage;
+    return this.canManageAgendaValue;
   }
 
   private openAgendaConfig(user: UserResponseDto): void {
@@ -82,6 +83,16 @@ export class UsersListComponent implements OnInit {
 
   ngOnInit(): void {
     this.usersStore.loadUsers();
+    
+    // Subscribe to canManageAgenda and store the value
+    this.authStore.canManageAgenda$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => this.canManageAgendaValue = value);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openUserEditModal(user: UserResponseDto): void {

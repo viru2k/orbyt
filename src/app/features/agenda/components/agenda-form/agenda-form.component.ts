@@ -72,6 +72,21 @@ export class AgendaFormComponent implements OnChanges {
     this.agendaForm.get('professionalId')?.valueChanges.subscribe((professionalId: number) => {
       this.onProfessionalChange(professionalId);
     });
+
+    // Escuchar cambios en las fechas para verificar disponibilidad
+    this.agendaForm.get('startDateTime')?.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.onDateTimeChange();
+    });
+
+    this.agendaForm.get('endDateTime')?.valueChanges.pipe(
+      debounceTime(500), 
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.onDateTimeChange();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
