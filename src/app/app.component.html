@@ -1,7 +1,8 @@
 
-<p-toast />
-@if (spinner.loading()) { <div class="overlay-spinner">
-    <p-progress-spinner strokeWidth="4" fill="transparent" animationDuration=".3s" [style]="{ width: '40px', height: '40px' }" />
-  </div> 
-}
-  <router-outlet></router-outlet>
+<div class="spinner-overlay" *ngIf="spinner.isVisible$ | async">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<router-outlet></router-outlet>
+

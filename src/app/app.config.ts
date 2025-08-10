@@ -1,8 +1,10 @@
 
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { ApiConfiguration } from './api/api-configuration';
 import { ActivityTrackerService } from './services/activity-tracker.service';
-
+import { CalendarUtils, DateAdapter, CalendarA11y, CalendarDateFormatter, CalendarEventTitleFormatter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { es } from 'date-fns/locale';
 import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
@@ -21,6 +23,7 @@ import localeEs from '@angular/common/locales/es';
 
 
 registerLocaleData(localeEs, 'es-ES');
+registerLocaleData(localeEs, 'es');
 
 
 export const appConfig: ApplicationConfig = {
@@ -82,9 +85,18 @@ export const appConfig: ApplicationConfig = {
     logOnly: true
   }),
     MessageService,
+    ConfirmationService,
     DatePipe,
     ActivityTrackerService,
-    { provide: LOCALE_ID, useValue: 'es-ES' }
+    CalendarUtils,
+    CalendarA11y,
+    CalendarDateFormatter,
+    CalendarEventTitleFormatter,
+    {
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    },
+    { provide: LOCALE_ID, useValue: 'es' }
   ],
 
 };

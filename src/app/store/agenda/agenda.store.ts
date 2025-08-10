@@ -11,11 +11,13 @@ import {
   CreateAppointmentDto,
   UpdateAppointmentDto,
   AgendaConfigResponseDto,
+  UpdateAgendaConfigDto,
   HolidayResponseDto,
+  CreateHolidayDto,
   AvailableSlotResponseDto,
   AppointmentSummaryResponseDto,
-} from '../../api/model/models';
-import { AgendaService } from '../../api/services/agenda.service';
+} from '../../api/models';
+import { AgendaService } from '../../api/services';
 
 // App Services and Models
 import { NotificationService, SpinnerService } from '@orb-services';
@@ -55,6 +57,8 @@ export interface AgendaState {
   currentDateRange: { start: Date; end: Date } | null;
   loading: boolean;
   error: HttpErrorResponse | string | null;
+  configLoading: boolean;
+  holidaysLoading: boolean;
 }
 
 // Initial State
@@ -68,30 +72,52 @@ export const initialAgendaState: AgendaState = {
   currentDateRange: null,
   loading: false,
   error: null,
+  configLoading: false,
+  holidaysLoading: false,
 };
 
 // Helper function
 function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): CalendarDisplayEvent {
-  if (!appointment.id) {
-    console.error('Appointment sin ID encontrado:', appointment);
-  }
-  if (!appointment.start || !appointment.end) {
-      console.warn('Appointment sin startDateTime o endDateTime:', appointment.title, appointment.id);
-  }
+
+  // Convert ISO string dates to Date objects for angular-calendar
+  const startDate = appointment.start ? new Date(appointment.start) : undefined;
+  const endDate = appointment.end ? new Date(appointment.end) : undefined;
+
 
   // Generate CSS classes based on status
   const statusClass = appointment.status ? `status-${appointment.status.toLowerCase()}` : '';
   const cssClasses = ['fc-event-modern', statusClass].filter(Boolean).join(' ');
 
+  const eventColor = appointment.color || '#3b82f6';
+  
   return {
     id: appointment.id!.toString(),
     title: appointment.title || 'Turno sin título',
-    start: appointment.start,
-    end: appointment.end,
+    start: startDate,
+    end: endDate,
     allDay: appointment.allDay || false,
-    color: appointment.color,
+    color: eventColor,
     editable: true,
-    className: cssClasses,
+    cssClass: cssClasses,
+    // Add inline styles for custom color
+    ...(appointment.color && {
+      style: {
+        backgroundColor: eventColor,
+        borderColor: eventColor
+      }
+    }),
+    meta: {
+      resourceId: appointment.extendedProps?.resourceId || appointment.roomId,
+      clientId: appointment.extendedProps?.clientId,
+      serviceId: appointment.serviceId,
+      notes: appointment.notes,
+      status: appointment.status,
+      originalAppointment: appointment,
+      professionalId: appointment.professional?.id,
+      roomId: appointment.roomId,
+      appointmentColor: eventColor,
+    },
+    // Keep extendedProps for backward compatibility
     extendedProps: {
       resourceId: appointment.extendedProps?.resourceId || appointment.roomId,
       clientId: appointment.extendedProps?.clientId,
@@ -101,6 +127,7 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
       originalAppointment: appointment,
       professionalId: appointment.professional?.id,
       roomId: appointment.roomId,
+      appointmentColor: eventColor,
     },
   };
 }
@@ -119,11 +146,14 @@ export class AgendaStore extends ComponentStore<AgendaState> {
   // SELECTORS
   readonly appointments$ = this.select((state) => state.appointments);
   readonly agendaConfig$ = this.select((state) => state.agendaConfig);
+  readonly agendaHolydays$ = this.select((state) => state.agendaHolydays);
   readonly availableTimes$ = this.select((state) => state.availableTimes);
   readonly summary$ = this.select((state) => state.summary);
   readonly selectedAppointment$ = this.select((state) => state.selectedAppointment);
   readonly currentDateRange$ = this.select((state) => state.currentDateRange);
   readonly loading$ = this.select((state) => state.loading);
+  readonly configLoading$ = this.select((state) => state.configLoading);
+  readonly holidaysLoading$ = this.select((state) => state.holidaysLoading);
   readonly error$ = this.select((state) => state.error);
 
   readonly calendarEvents$ = this.select(
@@ -135,9 +165,17 @@ export class AgendaStore extends ComponentStore<AgendaState> {
 
   // UPDATERS
   private readonly setLoading = this.updater((state, loading: boolean) => ({ ...state, loading }));
+  private readonly setConfigLoading = this.updater((state, configLoading: boolean) => ({ ...state, configLoading }));
+  private readonly setHolidaysLoading = this.updater((state, holidaysLoading: boolean) => ({ ...state, holidaysLoading }));
   private readonly setError = this.updater((state, error: HttpErrorResponse | string | null) => ({ ...state, error, loading: false }));
-  private readonly setAgendaConfig = this.updater((state, config: AgendaConfigResponseDto) => ({ ...state, agendaConfig: config, loading: false }));
-  private readonly setAgendaHolidays = this.updater((state, holydays: Array<HolidayResponseDto>) => ({ ...state, agendaHolydays: holydays, loading: false }));
+  private readonly setAgendaConfig = this.updater((state, config: AgendaConfigResponseDto) => ({ ...state, agendaConfig: config, configLoading: false }));
+  private readonly setAgendaHolidays = this.updater((state, holydays: Array<HolidayResponseDto>) => ({ ...state, agendaHolydays: holydays, holidaysLoading: false }));
+  private readonly addHoliday = this.updater((state, holiday: HolidayResponseDto) => ({ ...state, agendaHolydays: [...state.agendaHolydays, holiday], holidaysLoading: false }));
+  private readonly removeHoliday = this.updater((state, holidayId: number) => ({
+    ...state,
+    agendaHolydays: state.agendaHolydays.filter(h => h.id !== holidayId),
+    holidaysLoading: false
+  }));
   private readonly setAvailableTimes = this.updater((state, availableTimes: AvailableSlotResponseDto) => ({ ...state, availableTimes, loading: false }));
   private readonly setSummary = this.updater((state, summary: AppointmentSummaryResponseDto) => ({ ...state, summary, loading: false }));
   private readonly setAppointments = this.updater((state, appointments: AppointmentResponseDto[]) => ({ ...state, appointments, loading: false }));
@@ -159,18 +197,19 @@ export class AgendaStore extends ComponentStore<AgendaState> {
 
   // EFFECTS
 
-  readonly loadAgendaConfig = this.effect<number>((professionalId$) =>
+  readonly loadAgendaConfig = this.effect<number | undefined>((professionalId$) =>
     professionalId$.pipe(
-      tap(() => this.setLoading(true)),
+      tap(() => this.setConfigLoading(true)),
       exhaustMap((professionalId) =>
         this.agendaService.agendaControllerGetConfig({ professionalId }).pipe(
           tapResponse(
-            (config : AgendaConfigResponseDto) => {
-                  this.setAgendaConfig(config);              
+            (config: AgendaConfigResponseDto) => {
+              this.setAgendaConfig(config);
             },
             (error: any) => {
               this.setError(error);
-              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar la configuración de la agenda.');
+              this.setConfigLoading(false);
+              this.notificationService.showError(NotificationSeverity.Error, error.error?.message || 'Error al cargar la configuración de la agenda.');
             }
           )
         )
@@ -178,18 +217,19 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     )
   );
   
-  readonly loadAgendaHolidays = this.effect<number>((professionalId$) =>
+  readonly loadAgendaHolidays = this.effect<number | undefined>((professionalId$) =>
     professionalId$.pipe(
-      tap(() => this.setLoading(true)),
+      tap(() => this.setHolidaysLoading(true)),
       exhaustMap((professionalId) =>
         this.agendaService.agendaControllerGetHolidays({ professionalId }).pipe(
           tapResponse(
-            (holydays : Array<HolidayResponseDto>) => {
-                  this.setAgendaHolidays(holydays);              
+            (holydays: Array<HolidayResponseDto>) => {
+              this.setAgendaHolidays(holydays);
             },
             (error: any) => {
               this.setError(error);
-              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar los feriados de la agenda.');
+              this.setHolidaysLoading(false);
+              this.notificationService.showError(NotificationSeverity.Error, error.error?.message || 'Error al cargar los feriados de la agenda.');
             }
           )
         )
@@ -201,14 +241,14 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetAvailable({ date: params.date, professionalId: params.professionalId }).pipe(
+        this.agendaService.agendaControllerGetAvailable(params).pipe(
           tapResponse(
             (availableTimes: AvailableSlotResponseDto) => {
               this.setAvailableTimes(availableTimes);
             },
             (error: any) => {
               this.setError(error);
-              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar los horarios disponibles.');
+              this.notificationService.showError(NotificationSeverity.Error, error.error?.message || 'Error al cargar los horarios disponibles.');
             }
           )
         )
@@ -220,14 +260,14 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetSummary({ from: params.from, to: params.to, professionalId: params.professionalId }).pipe(
+        this.agendaService.agendaControllerGetSummary(params).pipe(
           tapResponse(
             (summary: AppointmentSummaryResponseDto) => {
               this.setSummary(summary);
             },
             (error: any) => {
               this.setError(error);
-              this.notificationService.showError(NotificationSeverity.Error, error.error.message || 'Error al cargar el resumen de la agenda.');
+              this.notificationService.showError(NotificationSeverity.Error, error.error?.message || 'Error al cargar el resumen de la agenda.');
             }
           )
         )
@@ -249,13 +289,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
         }
       }),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetAppointments({
-          date: params.date,
-          from: params.from,
-          to: params.to,
-          status: params.status,
-          professionalId: params.professionalId
-        }).pipe(
+        this.agendaService.agendaControllerGetAppointments(params).pipe(
           tapResponse(
             (appointments: AppointmentResponseDto[]) => {
               this.setAppointments(appointments);
@@ -363,6 +397,86 @@ export class AgendaStore extends ComponentStore<AgendaState> {
             (error: HttpErrorResponse) => {
               this.setError(error);
               this.notificationService.showError(NotificationSeverity.Error, 'Error al eliminar el turno.');
+              this.spinner.hide();
+            }
+          )
+        )
+      )
+    )
+  );
+
+  // NEW EFFECTS FOR CONFIG AND HOLIDAYS
+  
+  readonly updateAgendaConfig = this.effect<{ professionalId?: number; config: UpdateAgendaConfigDto }>((params$) =>
+    params$.pipe(
+      tap(() => {
+        this.setConfigLoading(true);
+        this.spinner.show();
+      }),
+      exhaustMap(({ professionalId, config }) =>
+        this.agendaService.agendaControllerUpdateConfig({ professionalId: professionalId || 1, body: config }).pipe(
+          tapResponse(
+            (updatedConfig: AgendaConfigResponseDto) => {
+              this.setAgendaConfig(updatedConfig);
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Configuración de agenda actualizada con éxito.');
+              this.spinner.hide();
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.setConfigLoading(false);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al actualizar la configuración de agenda.');
+              this.spinner.hide();
+            }
+          )
+        )
+      )
+    )
+  );
+
+  readonly addHolidayEffect = this.effect<{ professionalId?: number; holiday: CreateHolidayDto }>((params$) =>
+    params$.pipe(
+      tap(() => {
+        this.setHolidaysLoading(true);
+        this.spinner.show();
+      }),
+      exhaustMap(({ professionalId, holiday }) =>
+        this.agendaService.agendaControllerAddHoliday({ professionalId, body: holiday }).pipe(
+          tapResponse(
+            (newHoliday: HolidayResponseDto) => {
+              this.addHoliday(newHoliday);
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Feriado agregado con éxito.');
+              this.spinner.hide();
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.setHolidaysLoading(false);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al agregar el feriado.');
+              this.spinner.hide();
+            }
+          )
+        )
+      )
+    )
+  );
+
+  readonly deleteHolidayEffect = this.effect<{ holidayId: number }>((params$) =>
+    params$.pipe(
+      tap(() => {
+        this.setHolidaysLoading(true);
+        this.spinner.show();
+      }),
+      exhaustMap(({ holidayId }) =>
+        this.agendaService.agendaControllerDeleteHoliday({ id: holidayId }).pipe(
+          tapResponse(
+            () => {
+              this.removeHoliday(holidayId);
+              this.notificationService.showSuccess(NotificationSeverity.Success, 'Feriado eliminado con éxito.');
+              this.spinner.hide();
+            },
+            (error: HttpErrorResponse) => {
+              this.setError(error);
+              this.setHolidaysLoading(false);
+              this.notificationService.showError(NotificationSeverity.Error, 'Error al eliminar el feriado.');
               this.spinner.hide();
             }
           )
