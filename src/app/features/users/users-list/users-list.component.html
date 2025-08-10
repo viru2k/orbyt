@@ -73,3 +73,11 @@
     </app-user-edit-form>
   }
 </orb-dialog>
+
+<!-- Agenda Configuration Modal -->
+<app-agenda-config-modal
+  [(visible)]="displayAgendaConfigModal"
+  [professionalId]="selectedProfessionalId()"
+  (close)="onAgendaConfigModalClose()"
+>
+</app-agenda-config-modal>

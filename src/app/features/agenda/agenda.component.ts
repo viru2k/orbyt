@@ -189,8 +189,4 @@ export class AgendaComponent implements OnInit {
     this.dialogInitialDate = null;
   }
 
-  // Configuration navigation
-  openConfigModal(): void {
-    this.router.navigate(['/agenda/config']);
-  }
 }

@@ -111,6 +111,86 @@
         </div>
       </div>
 
+      <!-- Días Festivos / Vacaciones -->
+      <div class="form-section">
+        <h4>🏖️ Días Festivos y Vacaciones</h4>
+        
+        <div class="holidays-management">
+          <div class="holidays-list">
+            <div 
+              *ngFor="let holiday of (agendaStore.agendaHolydays$ | async) || []; trackBy: trackByHolidayId"
+              class="holiday-item"
+            >
+              <div class="holiday-info">
+                <span class="holiday-date">📅 {{ formatDisplayDate(holiday.date) }}</span>
+                <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
+              </div>
+              <orb-button
+                icon="pi pi-trash"
+                severity="danger"
+                size="small"
+                pTooltip="Eliminar día festivo"
+                (click)="onDeleteHoliday(holiday)"
+              />
+            </div>
+            
+            <div *ngIf="!(agendaStore.agendaHolydays$ | async)?.length" class="no-holidays">
+              <p>No hay días festivos configurados.</p>
+            </div>
+          </div>
+
+          <div class="add-holiday">
+            <orb-button
+              label="Agregar Día Festivo"
+              icon="pi pi-plus"
+              severity="info"
+              size="small"
+              (click)="showAddHolidayForm = !showAddHolidayForm"
+            />
+          </div>
+
+          <!-- Formulario para agregar festivo -->
+          <div *ngIf="showAddHolidayForm" class="add-holiday-form">
+            <form [formGroup]="holidayForm" class="holiday-form-inline">
+              <div class="input-group">
+                <orb-label text="📅 Fecha" />
+                <orb-text-input
+                  formControlName="date"
+                  type="date"
+                  placeholder="Selecciona una fecha"
+                />
+              </div>
+              
+              <div class="input-group">
+                <orb-label text="📝 Descripción (opcional)" />
+                <orb-text-input
+                  formControlName="reason"
+                  placeholder="Ej: Vacaciones, feriado nacional..."
+                />
+              </div>
+
+              <div class="form-actions">
+                <orb-button
+                  label="Cancelar"
+                  severity="secondary"
+                  size="small"
+                  (click)="onCancelAddHoliday()"
+                />
+                <orb-button
+                  label="Agregar"
+                  severity="success"
+                  icon="pi pi-plus"
+                  size="small"
+                  (click)="onAddHoliday()"
+                  [loading]="!!(agendaStore.holidaysLoading$ | async)"
+                  [disabled]="holidayForm.invalid"
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </form>
   </div>
   
@@ -133,3 +213,5 @@
     </div>
   </div>
 </orb-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

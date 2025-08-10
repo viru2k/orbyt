@@ -7,9 +7,12 @@ import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
 import { OrbTextInputComponent } from '@orb-shared-components/orb-text-input/orb-text-input.component';
 import { OrbLabelComponent } from '@orb-shared-components/orb-label/orb-label.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
-import { AgendaConfigResponseDto, UpdateAgendaConfigDto } from '../../../../api/model/models';
+import { AgendaConfigResponseDto, UpdateAgendaConfigDto, HolidayResponseDto, CreateHolidayDto } from '../../../../api/model/models';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-agenda-config-modal',
@@ -20,18 +23,24 @@ import { AgendaConfigResponseDto, UpdateAgendaConfigDto } from '../../../../api/
     OrbDialogComponent,
     OrbButtonComponent,
     OrbTextInputComponent,
-    OrbLabelComponent
+    OrbLabelComponent,
+    ConfirmDialogModule,
+    TooltipModule
   ],
   templateUrl: './agenda-config-modal.component.html',
-  styleUrls: ['./agenda-config-modal.component.scss']
+  styleUrls: ['./agenda-config-modal.component.scss'],
+  providers: [ConfirmationService]
 })
 export class AgendaConfigModalComponent implements OnInit, OnDestroy {
   @Input() visible = false;
   @Input() config: AgendaConfigResponseDto | null = null;
+  @Input() professionalId: number | null = null;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() close = new EventEmitter<void>();
 
   configForm!: FormGroup;
+  holidayForm!: FormGroup;
+  showAddHolidayForm = false;
   private destroy$ = new Subject<void>();
 
   weekDays = [
@@ -46,16 +55,21 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    public agendaStore: AgendaStore
+    public agendaStore: AgendaStore,
+    private confirmationService: ConfirmationService
   ) {
     this.initForm();
+    this.initHolidayForm();
   }
 
   ngOnInit(): void {
     // Load current config if not provided
     if (!this.config) {
-      this.agendaStore.loadAgendaConfig(undefined);
+      this.agendaStore.loadAgendaConfig(this.professionalId || undefined);
     }
+
+    // Load holidays for the professional
+    this.agendaStore.loadAgendaHolidays(this.professionalId || undefined);
 
     // Subscribe to config changes
     this.agendaStore.agendaConfig$
@@ -139,7 +153,10 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
         workingDays: selectedWorkingDays
       };
 
-      this.agendaStore.updateAgendaConfig({ config: updateDto });
+      this.agendaStore.updateAgendaConfig({ 
+        professionalId: this.professionalId || undefined,
+        config: updateDto 
+      });
       
       // Subscribe to success to close modal
       this.agendaStore.configLoading$
@@ -154,5 +171,66 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
 
   onCancel(): void {
     this.onHide();
+  }
+
+  private initHolidayForm(): void {
+    this.holidayForm = this.fb.group({
+      date: ['', Validators.required],
+      reason: ['', [Validators.maxLength(255)]]
+    });
+  }
+
+  trackByHolidayId(index: number, holiday: HolidayResponseDto): number {
+    return holiday.id;
+  }
+
+  formatDisplayDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  onDeleteHoliday(holiday: HolidayResponseDto): void {
+    this.confirmationService.confirm({
+      message: `¿Estás seguro de que quieres eliminar el feriado del ${this.formatDisplayDate(holiday.date)}?`,
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.agendaStore.deleteHolidayEffect({ holidayId: holiday.id });
+      },
+    });
+  }
+
+  onAddHoliday(): void {
+    if (this.holidayForm.valid) {
+      const formValue = this.holidayForm.value;
+      
+      const newHoliday: CreateHolidayDto = {
+        date: formValue.date,
+        reason: formValue.reason || undefined
+      };
+
+      this.agendaStore.addHolidayEffect({ 
+        professionalId: this.professionalId || undefined,
+        holiday: newHoliday 
+      });
+      
+      this.agendaStore.holidaysLoading$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(loading => {
+          if (!loading) {
+            this.onCancelAddHoliday();
+          }
+        });
+    }
+  }
+
+  onCancelAddHoliday(): void {
+    this.showAddHolidayForm = false;
+    this.holidayForm.reset();
   }
 }
