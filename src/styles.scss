@@ -1,9 +1,10 @@
-// Importa Bootstrap
-@use './styles/themes';
-
-// Tus propios archivos SCSS
+// Tus propios archivos SCSS (debe ir primero)
 @use  './styles/variables';
 @use './styles/mixins';
+@use './styles/themes';
+
+// Font Awesome (imports van después de @use)
+@import '@fortawesome/fontawesome-free/css/all.css';
 
 // Estilos globales (si deseas)
 * {

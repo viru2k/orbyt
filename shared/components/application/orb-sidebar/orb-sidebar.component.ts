@@ -32,7 +32,7 @@ export class OrbSidebarComponent implements OnInit {
         if (canManageProducts) {
           managementItems.push({
             label: 'Productos',
-            icon: 'pi pi-hammer',
+            icon: 'fas fa-box-open',
             command: () => this.router.navigate(['/management/product'])
           });
         }
@@ -40,7 +40,7 @@ export class OrbSidebarComponent implements OnInit {
         if (canManageClients) {
           managementItems.push({
             label: 'Clientes',
-            icon: 'pi pi-users',
+            icon: 'fas fa-user-friends',
             command: () => this.router.navigate(['/management/client'])
           });
         }
@@ -48,7 +48,7 @@ export class OrbSidebarComponent implements OnInit {
         if (canManageUsers) {
           managementItems.push({
             label: 'Usuarios',
-            icon: 'pi pi-user-cog',
+            icon: 'fas fa-users-cog',
             command: () => this.router.navigate(['/management/users'])
           });
         }
@@ -64,7 +64,7 @@ export class OrbSidebarComponent implements OnInit {
     const menuItems: MenuItem[] = [
       {
         label: 'Panel',
-        icon: 'pi pi-fw pi-home',
+        icon: 'fas fa-tachometer-alt',
         command: () => this.router.navigate(['/dashboard'])
       }
     ];
@@ -73,16 +73,16 @@ export class OrbSidebarComponent implements OnInit {
     if (canManageAgenda) {
       menuItems.push({
         label: 'Agenda',
-        icon: 'pi pi-fw pi-calendar',
+        icon: 'fas fa-calendar-alt',
         items: [
           {
             label: 'Calendario',
-            icon: 'pi pi-fw pi-calendar-plus',
+            icon: 'fas fa-calendar-check',
             routerLink: ['/agenda']
           },
           {
             label: 'Crear cita',
-            icon: 'pi pi-fw pi-user-plus',
+            icon: 'fas fa-calendar-plus',
             routerLink: ['/agenda/schedule']
           },
         ]
@@ -92,16 +92,16 @@ export class OrbSidebarComponent implements OnInit {
     // Stock section (always visible for now)
     menuItems.push({
       label: 'Stock',
-      icon: 'pi pi-fw pi-box',
+      icon: 'fas fa-warehouse',
       items: [
         {
           label: 'Entradas',
-          icon: 'pi pi-fw pi-arrow-down',
+          icon: 'fas fa-arrow-down',
           command: () => this.router.navigate(['/stock/in'])
         },
         {
           label: 'Salidas',
-          icon: 'pi pi-fw pi-arrow-up',
+          icon: 'fas fa-arrow-up',
           command: () => this.router.navigate(['/stock/out'])
         }
       ]
@@ -111,7 +111,7 @@ export class OrbSidebarComponent implements OnInit {
     if (managementItems.length > 0) {
       menuItems.push({
         label: 'Gestión',
-        icon: 'pi pi-fw pi-cog',
+        icon: 'fas fa-cogs',
         items: managementItems
       });
     }
@@ -119,7 +119,7 @@ export class OrbSidebarComponent implements OnInit {
     // Profile section (always visible)
     menuItems.push({
       label: 'Perfil',
-      icon: 'pi pi-fw pi-user',
+      icon: 'fas fa-user-circle',
       command: () => this.router.navigate(['/profile'])
     });
 

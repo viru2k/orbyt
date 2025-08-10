@@ -57,12 +57,12 @@ export class UsersListComponent implements OnInit {
   public actions: OrbActionItem<UserResponseDto>[] = [
     {
       label: 'Editar',
-      icon: 'pi pi-pencil',
+      icon: 'fas fa-edit',
       action: (item?: UserResponseDto) => item && this.openUserEditModal(item),
     },
     {
       label: 'Agenda',
-      icon: 'pi pi-calendar-plus',
+      icon: 'fas fa-calendar-alt',
       action: (item?: UserResponseDto) => item && this.openAgendaConfig(item),
       visible: (item?: UserResponseDto) => this.canManageAgenda()
     }
