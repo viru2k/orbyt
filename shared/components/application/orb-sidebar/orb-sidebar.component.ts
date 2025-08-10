@@ -84,6 +84,11 @@ export class OrbSidebarComponent implements OnInit {
             label: 'Crear cita',
             icon: 'pi pi-fw pi-user-plus',
             routerLink: ['/agenda/schedule']
+          },
+          {
+            label: 'Configuración',
+            icon: 'pi pi-fw pi-cog',
+            routerLink: ['/agenda/config']
           }
         ]
       });

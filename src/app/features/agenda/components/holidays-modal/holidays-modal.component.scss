@@ -1,4 +1,56 @@
 .holidays-modal {
+  .holidays-content {
+    .holidays-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1.5rem;
+    }
+    
+    .holidays-list {
+      .holiday-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          border-color: #3b82f6;
+          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+        }
+        
+        .holiday-info {
+          flex: 1;
+          
+          .holiday-date {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+          }
+          
+          .holiday-reason {
+            font-size: 0.875rem;
+            color: #6b7280;
+          }
+        }
+      }
+      
+      .no-holidays {
+        text-align: center;
+        padding: 3rem;
+        color: #6b7280;
+        
+        p {
+          margin: 0;
+        }
+      }
+    }
+  }
+
   .add-holiday-section {
     margin-bottom: 2rem;
     padding: 1.5rem;

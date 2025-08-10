@@ -414,7 +414,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
         this.spinner.show();
       }),
       exhaustMap(({ professionalId, config }) =>
-        this.agendaService.agendaControllerUpdateConfig({ professionalId: professionalId || 1, body: config }).pipe(
+        this.agendaService.agendaControllerUpdateConfig({ professionalId: professionalId?.toString() || '1', body: config }).pipe(
           tapResponse(
             (updatedConfig: AgendaConfigResponseDto) => {
               this.setAgendaConfig(updatedConfig);
@@ -459,29 +459,13 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     )
   );
 
+  // TODO: Backend needs to implement deleteHoliday endpoint
   readonly deleteHolidayEffect = this.effect<{ holidayId: number }>((params$) =>
     params$.pipe(
       tap(() => {
-        this.setHolidaysLoading(true);
-        this.spinner.show();
-      }),
-      exhaustMap(({ holidayId }) =>
-        this.agendaService.agendaControllerDeleteHoliday({ id: holidayId }).pipe(
-          tapResponse(
-            () => {
-              this.removeHoliday(holidayId);
-              this.notificationService.showSuccess(NotificationSeverity.Success, 'Feriado eliminado con éxito.');
-              this.spinner.hide();
-            },
-            (error: HttpErrorResponse) => {
-              this.setError(error);
-              this.setHolidaysLoading(false);
-              this.notificationService.showError(NotificationSeverity.Error, 'Error al eliminar el feriado.');
-              this.spinner.hide();
-            }
-          )
-        )
-      )
+        // Temporarily remove from local state until backend implements delete endpoint
+        this.notificationService.showError(NotificationSeverity.Error, 'Eliminar feriados no está implementado en el backend aún.');
+      })
     )
   );
 }

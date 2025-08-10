@@ -9,12 +9,8 @@ import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbTextAreaComponent } from '@orb-shared-components/orb-text-area/orb-text-area.component';
 import { OrbLabelComponent } from '@orb-shared-components/orb-label/orb-label.component';
-import { OrbTableComponent } from '@orb-shared-components/orb-table/orb-table.component';
-import { OrbActionsPopoverComponent } from '@orb-shared-components/orb-actions-popover/orb-actions-popover.component';
-
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
 import { HolidayResponseDto, CreateHolidayDto } from '../../../../api/models';
-import { IActions } from '@orb-shared-models/global';
 
 @Component({
   selector: 'app-holidays-modal',
@@ -26,9 +22,7 @@ import { IActions } from '@orb-shared-models/global';
     OrbButtonComponent,
     OrbDatepickerComponent,
     OrbTextAreaComponent,
-    OrbLabelComponent,
-    OrbTableComponent,
-    OrbActionsPopoverComponent
+    OrbLabelComponent
   ],
   templateUrl: './holidays-modal.component.html',
   styleUrls: ['./holidays-modal.component.scss']
@@ -42,18 +36,6 @@ export class HolidaysModalComponent implements OnInit, OnDestroy {
   showAddHolidayDialog = false;
   private destroy$ = new Subject<void>();
 
-  tableColumns = [
-    { field: 'date', header: '📅 Fecha', sortable: true },
-    { field: 'reason', header: '📝 Descripción', sortable: false },
-  ];
-
-  rowActions: IActions[] = [
-    {
-      label: 'Eliminar',
-      icon: 'pi pi-trash',
-      command: (item) => this.onDeleteHoliday(item),
-    },
-  ];
 
   disabledDays$ = this.agendaStore.agendaConfig$.pipe(
     map(config => {
@@ -132,7 +114,7 @@ export class HolidaysModalComponent implements OnInit, OnDestroy {
       this.agendaStore.holidaysLoading$
         .pipe(takeUntil(this.destroy$))
         .subscribe(loading => {
-          if (!loading && !this.agendaStore.error$()) {
+          if (!loading) {
             this.onCancelAdd();
           }
         });

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AgendaStore } from '../../store/agenda/agenda.store';
 import { UsersStore } from '../../store/users/users.store';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
@@ -8,8 +9,6 @@ import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbMultiselectComponent } from '@orb-shared-components/orb-multiselect/orb-multiselect.component';
 import { AgendaFormComponent } from './components/agenda-form/agenda-form.component';
-import { AgendaConfigModalComponent } from './components/agenda-config-modal/agenda-config-modal.component';
-import { HolidaysModalComponent } from './components/holidays-modal/holidays-modal.component';
 import { AppointmentResponseDto, UpdateAppointmentDto } from '../../api/model/models';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { OrbModernCalendarComponent, ModernCalendarEvent, DateSelectInfo, AdaptedEventClickArg, AdaptedDatesSetArg } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
@@ -27,8 +26,6 @@ import { CalendarEventTimesChangedEvent } from 'angular-calendar';
     OrbDatepickerComponent,
     OrbMultiselectComponent,
     AgendaFormComponent,
-    AgendaConfigModalComponent,
-    HolidaysModalComponent,
     OrbCardComponent,
     OrbModernCalendarComponent,
   ],
@@ -40,9 +37,6 @@ export class AgendaComponent implements OnInit {
   selectedAppointment: AppointmentResponseDto | null = null;
   dialogInitialDate: string | null = null;
 
-  // New modals
-  displayConfigModal = false;
-  displayHolidaysModal = false;
   
   // Filtros de fecha
   selectedDateFrom: Date = new Date();
@@ -66,7 +60,8 @@ export class AgendaComponent implements OnInit {
 
   constructor(
     public agendaStore: AgendaStore,
-    public usersStore: UsersStore
+    public usersStore: UsersStore,
+    private router: Router
   ) {
     // Configurar fechas por defecto (hoy)
     this.setTodayDates();
@@ -194,20 +189,8 @@ export class AgendaComponent implements OnInit {
     this.dialogInitialDate = null;
   }
 
-  // New modal handlers
+  // Configuration navigation
   openConfigModal(): void {
-    this.displayConfigModal = true;
-  }
-
-  closeConfigModal(): void {
-    this.displayConfigModal = false;
-  }
-
-  openHolidaysModal(): void {
-    this.displayHolidaysModal = true;
-  }
-
-  closeHolidaysModal(): void {
-    this.displayHolidaysModal = false;
+    this.router.navigate(['/agenda/config']);
   }
 }

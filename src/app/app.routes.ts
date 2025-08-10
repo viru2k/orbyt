@@ -70,6 +70,13 @@ export const appRoutes: Route[] = [
             (m) => m.AgendaNewComponent
           ),
       },
+      {
+        path: 'agenda/config',
+        loadComponent: () =>
+          import('./features/agenda/agenda-config/agenda-config.component').then(
+            (m) => m.AgendaConfigComponent
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: 'dashboard' },

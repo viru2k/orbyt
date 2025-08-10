@@ -12,15 +12,8 @@
   </div>
 
   <div slot="content">
-    <orb-table
-      [value]="(agendaStore.agendaHolydays$ | async) ?? []"
-      [columns]="tableColumns"
-      [loading]="agendaStore.holidaysLoading$ | async"
-      [actions]="rowActions"
-      [showActions]="true"
-      emptyMessage="No hay feriados configurados."
-    >
-      <div slot="header-actions">
+    <div class="holidays-content">
+      <div class="holidays-header">
         <orb-button
           label="Nuevo Feriado"
           severity="success"
@@ -29,7 +22,31 @@
           (click)="onShowAddForm()"
         />
       </div>
-    </orb-table>
+      
+      <div class="holidays-list">
+        <div 
+          *ngFor="let holiday of (agendaStore.agendaHolydays$ | async) || []; trackBy: trackByHolidayId"
+          class="holiday-item"
+        >
+          <div class="holiday-info">
+            <span class="holiday-date">📅 {{ formatDisplayDate(holiday.date) }}</span>
+            <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
+          </div>
+          <orb-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [disabled]="true"
+            pTooltip="Funcionalidad en desarrollo"
+            (click)="onDeleteHoliday(holiday)"
+          />
+        </div>
+        
+        <div *ngIf="!(agendaStore.agendaHolydays$ | async)?.length" class="no-holidays">
+          <p>No hay feriados configurados.</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div slot="footer">

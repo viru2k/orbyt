@@ -95,17 +95,10 @@
         <!-- New configuration buttons -->
         <div style="border-left: 1px solid #e5e7eb; margin-left: 0.5rem; padding-left: 0.5rem; display: flex; gap: 0.5rem;">
           <orb-button
-            label="Configurar Horarios"
+            label="Configuración"
             icon="pi pi-cog"
             severity="info"
             (click)="openConfigModal()"
-            size="small"
-          ></orb-button>
-          <orb-button
-            label="Gestionar Feriados"
-            icon="pi pi-ban"
-            severity="help"
-            (click)="openHolidaysModal()"
             size="small"
           ></orb-button>
         </div>
@@ -137,13 +130,3 @@
   ></app-agenda-form>
 </orb-dialog>
 
-<!-- Configuration Modals -->
-<app-agenda-config-modal
-  [(visible)]="displayConfigModal"
-  (close)="closeConfigModal()"
-></app-agenda-config-modal>
-
-<app-holidays-modal
-  [(visible)]="displayHolidaysModal"
-  (close)="closeHolidaysModal()"
-></app-holidays-modal>

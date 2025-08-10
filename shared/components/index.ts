@@ -20,4 +20,7 @@ export * from './orb-multiselect/orb-multiselect.component' ;
 export * from './orb-select/orb-select.component' ;
 export * from './orb-datepicker/orb-datepicker.component' ;
 export * from './orb-fullcalendar/orb-fullcalendar.component' ;
+export * from './orb-modern-calendar/orb-modern-calendar.component' ;
 export * from './orb-actions-popover/orb-actions-popover.component' ;
+export * from './orb-switch/orb-switch.component';
+export * from './orb-input-number/orb-input-number.component';

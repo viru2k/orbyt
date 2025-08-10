@@ -1,0 +1,120 @@
+<div class="orb-modern-calendar-container">
+  
+  <!-- Calendar Header/Toolbar -->
+  <div class="calendar-header">
+    <div class="header-left">
+      <button
+        class="btn btn-nav"
+        (click)="decrementDate()"
+        [attr.aria-label]="'Anterior'"
+      >
+        <i class="pi pi-angle-left"></i>
+      </button>
+      
+      <button
+        class="btn btn-nav"
+        (click)="incrementDate()"
+        [attr.aria-label]="'Siguiente'"
+      >
+        <i class="pi pi-angle-right"></i>
+      </button>
+      
+      <button
+        class="btn btn-today"
+        (click)="today()"
+      >
+        Hoy
+      </button>
+    </div>
+
+    <div class="header-center">
+      <h2 class="calendar-title">
+        <!-- Title will be managed by angular-calendar internally -->
+        {{ viewDate | date: (view === CalendarView.Month ? 'MMMM yyyy' : (view === CalendarView.Week ? 'MMMM yyyy' : 'd MMMM yyyy')) : locale }}
+      </h2>
+    </div>
+
+    <div class="header-right">
+      <div class="view-switcher">
+        <button
+          class="btn btn-view"
+          [class.active]="view === CalendarView.Month"
+          (click)="setView(CalendarView.Month)"
+        >
+          Mes
+        </button>
+        <button
+          class="btn btn-view"
+          [class.active]="view === CalendarView.Week"
+          (click)="setView(CalendarView.Week)"
+        >
+          Semana
+        </button>
+        <button
+          class="btn btn-view"
+          [class.active]="view === CalendarView.Day"
+          (click)="setView(CalendarView.Day)"
+        >
+          Día
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Content -->
+  <div class="calendar-content">
+    <div [ngSwitch]="view">
+      
+      <!-- Month View -->
+      <mwl-calendar-month-view
+        *ngSwitchCase="CalendarView.Month"
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh$"
+        [locale]="locale"
+        [weekStartsOn]="weekStartsOn"
+        [excludeDays]="excludeDays"
+        (eventClicked)="handleEventClick($event)"
+        (dayClicked)="handleDayClick($event)"
+        (eventTimesChanged)="handleEventTimesChanged($event)"
+      >
+      </mwl-calendar-month-view>
+
+      <!-- Week View -->
+      <mwl-calendar-week-view
+        *ngSwitchCase="CalendarView.Week"
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh$"
+        [locale]="locale"
+        [weekStartsOn]="weekStartsOn"
+        [excludeDays]="excludeDays"
+        [hourSegments]="2"
+        [dayStartHour]="6"
+        [dayEndHour]="22"
+        (eventClicked)="handleEventClick($event)"
+        (dayHeaderClicked)="handleDayClick($event)"
+        (eventTimesChanged)="handleEventTimesChanged($event)"
+        (hourSegmentClicked)="handleDayClick($event)"
+      >
+      </mwl-calendar-week-view>
+
+      <!-- Day View -->
+      <mwl-calendar-day-view
+        *ngSwitchCase="CalendarView.Day"
+        [viewDate]="viewDate"
+        [events]="events"
+        [refresh]="refresh$"
+        [locale]="locale"
+        [hourSegments]="4"
+        [dayStartHour]="6"
+        [dayEndHour]="22"
+        (eventClicked)="handleEventClick($event)"
+        (eventTimesChanged)="handleEventTimesChanged($event)"
+        (hourSegmentClicked)="handleDayClick($event)"
+      >
+      </mwl-calendar-day-view>
+
+    </div>
+  </div>
+</div>
