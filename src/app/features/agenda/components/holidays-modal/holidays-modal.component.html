@@ -13,7 +13,7 @@
 
   <div slot="content">
     <orb-table
-      [value]="agendaStore.agendaHolydays$ | async"
+      [value]="(agendaStore.agendaHolydays$ | async) ?? []"
       [columns]="tableColumns"
       [loading]="agendaStore.holidaysLoading$ | async"
       [actions]="rowActions"
