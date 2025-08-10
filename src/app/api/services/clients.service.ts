@@ -15,6 +15,8 @@ import { clientControllerCreate } from '../fn/clients/client-controller-create';
 import { ClientControllerCreate$Params } from '../fn/clients/client-controller-create';
 import { clientControllerFindAll } from '../fn/clients/client-controller-find-all';
 import { ClientControllerFindAll$Params } from '../fn/clients/client-controller-find-all';
+import { clientControllerFindGroupClients } from '../fn/clients/client-controller-find-group-clients';
+import { ClientControllerFindGroupClients$Params } from '../fn/clients/client-controller-find-group-clients';
 import { clientControllerFindOne } from '../fn/clients/client-controller-find-one';
 import { ClientControllerFindOne$Params } from '../fn/clients/client-controller-find-one';
 import { clientControllerRemove } from '../fn/clients/client-controller-remove';
@@ -92,6 +94,39 @@ export class ClientsService extends BaseService {
   clientControllerCreate(params: ClientControllerCreate$Params, context?: HttpContext): Observable<ClientResponseDto> {
     return this.clientControllerCreate$Response(params, context).pipe(
       map((r: StrictHttpResponse<ClientResponseDto>): ClientResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `clientControllerFindGroupClients()` */
+  static readonly ClientControllerFindGroupClientsPath = '/clients/group';
+
+  /**
+   * Listar todos los clientes del grupo (admin y sub-usuarios).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `clientControllerFindGroupClients()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerFindGroupClients$Response(params?: ClientControllerFindGroupClients$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ClientResponseDto>>> {
+    return clientControllerFindGroupClients(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Listar todos los clientes del grupo (admin y sub-usuarios).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `clientControllerFindGroupClients$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerFindGroupClients(params?: ClientControllerFindGroupClients$Params, context?: HttpContext): Observable<Array<ClientResponseDto>> {
+    return this.clientControllerFindGroupClients$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<ClientResponseDto>>): Array<ClientResponseDto> => r.body)
     );
   }
 

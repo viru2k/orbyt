@@ -12,7 +12,7 @@ import { AgendaConfigResponseDto } from '../../models/agenda-config-response-dto
 import { UpdateAgendaConfigDto } from '../../models/update-agenda-config-dto';
 
 export interface AgendaControllerUpdateConfig$Params {
-  professionalId: number;
+  professionalId: string;
       body: UpdateAgendaConfigDto
 }
 

@@ -14,18 +14,28 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { AgendaConfigResponseDto } from '../models/agenda-config-response-dto';
 import { agendaControllerAddHoliday } from '../fn/agenda/agenda-controller-add-holiday';
 import { AgendaControllerAddHoliday$Params } from '../fn/agenda/agenda-controller-add-holiday';
+import { agendaControllerBlockMultipleDates } from '../fn/agenda/agenda-controller-block-multiple-dates';
+import { AgendaControllerBlockMultipleDates$Params } from '../fn/agenda/agenda-controller-block-multiple-dates';
 import { agendaControllerBook } from '../fn/agenda/agenda-controller-book';
 import { AgendaControllerBook$Params } from '../fn/agenda/agenda-controller-book';
+import { agendaControllerBulkConfigUpdate } from '../fn/agenda/agenda-controller-bulk-config-update';
+import { AgendaControllerBulkConfigUpdate$Params } from '../fn/agenda/agenda-controller-bulk-config-update';
 import { agendaControllerCreate } from '../fn/agenda/agenda-controller-create';
 import { AgendaControllerCreate$Params } from '../fn/agenda/agenda-controller-create';
+import { agendaControllerCreateDayOverride } from '../fn/agenda/agenda-controller-create-day-override';
+import { AgendaControllerCreateDayOverride$Params } from '../fn/agenda/agenda-controller-create-day-override';
 import { agendaControllerDeleteAppointment } from '../fn/agenda/agenda-controller-delete-appointment';
 import { AgendaControllerDeleteAppointment$Params } from '../fn/agenda/agenda-controller-delete-appointment';
 import { agendaControllerGetAppointments } from '../fn/agenda/agenda-controller-get-appointments';
 import { AgendaControllerGetAppointments$Params } from '../fn/agenda/agenda-controller-get-appointments';
+import { agendaControllerGetAvailabilityRange } from '../fn/agenda/agenda-controller-get-availability-range';
+import { AgendaControllerGetAvailabilityRange$Params } from '../fn/agenda/agenda-controller-get-availability-range';
 import { agendaControllerGetAvailable } from '../fn/agenda/agenda-controller-get-available';
 import { AgendaControllerGetAvailable$Params } from '../fn/agenda/agenda-controller-get-available';
 import { agendaControllerGetConfig } from '../fn/agenda/agenda-controller-get-config';
 import { AgendaControllerGetConfig$Params } from '../fn/agenda/agenda-controller-get-config';
+import { agendaControllerGetDayOverrides } from '../fn/agenda/agenda-controller-get-day-overrides';
+import { AgendaControllerGetDayOverrides$Params } from '../fn/agenda/agenda-controller-get-day-overrides';
 import { agendaControllerGetHolidays } from '../fn/agenda/agenda-controller-get-holidays';
 import { AgendaControllerGetHolidays$Params } from '../fn/agenda/agenda-controller-get-holidays';
 import { agendaControllerGetProductsUsed } from '../fn/agenda/agenda-controller-get-products-used';
@@ -38,6 +48,8 @@ import { agendaControllerGetWeek } from '../fn/agenda/agenda-controller-get-week
 import { AgendaControllerGetWeek$Params } from '../fn/agenda/agenda-controller-get-week';
 import { agendaControllerRegisterProductsUsed } from '../fn/agenda/agenda-controller-register-products-used';
 import { AgendaControllerRegisterProductsUsed$Params } from '../fn/agenda/agenda-controller-register-products-used';
+import { agendaControllerUnblockDates } from '../fn/agenda/agenda-controller-unblock-dates';
+import { AgendaControllerUnblockDates$Params } from '../fn/agenda/agenda-controller-unblock-dates';
 import { agendaControllerUpdate } from '../fn/agenda/agenda-controller-update';
 import { AgendaControllerUpdate$Params } from '../fn/agenda/agenda-controller-update';
 import { agendaControllerUpdateConfig } from '../fn/agenda/agenda-controller-update-config';
@@ -546,6 +558,204 @@ export class AgendaService extends BaseService {
   agendaControllerGetProductsUsed(params: AgendaControllerGetProductsUsed$Params, context?: HttpContext): Observable<Array<AppointmentProductLogResponseDto>> {
     return this.agendaControllerGetProductsUsed$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<AppointmentProductLogResponseDto>>): Array<AppointmentProductLogResponseDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerBlockMultipleDates()` */
+  static readonly AgendaControllerBlockMultipleDatesPath = '/agenda/block-dates';
+
+  /**
+   * Bloquear múltiples fechas (vacaciones, días libres).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerBlockMultipleDates()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  agendaControllerBlockMultipleDates$Response(params: AgendaControllerBlockMultipleDates$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerBlockMultipleDates(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Bloquear múltiples fechas (vacaciones, días libres).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerBlockMultipleDates$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  agendaControllerBlockMultipleDates(params: AgendaControllerBlockMultipleDates$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerBlockMultipleDates$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerUnblockDates()` */
+  static readonly AgendaControllerUnblockDatesPath = '/agenda/block-dates';
+
+  /**
+   * Desbloquear fechas específicas.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerUnblockDates()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerUnblockDates$Response(params: AgendaControllerUnblockDates$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerUnblockDates(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Desbloquear fechas específicas.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerUnblockDates$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerUnblockDates(params: AgendaControllerUnblockDates$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerUnblockDates$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerCreateDayOverride()` */
+  static readonly AgendaControllerCreateDayOverridePath = '/agenda/day-override';
+
+  /**
+   * Configurar horario especial para un día específico.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerCreateDayOverride()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  agendaControllerCreateDayOverride$Response(params: AgendaControllerCreateDayOverride$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerCreateDayOverride(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Configurar horario especial para un día específico.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerCreateDayOverride$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  agendaControllerCreateDayOverride(params: AgendaControllerCreateDayOverride$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerCreateDayOverride$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerGetDayOverrides()` */
+  static readonly AgendaControllerGetDayOverridesPath = '/agenda/day-overrides';
+
+  /**
+   * Listar overrides de días específicos.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerGetDayOverrides()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerGetDayOverrides$Response(params?: AgendaControllerGetDayOverrides$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerGetDayOverrides(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Listar overrides de días específicos.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerGetDayOverrides$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerGetDayOverrides(params?: AgendaControllerGetDayOverrides$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerGetDayOverrides$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerBulkConfigUpdate()` */
+  static readonly AgendaControllerBulkConfigUpdatePath = '/agenda/bulk-config';
+
+  /**
+   * Actualización masiva de configuración para rango de fechas.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerBulkConfigUpdate()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  agendaControllerBulkConfigUpdate$Response(params: AgendaControllerBulkConfigUpdate$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerBulkConfigUpdate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Actualización masiva de configuración para rango de fechas.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerBulkConfigUpdate$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  agendaControllerBulkConfigUpdate(params: AgendaControllerBulkConfigUpdate$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerBulkConfigUpdate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerGetAvailabilityRange()` */
+  static readonly AgendaControllerGetAvailabilityRangePath = '/agenda/availability-range';
+
+  /**
+   * Obtener disponibilidad para un rango de fechas.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerGetAvailabilityRange()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerGetAvailabilityRange$Response(params: AgendaControllerGetAvailabilityRange$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerGetAvailabilityRange(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener disponibilidad para un rango de fechas.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerGetAvailabilityRange$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerGetAvailabilityRange(params: AgendaControllerGetAvailabilityRange$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerGetAvailabilityRange$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

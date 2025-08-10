@@ -10,7 +10,9 @@ export type { AppointmentProfessionalResponseDto } from './models/appointment-pr
 export type { AppointmentResponseDto } from './models/appointment-response-dto';
 export type { AppointmentSummaryResponseDto } from './models/appointment-summary-response-dto';
 export type { AvailableSlotResponseDto } from './models/available-slot-response-dto';
+export type { BlockDatesDto } from './models/block-dates-dto';
 export type { BookAppointmentDto } from './models/book-appointment-dto';
+export type { BulkConfigUpdateDto } from './models/bulk-config-update-dto';
 export type { ClientResponseDto } from './models/client-response-dto';
 export type { CreateAppointmentDto } from './models/create-appointment-dto';
 export type { CreateClientDto } from './models/create-client-dto';
@@ -22,6 +24,7 @@ export type { CreateStockMovementDto } from './models/create-stock-movement-dto'
 export type { CreateSubscriptionPlanDto } from './models/create-subscription-plan-dto';
 export type { CreateSubscriptionPlanFeatureDto } from './models/create-subscription-plan-feature-dto';
 export type { CreateSubUserDto } from './models/create-sub-user-dto';
+export type { DayOverrideDto } from './models/day-override-dto';
 export type { ExtendedPropsDto } from './models/extended-props-dto';
 export type { HolidayResponseDto } from './models/holiday-response-dto';
 export type { LoginDto } from './models/login-dto';

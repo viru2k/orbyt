@@ -1,7 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
-import { OrbTableComponent, OrbDialogComponent, OrbCardComponent } from '@orb-components';
+import { Router } from '@angular/router';
+import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent } from '@orb-components';
 import { UsersStore } from '@orb-stores/users/users.store';
+import { AuthStore } from '@orb-stores';
 import { UserResponseDto, RoleResponseDto, PermissionResponseDto } from '../../../api/model/models';
 import { TableColumn, OrbActionItem } from '@orb-models';
 import { MessageModule } from 'primeng/message';
@@ -17,6 +19,7 @@ import { UserEditFormComponent } from '../modal/user-edit-form.component';
     AsyncPipe,
     OrbTableComponent,
     OrbDialogComponent,
+    OrbActionsPopoverComponent,
     MessageModule,
     TagModule,
     ChipModule,
@@ -29,6 +32,8 @@ import { UserEditFormComponent } from '../modal/user-edit-form.component';
 })
 export class UsersListComponent implements OnInit {
   public readonly usersStore = inject(UsersStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly router = inject(Router);
 
   public users$ = this.usersStore.users$;
   public loading$ = this.usersStore.loading$;
@@ -43,6 +48,7 @@ export class UsersListComponent implements OnInit {
     { field: 'isAdmin', header: 'Admin' },
     { field: 'active', header: 'Activo' },
     { field: 'createdAt', header: 'Fecha Creación' },
+    { field: 'actions', header: 'Acciones', sortable: false }
   ];
 
   public actions: OrbActionItem<UserResponseDto>[] = [
@@ -50,8 +56,27 @@ export class UsersListComponent implements OnInit {
       label: 'Editar',
       icon: 'pi pi-pencil',
       action: (item?: UserResponseDto) => item && this.openUserEditModal(item),
+    },
+    {
+      label: 'Agenda',
+      icon: 'pi pi-calendar-plus',
+      action: (item?: UserResponseDto) => item && this.openAgendaConfig(item),
+      visible: (item?: UserResponseDto) => this.canManageAgenda()
     }
   ];
+
+  private canManageAgenda(): boolean {
+    // Suscribirse al observable para obtener el valor actual
+    let canManage = false;
+    this.authStore.canManageAgenda$.subscribe(value => canManage = value).unsubscribe();
+    return canManage;
+  }
+
+  private openAgendaConfig(user: UserResponseDto): void {
+    this.router.navigate(['/agenda/config'], { 
+      queryParams: { professionalId: user.id } 
+    });
+  }
 
   ngOnInit(): void {
     this.usersStore.loadUsers();

@@ -17,6 +17,8 @@ import { userControllerGetGroupUsers } from '../fn/users/user-controller-get-gro
 import { UserControllerGetGroupUsers$Params } from '../fn/users/user-controller-get-group-users';
 import { userControllerGetMyProfile } from '../fn/users/user-controller-get-my-profile';
 import { UserControllerGetMyProfile$Params } from '../fn/users/user-controller-get-my-profile';
+import { userControllerGetSubUsers } from '../fn/users/user-controller-get-sub-users';
+import { UserControllerGetSubUsers$Params } from '../fn/users/user-controller-get-sub-users';
 import { userControllerUpdateSubUser } from '../fn/users/user-controller-update-sub-user';
 import { UserControllerUpdateSubUser$Params } from '../fn/users/user-controller-update-sub-user';
 import { UserResponseDto } from '../models/user-response-dto';
@@ -97,7 +99,7 @@ export class UsersService extends BaseService {
   static readonly UserControllerGetGroupUsersPath = '/users/group';
 
   /**
-   * Admin: Listar todos los usuarios del grupo.
+   * Admin: Listar todos los usuarios del grupo incluyendo admin.
    *
    *
    *
@@ -111,7 +113,7 @@ export class UsersService extends BaseService {
   }
 
   /**
-   * Admin: Listar todos los usuarios del grupo.
+   * Admin: Listar todos los usuarios del grupo incluyendo admin.
    *
    *
    *
@@ -122,6 +124,39 @@ export class UsersService extends BaseService {
    */
   userControllerGetGroupUsers(params?: UserControllerGetGroupUsers$Params, context?: HttpContext): Observable<Array<UserResponseDto>> {
     return this.userControllerGetGroupUsers$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<UserResponseDto>>): Array<UserResponseDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `userControllerGetSubUsers()` */
+  static readonly UserControllerGetSubUsersPath = '/users/sub-users';
+
+  /**
+   * Admin: Listar solo los sub-usuarios del grupo.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `userControllerGetSubUsers()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  userControllerGetSubUsers$Response(params?: UserControllerGetSubUsers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserResponseDto>>> {
+    return userControllerGetSubUsers(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Admin: Listar solo los sub-usuarios del grupo.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `userControllerGetSubUsers$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  userControllerGetSubUsers(params?: UserControllerGetSubUsers$Params, context?: HttpContext): Observable<Array<UserResponseDto>> {
+    return this.userControllerGetSubUsers$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<UserResponseDto>>): Array<UserResponseDto> => r.body)
     );
   }
