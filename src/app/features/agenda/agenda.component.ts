@@ -8,10 +8,13 @@ import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbMultiselectComponent } from '@orb-shared-components/orb-multiselect/orb-multiselect.component';
 import { AgendaFormComponent } from './components/agenda-form/agenda-form.component';
+import { AgendaConfigModalComponent } from './components/agenda-config-modal/agenda-config-modal.component';
+import { HolidaysModalComponent } from './components/holidays-modal/holidays-modal.component';
 import { AppointmentResponseDto, UpdateAppointmentDto } from '../../api/model/models';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
-import { OrbFullcalendarComponent, CalendarDisplayEvent } from '@orb-shared-components/orb-fullcalendar/orb-fullcalendar.component';
+import { OrbModernCalendarComponent, ModernCalendarEvent, DateSelectInfo, AdaptedEventClickArg, AdaptedDatesSetArg } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
 import { DateSelectArg, EventClickArg, DatesSetArg, EventDropArg } from '@fullcalendar/core';
+import { CalendarEventTimesChangedEvent } from 'angular-calendar';
 
 @Component({
   selector: 'app-agenda',
@@ -24,8 +27,10 @@ import { DateSelectArg, EventClickArg, DatesSetArg, EventDropArg } from '@fullca
     OrbDatepickerComponent,
     OrbMultiselectComponent,
     AgendaFormComponent,
+    AgendaConfigModalComponent,
+    HolidaysModalComponent,
     OrbCardComponent,
-    OrbFullcalendarComponent,
+    OrbModernCalendarComponent,
   ],
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss'],
@@ -34,6 +39,10 @@ export class AgendaComponent implements OnInit {
   displayAgendaForm = false;
   selectedAppointment: AppointmentResponseDto | null = null;
   dialogInitialDate: string | null = null;
+
+  // New modals
+  displayConfigModal = false;
+  displayHolidaysModal = false;
   
   // Filtros de fecha
   selectedDateFrom: Date = new Date();
@@ -73,10 +82,10 @@ export class AgendaComponent implements OnInit {
 
   private setTodayDates(): void {
     const today = new Date();
-    // Fecha desde: hoy a las 00:00:00
-    this.selectedDateFrom = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
-    // Fecha hasta: hoy a las 23:59:59
-    this.selectedDateTo = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+    // Fecha desde: 7 días atrás a las 00:00:00
+    this.selectedDateFrom = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7, 0, 0, 0);
+    // Fecha hasta: 7 días adelante a las 23:59:59
+    this.selectedDateTo = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7, 23, 59, 59);
   }
 
   openNewAppointmentDialog(): void {
@@ -102,6 +111,7 @@ export class AgendaComponent implements OnInit {
       filters.status = this.selectedStatuses.map(s => s.value);
     }
     
+    
     this.agendaStore.loadAppointments(filters);
   }
 
@@ -126,7 +136,8 @@ export class AgendaComponent implements OnInit {
     this.performSearch();
   }
 
-  handleDatesSet(dateInfo: DatesSetArg): void {
+  // Modern Calendar compatible handlers
+  handleDatesSet(dateInfo: AdaptedDatesSetArg): void {
     // Solo actualizar si no es la carga inicial
     if (!this.isInitialLoad(dateInfo)) {
       this.agendaStore.loadAppointments({
@@ -136,15 +147,18 @@ export class AgendaComponent implements OnInit {
     }
   }
 
-  private isInitialLoad(dateInfo: DatesSetArg): boolean {
+  private isInitialLoad(dateInfo: AdaptedDatesSetArg): boolean {
     // Verificar si las fechas del calendario coinciden con las fechas de filtro
     const startMatches = Math.abs(dateInfo.start.getTime() - this.selectedDateFrom.getTime()) < 86400000; // 24 horas
     const endMatches = Math.abs(dateInfo.end.getTime() - this.selectedDateTo.getTime()) < 86400000;
     return startMatches && endMatches;
   }
 
-  handleEventClick(eventClickInfo: EventClickArg): void {
-    const originalAppointment = eventClickInfo.event.extendedProps['originalAppointment'];
+  handleEventClick(eventClickInfo: AdaptedEventClickArg): void {
+    // Try both extendedProps and the nested structure
+    const extendedProps = eventClickInfo.event.extendedProps || {};
+    const originalAppointment = extendedProps['originalAppointment'] || extendedProps.originalAppointment;
+    
     if (originalAppointment) {
       this.selectedAppointment = originalAppointment;
       this.dialogInitialDate = null;
@@ -152,20 +166,20 @@ export class AgendaComponent implements OnInit {
     }
   }
 
-  handleDateSelect(dateSelectInfo: DateSelectArg): void {
+  handleDateSelect(dateSelectInfo: DateSelectInfo): void {
     this.selectedAppointment = null;
     this.dialogInitialDate = dateSelectInfo.startStr;
     this.displayAgendaForm = true;
   }
 
-  handleEventDrop(eventDropInfo: EventDropArg): void {
-    const { event } = eventDropInfo;
-    if (event.id && event.start && event.end) {
+  handleEventDrop(eventDropInfo: CalendarEventTimesChangedEvent): void {
+    const { event, newStart, newEnd } = eventDropInfo;
+    if (event.id && newStart && newEnd) {
       const updateDto: UpdateAppointmentDto = {
-        startDateTime: event.start.toISOString(),
-        endDateTime: event.end.toISOString(),
+        startDateTime: newStart.toISOString(),
+        endDateTime: newEnd.toISOString(),
       };
-      this.agendaStore.updateAppointment({ id: event.id, dto: updateDto });
+      this.agendaStore.updateAppointment({ id: event.id.toString(), dto: updateDto });
     }
   }
 
@@ -178,5 +192,22 @@ export class AgendaComponent implements OnInit {
     this.displayAgendaForm = false;
     this.selectedAppointment = null;
     this.dialogInitialDate = null;
+  }
+
+  // New modal handlers
+  openConfigModal(): void {
+    this.displayConfigModal = true;
+  }
+
+  closeConfigModal(): void {
+    this.displayConfigModal = false;
+  }
+
+  openHolidaysModal(): void {
+    this.displayHolidaysModal = true;
+  }
+
+  closeHolidaysModal(): void {
+    this.displayHolidaysModal = false;
   }
 }

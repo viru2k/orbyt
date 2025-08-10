@@ -1,0 +1,135 @@
+<orb-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="agenda-config-modal"
+  (onHide)="onHide()"
+>
+  <div slot="header">
+    <h3>⚙️ Configuración de Agenda</h3>
+  </div>
+  
+  <div slot="content">
+    <form [formGroup]="configForm" class="config-form">
+      
+      <!-- Horario de trabajo -->
+      <div class="form-section">
+        <h4>🕒 Horario de Trabajo</h4>
+        
+        <div class="time-inputs">
+          <div class="input-group">
+            <orb-label text="Hora de inicio" />
+            <orb-text-input
+              formControlName="startTime"
+              type="time"
+              placeholder="09:00"
+            />
+          </div>
+          
+          <div class="input-group">
+            <orb-label text="Hora de fin" />
+            <orb-text-input
+              formControlName="endTime"
+              type="time"
+              placeholder="18:00"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Duración de slots -->
+      <div class="form-section">
+        <h4>⏱️ Configuración de Turnos</h4>
+        
+        <div class="input-group">
+          <orb-label text="Duración de cada turno (minutos)" />
+          <orb-text-input
+            formControlName="slotDuration"
+            type="number"
+            min="15"
+            max="120"
+            placeholder="30"
+          />
+          <small class="help-text">Entre 15 y 120 minutos</small>
+        </div>
+      </div>
+
+      <!-- Días laborales -->
+      <div class="form-section">
+        <h4>📅 Días Laborales</h4>
+        
+        <div class="working-days">
+          <div 
+            *ngFor="let day of weekDays; let i = index" 
+            class="day-checkbox"
+          >
+            <input
+              type="checkbox"
+              [id]="'day-' + i"
+              [formControl]="workingDaysControls[i]"
+              class="day-input"
+            />
+            <label [for]="'day-' + i" class="day-label">
+              {{ day.label }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuraciones adicionales -->
+      <div class="form-section">
+        <h4>🎛️ Configuraciones Adicionales</h4>
+        
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input
+              type="checkbox"
+              id="overbooking"
+              formControlName="overbookingAllowed"
+              class="config-checkbox"
+            />
+            <label for="overbooking" class="checkbox-label">
+              Permitir sobrebooking
+            </label>
+            <small class="help-text">Permitir más citas de las que el horario normalmente permite</small>
+          </div>
+          
+          <div class="checkbox-item">
+            <input
+              type="checkbox"
+              id="blockedDays"
+              formControlName="allowBookingOnBlockedDays"
+              class="config-checkbox"
+            />
+            <label for="blockedDays" class="checkbox-label">
+              Permitir reservas en días bloqueados
+            </label>
+            <small class="help-text">Los clientes pueden reservar en días marcados como feriados</small>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  
+  <div slot="footer">
+    <div class="modal-actions">
+      <orb-button
+        label="Cancelar"
+        severity="secondary"
+        (click)="onCancel()"
+        [disabled]="!!(agendaStore.configLoading$ | async)"
+      />
+      <orb-button
+        label="Guardar Configuración"
+        severity="success"
+        icon="pi pi-save"
+        (click)="onSave()"
+        [loading]="!!(agendaStore.configLoading$ | async)"
+        [disabled]="configForm.invalid"
+      />
+    </div>
+  </div>
+</orb-dialog>
