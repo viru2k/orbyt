@@ -1,5 +1,5 @@
 
-<div class="spinner-overlay" *ngIf="spinner.isVisible$ | async">
+<div class="spinner-overlay" *ngIf="spinner.loading()">
   <p-progressSpinner></p-progressSpinner>
 </div>
 <p-toast></p-toast>
