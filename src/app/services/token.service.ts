@@ -75,7 +75,7 @@ export class TokenService {
    * @param warningPercentage Porcentaje de vida útil para advertencia (default: 0.95)
    * @returns true si está cerca de expirar
    */
-  isTokenNearExpiration(token: string, warningPercentage: number = 0.95): boolean {
+  isTokenNearExpiration(token: string, warningPercentage = 0.95): boolean {
     const payload = this.decodeToken(token);
     if (!payload || !payload.exp || !payload.iat) return false;
     

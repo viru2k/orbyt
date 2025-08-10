@@ -14,179 +14,212 @@
   <div slot="content">
     <form [formGroup]="configForm" class="config-form">
       
-      <!-- Horario de trabajo -->
-      <div class="form-section">
-        <h4>🕒 Horario de Trabajo</h4>
-        
-        <div class="time-inputs">
-          <div class="input-group">
-            <orb-label text="Hora de inicio" />
-            <orb-text-input
-              formControlName="startTime"
-              type="time"
-              placeholder="09:00"
-            />
-          </div>
-          
-          <div class="input-group">
-            <orb-label text="Hora de fin" />
-            <orb-text-input
-              formControlName="endTime"
-              type="time"
-              placeholder="18:00"
-            />
-          </div>
+      <!-- Card: Horario de trabajo -->
+      <div class="config-card">
+        <div class="card-header">
+          <h4><i class="fas fa-clock"></i> Horario de Trabajo</h4>
         </div>
-      </div>
-
-      <!-- Duración de slots -->
-      <div class="form-section">
-        <h4>⏱️ Configuración de Turnos</h4>
-        
-        <div class="input-group">
-          <orb-label text="Duración de cada turno (minutos)" />
-          <orb-text-input
-            formControlName="slotDuration"
-            type="number"
-            min="15"
-            max="120"
-            placeholder="30"
-          />
-          <small class="help-text">Entre 15 y 120 minutos</small>
-        </div>
-      </div>
-
-      <!-- Días laborales -->
-      <div class="form-section">
-        <h4>📅 Días Laborales</h4>
-        
-        <div class="working-days">
-          <div 
-            *ngFor="let day of weekDays; let i = index" 
-            class="day-checkbox"
-          >
-            <input
-              type="checkbox"
-              [id]="'day-' + i"
-              [formControl]="workingDaysControls[i]"
-              class="day-input"
-            />
-            <label [for]="'day-' + i" class="day-label">
-              {{ day.label }}
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Configuraciones adicionales -->
-      <div class="form-section">
-        <h4>🎛️ Configuraciones Adicionales</h4>
-        
-        <div class="checkbox-group">
-          <div class="checkbox-item">
-            <input
-              type="checkbox"
-              id="overbooking"
-              formControlName="overbookingAllowed"
-              class="config-checkbox"
-            />
-            <label for="overbooking" class="checkbox-label">
-              Permitir sobrebooking
-            </label>
-            <small class="help-text">Permitir más citas de las que el horario normalmente permite</small>
-          </div>
-          
-          <div class="checkbox-item">
-            <input
-              type="checkbox"
-              id="blockedDays"
-              formControlName="allowBookingOnBlockedDays"
-              class="config-checkbox"
-            />
-            <label for="blockedDays" class="checkbox-label">
-              Permitir reservas en días bloqueados
-            </label>
-            <small class="help-text">Los clientes pueden reservar en días marcados como feriados</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Días Festivos / Vacaciones -->
-      <div class="form-section">
-        <h4>🏖️ Días Festivos y Vacaciones</h4>
-        
-        <div class="holidays-management">
-          <div class="holidays-list">
-            <div 
-              *ngFor="let holiday of (agendaStore.agendaHolydays$ | async) || []; trackBy: trackByHolidayId"
-              class="holiday-item"
-            >
-              <div class="holiday-info">
-                <span class="holiday-date">📅 {{ formatDisplayDate(holiday.date) }}</span>
-                <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
-              </div>
-              <orb-button
-                icon="pi pi-trash"
-                severity="danger"
-                size="small"
-                pTooltip="Eliminar día festivo"
-                (click)="onDeleteHoliday(holiday)"
-              />
+        <div class="card-content">
+          <div class="time-inputs">
+            <div class="input-group">
+              <p-floatLabel>
+                <input 
+                  pInputText 
+                  id="startTime"
+                  type="time" 
+                  formControlName="startTime"
+                  class="w-full"
+                />
+                <label for="startTime">Hora de inicio</label>
+              </p-floatLabel>
             </div>
             
-            <div *ngIf="!(agendaStore.agendaHolydays$ | async)?.length" class="no-holidays">
-              <p>No hay días festivos configurados.</p>
+            <div class="input-group">
+              <p-floatLabel>
+                <input 
+                  pInputText 
+                  id="endTime"
+                  type="time" 
+                  formControlName="endTime"
+                  class="w-full"
+                />
+                <label for="endTime">Hora de fin</label>
+              </p-floatLabel>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="add-holiday">
-            <orb-button
-              label="Agregar Día Festivo"
-              icon="pi pi-plus"
-              severity="info"
-              size="small"
-              (click)="showAddHolidayForm = !showAddHolidayForm"
-            />
+      <!-- Card: Configuración de turnos -->
+      <div class="config-card">
+        <div class="card-header">
+          <h4><i class="fas fa-stopwatch"></i> Configuración de Turnos</h4>
+        </div>
+        <div class="card-content">
+          <div class="input-group">
+            <p-floatLabel>
+              <p-inputNumber 
+                id="slotDuration"
+                formControlName="slotDuration"
+                [min]="15"
+                [max]="120"
+                suffix=" min"
+                styleClass="w-full"
+              />
+              <label for="slotDuration">Duración de cada turno</label>
+            </p-floatLabel>
+            <small class="help-text">Entre 15 y 120 minutos</small>
           </div>
+        </div>
+      </div>
 
-          <!-- Formulario para agregar festivo -->
-          <div *ngIf="showAddHolidayForm" class="add-holiday-form">
-            <form [formGroup]="holidayForm" class="holiday-form-inline">
-              <div class="input-group">
-                <orb-label text="📅 Fecha" />
-                <orb-text-input
-                  formControlName="date"
-                  type="date"
-                  placeholder="Selecciona una fecha"
+      <!-- Card: Días laborales -->
+      <div class="config-card">
+        <div class="card-header">
+          <h4><i class="fas fa-calendar-week"></i> Días Laborales</h4>
+        </div>
+        <div class="card-content">
+          <div class="working-days">
+            <div 
+              *ngFor="let day of weekDays; let i = index" 
+              class="day-checkbox"
+            >
+              <input
+                type="checkbox"
+                [id]="'day-' + i"
+                [formControl]="workingDaysControls[i]"
+                class="day-input"
+              />
+              <label [for]="'day-' + i" class="day-label">
+                {{ day.label }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Configuraciones adicionales -->
+      <div class="config-card">
+        <div class="card-header">
+          <h4><i class="fas fa-cogs"></i> Configuraciones Adicionales</h4>
+        </div>
+        <div class="card-content">
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="overbooking"
+                formControlName="overbookingAllowed"
+                class="config-checkbox"
+              />
+              <label for="overbooking" class="checkbox-label">
+                Permitir sobrebooking
+              </label>
+              <small class="help-text">Permitir más citas de las que el horario normalmente permite</small>
+            </div>
+            
+            <div class="checkbox-item">
+              <input
+                type="checkbox"
+                id="blockedDays"
+                formControlName="allowBookingOnBlockedDays"
+                class="config-checkbox"
+              />
+              <label for="blockedDays" class="checkbox-label">
+                Permitir reservas en días bloqueados
+              </label>
+              <small class="help-text">Los clientes pueden reservar en días marcados como feriados</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Días Festivos / Vacaciones -->
+      <div class="config-card holidays-card">
+        <div class="card-header">
+          <h4><i class="fas fa-umbrella-beach"></i> Días Festivos y Vacaciones</h4>
+        </div>
+        <div class="card-content">
+          <div class="holidays-management">
+            <div class="holidays-list">
+              <div 
+                *ngFor="let holiday of (agendaStore.agendaHolydays$ | async) || []; trackBy: trackByHolidayId"
+                class="holiday-item"
+              >
+                <div class="holiday-info">
+                  <span class="holiday-date">📅 {{ formatDisplayDate(holiday.date) }}</span>
+                  <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
+                </div>
+                <orb-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  size="small"
+                  pTooltip="Eliminar día festivo"
+                  (click)="onDeleteHoliday(holiday)"
                 />
               </div>
               
-              <div class="input-group">
-                <orb-label text="📝 Descripción (opcional)" />
-                <orb-text-input
-                  formControlName="reason"
-                  placeholder="Ej: Vacaciones, feriado nacional..."
-                />
+              <div *ngIf="!(agendaStore.agendaHolydays$ | async)?.length" class="no-holidays">
+                <p>No hay días festivos configurados.</p>
               </div>
+            </div>
 
-              <div class="form-actions">
-                <orb-button
-                  label="Cancelar"
-                  severity="secondary"
-                  size="small"
-                  (click)="onCancelAddHoliday()"
-                />
-                <orb-button
-                  label="Agregar"
-                  severity="success"
-                  icon="pi pi-plus"
-                  size="small"
-                  (click)="onAddHoliday()"
-                  [loading]="!!(agendaStore.holidaysLoading$ | async)"
-                  [disabled]="holidayForm.invalid"
-                />
-              </div>
-            </form>
+            <div class="add-holiday">
+              <orb-button
+                label="Agregar Día Festivo"
+                icon="pi pi-plus"
+                severity="info"
+                size="small"
+                (click)="showAddHolidayForm = !showAddHolidayForm"
+              />
+            </div>
+
+            <!-- Formulario para agregar festivo -->
+            <div *ngIf="showAddHolidayForm" class="add-holiday-form">
+              <form [formGroup]="holidayForm" class="holiday-form-inline">
+                <div class="input-group">
+                  <p-floatLabel>
+                    <p-calendar 
+                      id="holidayDate"
+                      formControlName="date"
+                      dateFormat="dd/mm/yy"
+                      styleClass="w-full"
+                    />
+                    <label for="holidayDate">Fecha</label>
+                  </p-floatLabel>
+                </div>
+                
+                <div class="input-group">
+                  <p-floatLabel>
+                    <input 
+                      pInputText 
+                      id="holidayReason"
+                      formControlName="reason"
+                      class="w-full"
+                    />
+                    <label for="holidayReason">Descripción (opcional)</label>
+                  </p-floatLabel>
+                </div>
+
+                <div class="form-actions">
+                  <orb-button
+                    label="Cancelar"
+                    severity="secondary"
+                    size="small"
+                    (click)="onCancelAddHoliday()"
+                  />
+                  <orb-button
+                    label="Agregar"
+                    severity="success"
+                    icon="pi pi-plus"
+                    size="small"
+                    (click)="onAddHoliday()"
+                    [loading]="!!(agendaStore.holidaysLoading$ | async)"
+                    [disabled]="holidayForm.invalid"
+                  />
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>

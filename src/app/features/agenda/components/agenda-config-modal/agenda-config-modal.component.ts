@@ -5,10 +5,12 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
-import { OrbTextInputComponent } from '@orb-shared-components/orb-text-input/orb-text-input.component';
-import { OrbLabelComponent } from '@orb-shared-components/orb-label/orb-label.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CalendarModule } from 'primeng/calendar';
 
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
 import { AgendaConfigResponseDto, UpdateAgendaConfigDto, HolidayResponseDto, CreateHolidayDto } from '../../../../api/model/models';
@@ -22,10 +24,12 @@ import { ConfirmationService } from 'primeng/api';
     ReactiveFormsModule,
     OrbDialogComponent,
     OrbButtonComponent,
-    OrbTextInputComponent,
-    OrbLabelComponent,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    FloatLabelModule,
+    InputTextModule,
+    InputNumberModule,
+    CalendarModule
   ],
   templateUrl: './agenda-config-modal.component.html',
   styleUrls: ['./agenda-config-modal.component.scss'],

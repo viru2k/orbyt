@@ -1,18 +1,124 @@
 .agenda-config-modal {
   .config-form {
-    max-width: 600px;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
     
-    .form-section {
-      margin-bottom: 2rem;
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .config-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
       
-      h4 {
-        margin: 0 0 1rem 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #374151;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #e5e7eb;
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
+      
+      .card-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        
+        h4 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #1f2937;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+      
+      .card-content {
+        padding: 1.5rem;
+      }
+    }
+    
+    .holidays-card {
+      grid-column: 1 / -1; // Full width for holidays section
+      margin-top: 1rem;
+      
+      .holidays-management {
+        .holidays-list {
+          max-height: 300px;
+          overflow-y: auto;
+          margin-bottom: 1rem;
+          
+          .holiday-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background-color: #f8fafc;
+            
+            .holiday-info {
+              display: flex;
+              flex-direction: column;
+              gap: 0.25rem;
+              
+              .holiday-date {
+                font-weight: 600;
+                color: #374151;
+              }
+              
+              .holiday-reason {
+                font-size: 14px;
+                color: #6b7280;
+              }
+            }
+          }
+          
+          .no-holidays {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+            font-style: italic;
+          }
+        }
+        
+        .add-holiday {
+          margin-bottom: 1rem;
+        }
+        
+        .add-holiday-form {
+          margin-top: 1rem;
+          padding: 1.5rem;
+          background-color: #f8fafc;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+          
+          .holiday-form-inline {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            
+            .form-actions {
+              grid-column: 1 / -1;
+              display: flex;
+              justify-content: flex-end;
+              gap: 0.5rem;
+              margin-top: 1rem;
+            }
+            
+            @media (max-width: 768px) {
+              grid-template-columns: 1fr;
+            }
+          }
+        }
+      }
+    }
       
       .time-inputs {
         display: grid;
@@ -113,9 +219,8 @@
         }
       }
     }
-  }
-  
-  .modal-actions {
+    
+    .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;

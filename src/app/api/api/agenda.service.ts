@@ -65,7 +65,7 @@ export class AgendaService extends BaseService {
     public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HolidayResponseDto>;
     public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<HolidayResponseDto>>;
     public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<HolidayResponseDto>>;
-    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerAddHoliday(createHolidayDto: CreateHolidayDto, professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createHolidayDto === null || createHolidayDto === undefined) {
             throw new Error('Required parameter createHolidayDto was null or undefined when calling agendaControllerAddHoliday.');
         }
@@ -111,7 +111,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/holiday`;
+        const localVarPath = `/agenda/holiday`;
         return this.httpClient.request<HolidayResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -136,7 +136,7 @@ export class AgendaService extends BaseService {
     public agendaControllerBook(bookAppointmentDto: BookAppointmentDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentResponseDto>;
     public agendaControllerBook(bookAppointmentDto: BookAppointmentDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentResponseDto>>;
     public agendaControllerBook(bookAppointmentDto: BookAppointmentDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentResponseDto>>;
-    public agendaControllerBook(bookAppointmentDto: BookAppointmentDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerBook(bookAppointmentDto: BookAppointmentDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (bookAppointmentDto === null || bookAppointmentDto === undefined) {
             throw new Error('Required parameter bookAppointmentDto was null or undefined when calling agendaControllerBook.');
         }
@@ -178,7 +178,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/book`;
+        const localVarPath = `/agenda/book`;
         return this.httpClient.request<AppointmentResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -202,7 +202,7 @@ export class AgendaService extends BaseService {
     public agendaControllerCreate(createAppointmentDto: CreateAppointmentDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentResponseDto>;
     public agendaControllerCreate(createAppointmentDto: CreateAppointmentDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentResponseDto>>;
     public agendaControllerCreate(createAppointmentDto: CreateAppointmentDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentResponseDto>>;
-    public agendaControllerCreate(createAppointmentDto: CreateAppointmentDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerCreate(createAppointmentDto: CreateAppointmentDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createAppointmentDto === null || createAppointmentDto === undefined) {
             throw new Error('Required parameter createAppointmentDto was null or undefined when calling agendaControllerCreate.');
         }
@@ -244,7 +244,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda`;
+        const localVarPath = `/agenda`;
         return this.httpClient.request<AppointmentResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -268,7 +268,7 @@ export class AgendaService extends BaseService {
     public agendaControllerDeleteAppointment(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentResponseDto>;
     public agendaControllerDeleteAppointment(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentResponseDto>>;
     public agendaControllerDeleteAppointment(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentResponseDto>>;
-    public agendaControllerDeleteAppointment(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerDeleteAppointment(id: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling agendaControllerDeleteAppointment.');
         }
@@ -301,7 +301,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<AppointmentResponseDto>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -328,7 +328,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetAppointments(date?: string, from?: string, to?: string, professionalId?: Array<number>, status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
     public agendaControllerGetAppointments(date?: string, from?: string, to?: string, professionalId?: Array<number>, status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
     public agendaControllerGetAppointments(date?: string, from?: string, to?: string, professionalId?: Array<number>, status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, professionalId?: Array<number>, status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetAppointments(date?: string, from?: string, to?: string, professionalId?: Array<number>, status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -378,7 +378,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda`;
+        const localVarPath = `/agenda`;
         return this.httpClient.request<Array<AppointmentResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -403,7 +403,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetAvailable(date: string, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AvailableSlotResponseDto>;
     public agendaControllerGetAvailable(date: string, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AvailableSlotResponseDto>>;
     public agendaControllerGetAvailable(date: string, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AvailableSlotResponseDto>>;
-    public agendaControllerGetAvailable(date: string, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetAvailable(date: string, professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (date === null || date === undefined) {
             throw new Error('Required parameter date was null or undefined when calling agendaControllerGetAvailable.');
         }
@@ -442,7 +442,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/available`;
+        const localVarPath = `/agenda/available`;
         return this.httpClient.request<AvailableSlotResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -466,7 +466,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetConfig(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
     public agendaControllerGetConfig(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
     public agendaControllerGetConfig(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
-    public agendaControllerGetConfig(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetConfig(professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -500,7 +500,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/config`;
+        const localVarPath = `/agenda/config`;
         return this.httpClient.request<AgendaConfigResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -524,7 +524,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetHolidays(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<HolidayResponseDto>>;
     public agendaControllerGetHolidays(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<HolidayResponseDto>>>;
     public agendaControllerGetHolidays(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<HolidayResponseDto>>>;
-    public agendaControllerGetHolidays(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetHolidays(professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -558,7 +558,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/holidays`;
+        const localVarPath = `/agenda/holidays`;
         return this.httpClient.request<Array<HolidayResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -582,7 +582,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetProductsUsed(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentProductLogResponseDto>>;
     public agendaControllerGetProductsUsed(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentProductLogResponseDto>>>;
     public agendaControllerGetProductsUsed(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentProductLogResponseDto>>>;
-    public agendaControllerGetProductsUsed(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetProductsUsed(id: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling agendaControllerGetProductsUsed.');
         }
@@ -615,7 +615,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/products`;
+        const localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/products`;
         return this.httpClient.request<Array<AppointmentProductLogResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -640,7 +640,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentSummaryResponseDto>;
     public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentSummaryResponseDto>>;
     public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentSummaryResponseDto>>;
-    public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetSummary(from: string, to: string, professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (from === null || from === undefined) {
             throw new Error('Required parameter from was null or undefined when calling agendaControllerGetSummary.');
         }
@@ -684,7 +684,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/summary`;
+        const localVarPath = `/agenda/summary`;
         return this.httpClient.request<AppointmentSummaryResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -708,7 +708,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetToday(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
     public agendaControllerGetToday(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
     public agendaControllerGetToday(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetToday(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetToday(professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -742,7 +742,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/today`;
+        const localVarPath = `/agenda/today`;
         return this.httpClient.request<Array<AppointmentResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -766,7 +766,7 @@ export class AgendaService extends BaseService {
     public agendaControllerGetWeek(professionalId?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<AppointmentResponseDto>>;
     public agendaControllerGetWeek(professionalId?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<AppointmentResponseDto>>>;
     public agendaControllerGetWeek(professionalId?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<AppointmentResponseDto>>>;
-    public agendaControllerGetWeek(professionalId?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerGetWeek(professionalId?: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new HttpParams({encoder: this.encoder});
         localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
@@ -800,7 +800,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/week`;
+        const localVarPath = `/agenda/week`;
         return this.httpClient.request<Array<AppointmentResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -825,7 +825,7 @@ export class AgendaService extends BaseService {
     public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public agendaControllerRegisterProductsUsed(id: number, body: object, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public agendaControllerRegisterProductsUsed(id: number, body: object, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerRegisterProductsUsed(id: number, body: object, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling agendaControllerRegisterProductsUsed.');
         }
@@ -869,7 +869,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/products-used`;
+        const localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/products-used`;
         return this.httpClient.request<any>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -894,7 +894,7 @@ export class AgendaService extends BaseService {
     public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AppointmentResponseDto>;
     public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AppointmentResponseDto>>;
     public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AppointmentResponseDto>>;
-    public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerUpdate(id: number, updateAppointmentDto: UpdateAppointmentDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling agendaControllerUpdate.');
         }
@@ -939,7 +939,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/agenda/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<AppointmentResponseDto>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -964,7 +964,7 @@ export class AgendaService extends BaseService {
     public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AgendaConfigResponseDto>;
     public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AgendaConfigResponseDto>>;
     public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AgendaConfigResponseDto>>;
-    public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public agendaControllerUpdateConfig(professionalId: number, updateAgendaConfigDto: UpdateAgendaConfigDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (professionalId === null || professionalId === undefined) {
             throw new Error('Required parameter professionalId was null or undefined when calling agendaControllerUpdateConfig.');
         }
@@ -1013,7 +1013,7 @@ export class AgendaService extends BaseService {
             }
         }
 
-        let localVarPath = `/agenda/config`;
+        const localVarPath = `/agenda/config`;
         return this.httpClient.request<AgendaConfigResponseDto>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

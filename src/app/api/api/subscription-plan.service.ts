@@ -50,7 +50,7 @@ export class SubscriptionPlanService extends BaseService {
     public subscriptionPlanControllerAddFeature(id: string, createSubscriptionPlanFeatureDto: CreateSubscriptionPlanFeatureDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SubscriptionPlanFeatureResponseDto>;
     public subscriptionPlanControllerAddFeature(id: string, createSubscriptionPlanFeatureDto: CreateSubscriptionPlanFeatureDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubscriptionPlanFeatureResponseDto>>;
     public subscriptionPlanControllerAddFeature(id: string, createSubscriptionPlanFeatureDto: CreateSubscriptionPlanFeatureDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubscriptionPlanFeatureResponseDto>>;
-    public subscriptionPlanControllerAddFeature(id: string, createSubscriptionPlanFeatureDto: CreateSubscriptionPlanFeatureDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public subscriptionPlanControllerAddFeature(id: string, createSubscriptionPlanFeatureDto: CreateSubscriptionPlanFeatureDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling subscriptionPlanControllerAddFeature.');
         }
@@ -92,7 +92,7 @@ export class SubscriptionPlanService extends BaseService {
             }
         }
 
-        let localVarPath = `/subscription-plan/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/feature`;
+        const localVarPath = `/subscription-plan/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/feature`;
         return this.httpClient.request<SubscriptionPlanFeatureResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -115,7 +115,7 @@ export class SubscriptionPlanService extends BaseService {
     public subscriptionPlanControllerCreate(createSubscriptionPlanDto: CreateSubscriptionPlanDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SubscriptionPlanResponseDto>;
     public subscriptionPlanControllerCreate(createSubscriptionPlanDto: CreateSubscriptionPlanDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubscriptionPlanResponseDto>>;
     public subscriptionPlanControllerCreate(createSubscriptionPlanDto: CreateSubscriptionPlanDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubscriptionPlanResponseDto>>;
-    public subscriptionPlanControllerCreate(createSubscriptionPlanDto: CreateSubscriptionPlanDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public subscriptionPlanControllerCreate(createSubscriptionPlanDto: CreateSubscriptionPlanDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createSubscriptionPlanDto === null || createSubscriptionPlanDto === undefined) {
             throw new Error('Required parameter createSubscriptionPlanDto was null or undefined when calling subscriptionPlanControllerCreate.');
         }
@@ -154,7 +154,7 @@ export class SubscriptionPlanService extends BaseService {
             }
         }
 
-        let localVarPath = `/subscription-plan`;
+        const localVarPath = `/subscription-plan`;
         return this.httpClient.request<SubscriptionPlanResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -176,7 +176,7 @@ export class SubscriptionPlanService extends BaseService {
     public subscriptionPlanControllerFindAll(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<SubscriptionPlanResponseDto>>;
     public subscriptionPlanControllerFindAll(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<SubscriptionPlanResponseDto>>>;
     public subscriptionPlanControllerFindAll(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<SubscriptionPlanResponseDto>>>;
-    public subscriptionPlanControllerFindAll(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public subscriptionPlanControllerFindAll(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -203,7 +203,7 @@ export class SubscriptionPlanService extends BaseService {
             }
         }
 
-        let localVarPath = `/subscription-plan`;
+        const localVarPath = `/subscription-plan`;
         return this.httpClient.request<Array<SubscriptionPlanResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -225,7 +225,7 @@ export class SubscriptionPlanService extends BaseService {
     public subscriptionPlanControllerFindOne(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SubscriptionPlanResponseDto>;
     public subscriptionPlanControllerFindOne(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SubscriptionPlanResponseDto>>;
     public subscriptionPlanControllerFindOne(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SubscriptionPlanResponseDto>>;
-    public subscriptionPlanControllerFindOne(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public subscriptionPlanControllerFindOne(id: string, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling subscriptionPlanControllerFindOne.');
         }
@@ -255,7 +255,7 @@ export class SubscriptionPlanService extends BaseService {
             }
         }
 
-        let localVarPath = `/subscription-plan/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        const localVarPath = `/subscription-plan/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<SubscriptionPlanResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
