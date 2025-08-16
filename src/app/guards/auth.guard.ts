@@ -9,12 +9,30 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const authStore = inject(AuthStore);
 
   const token = localStorage.getToken();
+  console.log('AuthGuard - Token encontrado:', !!token);
+  
   if (!token) {
-    // Store the attempted URL for redirecting after login
     authStore.setReturnUrl(state.url);
     router.navigate(['/login']);
     return false;
   }
 
+  // Si tenemos token pero no tenemos datos de usuario, cargar el perfil
+  // No podemos acceder al estado directamente desde el guard, mejor usar un selector
+  let shouldLoadProfile = true;
+  
+  // Verificar si ya tenemos usuario usando el observable (pero de forma síncrona)
+  authStore.user$.pipe().subscribe(user => {
+    shouldLoadProfile = !user;
+  }).unsubscribe();
+  
+  if (token && shouldLoadProfile) {
+    console.log('AuthGuard - Cargando perfil de usuario...');
+    authStore.loadUserProfile(token);
+  }
+
+  // Registrar actividad del usuario
+  authStore.recordActivity();
+  
   return true;
 };

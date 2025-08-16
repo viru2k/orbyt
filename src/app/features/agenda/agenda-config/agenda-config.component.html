@@ -1,0 +1,164 @@
+<!-- Header Card -->
+<orb-card>
+  <div orbHeader>
+    <h2>⚙️ Configuración de Agenda</h2>
+    <p class="text-gray-600">Gestiona los horarios, días laborales y configuraciones de agenda</p>
+  </div>
+</orb-card>
+
+<!-- Professional Selection Card (only if user can manage agenda) -->
+<orb-card style="margin-top: 1rem;" *ngIf="canManageAgenda$ | async">
+  <div orbHeader>
+    <h3>👥 Seleccionar Profesional</h3>
+  </div>
+  <div orbBody>
+    <div class="form-row">
+      <orb-label for="professional" text="Profesional"></orb-label>
+      <orb-select
+        id="professional"
+        placeholder="Seleccionar profesional"
+        [options]="(professionals$ | async) || []"
+        formControlName="selectedProfessional"
+        styleClass="w-full"
+      ></orb-select>
+    </div>
+  </div>
+</orb-card>
+
+<!-- Configuration Form Card -->
+<orb-card style="margin-top: 1rem;" *ngIf="selectedProfessionalId">
+  <div orbHeader>
+    <h3>🕐 Configuración de Horarios</h3>
+  </div>
+  <div orbBody>
+    <form [formGroup]="configForm" class="config-form">
+      <!-- Working Days -->
+      <div class="form-section">
+        <h4>📅 Días Laborales</h4>
+        <div class="days-grid">
+          <div 
+            *ngFor="let day of dayOptions" 
+            class="day-switch"
+          >
+            <input 
+              type="checkbox"
+              [id]="'day-' + day.value"
+              [checked]="configForm.get('workingDays')?.value?.includes(day.value)"
+              (change)="onDayToggle(day.value, $event)"
+              class="day-checkbox"
+            />
+            <label [for]="'day-' + day.value" class="day-label">{{ day.label }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Working Hours -->
+      <div class="form-section">
+        <h4>🕐 Horario de Trabajo</h4>
+        <div class="form-row-group">
+          <div class="form-field">
+            <orb-label for="workStart" text="Hora de Inicio"></orb-label>
+            <input 
+              id="workStart"
+              type="time" 
+              formControlName="workStart"
+              class="form-control"
+            />
+          </div>
+          <div class="form-field">
+            <orb-label for="workEnd" text="Hora de Fin"></orb-label>
+            <input 
+              id="workEnd"
+              type="time" 
+              formControlName="workEnd"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Slot Duration -->
+      <div class="form-section">
+        <h4>⏱️ Duración de Turnos</h4>
+        <div class="form-field">
+          <orb-label for="slotDuration" text="Minutos por turno"></orb-label>
+          <orb-input-number
+            id="slotDuration"
+            formControlName="slotDurationMinutes"
+            [min]="15"
+            [max]="240"
+            [step]="15"
+            suffix=" min"
+            styleClass="w-full"
+          ></orb-input-number>
+        </div>
+      </div>
+
+      <!-- Advanced Settings -->
+      <div class="form-section">
+        <h4>🔧 Configuraciones Avanzadas</h4>
+        
+        <div class="switch-group">
+          <div class="switch-item">
+            <input 
+              type="checkbox"
+              id="allowOverbooking"
+              formControlName="allowOverbooking"
+              class="config-checkbox"
+            />
+            <div class="switch-content">
+              <label for="allowOverbooking" class="switch-label">Permitir Sobreturnos</label>
+              <p class="switch-description">Permite agendar turnos adicionales en horarios ocupados</p>
+            </div>
+          </div>
+
+          <div class="switch-item">
+            <input 
+              type="checkbox"
+              id="allowBookingOnBlockedDays"
+              formControlName="allowBookingOnBlockedDays"
+              class="config-checkbox"
+            />
+            <div class="switch-content">
+              <label for="allowBookingOnBlockedDays" class="switch-label">Reservas en Días Bloqueados</label>
+              <p class="switch-description">Permite agendar en días marcados como no laborales</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <orb-button
+          label="💾 Guardar Configuración"
+          (click)="onSave()"
+          [loading]="(agendaStore.configLoading$ | async) || false"
+          [disabled]="configForm.invalid"
+          styleClass="save-button"
+        ></orb-button>
+      </div>
+    </form>
+  </div>
+</orb-card>
+
+<!-- Holidays Management Card -->
+<orb-card style="margin-top: 1rem;" *ngIf="selectedProfessionalId">
+  <div orbHeader>
+    <h3>🏖️ Gestión de Días Festivos</h3>
+    <p class="text-gray-600">Administra los días no laborales y festividades</p>
+  </div>
+  <div orbBody>
+    <orb-button
+      label="🗓️ Gestionar Feriados"
+      icon="pi pi-calendar-minus"
+      severity="info"
+      (click)="onManageHolidays()"
+    ></orb-button>
+  </div>
+</orb-card>
+
+<!-- Holidays Modal -->
+<app-holidays-modal
+  [(visible)]="displayHolidaysModal"
+  (close)="closeHolidaysModal()"
+></app-holidays-modal>

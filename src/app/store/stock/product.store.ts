@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { exhaustMap, tap } from 'rxjs';
 import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '../../api/model/models';
-import { ProductsService } from '../../api/api/api';
+import { ProductsService } from '../../api/services/products.service';
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
 import { tapResponse } from '@ngrx/operators';
@@ -85,7 +85,7 @@ export class ProductStore extends ComponentStore<ProductState> {
     productDto$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((productDto) =>
-        this.productsService.productControllerCreate(productDto).pipe(
+        this.productsService.productControllerCreate({ body: productDto }).pipe(
           tapResponse(
             (newProduct: ProductResponseDto) => {
               this.addProduct(newProduct);
@@ -105,7 +105,7 @@ export class ProductStore extends ComponentStore<ProductState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(({ id, dto }) =>
-        this.productsService.productControllerUpdate(id, dto).pipe(
+        this.productsService.productControllerUpdate({ id, body: dto }).pipe(
           tapResponse(
             (updatedProduct: ProductResponseDto) => {
               this.updateProduct(updatedProduct);
@@ -125,7 +125,7 @@ export class ProductStore extends ComponentStore<ProductState> {
     productId$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((id) =>
-        this.productsService.productControllerRemove(id).pipe(
+        this.productsService.productControllerRemove({ id }).pipe(
           tapResponse(
             () => {
               this.removeProduct(id);

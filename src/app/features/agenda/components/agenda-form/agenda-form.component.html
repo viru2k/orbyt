@@ -11,28 +11,42 @@
       </orb-form-field>
     </div>
     <div class="col-12 md:col-6">
-      <orb-form-field label="Fecha">
-        <orb-datepicker formControlName="date" [showIcon]="true"></orb-datepicker>
+      <orb-form-field label="Fecha y Hora de Inicio">
+        <orb-datepicker 
+          formControlName="startDateTime"
+          mode="datetime"
+          [showIcon]="true"
+        ></orb-datepicker>
       </orb-form-field>
     </div>
-    <div class="col-12 md:col-3">
-      <orb-form-field label="Hora Inicio">
-        <orb-text-input formControlName="startTime" type="time"></orb-text-input>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Fecha y Hora de Fin">
+        <orb-datepicker 
+          formControlName="endDateTime"
+          mode="datetime"
+          [showIcon]="true"
+        ></orb-datepicker>
       </orb-form-field>
     </div>
-    <div class="col-12 md:col-3">
-      <orb-form-field label="Hora Fin" >
-        <orb-text-input formControlName="endTime" type="time"></orb-text-input>
-      </orb-form-field>
+    
+    <!-- Mensaje de disponibilidad de turnos -->
+    <div class="col-12" *ngIf="availabilityMessage">
+      <p-message 
+        [severity]="availabilityMessage.severity"
+        [text]="availabilityMessage.text"
+        [closable]="true"
+        (onClose)="clearAvailabilityMessage()"
+      ></p-message>
     </div>
     <div class="col-12 md:col-6">
       <orb-form-field label="Cliente" >
         <orb-select
           formControlName="clientId"
           [options]="(clients$ | async) || []"
-          optionLabel="name"
+          optionLabel="fullname"
           optionValue="id"
-          placeholder="Seleccione un cliente"
+          [filter]="true"
+          filterBy="fullname"
         ></orb-select>
       </orb-form-field>
     </div>
@@ -41,9 +55,10 @@
         <orb-select
           formControlName="professionalId"
           [options]="(professionals$ | async) || []"
-          optionLabel="name"
+          optionLabel="fullName"
           optionValue="id"
-          placeholder="Seleccione un profesional"
+          [filter]="true"
+          filterBy="fullName"
         ></orb-select>
       </orb-form-field>
     </div>
@@ -54,7 +69,6 @@
           [options]="(services$ | async) || []"
           optionLabel="name"
           optionValue="id"
-          placeholder="Seleccione un servicio"
         ></orb-select>
       </orb-form-field>
     </div>
@@ -65,14 +79,33 @@
           [options]="(rooms$ | async) || []"
           optionLabel="name"
           optionValue="id"
-          placeholder="Seleccione una sala"
         ></orb-select>
       </orb-form-field>
     </div>
   </div>
 
-  <div class="flex justify-content-end gap-2 mt-4">
-    <orb-button label="Cancelar" styleClass="p-button-secondary" (onClick)="onCancel()"></orb-button>
-    <orb-button label="Guardar" type="submit" [loading]="(agendaStore.loading$ | async) || false"></orb-button>
+  <div class="flex justify-between mt-4">
+    <div>
+      <orb-button
+        *ngIf="appointment"
+        label="Eliminar"
+        icon="pi pi-trash"
+        styleClass="p-button-danger"
+        (click)="onDelete()"
+      ></orb-button>
+    </div>
+    <div class="flex gap-2">
+      <orb-button
+        label="Cancelar"
+        styleClass="p-button-secondary"
+        (click)="onCancel()"
+      ></orb-button>
+      <orb-button
+        label="Guardar"
+        type="submit"
+        [loading]="(agendaStore.loading$ | async) || false"
+        [disabled]="agendaForm.invalid"
+      ></orb-button>
+    </div>
   </div>
 </form>

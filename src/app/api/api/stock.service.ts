@@ -17,11 +17,11 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { CreateStockMovementDto } from '../model/createStockMovementDto';
+import { CreateStockMovementDto } from '../model/create-stock-movement-dto';
 // @ts-ignore
-import { StockMovementResponseDto } from '../model/stockMovementResponseDto';
+import { StockMovementResponseDto } from '../model/stock-movement-response-dto';
 // @ts-ignore
-import { StockSummaryResponseDto } from '../model/stockSummaryResponseDto';
+import { StockSummaryResponseDto } from '../model/stock-summary-response-dto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -48,7 +48,7 @@ export class StockService extends BaseService {
     public stockControllerCreate(createStockMovementDto: CreateStockMovementDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<StockMovementResponseDto>;
     public stockControllerCreate(createStockMovementDto: CreateStockMovementDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<StockMovementResponseDto>>;
     public stockControllerCreate(createStockMovementDto: CreateStockMovementDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<StockMovementResponseDto>>;
-    public stockControllerCreate(createStockMovementDto: CreateStockMovementDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public stockControllerCreate(createStockMovementDto: CreateStockMovementDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createStockMovementDto === null || createStockMovementDto === undefined) {
             throw new Error('Required parameter createStockMovementDto was null or undefined when calling stockControllerCreate.');
         }
@@ -90,7 +90,7 @@ export class StockService extends BaseService {
             }
         }
 
-        let localVarPath = `/stock`;
+        const localVarPath = `/stock`;
         return this.httpClient.request<StockMovementResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -114,7 +114,7 @@ export class StockService extends BaseService {
     public stockControllerGetMovements(productId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<StockMovementResponseDto>>;
     public stockControllerGetMovements(productId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<StockMovementResponseDto>>>;
     public stockControllerGetMovements(productId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<StockMovementResponseDto>>>;
-    public stockControllerGetMovements(productId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public stockControllerGetMovements(productId: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (productId === null || productId === undefined) {
             throw new Error('Required parameter productId was null or undefined when calling stockControllerGetMovements.');
         }
@@ -147,7 +147,7 @@ export class StockService extends BaseService {
             }
         }
 
-        let localVarPath = `/stock/${this.configuration.encodeParam({name: "productId", value: productId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/stock/${this.configuration.encodeParam({name: "productId", value: productId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<Array<StockMovementResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -170,7 +170,7 @@ export class StockService extends BaseService {
     public stockControllerGetSummary(productId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<StockSummaryResponseDto>;
     public stockControllerGetSummary(productId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<StockSummaryResponseDto>>;
     public stockControllerGetSummary(productId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<StockSummaryResponseDto>>;
-    public stockControllerGetSummary(productId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public stockControllerGetSummary(productId: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (productId === null || productId === undefined) {
             throw new Error('Required parameter productId was null or undefined when calling stockControllerGetSummary.');
         }
@@ -203,7 +203,7 @@ export class StockService extends BaseService {
             }
         }
 
-        let localVarPath = `/stock/${this.configuration.encodeParam({name: "productId", value: productId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/summary`;
+        const localVarPath = `/stock/${this.configuration.encodeParam({name: "productId", value: productId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/summary`;
         return this.httpClient.request<StockSummaryResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

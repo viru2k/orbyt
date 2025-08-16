@@ -8,8 +8,7 @@
     "build": "nx build",
     "lint": "nx lint",
     "test": "nx test",
-    "openapi:generate": "npx ng-openapi-gen",
-    "gemini-agent": "npx https://github.com/google-gemini/gemini-cli"
+    "openapi:generate": "npx ng-openapi-gen"
   },
   "dependencies": {
     "@angular/animations": "~19.2.0",
@@ -20,6 +19,7 @@
     "@angular/platform-browser": "~19.2.0",
     "@angular/platform-browser-dynamic": "~19.2.0",
     "@angular/router": "~19.2.0",
+    "@fortawesome/fontawesome-free": "^7.0.0",
     "@fullcalendar/angular": "^6.1.18",
     "@fullcalendar/core": "^6.1.18",
     "@fullcalendar/daygrid": "^6.1.18",
@@ -35,8 +35,10 @@
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
     "@primeng/themes": "^19.1.2",
+    "angular-calendar": "^0.31.1",
     "bootstrap": "^5.3.5",
     "chart.js": "^4.5.0",
+    "date-fns": "^4.1.0",
     "ng-openapi-gen": "^0.53.0",
     "primeicons": "^7.0.0",
     "primeng": "^19.1.2",

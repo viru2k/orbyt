@@ -1,0 +1,121 @@
+<orb-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="holidays-modal"
+  (onHide)="onHide()"
+>
+  <div slot="header">
+    <h3>🏖️ Gestión de Feriados y Días Bloqueados</h3>
+  </div>
+
+  <div slot="content">
+    <div class="holidays-content">
+      <div class="holidays-header">
+        <orb-button
+          label="Nuevo Feriado"
+          severity="success"
+          icon="pi pi-plus"
+          size="small"
+          (click)="onShowAddForm()"
+        />
+      </div>
+      
+      <div class="holidays-list">
+        <div 
+          *ngFor="let holiday of (agendaStore.agendaHolydays$ | async) || []; trackBy: trackByHolidayId"
+          class="holiday-item"
+        >
+          <div class="holiday-info">
+            <span class="holiday-date">📅 {{ formatDisplayDate(holiday.date) }}</span>
+            <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
+          </div>
+          <orb-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [disabled]="true"
+            pTooltip="Funcionalidad en desarrollo"
+            (click)="onDeleteHoliday(holiday)"
+          />
+        </div>
+        
+        <div *ngIf="!(agendaStore.agendaHolydays$ | async)?.length" class="no-holidays">
+          <p>No hay feriados configurados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div slot="footer">
+    <div class="modal-actions">
+      <orb-button
+        label="Cerrar"
+        severity="secondary"
+        (click)="onHide()"
+      />
+    </div>
+  </div>
+</orb-dialog>
+
+<!-- Add/Edit Holiday Dialog -->
+<orb-dialog
+  [(visible)]="showAddHolidayDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="add-holiday-dialog"
+  (onHide)="onCancelAdd()"
+>
+  <div slot="header">
+    <h4>➕ Agregar Nuevo Feriado</h4>
+  </div>
+
+  <div slot="content">
+    <form [formGroup]="holidayForm" class="holiday-form">
+      <div class="form-row">
+        <div class="input-group">
+          <orb-label text="📅 Fecha del feriado" />
+          <orb-datepicker
+            formControlName="date"
+            placeholder="Selecciona una fecha"
+            [showIcon]="true"
+            [disabledDays]="disabledDays"
+          />
+        </div>
+        
+        <div class="input-group">
+          <orb-label text="📝 Descripción (opcional)" />
+          <orb-text-area
+            formControlName="reason"
+            placeholder="Ej: Feriado nacional, vacaciones, etc."
+            [rows]="2"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div slot="footer">
+    <div class="form-actions">
+      <orb-button
+        label="Cancelar"
+        severity="secondary"
+        size="small"
+        (click)="onCancelAdd()"
+      />
+      <orb-button
+        label="Agregar Feriado"
+        severity="success"
+        icon="pi pi-plus"
+        size="small"
+        (click)="onAddHoliday()"
+        [loading]="!!(agendaStore.holidaysLoading$ | async)"
+        [disabled]="holidayForm.invalid"
+      />
+    </div>
+  </div>
+</orb-dialog>

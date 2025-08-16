@@ -10,7 +10,9 @@ import { AuthStore } from '@orb-stores';
 
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent } from '@orb-components';
+import { OrbTextInputComponent } from '@orb-shared-components/orb-text-input/orb-text-input.component';
+import { OrbFormFieldComponent } from '@orb-shared-components/application/orb-form-field/orb-form-field.component';
+import { OrbFormFooterComponent } from '@orb-shared-components/application/orb-form-footer/orb-form-footer.component';
 import { FormButtonAction } from '@orb-models';
 
 @Component({
@@ -20,8 +22,6 @@ import { FormButtonAction } from '@orb-models';
     CommonModule,
     ReactiveFormsModule,
     AsyncPipe,
-    OrbCardComponent,
-    OrbButtonComponent,
     OrbTextInputComponent,
     OrbFormFieldComponent,
     OrbFormFooterComponent

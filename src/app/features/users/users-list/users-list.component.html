@@ -15,6 +15,25 @@
       [rows]="10"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
+      <ng-template pTemplate="body" let-user let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            <ng-container [ngSwitch]="col.field">
+              <ng-container *ngSwitchCase="'actions'">
+                <orb-actions-popover
+                  [actions]="actions"
+                  [itemData]="user">
+                </orb-actions-popover>
+              </ng-container>
+              
+              <ng-container *ngSwitchDefault>
+                {{ user[col.field] }}
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+
       <ng-template pTemplate="rowexpansion" let-user>
         <div class="user-details-expansion">
           <div class="detail-section">
@@ -54,3 +73,11 @@
     </app-user-edit-form>
   }
 </orb-dialog>
+
+<!-- Agenda Configuration Modal -->
+<app-agenda-config-modal
+  [(visible)]="displayAgendaConfigModal"
+  [professionalId]="selectedProfessionalId()"
+  (close)="onAgendaConfigModalClose()"
+>
+</app-agenda-config-modal>

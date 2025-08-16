@@ -14,7 +14,7 @@ import {
   CreateClientDto,
   UpdateClientDto,
 } from '../../api/model/models';
-import { ClientsService } from '../../api/api/api';
+import { ClientsService } from '../../api/services/clients.service';
 import { DateFormatService } from 'src/app/services/core/utils/date-format.service';
 
 
@@ -52,7 +52,7 @@ export const ClientStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true })),
         switchMap((clientDto) =>
-          clientsService.clientControllerCreate(clientDto).pipe(
+          clientsService.clientControllerCreate({ body: clientDto }).pipe(
             tap((createdClient) => {
               patchState(store, (state) => ({
                 clients: [...state.clients, createdClient],
@@ -67,7 +67,7 @@ export const ClientStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true })),
         switchMap(({ id, clientDto }) =>
-          clientsService.clientControllerUpdate(id, clientDto).pipe(
+          clientsService.clientControllerUpdate({ id, body: clientDto }).pipe(
             tap((updatedClient) => {
               patchState(store, (state) => ({
                 clients: state.clients.map((c) =>
@@ -84,7 +84,7 @@ export const ClientStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true })),
         switchMap((id) =>
-          clientsService.clientControllerRemove(id).pipe(
+          clientsService.clientControllerRemove({ id }).pipe(
             tap(() => {
               patchState(store, (state) => ({
                 clients: state.clients.filter((c) => c.id !== id),

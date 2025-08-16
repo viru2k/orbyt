@@ -33,6 +33,7 @@
             [value]="role.id"
             (onChange)="onRoleChange(role.id, $event)"
             [ngModel]="isRoleSelected(role.id)"
+            [ngModelOptions]="{standalone: true}"
           ></p-checkbox>
           <label [for]="'role-' + role.id">{{ role.name }} - {{ role.description }}</label>
         </div>

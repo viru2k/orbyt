@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { CardModule } from 'primeng/card';
-import { take } from 'rxjs';
+import { take, filter } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,20 +23,31 @@ export class DashboardComponent implements OnInit {
   constructor(private readonly agendaStore: AgendaStore, private readonly authStore: AuthStore) {}
 
   ngOnInit() {
+    // Rango de fechas para HOY desde 00:00 hasta 23:59
     const today = new Date();
-    const from = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-    const to = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
-    this.authStore.user$.pipe(take(1)).subscribe((user) => {
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const date = today.getDate();
+    
+    // Crear fechas en UTC para evitar problemas de timezone
+    const from = new Date(Date.UTC(year, month, date, 0, 0, 0, 0)).toISOString();
+    const to = new Date(Date.UTC(year, month, date, 23, 59, 59, 999)).toISOString();
+    
+    this.authStore.user$.pipe(
+      filter(user => !!user && !!user.id),
+      take(1)
+    ).subscribe((user) => {
       console.log('user', user);  
-          this.agendaStore.loadAgendaConfig(user?.id || 0 );
-          this.agendaStore.loadAgendaHolidays(user?.id || 0 );
-
-          this.agendaStore.loadSummary({ from, to, professionalId: user?.id || 0 });
-          this.agendaStore.loadAppointments({ startDate: new Date(from), endDate: new Date(to), professionalId: user?.id || 0 });
+      const professionalId = user!.id;
+      
+      this.agendaStore.loadAgendaConfig(professionalId);
+      this.agendaStore.loadAgendaHolidays(professionalId);
+      this.agendaStore.loadSummary({ from, to, professionalId });
+      this.agendaStore.loadAppointments({ from, to, professionalId: [professionalId] });
     })
 
     this.summary$.subscribe((summary:any) => {
-      if (summary) {
+      if (summary && summary.dailySummary && Array.isArray(summary.dailySummary)) {
         this.data = {
           labels: summary.dailySummary.map((d:any) => d.date),
           datasets: [

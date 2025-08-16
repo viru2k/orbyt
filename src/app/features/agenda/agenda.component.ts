@@ -1,60 +1,192 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AgendaStore } from '../../store/agenda/agenda.store';
+import { UsersStore } from '../../store/users/users.store';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
+import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
+import { OrbMultiselectComponent } from '@orb-shared-components/orb-multiselect/orb-multiselect.component';
 import { AgendaFormComponent } from './components/agenda-form/agenda-form.component';
-import { AppointmentResponseDto } from '../../api/model/models';
+import { AppointmentResponseDto, UpdateAppointmentDto } from '../../api/model/models';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
-import { AgendaListComponent } from './components/agenda-list/agenda-list.component';
+import { OrbModernCalendarComponent, ModernCalendarEvent, DateSelectInfo, AdaptedEventClickArg, AdaptedDatesSetArg } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
+import { DateSelectArg, EventClickArg, DatesSetArg, EventDropArg } from '@fullcalendar/core';
+import { CalendarEventTimesChangedEvent } from 'angular-calendar';
 
 @Component({
   selector: 'app-agenda',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     OrbButtonComponent,
     OrbDialogComponent,
+    OrbDatepickerComponent,
+    OrbMultiselectComponent,
     AgendaFormComponent,
     OrbCardComponent,
-    AgendaListComponent
+    OrbModernCalendarComponent,
   ],
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss'],
-  // AgendaStore is providedIn: 'root', so no need to provide it here
 })
 export class AgendaComponent implements OnInit {
   displayAgendaForm = false;
   selectedAppointment: AppointmentResponseDto | null = null;
+  dialogInitialDate: string | null = null;
 
-  constructor(public agendaStore: AgendaStore) {}
+  
+  // Filtros de fecha
+  selectedDateFrom: Date = new Date();
+  selectedDateTo: Date = new Date();
+  
+  // Filtros de usuarios y estados
+  selectedUsers: any[] = [];
+  selectedStatuses: any[] = [];
+  
+  // Opciones para los filtros (según nueva API)
+  statusOptions = [
+    { label: 'Pendiente', value: 'pending' },
+    { label: 'Confirmada', value: 'confirmed' },
+    { label: 'Check-in', value: 'checked_in' },
+    { label: 'En Proceso', value: 'in_progress' },
+    { label: 'Completada', value: 'completed' },
+    { label: 'Cancelada', value: 'cancelled' },
+    { label: 'No Show', value: 'no_show' },
+    { label: 'Reprogramada', value: 'rescheduled' }
+  ];
+
+  constructor(
+    public agendaStore: AgendaStore,
+    public usersStore: UsersStore,
+    private router: Router
+  ) {
+    // Configurar fechas por defecto (hoy)
+    this.setTodayDates();
+  }
 
   ngOnInit(): void {
-    // Load appointments for a default range, e.g., current month
+    // Cargar usuarios para el filtro
+    this.usersStore.loadUsers();
+    
+    // Realizar búsqueda automática con la fecha de hoy al inicializar
+    this.performSearch();
+  }
+
+  private setTodayDates(): void {
     const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    this.agendaStore.loadAppointments({ startDate: startOfMonth, endDate: endOfMonth });
+    // Fecha desde: 7 días atrás a las 00:00:00
+    this.selectedDateFrom = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7, 0, 0, 0);
+    // Fecha hasta: 7 días adelante a las 23:59:59
+    this.selectedDateTo = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7, 23, 59, 59);
   }
 
-  openNewAppointmentForm(): void {
+  openNewAppointmentDialog(): void {
     this.selectedAppointment = null;
+    this.dialogInitialDate = new Date().toISOString();
     this.displayAgendaForm = true;
   }
 
-  editAppointment(appointment: AppointmentResponseDto): void {
-    this.selectedAppointment = appointment;
-    this.displayAgendaForm = true;
-  }
-
-  deleteAppointment(id: number): void {
-    if (confirm('¿Está seguro de que desea eliminar esta cita?')) {
-      this.agendaStore.deleteAppointment(id);
+  performSearch(): void {
+    // Construir parámetros de filtro usando la nueva API
+    const filters: any = {
+      from: this.selectedDateFrom.toISOString(),
+      to: this.selectedDateTo.toISOString(),
+    };
+    
+    // Agregar filtros de usuario si hay selecciones (array)
+    if (this.selectedUsers.length > 0) {
+      filters.professionalId = this.selectedUsers.map(u => u.id);
     }
+    
+    // Agregar filtros de estado si hay selecciones (array)  
+    if (this.selectedStatuses.length > 0) {
+      filters.status = this.selectedStatuses.map(s => s.value);
+    }
+    
+    
+    this.agendaStore.loadAppointments(filters);
+  }
+
+  onDateFromChange(date: Date): void {
+    this.selectedDateFrom = date;
+  }
+
+  onDateToChange(date: Date): void {
+    this.selectedDateTo = date;
+  }
+  
+  onUsersChange(users: any[]): void {
+    this.selectedUsers = users;
+  }
+  
+  onStatusesChange(statuses: any[]): void {
+    this.selectedStatuses = statuses;
+  }
+
+  resetToToday(): void {
+    this.setTodayDates();
+    this.performSearch();
+  }
+
+  // Modern Calendar compatible handlers
+  handleDatesSet(dateInfo: AdaptedDatesSetArg): void {
+    // Solo actualizar si no es la carga inicial
+    if (!this.isInitialLoad(dateInfo)) {
+      this.agendaStore.loadAppointments({
+        from: dateInfo.start.toISOString(),
+        to: dateInfo.end.toISOString(),
+      });
+    }
+  }
+
+  private isInitialLoad(dateInfo: AdaptedDatesSetArg): boolean {
+    // Verificar si las fechas del calendario coinciden con las fechas de filtro
+    const startMatches = Math.abs(dateInfo.start.getTime() - this.selectedDateFrom.getTime()) < 86400000; // 24 horas
+    const endMatches = Math.abs(dateInfo.end.getTime() - this.selectedDateTo.getTime()) < 86400000;
+    return startMatches && endMatches;
+  }
+
+  handleEventClick(eventClickInfo: AdaptedEventClickArg): void {
+    // Try both extendedProps and the nested structure
+    const extendedProps = eventClickInfo.event.extendedProps || {};
+    const originalAppointment = extendedProps['originalAppointment'] || extendedProps.originalAppointment;
+    
+    if (originalAppointment) {
+      this.selectedAppointment = originalAppointment;
+      this.dialogInitialDate = null;
+      this.displayAgendaForm = true;
+    }
+  }
+
+  handleDateSelect(dateSelectInfo: DateSelectInfo): void {
+    this.selectedAppointment = null;
+    this.dialogInitialDate = dateSelectInfo.startStr;
+    this.displayAgendaForm = true;
+  }
+
+  handleEventDrop(eventDropInfo: CalendarEventTimesChangedEvent): void {
+    const { event, newStart, newEnd } = eventDropInfo;
+    if (event.id && newStart && newEnd) {
+      const updateDto: UpdateAppointmentDto = {
+        startDateTime: newStart.toISOString(),
+        endDateTime: newEnd.toISOString(),
+      };
+      this.agendaStore.updateAppointment({ id: event.id.toString(), dto: updateDto });
+    }
+  }
+
+  handleDelete(appointmentId: string): void {
+    this.agendaStore.deleteAppointment(appointmentId);
+    this.onFormClose();
   }
 
   onFormClose(): void {
     this.displayAgendaForm = false;
     this.selectedAppointment = null;
+    this.dialogInitialDate = null;
   }
+
 }

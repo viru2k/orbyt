@@ -1,7 +1,10 @@
 
-import { MessageService } from 'primeng/api';
-import { Configuration } from './api/configuration';
-
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { ApiConfiguration } from './api/api-configuration';
+import { ActivityTrackerService } from './services/activity-tracker.service';
+import { CalendarUtils, DateAdapter, CalendarA11y, CalendarDateFormatter, CalendarEventTitleFormatter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { es } from 'date-fns/locale';
 import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { appRoutes } from './app.routes';
@@ -20,6 +23,7 @@ import localeEs from '@angular/common/locales/es';
 
 
 registerLocaleData(localeEs, 'es-ES');
+registerLocaleData(localeEs, 'es');
 
 
 export const appConfig: ApplicationConfig = {
@@ -66,7 +70,7 @@ export const appConfig: ApplicationConfig = {
     multi: true
   },
   {
-    provide: Configuration,
+    provide: ApiConfiguration,
     useFactory: apiConfigFactory,
     deps: [LocalStorageService],
   },
@@ -81,15 +85,24 @@ export const appConfig: ApplicationConfig = {
     logOnly: true
   }),
     MessageService,
-     DatePipe,
-    { provide: LOCALE_ID, useValue: 'es-ES' }
+    ConfirmationService,
+    DatePipe,
+    ActivityTrackerService,
+    CalendarUtils,
+    CalendarA11y,
+    CalendarDateFormatter,
+    CalendarEventTitleFormatter,
+    {
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    },
+    { provide: LOCALE_ID, useValue: 'es' }
   ],
 
 };
 
-export function apiConfigFactory(localStorage: LocalStorageService): Configuration {
-  const config = new Configuration({
-    basePath: 'http://127.0.0.1:3000'
-  });
+export function apiConfigFactory(localStorage: LocalStorageService): ApiConfiguration {
+  const config = new ApiConfiguration();
+  config.rootUrl = 'http://127.0.0.1:3000';
   return config;
 }

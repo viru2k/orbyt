@@ -93,8 +93,8 @@ export class OrbTopbarComponent {
   }
 
   logout() {
-    this.authStore.logout();
-    this.router.navigate(['/login']);
+    this.authStore.performLogout();
+    // No necesario navegar aquí, el effect ya lo hace
   }
 
 

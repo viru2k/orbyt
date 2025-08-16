@@ -17,11 +17,11 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { AdminUpdateUserDto } from '../model/adminUpdateUserDto';
+import { AdminUpdateUserDto } from '../model/admin-update-user-dto';
 // @ts-ignore
-import { CreateSubUserDto } from '../model/createSubUserDto';
+import { CreateSubUserDto } from '../model/create-sub-user-dto';
 // @ts-ignore
-import { UserResponseDto } from '../model/userResponseDto';
+import { UserResponseDto } from '../model/user-response-dto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -48,7 +48,7 @@ export class UsersService extends BaseService {
     public userControllerCreateSubUser(createSubUserDto: CreateSubUserDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserResponseDto>;
     public userControllerCreateSubUser(createSubUserDto: CreateSubUserDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserResponseDto>>;
     public userControllerCreateSubUser(createSubUserDto: CreateSubUserDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserResponseDto>>;
-    public userControllerCreateSubUser(createSubUserDto: CreateSubUserDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public userControllerCreateSubUser(createSubUserDto: CreateSubUserDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createSubUserDto === null || createSubUserDto === undefined) {
             throw new Error('Required parameter createSubUserDto was null or undefined when calling userControllerCreateSubUser.');
         }
@@ -90,7 +90,7 @@ export class UsersService extends BaseService {
             }
         }
 
-        let localVarPath = `/users/sub-user`;
+        const localVarPath = `/users/sub-user`;
         return this.httpClient.request<UserResponseDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -106,14 +106,14 @@ export class UsersService extends BaseService {
     }
 
     /**
-     * Admin: Listar todos los usuarios del grupo
+     * Admin: Listar todos los usuarios del grupo incluyendo admin
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
     public userControllerGetGroupUsers(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<UserResponseDto>>;
     public userControllerGetGroupUsers(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<UserResponseDto>>>;
     public userControllerGetGroupUsers(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<UserResponseDto>>>;
-    public userControllerGetGroupUsers(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public userControllerGetGroupUsers(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -143,7 +143,7 @@ export class UsersService extends BaseService {
             }
         }
 
-        let localVarPath = `/users/group`;
+        const localVarPath = `/users/group`;
         return this.httpClient.request<Array<UserResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -165,7 +165,7 @@ export class UsersService extends BaseService {
     public userControllerGetMyProfile(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserResponseDto>;
     public userControllerGetMyProfile(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserResponseDto>>;
     public userControllerGetMyProfile(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserResponseDto>>;
-    public userControllerGetMyProfile(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public userControllerGetMyProfile(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -195,8 +195,60 @@ export class UsersService extends BaseService {
             }
         }
 
-        let localVarPath = `/users/me`;
+        const localVarPath = `/users/me`;
         return this.httpClient.request<UserResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Admin: Listar solo los sub-usuarios del grupo
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public userControllerGetSubUsers(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<UserResponseDto>>;
+    public userControllerGetSubUsers(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<UserResponseDto>>>;
+    public userControllerGetSubUsers(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<UserResponseDto>>>;
+    public userControllerGetSubUsers(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (bearer) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('bearer', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        const localVarPath = `/users/sub-users`;
+        return this.httpClient.request<Array<UserResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -219,7 +271,7 @@ export class UsersService extends BaseService {
     public userControllerUpdateSubUser(id: number, adminUpdateUserDto: AdminUpdateUserDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<UserResponseDto>;
     public userControllerUpdateSubUser(id: number, adminUpdateUserDto: AdminUpdateUserDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<UserResponseDto>>;
     public userControllerUpdateSubUser(id: number, adminUpdateUserDto: AdminUpdateUserDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<UserResponseDto>>;
-    public userControllerUpdateSubUser(id: number, adminUpdateUserDto: AdminUpdateUserDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public userControllerUpdateSubUser(id: number, adminUpdateUserDto: AdminUpdateUserDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling userControllerUpdateSubUser.');
         }
@@ -264,7 +316,7 @@ export class UsersService extends BaseService {
             }
         }
 
-        let localVarPath = `/users/sub-user/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/users/sub-user/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<UserResponseDto>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

@@ -17,11 +17,11 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { CreateNotificationDto } from '../model/createNotificationDto';
+import { CreateNotificationDto } from '../model/create-notification-dto';
 // @ts-ignore
-import { NotificationResponseDto } from '../model/notificationResponseDto';
+import { NotificationResponseDto } from '../model/notification-response-dto';
 // @ts-ignore
-import { NotificationSummaryResponseDto } from '../model/notificationSummaryResponseDto';
+import { NotificationSummaryResponseDto } from '../model/notification-summary-response-dto';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -48,7 +48,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerCreateNotification(createNotificationDto: CreateNotificationDto, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public notificationControllerCreateNotification(createNotificationDto: CreateNotificationDto, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public notificationControllerCreateNotification(createNotificationDto: CreateNotificationDto, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public notificationControllerCreateNotification(createNotificationDto: CreateNotificationDto, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerCreateNotification(createNotificationDto: CreateNotificationDto, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createNotificationDto === null || createNotificationDto === undefined) {
             throw new Error('Required parameter createNotificationDto was null or undefined when calling notificationControllerCreateNotification.');
         }
@@ -89,7 +89,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications`;
+        const localVarPath = `/notifications`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -112,7 +112,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerGetAll(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<NotificationResponseDto>>;
     public notificationControllerGetAll(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<NotificationResponseDto>>>;
     public notificationControllerGetAll(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<NotificationResponseDto>>>;
-    public notificationControllerGetAll(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerGetAll(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -142,7 +142,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications`;
+        const localVarPath = `/notifications`;
         return this.httpClient.request<Array<NotificationResponseDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -164,7 +164,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerGetFailed(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public notificationControllerGetFailed(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public notificationControllerGetFailed(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public notificationControllerGetFailed(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerGetFailed(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -193,7 +193,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications/failed`;
+        const localVarPath = `/notifications/failed`;
         return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -215,7 +215,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerGetSummary(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<NotificationSummaryResponseDto>;
     public notificationControllerGetSummary(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<NotificationSummaryResponseDto>>;
     public notificationControllerGetSummary(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<NotificationSummaryResponseDto>>;
-    public notificationControllerGetSummary(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerGetSummary(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -245,7 +245,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications/summary`;
+        const localVarPath = `/notifications/summary`;
         return this.httpClient.request<NotificationSummaryResponseDto>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -267,7 +267,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerGetUnread(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public notificationControllerGetUnread(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public notificationControllerGetUnread(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public notificationControllerGetUnread(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerGetUnread(observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -296,7 +296,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications/unread`;
+        const localVarPath = `/notifications/unread`;
         return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -319,7 +319,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerMarkAsRead(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public notificationControllerMarkAsRead(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public notificationControllerMarkAsRead(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public notificationControllerMarkAsRead(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerMarkAsRead(id: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling notificationControllerMarkAsRead.');
         }
@@ -352,7 +352,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/read`;
+        const localVarPath = `/notifications/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/read`;
         return this.httpClient.request<any>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -375,7 +375,7 @@ export class NotificationsService extends BaseService {
     public notificationControllerRetry(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
     public notificationControllerRetry(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public notificationControllerRetry(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public notificationControllerRetry(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationControllerRetry(id: number, observe: any = 'body', reportProgress = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling notificationControllerRetry.');
         }
@@ -407,7 +407,7 @@ export class NotificationsService extends BaseService {
             }
         }
 
-        let localVarPath = `/notifications/retry/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        const localVarPath = `/notifications/retry/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

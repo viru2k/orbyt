@@ -1,5 +1,4 @@
 import { SPANISH_LOCALE } from '@orb-models';
-
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import {  TranslateService } from '@ngx-translate/core';
@@ -7,11 +6,14 @@ import { SpinnerService, ThemeService } from '@orb-services';
 import { PrimeNG } from 'primeng/config';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [ RouterModule, RouterOutlet,ProgressSpinnerModule, ToastModule ],
+  imports: [ CommonModule, RouterModule, RouterOutlet,ProgressSpinnerModule, ToastModule, ConfirmDialogModule ],
   providers: [ThemeService, PrimeNG],
   selector: 'app-root',
+  standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

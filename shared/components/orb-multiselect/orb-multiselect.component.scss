@@ -1,9 +1,144 @@
 
-// NOTA: PrimeNG v17+ con :host-context o ::ng-deep puede ser delicado con standalone.
-// Es mejor usar [ngClass]="{'w-full': true}" o [style]="{width: '100%'}" en el p-dropdown
-// o confiar en las clases del contenedor padre (ej. .field en PrimeFlex).
-// He añadido 'w-full' a [ngClass] en el HTML para un comportamiento por defecto.
+@use '../../../src/styles/variables' as vars;
+@use '../../../src/styles/mixins';
 
-::ng-deep orb-multiselect{
-    display:block 
-} 
+:host {
+  display: block;
+}
+
+// Orbyt themed multiselect styles
+::ng-deep {
+  .p-multiselect {
+    font-family: vars.$font-family !important;
+    border: 1px solid var(--border-color, #{vars.$border-color}) !important;
+    border-radius: var(--radius-md, #{vars.$radius-md}) !important;
+    transition: var(--transition-fast, #{vars.$transition-fast}) !important;
+    background: var(--background-primary, #{vars.$background-primary}) !important;
+    width: 100% !important;
+    
+    &:not(.p-disabled):hover {
+      border-color: var(--primary-blue, #{vars.$primary-blue}) !important;
+    }
+    
+    &:not(.p-disabled).p-focus {
+      border-color: var(--primary-blue, #{vars.$primary-blue}) !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    }
+    
+    .p-multiselect-label {
+      color: var(--text-primary, #{vars.$text-primary}) !important;
+      padding: var(--space-3, #{vars.$space-3}) var(--space-4, #{vars.$space-4}) !important;
+      
+      &.p-placeholder {
+        color: var(--text-muted, #{vars.$text-muted}) !important;
+      }
+    }
+    
+    .p-multiselect-trigger {
+      color: var(--text-secondary, #{vars.$text-secondary}) !important;
+      
+      .p-multiselect-trigger-icon {
+        transition: var(--transition-fast, #{vars.$transition-fast}) !important;
+      }
+    }
+    
+    // Token/chip styles for selected items
+    .p-multiselect-token {
+      background: var(--gradient-primary, #{vars.$gradient-primary}) !important;
+      color: white !important;
+      border-radius: var(--radius-sm, #{vars.$radius-sm}) !important;
+      padding: var(--space-1, #{vars.$space-1}) var(--space-2, #{vars.$space-2}) !important;
+      margin: 2px !important;
+      
+      .p-multiselect-token-label {
+        font-size: var(--text-sm, #{vars.$text-sm}) !important;
+        font-weight: var(--font-medium, #{vars.$font-medium}) !important;
+      }
+      
+      .p-multiselect-token-icon {
+        margin-left: var(--space-1, #{vars.$space-1}) !important;
+        color: white !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.2) !important;
+          border-radius: 50% !important;
+        }
+      }
+    }
+  }
+  
+  // Panel dropdown styles
+  .p-multiselect-panel {
+    border: 1px solid var(--border-light, #{vars.$border-light}) !important;
+    border-radius: var(--radius-md, #{vars.$radius-md}) !important;
+    box-shadow: var(--shadow-lg, #{vars.$shadow-lg}) !important;
+    
+    .p-multiselect-header {
+      background: var(--background-secondary, #{vars.$background-secondary}) !important;
+      border-bottom: 1px solid var(--border-light, #{vars.$border-light}) !important;
+      padding: var(--space-3, #{vars.$space-3}) !important;
+      
+      .p-checkbox {
+        .p-checkbox-box {
+          border: 1px solid var(--border-color, #{vars.$border-color}) !important;
+          border-radius: var(--radius-sm, #{vars.$radius-sm}) !important;
+          
+          &.p-highlight {
+            background: var(--gradient-primary, #{vars.$gradient-primary}) !important;
+            border-color: transparent !important;
+          }
+        }
+      }
+      
+      .p-multiselect-filter-container {
+        .p-inputtext {
+          border: 1px solid var(--border-color, #{vars.$border-color}) !important;
+          border-radius: var(--radius-sm, #{vars.$radius-sm}) !important;
+          padding: var(--space-2, #{vars.$space-2}) var(--space-3, #{vars.$space-3}) !important;
+          
+          &:focus {
+            border-color: var(--primary-blue, #{vars.$primary-blue}) !important;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1) !important;
+          }
+        }
+      }
+    }
+    
+    .p-multiselect-items {
+      .p-multiselect-item {
+        padding: var(--space-2, #{vars.$space-2}) var(--space-3, #{vars.$space-3}) !important;
+        color: var(--text-primary, #{vars.$text-primary}) !important;
+        transition: var(--transition-fast, #{vars.$transition-fast}) !important;
+        
+        &:hover {
+          background: rgba(vars.$orbyt-lavender, 0.1) !important;
+          color: var(--text-primary, #{vars.$text-primary}) !important;
+        }
+        
+        &.p-highlight {
+          background: var(--gradient-primary, #{vars.$gradient-primary}) !important;
+          color: white !important;
+        }
+        
+        .p-checkbox {
+          margin-right: var(--space-2, #{vars.$space-2}) !important;
+          
+          .p-checkbox-box {
+            border: 1px solid var(--border-color, #{vars.$border-color}) !important;
+            border-radius: var(--radius-sm, #{vars.$radius-sm}) !important;
+            
+            &.p-highlight {
+              background: var(--gradient-primary, #{vars.$gradient-primary}) !important;
+              border-color: transparent !important;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Invalid state
+  .p-multiselect.p-invalid {
+    border-color: var(--error, #{vars.$error}) !important;
+  }
+}

@@ -1,27 +1,122 @@
+<!-- Card de filtros horizontal -->
 <orb-card>
-  <div class="flex justify-content-between align-items-center mb-4">
-    <h2>Gestión de Citas</h2>
-    <orb-button label="Nueva Cita" icon="pi pi-plus" (onClick)="openNewAppointmentForm()"></orb-button>
+  <div orbHeader>
+    <h2>Agenda - Filtros</h2>
   </div>
-
-  <app-agenda-list
-    [appointments]="(agendaStore.appointments$ | async) || []"
-    [isLoading]="(agendaStore.loading$ | async) || false"
-    (edit)="editAppointment($event)"
-    (delete)="deleteAppointment($event)"
-  ></app-agenda-list>
-
-  <orb-dialog
-    [(visible)]="displayAgendaForm"
-    [header]="selectedAppointment ? 'Editar Cita' : 'Nueva Cita'"
-    [modal]="true"
-    [style]="{ width: '50vw' }"
-    (onHide)="onFormClose()"
-  >
-    <app-agenda-form
-      [appointment]="selectedAppointment"
-      (save)="onFormClose()"
-      (cancel)="onFormClose()"
-    ></app-agenda-form>
-  </orb-dialog>
+  
+  <div orbBody>
+    <div class="filters-container" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; padding: 1rem 0;">
+      <!-- Filtros de fecha -->
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label for="date-from" class="text-sm font-medium text-gray-600">Desde:</label>
+          <orb-datepicker
+            id="date-from"
+            mode="datetime"
+            placeholder="dd/mm/yyyy hh:mm"
+            [ngModel]="selectedDateFrom"
+            (ngModelChange)="onDateFromChange($event)"
+            styleClass="w-48"
+          ></orb-datepicker>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label for="date-to" class="text-sm font-medium text-gray-600">Hasta:</label>
+          <orb-datepicker
+            id="date-to"
+            mode="datetime"
+            placeholder="dd/mm/yyyy hh:mm"
+            [ngModel]="selectedDateTo"
+            (ngModelChange)="onDateToChange($event)"
+            styleClass="w-48"
+          ></orb-datepicker>
+        </div>
+      </div>
+      
+      <!-- Filtros de usuarios y estados -->
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label for="users-filter" class="text-sm font-medium text-gray-600">Profesionales:</label>
+          <orb-multiselect
+            id="users-filter"
+            placeholder="Seleccionar profesionales"
+            [options]="(usersStore.users$ | async) || []"
+            optionLabel="fullName"
+            [ngModel]="selectedUsers"
+            (ngModelChange)="onUsersChange($event)"
+            styleClass="w-52"
+            display="chip"
+            [maxSelectedLabels]="1"
+            selectedItemsLabel="{0} profesionales"
+          ></orb-multiselect>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label for="status-filter" class="text-sm font-medium text-gray-600">Estados:</label>
+          <orb-multiselect
+            id="status-filter"
+            placeholder="Seleccionar estados"
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="selectedStatuses"
+            (ngModelChange)="onStatusesChange($event)"
+            styleClass="w-48"
+            display="chip"
+            [maxSelectedLabels]="1"
+            selectedItemsLabel="{0} estados"
+          ></orb-multiselect>
+        </div>
+      </div>
+      
+      <!-- Botones de acción -->
+      <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <orb-button
+          label="Buscar"
+          icon="pi pi-search"
+          (click)="performSearch()"
+          size="small"
+        ></orb-button>
+        <orb-button
+          label="Hoy"
+          icon="pi pi-calendar"
+          severity="secondary"
+          (click)="resetToToday()"
+          size="small"
+        ></orb-button>
+        <orb-button
+          label="Nuevo Turno"
+          icon="pi pi-plus"
+          severity="success"
+          (click)="openNewAppointmentDialog()"
+          size="small"
+        ></orb-button>
+        
+      </div>
+    </div>
+  </div>
 </orb-card>
+
+<!-- Card del calendario -->
+<orb-card style="margin-top: 1rem;">
+  <div orbBody>
+    <orb-modern-calendar
+      [events]="(agendaStore.calendarEvents$ | async) || []"
+      (datesSetRange)="handleDatesSet($event)"
+      (eventClick)="handleEventClick($event)"
+      (dateSelect)="handleDateSelect($event)"
+      (eventDrop)="handleEventDrop($event)"
+    ></orb-modern-calendar>
+  </div>
+</orb-card>
+
+<orb-dialog [(visible)]="displayAgendaForm" (onHide)="onFormClose()" [header]="selectedAppointment ? 'Editar Turno' : 'Nuevo Turno'">
+  <app-agenda-form
+    *ngIf="displayAgendaForm"
+    [appointment]="selectedAppointment"
+    [initialDate]="dialogInitialDate"
+    (close)="onFormClose()"
+    (delete)="handleDelete($event)"
+  ></app-agenda-form>
+</orb-dialog>
+
