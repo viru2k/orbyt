@@ -52,6 +52,7 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   @Input() selectionMode: 'single' | 'multiple' | 'range' = 'single';
   @Input() inline: boolean = false;
   @Input() showButtonBar: boolean = true;
+  @Input() hideOnDateTimeSelect: boolean = true; // Nueva propiedad para controlar auto-cierre
   @Input() dataType: string = 'date'; // Para que p-datepicker devuelva objetos Date
   @Input() showTime: boolean = false;
   @Input() timeOnly: boolean = false;
@@ -67,6 +68,11 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
 
   // Configuración de idiomas para PrimeNG DatePicker
   localeConfig: any = {};
+  
+  // Ancho dinámico calculado
+  get dynamicWidth(): string {
+    return this.calculateWidth();
+  }
 
   constructor(
     private injector: Injector,
@@ -131,6 +137,12 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
         this.dateFormat = this.locale.startsWith('es') ? 'dd/mm/yy' : 'mm/dd/yy';
       }
     }
+    
+    // Si es modo range, no cerrar automáticamente para permitir selección de rango completo
+    if (this.selectionMode === 'range') {
+      this.hideOnDateTimeSelect = false;
+      this.showButtonBar = true; // Forzar botones para que puedan cerrar manualmente
+    }
   }
 
   writeValue(value: any): void {
@@ -171,5 +183,24 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
 
   get isInvalid(): boolean {
     return !!(this.ngControl?.invalid && (this.ngControl?.touched || this.ngControl?.dirty));
+  }
+  
+  /**
+   * Calcula el ancho apropiado basado en el tipo de calendario
+   */
+  private calculateWidth(): string {
+    // Anchos base en rem para diferentes tipos
+    const widths = {
+      single: '10rem',      // Fecha simple: "dd/mm/yyyy" ~10rem
+      singleTime: '13rem',  // Fecha + hora: "dd/mm/yyyy hh:mm" ~13rem
+      range: '20rem',       // Rango: "dd/mm/yyyy - dd/mm/yyyy" ~20rem
+      rangeTime: '26rem'    // Rango + hora: "dd/mm/yyyy hh:mm - dd/mm/yyyy hh:mm" ~26rem
+    };
+    
+    if (this.selectionMode === 'range') {
+      return this.showTime ? widths.rangeTime : widths.range;
+    } else {
+      return this.showTime ? widths.singleTime : widths.single;
+    }
   }
 }

@@ -43,3 +43,29 @@ html, body {
   padding: 4px 8px;
   border-radius: 12px;
 }
+
+/* Global dropdown and input styling fixes */
+:root {
+  --project-input-height: 32px;
+  --project-font-size: 14px;
+}
+
+.p-inputtext,
+.p-dropdown,
+.p-select,
+.p-multiselect,
+.p-calendar .p-inputtext {
+  height: var(--project-input-height) !important;
+  font-size: var(--project-font-size) !important;
+}
+
+/* Fix all dropdown label padding issues */
+.p-dropdown .p-dropdown-label,
+.p-select .p-select-label,
+.p-multiselect .p-multiselect-label {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  line-height: normal !important;
+  padding: 0.25rem 0.5rem !important;
+}

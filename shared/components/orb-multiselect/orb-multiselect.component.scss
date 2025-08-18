@@ -27,7 +27,11 @@
     
     .p-multiselect-label {
       color: var(--text-primary, #{vars.$text-primary}) !important;
-      padding: var(--space-3, #{vars.$space-3}) var(--space-4, #{vars.$space-4}) !important;
+      padding: 0.25rem 0.5rem !important; // Padding controlado, no usar custom properties
+      display: flex !important;
+      align-items: center !important;
+      height: 100% !important;
+      line-height: normal !important;
       
       &.p-placeholder {
         color: var(--text-muted, #{vars.$text-muted}) !important;

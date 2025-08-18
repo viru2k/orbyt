@@ -4,6 +4,31 @@
 // o confiar en las clases del contenedor padre (ej. .field en PrimeFlex).
 // He añadido 'w-full' a [ngClass] en el HTML para un comportamiento por defecto.
 
-::ng-deep orb-datepicker{
-    display:block ;
+:host {
+  display: block;
+}
+
+// Estilos para los diferentes tamaños de calendario
+::ng-deep {
+  .p-datepicker {
+    // Asegurar que el input tenga el ancho correcto
+    .p-inputtext {
+      text-align: center;
+      font-size: var(--project-font-size, 14px);
+    }
+    
+    // Para rangos, centrar el contenido
+    &.p-datepicker-range {
+      .p-inputtext {
+        text-align: left; // Los rangos se ven mejor alineados a la izquierda
+      }
+    }
+  }
+  
+  // Asegurar que no se desborde en pantallas pequeñas
+  @media (max-width: 768px) {
+    .p-datepicker {
+      max-width: 100%;
+    }
+  }
 } 

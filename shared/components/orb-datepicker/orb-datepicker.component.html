@@ -7,6 +7,7 @@
   [disabled]="disabled"
   [ngClass]="{'p-invalid': isInvalid, 'w-full': !inline}"
   [class]="styleClass ?? ''"
+  [style]="!styleClass && !inline ? {width: dynamicWidth} : (inline ? {border: 'none'} : null)"
   [dateFormat]="dateFormat"
   [showIcon]="showIcon && !inline"
   [appendTo]="appendTo"
@@ -22,9 +23,9 @@
   [timeOnly]="timeOnly"
   [hourFormat]="hourFormat"
   [showButtonBar]="showButtonBar"
+  [hideOnDateTimeSelect]="hideOnDateTimeSelect"
   [dataType]="dataType" 
   [locale]="localeConfig"
-  [style]="inline ? {border: 'none'} : null"
   [inputStyleClass]="inline ? 'p-sr-only' : undefined"
 ></p-datepicker>
 
