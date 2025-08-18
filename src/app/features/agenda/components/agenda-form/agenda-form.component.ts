@@ -11,6 +11,7 @@ import { UsersService } from '../../../../api/services/users.service';
 import { Observable, of, debounceTime, distinctUntilChanged } from 'rxjs';
 import { OrbButtonComponent, OrbDatepickerComponent, OrbFormFieldComponent, OrbSelectComponent, OrbTextAreaComponent, OrbTextInputComponent } from '@orb-components';
 import { MessageModule } from 'primeng/message';
+import { AppointmentStatus } from '../../../../api/model/appointment-status.enum';
 
 @Component({
   selector: 'app-agenda-form',
@@ -42,6 +43,11 @@ export class AgendaFormComponent implements OnChanges {
   rooms$: Observable<any[]> = of([]);
   selectedProfessionalId: number | null = null;
 
+  statusOptions = Object.keys(AppointmentStatus).map(key => ({
+    label: key.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
+    value: (AppointmentStatus as any)[key]
+  }));
+
   // Validación de disponibilidad
   availabilityMessage: { severity: 'success' | 'info' | 'warn' | 'error', text: string } | null = null;
   private availabilityCheckTimeout: any;
@@ -61,6 +67,7 @@ export class AgendaFormComponent implements OnChanges {
       professionalId: [null, Validators.required],
       serviceId: [null],
       roomId: [null],
+      status: [null, Validators.required],
     });
 
     // Cargar profesionales del grupo
@@ -107,7 +114,8 @@ export class AgendaFormComponent implements OnChanges {
         professionalId: this.appointment.professional?.id,
         serviceId: this.appointment.serviceId,
         roomId: this.appointment.roomId,
-      });
+        status: this.appointment.status,
+      }, { emitEvent: false });
     } else {
       // Resetear el formulario y deshabilitar cliente
       this.agendaForm.reset();
@@ -140,7 +148,7 @@ export class AgendaFormComponent implements OnChanges {
       allDay: false,
       clientId: formValue.clientId,
       professionalId: formValue.professionalId,
-      status: 'confirmed',
+      status: formValue.status,
       serviceId: formValue.serviceId,
       roomId: formValue.roomId,
     };

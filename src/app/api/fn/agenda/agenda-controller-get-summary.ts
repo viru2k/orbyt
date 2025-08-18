@@ -23,9 +23,9 @@ export interface AgendaControllerGetSummary$Params {
   to: string;
 
 /**
- * ID del profesional (admin)
+ * IDs de los profesionales (admin)
  */
-  professionalId?: number;
+  professionalId?: Array<number>;
 }
 
 export function agendaControllerGetSummary(http: HttpClient, rootUrl: string, params: AgendaControllerGetSummary$Params, context?: HttpContext): Observable<StrictHttpResponse<AppointmentSummaryResponseDto>> {

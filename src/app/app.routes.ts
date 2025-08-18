@@ -42,6 +42,13 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'inventory/movements',
+        loadComponent: () =>
+          import('./features/inventory/movements/movement-list/movement-list.component').then(
+            (m) => m.MovementListComponent
+          ),
+      },
+      {
         path: 'management/users', // Nueva ruta para usuarios
         canActivate: [AdminGuard],
         loadComponent: () =>
@@ -75,6 +82,20 @@ export const appRoutes: Route[] = [
         loadComponent: () =>
           import('./features/agenda/agenda-config/agenda-config.component').then(
             (m) => m.AgendaConfigComponent
+          ),
+      },
+      {
+        path: 'consultations',
+        loadComponent: () =>
+          import('./features/consultations/consultations-list.component').then(
+            (m) => m.ConsultationsListComponent
+          ),
+      },
+      {
+        path: 'invoices',
+        loadComponent: () =>
+          import('./features/invoices/invoices-list.component').then(
+            (m) => m.InvoicesListComponent
           ),
       },
     ],

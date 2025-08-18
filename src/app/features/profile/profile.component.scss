@@ -9,7 +9,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, 
     variables.$gray-50 0%, 
-    rgba(variables.$orbyt-cream, 0.3) 50%, 
+    variables.$gray-100 50%, 
     variables.$gray-50 100%
   );
 }
@@ -45,7 +45,7 @@
   
   .header-background {
     height: 200px;
-    background: var(--gradient-primary);
+    background: linear-gradient(135deg, variables.$primary-blue 0%, variables.$primary-purple 100%);
     border-radius: 0 0 var(--radius-2xl, 1.5rem) var(--radius-2xl, 1.5rem);
     position: relative;
     
@@ -111,7 +111,7 @@
       border: 3px solid white;
       
       &.active {
-        background: var(--gradient-wellness);
+        background: linear-gradient(135deg, variables.$primary-teal 0%, variables.$orbyt-mint 100%);
       }
       
       i {
@@ -189,7 +189,7 @@
   .card-header {
     background: linear-gradient(135deg, 
       variables.$gray-50 0%, 
-      rgba(variables.$orbyt-cream, 0.5) 100%
+      variables.$gray-100 100%
     );
     padding: var(--space-6, 1.5rem);
     border-bottom: 1px solid var(--border-light);

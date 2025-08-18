@@ -52,7 +52,7 @@ export class ClientListComponent implements OnInit {
     { field: 'phone', header: 'Teléfono', sortable: false },
     { field: 'statusText', header: 'Estado', sortable: true, width: '120px' },
     { field: 'createdAt', header: 'Fecha Creación', sortable: true, width: '180px' },
-    { field: 'actions', header: 'Acciones', width: '100px', sortable: false }
+    { field: 'actions', header: '', width: '10px', sortable: false }
   ];
 
   tableFeaturesConfig: OrbTableFeatures = {

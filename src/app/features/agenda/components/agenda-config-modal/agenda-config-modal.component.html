@@ -4,6 +4,7 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
+  size="xl"
   styleClass="agenda-config-modal"
   (onHide)="onHide()"
 >
@@ -17,7 +18,7 @@
       <!-- Card: Horario de trabajo -->
       <div class="config-card">
         <div class="card-header">
-          <h4><i class="fas fa-clock"></i> Horario de Trabajo</h4>
+          <h4><i class="pi pi-clock" style="color: #3b82f6;"></i> Horario de Trabajo</h4>
         </div>
         <div class="card-content">
           <div class="time-inputs">
@@ -53,7 +54,7 @@
       <!-- Card: Configuración de turnos -->
       <div class="config-card">
         <div class="card-header">
-          <h4><i class="fas fa-stopwatch"></i> Configuración de Turnos</h4>
+          <h4><i class="pi pi-stopwatch" style="color: #10b981;"></i> Configuración de Turnos</h4>
         </div>
         <div class="card-content">
           <div class="input-group">
@@ -73,35 +74,10 @@
         </div>
       </div>
 
-      <!-- Card: Días laborales -->
-      <div class="config-card">
-        <div class="card-header">
-          <h4><i class="fas fa-calendar-week"></i> Días Laborales</h4>
-        </div>
-        <div class="card-content">
-          <div class="working-days">
-            <div 
-              *ngFor="let day of weekDays; let i = index" 
-              class="day-checkbox"
-            >
-              <input
-                type="checkbox"
-                [id]="'day-' + i"
-                [formControl]="workingDaysControls[i]"
-                class="day-input"
-              />
-              <label [for]="'day-' + i" class="day-label">
-                {{ day.label }}
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Card: Configuraciones adicionales -->
       <div class="config-card">
         <div class="card-header">
-          <h4><i class="fas fa-cogs"></i> Configuraciones Adicionales</h4>
+          <h4><i class="pi pi-cog" style="color: #f59e0b;"></i> Configuraciones Adicionales</h4>
         </div>
         <div class="card-content">
           <div class="checkbox-group">
@@ -134,37 +110,62 @@
         </div>
       </div>
 
+      <!-- Card: Días laborales - Now spans 2 columns for better layout -->
+      <div class="config-card" style="grid-column: span 2;">
+        <div class="card-header">
+          <h4><i class="pi pi-calendar" style="color: #8b5cf6;"></i> Días Laborales</h4>
+        </div>
+        <div class="card-content">
+          <div class="working-days">
+            <!-- Row 1: Monday and Tuesday -->
+            <div class="working-days-row">
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[0].label }}" [formControl]="workingDaysControls[0]"></orb-switch>
+              </div>
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[1].label }}" [formControl]="workingDaysControls[1]"></orb-switch>
+              </div>
+            </div>
+            
+            <!-- Row 2: Wednesday and Thursday -->
+            <div class="working-days-row">
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[2].label }}" [formControl]="workingDaysControls[2]"></orb-switch>
+              </div>
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[3].label }}" [formControl]="workingDaysControls[3]"></orb-switch>
+              </div>
+            </div>
+            
+            <!-- Row 3: Friday and Saturday -->
+            <div class="working-days-row">
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[4].label }}" [formControl]="workingDaysControls[4]"></orb-switch>
+              </div>
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[5].label }}" [formControl]="workingDaysControls[5]"></orb-switch>
+              </div>
+            </div>
+            
+            <!-- Row 4: Sunday centered -->
+            <div class="working-days-row">
+              <div class="day-checkbox">
+                <orb-switch label="     {{ weekDays[6].label }}" [formControl]="workingDaysControls[6]"></orb-switch>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Card: Días Festivos / Vacaciones -->
       <div class="config-card holidays-card">
         <div class="card-header">
-          <h4><i class="fas fa-umbrella-beach"></i> Días Festivos y Vacaciones</h4>
+          <h4><i class="pi pi-sun" style="color: #ef4444;"></i> Días Festivos y Vacaciones</h4>
         </div>
         <div class="card-content">
           <div class="holidays-management">
-            <div class="holidays-list">
-              <div 
-                *ngFor="let holiday of (agendaStore.agendaHolydays$ | async) || []; trackBy: trackByHolidayId"
-                class="holiday-item"
-              >
-                <div class="holiday-info">
-                  <span class="holiday-date">📅 {{ formatDisplayDate(holiday.date) }}</span>
-                  <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
-                </div>
-                <orb-button
-                  icon="pi pi-trash"
-                  severity="danger"
-                  size="small"
-                  pTooltip="Eliminar día festivo"
-                  (click)="onDeleteHoliday(holiday)"
-                />
-              </div>
-              
-              <div *ngIf="!(agendaStore.agendaHolydays$ | async)?.length" class="no-holidays">
-                <p>No hay días festivos configurados.</p>
-              </div>
-            </div>
-
-            <div class="add-holiday">
+            <!-- Add Holiday Button with spacing -->
+            <div class="add-holiday-header" style="margin-bottom: 2rem;">
               <orb-button
                 label="Agregar Día Festivo"
                 icon="pi pi-plus"
@@ -174,8 +175,8 @@
               />
             </div>
 
-            <!-- Formulario para agregar festivo -->
-            <div *ngIf="showAddHolidayForm" class="add-holiday-form">
+            <!-- Add Holiday Form -->
+            <div *ngIf="showAddHolidayForm" class="add-holiday-form" style="margin-bottom: 2rem;">
               <form [formGroup]="holidayForm" class="holiday-form-inline">
                 <div class="input-group">
                   <p-floatLabel>
@@ -219,6 +220,68 @@
                   />
                 </div>
               </form>
+            </div>
+
+            <!-- Holidays Table with proper spacing -->
+            <div class="holidays-table-container" style="margin-top: 1.5rem; border-top: 1px solid #e5e7eb; padding-top: 1.5rem;">
+              <p-table 
+                [value]="(agendaStore.agendaHolydays$ | async) || []" 
+                [loading]="!!(agendaStore.holidaysLoading$ | async)"
+                [paginator]="true"
+                [rows]="5"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} feriados"
+                responsiveLayout="scroll"
+                styleClass="p-datatable-striped p-datatable-sm"
+              >
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th style="width: 30%">Fecha</th>
+                    <th style="width: 50%">Descripción</th>
+                    <th style="width: 10%"></th>
+                  </tr>
+                </ng-template>
+                
+                <ng-template pTemplate="body" let-holiday>
+                  <tr>
+                    <td>
+                      <div class="holiday-date-cell">
+                        <i class="fas fa-calendar-alt"></i>
+                        {{ formatDisplayDate(holiday.date) }}
+                      </div>
+                    </td>
+                    <td>
+                      <span class="holiday-description">
+                        {{ holiday.description || 'Sin descripción' }}
+                      </span>
+                    </td>
+                    <td>
+                      <orb-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        size="small"
+                     
+                        pTooltip="Eliminar día festivo"
+                        (click)="onDeleteHoliday(holiday)"
+                      />
+                    </td>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="3" class="text-center p-4">
+                      <div class="empty-state">
+                        <i class="fas fa-calendar-times text-4xl text-gray-400 mb-3"></i>
+                        <p class="text-gray-600 mb-0">No hay días festivos configurados</p>
+                        <small class="text-gray-500">
+                          Usa el botón "Agregar Día Festivo" para crear uno nuevo
+                        </small>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
             </div>
           </div>
         </div>

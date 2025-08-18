@@ -24,20 +24,15 @@
           <h5 class="m-0 mr-3">{{ caption }}</h5>
         }
          @if (tableFeatures.showGlobalSearch) {
-            <div class="flex">
-            <p-iconfield iconPosition="left" class="ml-auto">
-                <p-inputicon>
-                    <i class="pi pi-search"></i>
-                </p-inputicon>
-                <input
-                    pInputText
-                    type="text"
-                (input)="globalFilterValue = $any($event.target)?.value; dt.filterGlobal(globalFilterValue, 'contains')"
-                    placeholder="Buscar"
-                />
-            </p-iconfield>
-        </div>
-     
+            <div class="ml-auto table-search-container">
+              <orb-text-input-group 
+                [icon]="'fa fa-search'"
+                type="text"
+                [(ngModel)]="globalFilterValue"
+                [placeholder]="tableFeatures.globalSearchPlaceholder || 'Buscar'"
+                (input)="onSearchInput()">
+              </orb-text-input-group>
+            </div>
         }
       </div>
 

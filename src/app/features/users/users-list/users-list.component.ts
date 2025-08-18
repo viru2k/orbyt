@@ -55,7 +55,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     { field: 'isAdmin', header: 'Admin' },
     { field: 'active', header: 'Activo' },
     { field: 'createdAt', header: 'Fecha Creación' },
-    { field: 'actions', header: 'Acciones', sortable: false }
+    { field: 'actions', header: '', sortable: false, width: '10px' }
   ];
 
   public actions: OrbActionItem<UserResponseDto>[] = [

@@ -16,7 +16,7 @@
       <orb-label for="professional" text="Profesional"></orb-label>
       <orb-select
         id="professional"
-        placeholder="Seleccionar profesional"
+        placeholder="Buscar profesional por nombre"
         [options]="(professionals$ | async) || []"
         formControlName="selectedProfessional"
         styleClass="w-full"

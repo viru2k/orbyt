@@ -22,8 +22,23 @@
       "Bash(npx tsc:*)",
       "Bash(cp:*)",
       "Bash(git checkout:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx nx build:*)",
+      "Bash(curl:*)",
+      "Bash(npm run seed:*)",
+      "Bash(touch:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:js.devexpress.com)",
+      "WebSearch",
+      "Bash(rg:*)",
+      "Bash(true)",
+      "Bash(git stash push:*)"
     ],
-    "deny": []
+    "deny": [],
+    "additionalDirectories": [
+      "C:\\repositories\\orbyt-repositories\\orbyt",
+      "C:\\repositories\\orbyt-repositories",
+      "C:\\c\\repositories\\orbyt-repositories"
+    ]
   }
 }

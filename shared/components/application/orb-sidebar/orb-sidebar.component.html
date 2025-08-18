@@ -1,31 +1,96 @@
-<aside class="orb-sidebar">
+<aside class="orb-sidebar" [class.collapsed]="isCollapsed()">
   <!-- User header section -->
   <div class="sidebar-header">
     <div class="user-info">
       <div class="user-avatar">
         <span class="user-initials">{{ authStore.userInitials$ | async }}</span>
       </div>
-      <div class="user-details">
-        <p class="user-name">{{ authStore.userFullName$ | async }}</p>
+      <div class="user-details" [class.hidden]="isCollapsed()">
+        <div class="user-name-row">
+          <p class="user-name">{{ authStore.userFullName$ | async }}</p>
+          <!-- Toggle button al lado del texto cuando expandido -->
+          <button class="sidebar-toggle-inline" (click)="toggleSidebar()" title="Colapsar menú">
+            <i class="pi pi-angle-left"></i>
+          </button>
+        </div>
         <p class="user-role">Profesional</p>
       </div>
+    </div>
+    
+    <!-- Toggle button debajo del avatar solo cuando colapsado -->
+    <div *ngIf="isCollapsed()" class="toggle-below-avatar">
+      <button class="sidebar-toggle-below" (click)="toggleSidebar()" title="Expandir menú">
+        <i class="pi pi-angle-right"></i>
+      </button>
     </div>
   </div>
 
   <!-- Navigation menu -->
   <nav class="sidebar-nav">
-    <p-panelMenu
-      [model]="items"
-      [style]="{ width: '100%' }"
-      [multiple]="true"
-    ></p-panelMenu>
+    <!-- Menu expandido (normal) -->
+    <div *ngIf="!isCollapsed()" class="expanded-menu">
+      <p-panelMenu
+        [model]="items"
+        [style]="{ width: '100%' }"
+        [multiple]="true"
+      ></p-panelMenu>
+    </div>
+    
+    <!-- Menu colapsado (solo iconos) -->
+    <div *ngIf="isCollapsed()" class="collapsed-menu">
+      <div *ngFor="let item of items" class="collapsed-menu-item">
+        <button 
+          class="collapsed-item-btn"
+          (click)="onCollapsedMenuItemClick($event, item)"
+          [title]="item.label"
+        >
+          <i [class]="item.icon"></i>
+        </button>
+      </div>
+    </div>
   </nav>
 
   <!-- Logout section -->
   <div class="sidebar-footer">
-    <button class="logout-btn" (click)="logout()">
+    <button class="logout-btn" (click)="logout()" [title]="isCollapsed() ? 'Cerrar sesión' : ''">
       <i class="pi pi-sign-out"></i>
-      <span>Cerrar sesión</span>
+      <span [class.hidden]="isCollapsed()">Cerrar sesión</span>
     </button>
   </div>
 </aside>
+
+<!-- Popovers for collapsed menu -->
+<p-overlayPanel #menuPopover styleClass="menu-popover" [dismissable]="true" [showCloseIcon]="false">
+  <div class="popover-content">
+    <h6 class="popover-title">{{ activeParentItem?.label }}</h6>
+    <ul class="popover-menu">
+      <li *ngFor="let item of activePopoverItems" class="popover-menu-item">
+        <button 
+          class="popover-item-btn"
+          (click)="onPopoverItemClick($event, item)"
+          [class.has-children]="item.items && item.items.length > 0"
+        >
+          <i [class]="item.icon" class="item-icon"></i>
+          <span class="item-label">{{ item.label }}</span>
+          <i *ngIf="item.items && item.items.length > 0" class="pi pi-chevron-right chevron-icon"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</p-overlayPanel>
+
+<p-overlayPanel #subMenuPopover styleClass="submenu-popover" [dismissable]="true" [showCloseIcon]="false">
+  <div class="popover-content">
+    <ul class="popover-menu">
+      <li *ngFor="let item of activeSubMenuItems" class="popover-menu-item">
+        <button 
+          class="popover-item-btn"
+          (click)="onSubMenuItemClick($event, item)"
+        >
+          <i [class]="item.icon" class="item-icon"></i>
+          <span class="item-label">{{ item.label }}</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</p-overlayPanel>

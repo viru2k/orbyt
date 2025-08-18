@@ -11,10 +11,12 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
+import { TableModule } from 'primeng/table';
 
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
 import { AgendaConfigResponseDto, UpdateAgendaConfigDto, HolidayResponseDto, CreateHolidayDto } from '../../../../api/model/models';
 import { ConfirmationService } from 'primeng/api';
+import { OrbSwitchComponent } from "@orb-components";
 
 @Component({
   selector: 'app-agenda-config-modal',
@@ -29,8 +31,10 @@ import { ConfirmationService } from 'primeng/api';
     FloatLabelModule,
     InputTextModule,
     InputNumberModule,
-    CalendarModule
-  ],
+    CalendarModule,
+    TableModule,
+    OrbSwitchComponent
+],
   templateUrl: './agenda-config-modal.component.html',
   styleUrls: ['./agenda-config-modal.component.scss'],
   providers: [ConfirmationService]

@@ -1,0 +1,129 @@
+<orb-toolbar>
+  <div body>
+    <div class="flex align-items-center gap-3">
+      <label for="product-selector" class="font-semibold">Seleccionar Producto:</label>
+      <p-dropdown
+        id="product-selector"
+        [options]="(products$ | async) || []"
+        [ngModel]="selectedProduct()"
+        (ngModelChange)="onProductChange($event)"
+        optionLabel="name"
+        placeholder="Selecciona un producto"
+        [showClear]="true"
+        styleClass="w-20rem"
+      >
+        <ng-template pTemplate="selectedItem" let-product>
+          <div class="flex align-items-center gap-2" *ngIf="product">
+            <span>{{ product.name }}</span>
+            <span class="text-sm text-gray-500">({{ product.id }})</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="item" let-product>
+          <div class="flex align-items-center gap-2">
+            <span>{{ product.name }}</span>
+            <span class="text-sm text-gray-500">({{ product.id }})</span>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+  </div>
+  <div footer>
+    <orb-button 
+      label="Nuevo Movimiento" 
+      icon="pi pi-plus"
+      (click)="showMovementForm()" 
+      [disabled]="!selectedProduct()"
+    />
+  </div>
+</orb-toolbar>
+
+<orb-card>
+  <div class="grid" orbBody>
+    @if (!selectedProduct()) {
+      <div class="col-12 text-center p-6">
+        <i class="pi pi-info-circle text-4xl text-gray-400 mb-3"></i>
+        <h3 class="text-gray-600 mb-2">Selecciona un producto</h3>
+        <p class="text-gray-500">Para ver los movimientos de stock, primero selecciona un producto de la lista superior.</p>
+      </div>
+    } @else {
+      <orb-table
+        [value]="(movements$ | async) || []"
+        [columns]="tableColumns"
+        [loading]="(isLoading$ | async) || false"
+        [totalRecords]="(movements$ | async)?.length || 0"
+        [rows]="tableRows()"
+        [first]="tableFirst()"
+        [tableFeatures]="tableFeaturesConfig"
+        [globalFilterFields]="['productNameAtTime', 'typeText', 'reason']"
+        [tableHeaderActions]="movementTableHeaderActions"
+        dataKey="id"
+        paginatorPosition="both"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} movimientos"
+      >
+        <ng-template pTemplate="body" let-movement let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">
+              <ng-container [ngSwitch]="col.field">
+                
+                <ng-container *ngSwitchCase="'typeText'">
+                  <span [class]="movement.typeClass" class="movement-type-badge">
+                    <i [class]="movement.typeIcon" class="mr-1"></i>
+                    {{ movement.typeText }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'quantity'">
+                  <span [class]="movement.type === 'in' ? 'text-green-600 font-semibold' : movement.type === 'out' || movement.type === 'usage' ? 'text-red-600 font-semibold' : 'text-blue-600 font-semibold'">
+                    {{ movement.type === 'in' ? '+' : movement.type === 'out' || movement.type === 'usage' ? '-' : '' }}{{ movement.quantity }}
+                  </span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'reason'">
+                  <span class="text-gray-600">{{ movement.reason || 'Sin especificar' }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchDefault>
+                  {{ movement[col.field] }}
+                </ng-container>
+                
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="empty">
+          <div class="text-center p-6">
+            <i class="pi pi-inbox text-4xl text-gray-400 mb-3"></i>
+            <h3 class="text-gray-600 mb-2">No hay movimientos</h3>
+            <p class="text-gray-500">Este producto aún no tiene movimientos de stock registrados.</p>
+            <orb-button 
+              label="Registrar Primer Movimiento" 
+              icon="pi pi-plus" 
+              (click)="showMovementForm()" 
+              styleClass="mt-3"
+            />
+          </div>
+        </ng-template>
+      </orb-table>
+    }
+  </div>
+</orb-card>
+
+<orb-dialog
+  [visible]="displayMovementModal()"
+  header="Nuevo Movimiento de Stock"
+  size="md"
+  (onHide)="onCancelForm()"
+>
+  @if (displayMovementModal() && selectedProduct()) {
+    <orb-movement-form
+      [productId]="selectedProduct()!.id"
+      [productName]="selectedProduct()!.name"
+      (saved)="onSavedForm()"
+      (cancel)="onCancelForm()"
+    />
+  }
+</orb-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

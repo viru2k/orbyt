@@ -21,10 +21,16 @@ import { notificationControllerGetSummary } from '../fn/notifications/notificati
 import { NotificationControllerGetSummary$Params } from '../fn/notifications/notification-controller-get-summary';
 import { notificationControllerGetUnread } from '../fn/notifications/notification-controller-get-unread';
 import { NotificationControllerGetUnread$Params } from '../fn/notifications/notification-controller-get-unread';
+import { notificationControllerGetWebSocketStats } from '../fn/notifications/notification-controller-get-web-socket-stats';
+import { NotificationControllerGetWebSocketStats$Params } from '../fn/notifications/notification-controller-get-web-socket-stats';
 import { notificationControllerMarkAsRead } from '../fn/notifications/notification-controller-mark-as-read';
 import { NotificationControllerMarkAsRead$Params } from '../fn/notifications/notification-controller-mark-as-read';
 import { notificationControllerRetry } from '../fn/notifications/notification-controller-retry';
 import { NotificationControllerRetry$Params } from '../fn/notifications/notification-controller-retry';
+import { notificationControllerTestBroadcast } from '../fn/notifications/notification-controller-test-broadcast';
+import { NotificationControllerTestBroadcast$Params } from '../fn/notifications/notification-controller-test-broadcast';
+import { notificationControllerTestWebSocket } from '../fn/notifications/notification-controller-test-web-socket';
+import { NotificationControllerTestWebSocket$Params } from '../fn/notifications/notification-controller-test-web-socket';
 import { NotificationResponseDto } from '../models/notification-response-dto';
 import { NotificationSummaryResponseDto } from '../models/notification-summary-response-dto';
 
@@ -262,6 +268,105 @@ export class NotificationsService extends BaseService {
   notificationControllerGetSummary(params?: NotificationControllerGetSummary$Params, context?: HttpContext): Observable<NotificationSummaryResponseDto> {
     return this.notificationControllerGetSummary$Response(params, context).pipe(
       map((r: StrictHttpResponse<NotificationSummaryResponseDto>): NotificationSummaryResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `notificationControllerTestWebSocket()` */
+  static readonly NotificationControllerTestWebSocketPath = '/notifications/test-websocket';
+
+  /**
+   * Enviar notificación de prueba por WebSocket.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `notificationControllerTestWebSocket()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationControllerTestWebSocket$Response(params?: NotificationControllerTestWebSocket$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+    return notificationControllerTestWebSocket(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Enviar notificación de prueba por WebSocket.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `notificationControllerTestWebSocket$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationControllerTestWebSocket(params?: NotificationControllerTestWebSocket$Params, context?: HttpContext): Observable<any> {
+    return this.notificationControllerTestWebSocket$Response(params, context).pipe(
+      map((r: StrictHttpResponse<any>): any => r.body)
+    );
+  }
+
+  /** Path part for operation `notificationControllerTestBroadcast()` */
+  static readonly NotificationControllerTestBroadcastPath = '/notifications/test-broadcast';
+
+  /**
+   * Enviar notificación broadcast de prueba por WebSocket.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `notificationControllerTestBroadcast()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationControllerTestBroadcast$Response(params?: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+    return notificationControllerTestBroadcast(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Enviar notificación broadcast de prueba por WebSocket.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `notificationControllerTestBroadcast$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationControllerTestBroadcast(params?: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<any> {
+    return this.notificationControllerTestBroadcast$Response(params, context).pipe(
+      map((r: StrictHttpResponse<any>): any => r.body)
+    );
+  }
+
+  /** Path part for operation `notificationControllerGetWebSocketStats()` */
+  static readonly NotificationControllerGetWebSocketStatsPath = '/notifications/websocket-stats';
+
+  /**
+   * Obtener estadísticas de conexiones WebSocket.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `notificationControllerGetWebSocketStats()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationControllerGetWebSocketStats$Response(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return notificationControllerGetWebSocketStats(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener estadísticas de conexiones WebSocket.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `notificationControllerGetWebSocketStats$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  notificationControllerGetWebSocketStats(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<void> {
+    return this.notificationControllerGetWebSocketStats$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

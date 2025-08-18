@@ -12,6 +12,8 @@ export interface ModernCalendarEvent extends CalendarEvent {
   clientName?: string;
   description?: string;
   type?: string;
+  editable?: boolean;
+  extendedProps?: any;
   // Make start required to match expected behavior
   start: Date;
 }
@@ -63,6 +65,7 @@ export class OrbModernCalendarComponent implements OnInit, OnChanges {
   @Input() locale: string = 'es';
   @Input() weekStartsOn: number = 1; // Monday
   @Input() excludeDays: number[] = []; // Days to exclude (0 = Sunday, 6 = Saturday)
+  @Input() slotDuration: number = 30;
   
   @Output() eventClick = new EventEmitter<AdaptedEventClickArg>();
   @Output() dayClick = new EventEmitter<{ date: Date; events: ModernCalendarEvent[] }>();
@@ -75,6 +78,7 @@ export class OrbModernCalendarComponent implements OnInit, OnChanges {
 
   view$ = CalendarView;
   refresh$ = new Subject<void>();
+  hourSegments: number = 2;
 
   // Calendar views
   CalendarView = CalendarView;
@@ -82,13 +86,20 @@ export class OrbModernCalendarComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit(): void {
-    // Setup initial configuration if needed
+    this.updateHourSegments();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['events'] && !changes['events'].firstChange) {
       this.refresh$.next();
     }
+    if (changes['slotDuration']) {
+      this.updateHourSegments();
+    }
+  }
+
+  private updateHourSegments(): void {
+    this.hourSegments = 60 / this.slotDuration;
   }
 
   // Event handlers

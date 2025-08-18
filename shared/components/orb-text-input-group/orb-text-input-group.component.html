@@ -1,0 +1,18 @@
+<p-inputgroup>
+    <p-inputgroup-addon>
+        <i [class]="icon"></i>
+    </p-inputgroup-addon>
+    <input 
+    pInputText  
+    [id]="inputId"
+    [type]="type"
+    [value]="_value"
+    [disabled]="_disabled"
+    [readOnly]="readOnly"
+    [placeholder]="placeholder"
+    (input)="onInputChange($event)"
+    (blur)="onInputBlur()"
+    autocomplete="off"
+    class="w-full" 
+    [ngClass]="{'ng-invalid ng-dirty': isInvalid}" />
+</p-inputgroup>

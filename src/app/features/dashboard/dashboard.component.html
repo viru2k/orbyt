@@ -1,141 +1,339 @@
 
-<div class="orbyt-dashboard">
-  <!-- Welcome Section -->
-  <div class="welcome-section">
-    <div class="welcome-card orbyt-card">
-      <div class="welcome-content">
-        <h1 class="welcome-title">¡Bienvenido de vuelta!</h1>
-        <p class="welcome-subtitle">Gestiona tu salón de belleza con elegancia</p>
-      </div>
-      <div class="welcome-decoration">
-        <div class="gradient-orb"></div>
-      </div>
+<div class="dashboard" *ngIf="!isLoading()">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <i class="fa fa-tachometer-alt"></i>
+        Panel de Control Médico
+      </h1>
+      <p class="dashboard-subtitle">Gestión integral de consultas e ingresos - {{ currentMonth }}</p>
+    </div>
+    <div class="header-actions">
+      <orb-button 
+        label="Nueva Consulta" 
+        icon="fa fa-plus" 
+        variant="success"
+        (clicked)="navigateToConsultations()">
+      </orb-button>
+      <orb-button 
+        label="Nueva Factura" 
+        icon="fa fa-file-invoice" 
+        variant="primary"
+        (clicked)="createNewInvoice()">
+      </orb-button>
     </div>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="stats-grid">
-    <div class="stat-card orbyt-card stat-card--appointments">
-      <div class="stat-icon">
-        <i class="pi pi-calendar"></i>
+  <!-- KPI Cards Grid -->
+  <div class="kpi-grid">
+    <orb-card class="kpi-card revenue">
+      <div orbHeader>
+        <div class="kpi-icon">
+          <i class="fa fa-euro-sign"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ totalRevenue() | currency:'EUR':'symbol':'1.0-0' }}</h3>
+          <p class="kpi-label">Ingresos Totales</p>
+          <div class="kpi-trend positive">
+            <i class="fa fa-arrow-up"></i>
+            <span>+{{ revenueGrowth() }}%</span>
+          </div>
+        </div>
       </div>
-      <div class="stat-content">
-        <h3 class="stat-number">24</h3>
-        <p class="stat-label">Citas Hoy</p>
+    </orb-card>
+
+    <orb-card class="kpi-card consultations">
+      <div orbHeader>
+        <div class="kpi-icon">
+          <i class="fa fa-stethoscope"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ totalConsultations() }}</h3>
+          <p class="kpi-label">Consultas Totales</p>
+          <div class="kpi-trend positive">
+            <i class="fa fa-arrow-up"></i>
+            <span>+{{ consultationGrowth() }}%</span>
+          </div>
+        </div>
       </div>
-    </div>
-    
-    <div class="stat-card orbyt-card stat-card--clients">
-      <div class="stat-icon">
-        <i class="pi pi-users"></i>
+    </orb-card>
+
+    <orb-card class="kpi-card pending">
+      <div orbHeader>
+        <div class="kpi-icon">
+          <i class="fa fa-clock"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ pendingInvoices() }}</h3>
+          <p class="kpi-label">Facturas Pendientes</p>
+          <div class="kpi-subtitle">{{ todayConsultations() }} consultas hoy</div>
+        </div>
       </div>
-      <div class="stat-content">
-        <h3 class="stat-number">156</h3>
-        <p class="stat-label">Clientes Totales</p>
+    </orb-card>
+
+    <orb-card class="kpi-card satisfaction">
+      <div orbHeader>
+        <div class="kpi-icon">
+          <i class="fa fa-heart"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ clientSatisfaction() }}%</h3>
+          <p class="kpi-label">Satisfacción</p>
+          <div class="kpi-subtitle">{{ averageConsultationTime() }} min promedio</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="stat-card orbyt-card stat-card--revenue">
-      <div class="stat-icon">
-        <i class="pi pi-dollar"></i>
-      </div>
-      <div class="stat-content">
-        <h3 class="stat-number">$2,450</h3>
-        <p class="stat-label">Ingresos del Mes</p>
-      </div>
-    </div>
-    
-    <div class="stat-card orbyt-card stat-card--services">
-      <div class="stat-icon">
-        <i class="pi pi-star"></i>
-      </div>
-      <div class="stat-content">
-        <h3 class="stat-number">12</h3>
-        <p class="stat-label">Servicios Activos</p>
-      </div>
-    </div>
+    </orb-card>
   </div>
 
-  <!-- Main Content -->
-  <div class="dashboard-content">
-    <!-- Chart Section -->
-    <div class="chart-section orbyt-card">
-      <div class="chart-header">
-        <h3>Resumen Mensual de Citas</h3>
-        <div class="chart-filters">
-          <button class="filter-btn active">Este Mes</button>
-          <button class="filter-btn">Último Mes</button>
-          <button class="filter-btn">Este Año</button>
+  <!-- Charts Section -->
+  <div class="charts-grid">
+    <!-- Revenue Chart -->
+    <orb-card class="chart-card">
+      <div orbHeader>
+        <h3><i class="fa fa-chart-line"></i> Evolución de Ingresos</h3>
+        <div class="chart-period">
+          <orb-button 
+            label="6M" 
+            variant="text" 
+            size="small"
+            [class.active]="currentPeriod() === '6months'"
+            (clicked)="currentPeriod.set('6months')">
+          </orb-button>
+          <orb-button 
+            label="1A" 
+            variant="text" 
+            size="small"
+            [class.active]="currentPeriod() === '1year'"
+            (clicked)="currentPeriod.set('1year')">
+          </orb-button>
         </div>
       </div>
-      <div class="chart-container">
-        <p-chart type="line" [data]="data" [options]="options"></p-chart>
+      <div orbBody>
+        <div class="chart-container">
+          <orb-chart 
+            type="line" 
+            [data]="revenueChartData" 
+            [options]="chartOptions"
+            [height]="300">
+          </orb-chart>
+        </div>
       </div>
-    </div>
+    </orb-card>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions orbyt-card">
-      <h3>Acciones Rápidas</h3>
-      <div class="actions-grid">
-        <button class="action-btn orbyt-button orbyt-button--orbyt">
-          <i class="pi pi-plus"></i>
-          Nueva Cita
-        </button>
-        <button class="action-btn orbyt-button orbyt-button--wellness">
-          <i class="pi pi-user-plus"></i>
-          Nuevo Cliente
-        </button>
-        <button class="action-btn orbyt-button orbyt-button--soft">
-          <i class="pi pi-calendar-plus"></i>
-          Ver Agenda
-        </button>
-        <button class="action-btn orbyt-button">
-          <i class="pi pi-chart-line"></i>
-          Reportes
-        </button>
+    <!-- Consultations Status Chart -->
+    <orb-card class="chart-card">
+      <div orbHeader>
+        <h3><i class="fa fa-pie-chart"></i> Estado de Consultas</h3>
       </div>
-    </div>
+      <div orbBody>
+        <div class="chart-container">
+          <orb-chart 
+            type="doughnut" 
+            [data]="consultationsChartData" 
+            [options]="doughnutOptions"
+            [height]="300">
+          </orb-chart>
+        </div>
+      </div>
+    </orb-card>
+
+    <!-- Performance Metrics -->
+    <orb-card class="chart-card">
+      <div orbHeader>
+        <h3><i class="fa fa-chart-bar"></i> Métricas de Rendimiento</h3>
+      </div>
+      <div orbBody>
+        <div class="chart-container">
+          <orb-chart 
+            type="bar" 
+            [data]="performanceChartData" 
+            [options]="barOptions"
+            [height]="300">
+          </orb-chart>
+        </div>
+      </div>
+    </orb-card>
   </div>
 
-  <!-- Recent Activity -->
-  <div class="recent-activity orbyt-card">
-    <h3>Actividad Reciente</h3>
-    <div class="activity-list">
-      <div class="activity-item">
-        <div class="activity-avatar orbyt-avatar">
-          <i class="pi pi-user"></i>
-        </div>
-        <div class="activity-content">
-          <p class="activity-text">
-            <strong>María González</strong> reservó una cita para <strong>Corte y Peinado</strong>
-          </p>
-          <span class="activity-time">Hace 10 minutos</span>
+  <!-- Goals & Progress Section -->
+  <div class="goals-grid">
+    <orb-card class="goal-card">
+      <div orbHeader>
+        <h3><i class="fa fa-target"></i> Meta Mensual de Ingresos</h3>
+      </div>
+      <div orbBody>
+        <div class="goal-content">
+          <div class="goal-amount">
+            <span class="current">{{ totalRevenue() | currency:'EUR':'symbol':'1.0-0' }}</span>
+            <span class="target">/ {{ monthlyRevenueGoal() | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
+          <orb-progress-bar 
+            [value]="getRevenueProgress()" 
+            [showValue]="false"
+            styleClass="revenue-progress">
+          </orb-progress-bar>
+          <div class="progress-label">{{ getRevenueProgress() | number:'1.0-0' }}% completado</div>
         </div>
       </div>
-      
-      <div class="activity-item">
-        <div class="activity-avatar orbyt-avatar">
-          <i class="pi pi-calendar"></i>
-        </div>
-        <div class="activity-content">
-          <p class="activity-text">
-            Cita con <strong>Ana Martín</strong> completada - <strong>Tratamiento Facial</strong>
-          </p>
-          <span class="activity-time">Hace 1 hora</span>
+    </orb-card>
+
+    <orb-card class="goal-card">
+      <div orbHeader>
+        <h3><i class="fa fa-users"></i> Meta de Consultas</h3>
+      </div>
+      <div orbBody>
+        <div class="goal-content">
+          <div class="goal-amount">
+            <span class="current">{{ totalConsultations() }}</span>
+            <span class="target">/ {{ monthlyConsultationsGoal() }}</span>
+          </div>
+          <orb-progress-bar 
+            [value]="getConsultationsProgress()" 
+            [showValue]="false"
+            styleClass="consultations-progress">
+          </orb-progress-bar>
+          <div class="progress-label">{{ getConsultationsProgress() | number:'1.0-0' }}% completado</div>
         </div>
       </div>
-      
-      <div class="activity-item">
-        <div class="activity-avatar orbyt-avatar">
-          <i class="pi pi-star"></i>
-        </div>
-        <div class="activity-content">
-          <p class="activity-text">
-            <strong>Cliente VIP</strong> - Laura Pérez cumple 1 año con nosotros
-          </p>
-          <span class="activity-time">Hace 2 horas</span>
-        </div>
+    </orb-card>
+  </div>
+
+  <!-- Activity Tables -->
+  <div class="activity-grid">
+    <!-- Recent Invoices -->
+    <orb-card class="activity-card">
+      <div orbHeader>
+        <h3><i class="fa fa-file-invoice"></i> Facturas Recientes</h3>
+        <orb-button 
+          label="Ver Todas" 
+          size="small" 
+          variant="text"
+          (clicked)="navigateToInvoices()">
+        </orb-button>
+      </div>
+      <div orbBody>
+        <orb-table 
+          [value]="recentInvoices()" 
+          [columns]="invoiceColumns"
+          [paginator]="false"
+          styleClass="recent-table">
+          <ng-template #body let-invoice let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                <ng-container [ngSwitch]="col.field">
+                  <ng-container *ngSwitchCase="'invoiceNumber'">
+                    {{ invoice.invoiceNumber }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'client'">
+                    {{ getClientName(invoice) }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'total'">
+                    {{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'status'">
+                    <orb-tag 
+                      [value]="getStatusLabel(invoice.status)" 
+                      [severity]="getStatusSeverity(invoice.status)">
+                    </orb-tag>
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+        </orb-table>
+      </div>
+    </orb-card>
+
+    <!-- Recent Consultations -->
+    <orb-card class="activity-card">
+      <div orbHeader>
+        <h3><i class="fa fa-stethoscope"></i> Consultas Recientes</h3>
+        <orb-button 
+          label="Ver Todas" 
+          size="small" 
+          variant="text"
+          (clicked)="navigateToConsultations()">
+        </orb-button>
+      </div>
+      <div orbBody>
+        <orb-table 
+          [value]="recentConsultations()" 
+          [columns]="consultationColumns"
+          [paginator]="false"
+          styleClass="recent-table">
+          <ng-template #body let-consultation let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                <ng-container [ngSwitch]="col.field">
+                  <ng-container *ngSwitchCase="'consultationNumber'">
+                    {{ consultation.consultationNumber }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'client'">
+                    {{ getClientName(consultation) }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'createdAt'">
+                    {{ formatDate(consultation.createdAt) }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'status'">
+                    <orb-tag 
+                      [value]="getStatusLabel(consultation.status)" 
+                      [severity]="getStatusSeverity(consultation.status)">
+                    </orb-tag>
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+        </orb-table>
+      </div>
+    </orb-card>
+  </div>
+
+  <!-- Quick Actions Panel -->
+  <orb-card class="quick-actions-panel">
+    <div orbHeader>
+      <h3><i class="fa fa-bolt"></i> Acciones Rápidas</h3>
+    </div>
+    <div orbBody>
+      <div class="quick-actions-grid">
+        <orb-button 
+          label="Nueva Consulta" 
+          icon="fa fa-stethoscope" 
+          size="large"
+          variant="success"
+          (clicked)="navigateToConsultations()">
+        </orb-button>
+        <orb-button 
+          label="Nueva Factura" 
+          icon="fa fa-file-invoice" 
+          size="large"
+          variant="primary"
+          (clicked)="createNewInvoice()">
+        </orb-button>
+        <orb-button 
+          label="Ver Agenda" 
+          icon="fa fa-calendar" 
+          size="large"
+          variant="secondary"
+          (clicked)="navigateToAgenda()">
+        </orb-button>
+        <orb-button 
+          label="Reportes" 
+          icon="fa fa-chart-line" 
+          size="large"
+          variant="outline"
+          (clicked)="navigateToInvoices()">
+        </orb-button>
       </div>
     </div>
+  </orb-card>
+</div>
+
+<!-- Loading State -->
+<div class="dashboard-loading" *ngIf="isLoading()">
+  <div class="loading-content">
+    <i class="fa fa-spinner fa-spin"></i>
+    <p>Cargando dashboard...</p>
   </div>
 </div>

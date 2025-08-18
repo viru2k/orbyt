@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Arreglar alineación del ícono con el input - usando !important para sobrescribir estilos globales
+:host ::ng-deep {
+  .p-inputgroup {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: var(--project-input-height, 32px) !important;
+  }
+  
+  .p-inputgroup-addon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: var(--project-input-height, 32px) !important;
+    width: var(--project-input-height, 32px) !important;
+    height: var(--project-input-height, 32px) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #f8f9fa !important;
+    border: 1px solid #ced4da !important;
+    border-right: none !important;
+    border-top-left-radius: 6px !important;
+    border-bottom-left-radius: 6px !important;
+    line-height: normal !important;
+  }
+  
+  .p-inputtext {
+    height: var(--project-input-height, 32px) !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: none !important;
+    flex: 1 !important;
+    font-size: var(--project-font-size, 14px) !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+  
+  i {
+    color: #6c757d !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+}

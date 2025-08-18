@@ -1,0 +1,334 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+.consultation-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6, 1.5rem);
+}
+
+.consultation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6, 1.5rem);
+  padding: var(--space-6, 1.5rem);
+  background: linear-gradient(135deg, rgba(variables.$primary-blue, 0.05) 0%, rgba(variables.$primary-purple, 0.03) 100%);
+  border: 1px solid rgba(variables.$primary-blue, 0.2);
+  border-radius: var(--radius-lg, 0.75rem);
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4, 1rem);
+
+    h2 {
+      margin: 0;
+      font-family: variables.$font-family;
+      font-size: variables.$text-xl;
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+
+      i {
+        color: variables.$primary-blue;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: var(--space-2, 0.5rem);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: var(--space-4, 1rem);
+    text-align: center;
+
+    .header-actions {
+      justify-content: center;
+    }
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2, 0.5rem) 0;
+  border-bottom: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-weight: variables.$font-medium;
+    color: variables.$gray-600;
+    font-size: variables.$text-sm;
+  }
+
+  .value {
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-900;
+    text-align: right;
+  }
+}
+
+.symptoms-diagnosis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6, 1.5rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.section {
+  h4 {
+    margin: 0 0 var(--space-3, 0.75rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-base;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+  }
+
+  .content {
+    margin: 0;
+    padding: var(--space-4, 1rem);
+    background: rgba(variables.$gray-50, 0.5);
+    border-radius: var(--radius-md, 0.5rem);
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+    line-height: 1.6;
+    color: variables.$gray-700;
+  }
+}
+
+.vital-signs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4, 1rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+.vital-sign {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem);
+  background: white;
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+  border-radius: var(--radius-lg, 0.75rem);
+  transition: all variables.$transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .vital-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, variables.$primary-blue 0%, variables.$primary-purple 100%);
+    border-radius: 50%;
+    color: white;
+    font-size: variables.$text-lg;
+  }
+
+  .vital-info {
+    flex: 1;
+
+    .vital-label {
+      display: block;
+      font-size: variables.$text-xs;
+      color: variables.$gray-600;
+      font-weight: variables.$font-medium;
+      margin-bottom: var(--space-1, 0.25rem);
+    }
+
+    .vital-value {
+      display: block;
+      font-size: variables.$text-base;
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-900;
+    }
+  }
+}
+
+.treatment-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6, 1.5rem);
+}
+
+.medications-allergies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6, 1.5rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.medication-list,
+.allergy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.medication-item,
+.allergy-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  margin-bottom: var(--space-2, 0.5rem);
+  background: rgba(variables.$gray-50, 0.5);
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+  i {
+    color: variables.$primary-blue;
+  }
+}
+
+.allergy-item {
+  border-color: rgba(variables.$orbyt-coral, 0.3);
+  background: rgba(variables.$orbyt-coral, 0.05);
+
+  i {
+    color: variables.$orbyt-coral;
+  }
+}
+
+.followup-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
+
+.followup-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  font-weight: variables.$font-medium;
+  color: variables.$gray-800;
+
+  i {
+    color: #10b981; // emerald-500
+    font-size: variables.$text-lg;
+  }
+}
+
+.followup-date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3, 0.75rem);
+  background: rgba(variables.$primary-blue, 0.05);
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid rgba(variables.$primary-blue, 0.2);
+
+  .label {
+    font-weight: variables.$font-medium;
+    color: variables.$gray-600;
+  }
+
+  .value {
+    font-weight: variables.$font-semibold;
+    color: variables.$primary-blue;
+  }
+}
+
+.notes-content {
+  margin: 0;
+  padding: var(--space-4, 1rem);
+  background: rgba(variables.$gray-50, 0.5);
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+  line-height: 1.6;
+  color: variables.$gray-700;
+  font-style: italic;
+}
+
+// Card spacing
+:global(.orb-card) {
+  margin-bottom: var(--space-6, 1.5rem);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Text utilities
+.text-success {
+  color: #10b981; // emerald-500
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .consultation-details-container {
+    padding: var(--space-4, 1rem);
+  }
+
+  .vital-signs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .medications-allergies-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .followup-date {
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+    text-align: center;
+  }
+}
+
+// Print styles
+@media print {
+  .consultation-header .header-actions {
+    display: none;
+  }
+
+  .consultation-details-container {
+    padding: 0;
+  }
+
+  :global(.orb-card) {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}

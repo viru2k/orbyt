@@ -48,7 +48,7 @@ export class ProductListComponent implements OnInit {
     { field: 'currentPrice', header: 'Precio', sortable: true },
     { field: 'statusText', header: 'Estado', sortable: true },
     { field: 'ownerName', header: 'Propietario', sortable: true },
-    { field: 'actions', header: 'Acciones', sortable: false }
+    { field: 'actions', header: '', sortable: false, width: '10px' }
   ];
 
   tableFeaturesConfig: OrbTableFeatures = {

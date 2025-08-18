@@ -1,0 +1,364 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+.invoice-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6, 1.5rem);
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-6, 1.5rem);
+  padding: var(--space-6, 1.5rem);
+  background: linear-gradient(135deg, rgba(variables.$primary-blue, 0.1) 0%, rgba(variables.$primary-purple, 0.05) 100%);
+  border-radius: var(--radius-lg, 0.75rem);
+  border: 1px solid rgba(variables.$primary-blue, 0.2);
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+
+    h2 {
+      margin: 0;
+      font-family: variables.$font-family;
+      font-size: variables.$text-2xl;
+      font-weight: variables.$font-bold;
+      color: variables.$gray-900;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+
+      i {
+        color: variables.$primary-blue;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: var(--space-2, 0.5rem);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: var(--space-4, 1rem);
+
+    .header-actions {
+      width: 100%;
+      justify-content: stretch;
+
+      :global(.orb-button) {
+        flex: 1;
+      }
+    }
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-section {
+  background: white;
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+  h3 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3, 0.75rem);
+  }
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4, 1rem);
+  padding: var(--space-2, 0.5rem) 0;
+  border-bottom: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-weight: variables.$font-medium;
+    color: variables.$gray-600;
+    flex-shrink: 0;
+    min-width: 120px;
+  }
+
+  .value {
+    color: variables.$gray-900;
+    text-align: right;
+    word-break: break-word;
+
+    &.overdue {
+      color: variables.$orbyt-coral;
+      font-weight: variables.$font-semibold;
+    }
+  }
+}
+
+.items-section {
+  background: white;
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  h3 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+
+  :global(.p-datatable) {
+    border-radius: var(--radius-lg, 0.75rem);
+    overflow: hidden;
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+
+    .p-datatable-thead > tr > th {
+      background: rgba(variables.$primary-blue, 0.1);
+      color: variables.$gray-800;
+      font-weight: variables.$font-semibold;
+      border-color: rgba(variables.$orbyt-lavender, 0.2);
+    }
+
+    .p-datatable-tbody > tr > td {
+      border-color: rgba(variables.$orbyt-lavender, 0.1);
+      padding: var(--space-3, 0.75rem);
+      vertical-align: top;
+    }
+
+    .p-datatable-tbody > tr:hover {
+      background: rgba(variables.$primary-blue, 0.05);
+    }
+  }
+}
+
+.item-description {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+
+  .item-notes {
+    color: variables.$gray-500;
+    font-style: italic;
+  }
+}
+
+.totals-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-6, 1.5rem);
+
+  .totals-card {
+    background: linear-gradient(135deg, rgba(variables.$primary-blue, 0.05) 0%, rgba(variables.$primary-purple, 0.03) 100%);
+    border: 1px solid rgba(variables.$primary-blue, 0.2);
+    border-radius: var(--radius-lg, 0.75rem);
+    padding: var(--space-6, 1.5rem);
+    min-width: 350px;
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-2, 0.5rem) 0;
+      font-family: variables.$font-family;
+
+      .label {
+        color: variables.$gray-700;
+        font-weight: variables.$font-medium;
+      }
+
+      .value {
+        color: variables.$gray-900;
+        font-weight: variables.$font-semibold;
+
+        &.discount {
+          color: variables.$orbyt-coral;
+        }
+      }
+
+      &.final-total {
+        font-size: variables.$text-lg;
+        color: variables.$primary-blue;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    justify-content: stretch;
+
+    .totals-card {
+      min-width: auto;
+      width: 100%;
+    }
+  }
+}
+
+.payment-section {
+  background: white;
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  h3 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+
+  .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+
+  .payment-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1, 0.25rem);
+    padding: var(--space-3, 0.75rem);
+    background: rgba(variables.$gray-50, 0.5);
+    border-radius: var(--radius-md, 0.5rem);
+
+    .payment-label {
+      font-size: variables.$text-sm;
+      color: variables.$gray-600;
+      font-weight: variables.$font-medium;
+    }
+
+    .payment-value {
+      font-size: variables.$text-base;
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-900;
+
+      &.paid {
+        color: #10b981; // emerald-500
+      }
+
+      &.pending {
+        color: variables.$orbyt-coral;
+      }
+    }
+  }
+}
+
+.notes-section {
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+
+  .note-item {
+    background: white;
+    border-radius: var(--radius-lg, 0.75rem);
+    padding: var(--space-6, 1.5rem);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+    h4 {
+      margin: 0 0 var(--space-3, 0.75rem) 0;
+      font-family: variables.$font-family;
+      font-size: variables.$text-base;
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2, 0.5rem);
+
+      i {
+        color: variables.$primary-blue;
+      }
+    }
+
+    p {
+      margin: 0;
+      color: variables.$gray-700;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .invoice-details-container {
+    padding: var(--space-4, 1rem);
+  }
+
+  .info-section,
+  .items-section,
+  .payment-section,
+  .note-item {
+    padding: var(--space-4, 1rem);
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1, 0.25rem);
+
+    .label {
+      min-width: auto;
+    }
+
+    .value {
+      text-align: left;
+    }
+  }
+}

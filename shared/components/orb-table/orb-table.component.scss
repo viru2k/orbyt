@@ -1,4 +1,11 @@
 :host {
     display: block;
   }
+
+  // Contenedor del buscador de tabla - 70% de ancho
+  .table-search-container {
+    width: 70%;
+    max-width: 400px;
+    min-width: 250px;
+  }
   

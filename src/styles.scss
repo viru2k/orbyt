@@ -6,7 +6,95 @@
 // Font Awesome (imports van después de @use)
 @import '@fortawesome/fontawesome-free/css/all.css';
 
-// Estilos globales (si deseas)
+// CSS Custom Properties globales basadas en nuestra paleta
+:root {
+  // Primary colors
+  --primary-blue: #{variables.$primary-blue};
+  --primary-purple: #{variables.$primary-purple};
+  --primary-teal: #{variables.$primary-teal};
+  
+  // Beauty brand palette
+  --orbyt-rose: #{variables.$orbyt-rose};
+  --orbyt-coral: #{variables.$orbyt-coral};
+  --orbyt-mint: #{variables.$orbyt-mint};
+  --orbyt-lavender: #{variables.$orbyt-lavender};
+  --orbyt-peach: #{variables.$orbyt-peach};
+  --orbyt-cream: #{variables.$orbyt-cream};
+  
+  // Neutral colors
+  --white: #{variables.$white};
+  --gray-50: #{variables.$gray-50};
+  --gray-100: #{variables.$gray-100};
+  --gray-200: #{variables.$gray-200};
+  --gray-300: #{variables.$gray-300};
+  --gray-400: #{variables.$gray-400};
+  --gray-500: #{variables.$gray-500};
+  --gray-600: #{variables.$gray-600};
+  --gray-700: #{variables.$gray-700};
+  --gray-800: #{variables.$gray-800};
+  --gray-900: #{variables.$gray-900};
+  
+  // Semantic colors
+  --color-success: #{variables.$success};
+  --color-warning: #{variables.$warning};
+  --color-error: #{variables.$error};
+  --color-info: #{variables.$info};
+  
+  // Background colors
+  --background-primary: #{variables.$background-primary};
+  --background-secondary: #{variables.$background-secondary};
+  --background-card: #{variables.$background-card};
+  --background-sidebar: #{variables.$background-sidebar};
+  
+  // Text colors
+  --text-primary: #{variables.$text-primary};
+  --text-secondary: #{variables.$text-secondary};
+  --text-muted: #{variables.$text-muted};
+  --text-inverse: #{variables.$text-inverse};
+  
+  // Border colors
+  --border-color: #{variables.$border-color};
+  --border-light: #{variables.$border-light};
+  
+  // Spacing
+  --space-1: #{variables.$space-1};
+  --space-2: #{variables.$space-2};
+  --space-3: #{variables.$space-3};
+  --space-4: #{variables.$space-4};
+  --space-5: #{variables.$space-5};
+  --space-6: #{variables.$space-6};
+  --space-8: #{variables.$space-8};
+  --space-10: #{variables.$space-10};
+  --space-12: #{variables.$space-12};
+  --space-16: #{variables.$space-16};
+  
+  // Border radius
+  --radius-sm: #{variables.$radius-sm};
+  --radius-md: #{variables.$radius-md};
+  --radius-lg: #{variables.$radius-lg};
+  --radius-xl: #{variables.$radius-xl};
+  --radius-2xl: #{variables.$radius-2xl};
+  --radius-full: #{variables.$radius-full};
+  
+  // Shadows
+  --shadow-sm: #{variables.$shadow-sm};
+  --shadow-md: #{variables.$shadow-md};
+  --shadow-lg: #{variables.$shadow-lg};
+  --shadow-xl: #{variables.$shadow-xl};
+  
+  // Gradients
+  --gradient-primary: #{variables.$gradient-primary};
+  --gradient-orbyt: #{variables.$gradient-orbyt};
+  --gradient-wellness: #{variables.$gradient-wellness};
+  --gradient-soft: #{variables.$gradient-soft};
+  
+  // Transitions
+  --transition-fast: #{variables.$transition-fast};
+  --transition-normal: #{variables.$transition-normal};
+  --transition-slow: #{variables.$transition-slow};
+}
+
+// Estilos globales
 * {
   box-sizing: border-box;
 }
@@ -15,33 +103,302 @@ html, body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  font-family: variables.$font-family;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
 }
 
 
-/* En src/styles.scss */
-
+/* Status badges modernos */
 .status-active {
-  background-color: #d4edda; /* Verde suave */
-  color: #155724;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: bold;
+  background-color: rgba(variables.$primary-teal, 0.1);
+  color: variables.$primary-teal;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: variables.$font-medium;
+  font-size: variables.$text-xs;
+  border: 1px solid rgba(variables.$primary-teal, 0.2);
 }
 
 .status-inactive {
-  background-color: #f8d7da; /* Rojo suave */
-  color: #721c24;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: bold;
+  background-color: rgba(variables.$error, 0.1);
+  color: variables.$error;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: variables.$font-medium;
+  font-size: variables.$text-xs;
+  border: 1px solid rgba(variables.$error, 0.2);
 }
 
 .status-undefined,
 .status-unknown {
-  background-color: #e2e3e5; /* Gris */
-  color: #383d41;
-  padding: 4px 8px;
-  border-radius: 12px;
+  background-color: var(--gray-100);
+  color: var(--gray-600);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: variables.$font-medium;
+  font-size: variables.$text-xs;
+  border: 1px solid var(--gray-200);
+}
+
+/* Clases utilitarias globales */
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-orbyt {
+  background: var(--gradient-orbyt);
+}
+
+.gradient-wellness {
+  background: var(--gradient-wellness);
+}
+
+.text-gradient-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   ESTILOS GLOBALES PARA ESTANDARIZACIÓN DEL PROYECTO
+   ============================================ */
+
+/* Variables CSS para las medidas estándar del proyecto */
+:root {
+  --project-font-size: 14px;
+  --project-font-size-small: 12px;
+  --project-input-height: 32px;
+  --project-button-height: 32px;
+  --project-table-padding: 1px 0.5rem;
+}
+
+/* Estilos globales para PrimeNG - aplicar en todo el proyecto */
+:root {
+  /* Override de variables PrimeNG para tablas */
+  --p-datatable-body-cell-padding: 1px 0.5rem !important;
+}
+
+/* Estilos globales para componentes PrimeNG */
+.p-datatable {
+  font-size: var(--project-font-size) !important;
+  
+  .p-datatable-header {
+    padding: 0.25rem 0.5rem !important;
+    font-size: var(--project-font-size) !important;
+    font-weight: 600 !important;
+  }
+  
+  .p-datatable-thead > tr > th {
+    padding: var(--project-table-padding) !important;
+    font-size: var(--project-font-size) !important;
+    font-weight: 600 !important;
+    height: var(--project-input-height) !important;
+    border-right: 1px solid #dee2e6 !important; /* Línea vertical separadora */
+    
+    &:last-child {
+      border-right: none !important; /* Sin línea en la última columna */
+    }
+  }
+  
+  .p-datatable-tbody > tr > td {
+    padding: var(--project-table-padding) !important;
+    font-size: var(--project-font-size) !important;
+    height: var(--project-input-height) !important;
+    vertical-align: middle !important;
+    border-right: 1px solid #dee2e6 !important; /* Línea vertical separadora */
+    
+    &:last-child {
+      border-right: none !important; /* Sin línea en la última columna */
+    }
+  }
+}
+
+/* Inputs y controles de formulario */
+.p-inputtext,
+.p-dropdown,
+.p-multiselect,
+.p-calendar .p-inputtext {
+  height: var(--project-input-height) !important;
+  font-size: var(--project-font-size) !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+/* Botones */
+.p-button {
+  height: var(--project-button-height) !important;
+  font-size: var(--project-font-size) !important;
+  
+  &.p-button-sm {
+    height: 28px !important;
+    font-size: var(--project-font-size-small) !important;
+  }
+  
+  /* Botones circulares/cuadrados de acción */
+  &.p-button-icon-only {
+    width: var(--project-button-height) !important;
+    height: var(--project-button-height) !important;
+    padding: 0 !important;
+    
+    .p-button-icon {
+      margin: 0 !important;
+    }
+    
+    &.p-button-sm {
+      width: 28px !important;
+      height: 28px !important;
+    }
+  }
+  
+  /* Botones redondos específicamente */
+  &.p-button-rounded {
+    width: var(--project-button-height) !important;
+    height: var(--project-button-height) !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    
+    .p-button-icon {
+      margin: 0 !important;
+    }
+    
+    &.p-button-sm {
+      width: 28px !important;
+      height: 28px !important;
+    }
+  }
+}
+
+/* Labels y texto */
+label {
+  font-size: var(--project-font-size) !important;
+}
+
+/* Tags */
+.p-tag {
+  font-size: var(--project-font-size) !important;
+  height: var(--project-input-height) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.25rem 0.5rem !important;
+  
+  .p-tag-value {
+    font-size: var(--project-font-size) !important;
+  }
+}
+
+/* Dropdowns */
+.p-dropdown-trigger,
+.p-multiselect-trigger {
+  width: 28px !important;
+}
+
+/* Paginación */
+.p-paginator {
+  .p-paginator-element {
+    min-width: 28px !important;
+    height: 28px !important;
+    font-size: var(--project-font-size) !important;
+  }
+}
+
+/* Input Groups - Global styling for consistent height */
+.p-inputgroup {
+  .p-inputgroup-addon {
+    height: var(--project-input-height) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: var(--project-input-height) !important;
+  }
+  
+  .p-inputtext {
+    height: var(--project-input-height) !important;
+    font-size: var(--project-font-size) !important;
+  }
+}
+
+/* Global input and dropdown styling */
+.p-inputtext,
+.p-dropdown,
+.p-select,
+.p-calendar .p-inputtext {
+  height: var(--project-input-height) !important;
+  font-size: var(--project-font-size) !important;
+}
+
+/* Fix p-select label padding */
+.p-select .p-select-label {
+  padding: 0.25rem 0.5rem !important;
+  // Remover padding problemático de PrimeNG
+  // padding: var(--p-select-padding-y) var(--p-select-padding-x); // <- REMOVIDO
+}
+
+.p-dropdown {
+  .p-dropdown-label {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    line-height: normal !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+.p-select {
+  .p-select-label {
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+    line-height: normal !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+/* Dialog y formularios */
+.p-dialog {
+  .p-dialog-content {
+    .p-field {
+      label {
+        font-size: var(--project-font-size) !important;
+      }
+      
+      .p-inputtext,
+      .p-dropdown,
+      .p-calendar .p-inputtext {
+        height: var(--project-input-height) !important;
+        font-size: var(--project-font-size) !important;
+      }
+    }
+  }
+  
+  .p-dialog-footer {
+    .p-button {
+      height: var(--project-button-height) !important;
+      font-size: var(--project-font-size) !important;
+    }
+  }
+}
+
+/* Tokens en multiselect */
+.p-multiselect-token {
+  font-size: var(--project-font-size-small) !important;
+  padding: 0.125rem 0.25rem !important;
+  
+  .p-multiselect-token-label,
+  .p-multiselect-token-icon {
+    font-size: var(--project-font-size-small) !important;
+  }
+}
+
+/* Cards con padding reducido */
+.p-card {
+  .p-card-header {
+    padding: 8px 1rem !important;
+  }
+  
+  .p-card-body {
+    padding: 8px 1rem !important;
+  }
 }
 
 /* Global dropdown and input styling fixes */

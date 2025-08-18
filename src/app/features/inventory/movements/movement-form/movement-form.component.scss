@@ -1,0 +1,47 @@
+:host ::ng-deep {
+  .p-dropdown {
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+      padding: 0.5rem 0.75rem;
+      
+      &:hover {
+        background-color: #f8f9fa;
+      }
+    }
+  }
+  
+  .p-inputnumber {
+    width: 100%;
+    
+    .p-inputnumber-input {
+      text-align: center;
+    }
+    
+    .p-inputnumber-button {
+      width: 2.5rem;
+    }
+  }
+  
+  .border-radius {
+    border-radius: 0.5rem;
+  }
+  
+  .bg-blue-50 {
+    background-color: #eff6ff;
+  }
+  
+  .border-blue-200 {
+    border-color: #bfdbfe;
+  }
+  
+  .text-blue-600 {
+    color: #2563eb;
+  }
+  
+  .text-blue-700 {
+    color: #1d4ed8;
+  }
+  
+  .text-blue-800 {
+    color: #1e40af;
+  }
+}

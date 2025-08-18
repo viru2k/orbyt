@@ -1,4 +1,332 @@
 :host {
   display: block;
-  padding: 1rem;
+  padding: 0.75rem;
+}
+
+// Estilos compactos para la agenda
+
+.compact-card {
+  margin-bottom: 0.75rem;
+  
+  .p-card-header {
+    padding: 8px 1rem; // Reducido a 8px máximo
+    
+    .compact-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #495057;
+    }
+  }
+  
+  .p-card-body {
+    padding: 8px 1rem; // Reducido a 8px máximo
+  }
+}
+
+.compact-filters-container {
+  .filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+    
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 140px;
+      
+      &.filter-date {
+        min-width: 280px; // Aumentado para mostrar rangos completos
+      }
+      
+      .compact-label {
+        font-size: 14px; // Fuente estándar del proyecto
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 0;
+        line-height: 1.2;
+      }
+    }
+    
+    .filter-actions {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+      margin-left: auto;
+    }
+  }
+}
+
+// Estilos para componentes compactos
+:host ::ng-deep {
+  // Multiselect compacto
+  .compact-multiselect {
+    .p-multiselect {
+      min-height: 32px !important;
+      height: 32px !important;
+      
+      .p-multiselect-label {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 14px !important; // Fuente estándar
+        line-height: 1.2 !important;
+      }
+      
+      .p-multiselect-trigger {
+        width: 28px !important;
+      }
+      
+      .p-multiselect-token {
+        padding: 0.125rem 0.25rem !important;
+        margin: 0.125rem !important;
+        font-size: 12px !important; // Ligeramente menor para tokens
+        
+        .p-multiselect-token-label {
+          font-size: 12px !important;
+        }
+        
+        .p-multiselect-token-icon {
+          font-size: 12px !important;
+          margin-left: 0.25rem !important;
+        }
+      }
+    }
+  }
+  
+  // DatePicker compacto
+  .compact-datepicker {
+    .p-calendar {
+      .p-inputtext {
+        height: 32px !important;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 14px !important; // Fuente estándar
+      }
+      
+      .p-datepicker-trigger {
+        width: 28px !important;
+        height: 32px !important;
+      }
+    }
+  }
+  
+  // Botones compactos
+  .compact-btn {
+    &.p-button {
+      height: 32px !important;
+      width: 32px !important;
+      padding: 0 !important;
+      
+      .p-button-icon {
+        font-size: 14px !important; // Fuente estándar
+        margin: 0 !important;
+      }
+    }
+  }
+  
+  // DateRangePicker compacto
+  .orb-date-range-picker {
+    width: 100% !important; // Asegurar que use todo el ancho disponible
+    
+    .p-calendar {
+      width: 100% !important;
+      
+      .p-inputtext {
+        height: 32px !important;
+        padding: 0.25rem 0.5rem !important;
+        font-size: 14px !important; // Fuente estándar
+        min-width: 200px !important; // Ancho mínimo para rangos
+      }
+      
+      .p-datepicker-trigger {
+        width: 28px !important;
+        height: 32px !important;
+      }
+    }
+    
+    .quick-actions {
+      margin-top: 0.25rem;
+      
+      .p-button {
+        height: 32px !important; // Altura estándar
+        padding: 0.25rem 0.5rem !important;
+        font-size: 14px !important; // Fuente estándar
+      }
+    }
+  }
+  
+  // Tags de resumen compactas
+  .p-tag {
+    padding: 0.25rem 0.5rem !important;
+    font-size: 14px !important; // Fuente estándar
+    height: 32px !important; // Altura estándar
+    display: inline-flex !important;
+    align-items: center !important;
+    
+    .p-tag-value {
+      font-size: 14px !important;
+    }
+  }
+  
+  // Calendario más compacto
+  .orb-modern-calendar {
+    .fc {
+      font-size: 0.85rem;
+      
+      .fc-header-toolbar {
+        margin-bottom: 0.5rem;
+        
+        .fc-toolbar-chunk {
+          .fc-button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+          }
+        }
+      }
+      
+      .fc-daygrid-event {
+        font-size: 0.75rem;
+        padding: 1px 2px;
+        margin-bottom: 1px;
+      }
+      
+      .fc-timegrid-event {
+        font-size: 0.75rem;
+        padding: 1px 2px;
+      }
+      
+      .fc-event-title {
+        font-size: 0.75rem;
+      }
+      
+      .fc-event-time {
+        font-size: 0.7rem;
+      }
+    }
+  }
+  
+  // Formularios más compactos
+  .p-dialog {
+    .p-dialog-content {
+      padding: 1rem;
+      
+      .p-field {
+        margin-bottom: 0.75rem;
+        
+        label {
+          font-size: 14px; // Fuente estándar
+          margin-bottom: 0.25rem;
+        }
+        
+        .p-inputtext,
+        .p-dropdown,
+        .p-calendar .p-inputtext {
+          height: 32px !important; // Altura estándar
+          padding: 0.25rem 0.5rem;
+          font-size: 14px; // Fuente estándar
+        }
+        
+        .p-dropdown-trigger {
+          width: 28px;
+        }
+      }
+    }
+    
+    .p-dialog-footer {
+      padding: 0.75rem 1rem;
+      
+      .p-button {
+        height: 32px !important; // Altura estándar
+        padding: 0.25rem 0.75rem;
+        font-size: 14px; // Fuente estándar
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .compact-filters-container .filters-row {
+    gap: 0.5rem;
+    
+    .filter-item {
+      min-width: 120px;
+      
+      &.filter-date {
+        min-width: 250px; // Aumentado para pantallas medianas
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .compact-filters-container .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .filter-item {
+      min-width: auto;
+      width: 100%;
+      
+      &.filter-date {
+        min-width: auto;
+      }
+    }
+    
+    .filter-actions {
+      flex-direction: row;
+      justify-content: center;
+      margin-left: 0;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+// Estilos para el resumen en el calendario
+.calendar-summary {
+  margin-bottom: 1rem;
+  
+  .summary-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+}
+
+// Optimizaciones específicas para tablas
+:host ::ng-deep {
+  .p-datatable {
+    font-size: 14px; // Fuente estándar del proyecto
+    
+    .p-datatable-header {
+      padding: 0.25rem 0.5rem; // Reducido
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .p-datatable-thead > tr > th {
+      padding: 1px 0.5rem; // Padding mínimo vertical
+      font-size: 14px;
+      font-weight: 600;
+      height: 32px; // Altura estándar
+    }
+    
+    .p-datatable-tbody > tr > td {
+      padding: 1px 0.5rem !important; // Padding mínimo vertical, mantener horizontal
+      font-size: 14px;
+      height: 32px; // Altura estándar
+      vertical-align: middle;
+    }
+    
+    .p-paginator {
+      padding: 0.25rem 0.5rem;
+      
+      .p-paginator-element {
+        min-width: 28px;
+        height: 28px;
+        font-size: 14px;
+      }
+    }
+  }
 }

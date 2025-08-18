@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { ButtonSeverity, ButtonStyleType } from '@orb-models';
@@ -17,7 +17,16 @@ export class OrbButtonComponent {
   @Input() rounded = false;
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() severity: ButtonSeverity = 'primary';
-   @Input()  styleType?: ButtonStyleType | 'text';
-   @Input() loading= false;
+  @Input() styleType?: ButtonStyleType | 'text';
+  @Input() loading = false;
+  @Input() variant?: 'success' | 'primary' | 'secondary' | 'warning' | 'danger' | 'text' | 'outline' | 'info';
+  @Input() size?: 'small' | 'normal' | 'large';
 
+  @Output() clicked = new EventEmitter<Event>();
+
+  onClick(event: Event) {
+    if (!this.disabled && !this.loading) {
+      this.clicked.emit(event);
+    }
+  }
 }

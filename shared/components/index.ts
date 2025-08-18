@@ -21,6 +21,10 @@ export * from './orb-select/orb-select.component' ;
 export * from './orb-datepicker/orb-datepicker.component' ;
 export * from './orb-fullcalendar/orb-fullcalendar.component' ;
 export * from './orb-modern-calendar/orb-modern-calendar.component' ;
+// DevExtreme scheduler removed - using Angular Calendar instead
 export * from './orb-actions-popover/orb-actions-popover.component' ;
 export * from './orb-switch/orb-switch.component';
 export * from './orb-input-number/orb-input-number.component';
+export * from './orb-chart/orb-chart.component';
+export * from './orb-progress-bar/orb-progress-bar.component';
+export * from './orb-tag/orb-tag.component';

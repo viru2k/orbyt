@@ -1,15 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { MenuItem } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { AuthStore } from '@orb-stores';
 import { combineLatest, map } from 'rxjs';
+import { OverlayPanel, OverlayPanelModule } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'orb-sidebar',
   standalone: true,
-  imports: [PanelMenuModule, CommonModule],
+  imports: [PanelMenuModule, CommonModule, OverlayPanelModule],
   templateUrl: './orb-sidebar.component.html',
   styleUrls: ['./orb-sidebar.component.scss']
 })
@@ -17,8 +18,23 @@ export class OrbSidebarComponent implements OnInit {
   items: MenuItem[] = [];
   readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
+  
+  // Signal for sidebar collapsed state
+  isCollapsed = signal(false);
+  
+  // Popovers management
+  @ViewChild('menuPopover') menuPopover!: OverlayPanel;
+  @ViewChild('subMenuPopover') subMenuPopover!: OverlayPanel;
+  
+  // Current active popover data
+  activePopoverItems: MenuItem[] = [];
+  activeSubMenuItems: MenuItem[] = [];
+  activeParentItem: MenuItem | null = null;
 
   ngOnInit(): void {
+    // Inicializar menú básico inmediatamente
+    this.items = this.buildMenuItems([], false);
+    
     // Suscribirse a los permisos del usuario para actualizar el menú dinámicamente
     combineLatest([
       this.authStore.canManageUsers$,
@@ -89,20 +105,29 @@ export class OrbSidebarComponent implements OnInit {
       });
     }
 
-    // Stock section (always visible for now)
+    // Consultas médicas section
     menuItems.push({
-      label: 'Stock',
+      label: 'Consultas',
+      icon: 'fas fa-stethoscope',
+      command: () => this.router.navigate(['/consultations'])
+    });
+
+    // Facturación section
+    menuItems.push({
+      label: 'Facturación',
+      icon: 'fas fa-file-invoice-dollar',
+      command: () => this.router.navigate(['/invoices'])
+    });
+
+    // Inventario section (always visible for now)
+    menuItems.push({
+      label: 'Inventario',
       icon: 'fas fa-warehouse',
       items: [
         {
-          label: 'Entradas',
-          icon: 'fas fa-arrow-down',
-          command: () => this.router.navigate(['/stock/in'])
-        },
-        {
-          label: 'Salidas',
-          icon: 'fas fa-arrow-up',
-          command: () => this.router.navigate(['/stock/out'])
+          label: 'Movimientos',
+          icon: 'fas fa-exchange-alt',
+          command: () => this.router.navigate(['/inventory/movements'])
         }
       ]
     });
@@ -128,5 +153,103 @@ export class OrbSidebarComponent implements OnInit {
 
   logout(): void {
     this.authStore.performLogout();
+  }
+
+  toggleSidebar(): void {
+    this.isCollapsed.update(value => !value);
+    // Cerrar popovers cuando se expande el sidebar
+    if (!this.isCollapsed()) {
+      this.closeAllPopovers();
+    }
+  }
+
+  onCollapsedMenuItemClick(event: Event, item: MenuItem): void {
+    if (!this.isCollapsed()) return;
+    
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Si el item tiene command y no tiene items (hoja), ejecutar command
+    if (item.command && (!item.items || item.items.length === 0)) {
+      item.command({ originalEvent: event, item: item });
+      this.closeAllPopovers();
+      return;
+    }
+    
+    // Si tiene items, mostrar popover
+    if (item.items && item.items.length > 0) {
+      this.activePopoverItems = item.items;
+      this.activeParentItem = item;
+      
+      // Configurar posicionamiento a la derecha
+      const target = event.target as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      
+      setTimeout(() => {
+        this.menuPopover.show(event, target);
+        
+        // Posicionar manualmente a la derecha
+        const popoverEl = document.querySelector('.menu-popover .p-overlaypanel') as HTMLElement;
+        if (popoverEl) {
+          popoverEl.style.left = `${rect.right + 8}px`;
+          popoverEl.style.top = `${rect.top}px`;
+          popoverEl.style.transform = 'none';
+        }
+      }, 0);
+    }
+  }
+
+  onPopoverItemClick(event: Event, item: MenuItem): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Si el item tiene command y no tiene items (hoja), ejecutar command
+    if (item.command && (!item.items || item.items.length === 0)) {
+      item.command({ originalEvent: event, item: item });
+      this.closeAllPopovers();
+      return;
+    }
+    
+    // Si tiene routerLink, navegar
+    if (item.routerLink) {
+      this.router.navigate(item.routerLink);
+      this.closeAllPopovers();
+      return;
+    }
+    
+    // Si tiene items, mostrar submenu popover
+    if (item.items && item.items.length > 0) {
+      this.activeSubMenuItems = item.items;
+      this.subMenuPopover.toggle(event);
+    }
+  }
+
+  closeAllPopovers(): void {
+    if (this.menuPopover) {
+      this.menuPopover.hide();
+    }
+    if (this.subMenuPopover) {
+      this.subMenuPopover.hide();
+    }
+    this.activePopoverItems = [];
+    this.activeSubMenuItems = [];
+    this.activeParentItem = null;
+  }
+
+  onSubMenuItemClick(event: Event, item: MenuItem): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Si el item tiene command, ejecutar command
+    if (item.command) {
+      item.command({ originalEvent: event, item: item });
+    }
+    
+    // Si tiene routerLink, navegar
+    if (item.routerLink) {
+      this.router.navigate(item.routerLink);
+    }
+    
+    this.closeAllPopovers();
   }
 }

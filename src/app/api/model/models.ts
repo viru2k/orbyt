@@ -43,3 +43,4 @@ export * from './update-client-dto';
 export * from './update-product-dto';
 export * from './update-role-dto';
 export * from './user-response-dto';
+export * from './appointment-status.enum';

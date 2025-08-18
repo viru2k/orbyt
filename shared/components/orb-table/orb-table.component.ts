@@ -9,11 +9,12 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuModule, Menu } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
 import { PrimeTemplate, MenuItem, SortEvent, SortMeta } from 'primeng/api';
-import { OrbButtonComponent } from '../orb-button/orb-button.component';
+// import { OrbButtonComponent } from '../orb-button/orb-button.component'; // No longer needed
+import { OrbTextInputGroupComponent } from '../orb-text-input-group/orb-text-input-group.component';
 import { OrbActionItem, OrbTableFeatures, TableColumn } from '@orb-models';
-import { IconField } from 'primeng/iconfield';
-import { InputIcon } from 'primeng/inputicon';
 
 
 @Component({
@@ -27,8 +28,10 @@ import { InputIcon } from 'primeng/inputicon';
     InputTextModule,
     MenuModule,
     TooltipModule,
-    InputIcon,
-    IconField
+    InputIconModule,
+    IconFieldModule,
+    // OrbButtonComponent, // No longer needed
+    OrbTextInputGroupComponent
   ],
   templateUrl: './orb-table.component.html',
   styleUrls: ['./orb-table.component.scss'],
@@ -91,6 +94,7 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
   @ViewChild('tableHeaderActionMenuRef') tableHeaderActionMenu!: Menu;
 
   globalFilterValue: string = ''; // Para ngModel
+  @ViewChild('dt') dataTable!: Table;
 
   ngOnInit() {
     if (this.tableHeaderActions.length > 0) {
@@ -162,5 +166,16 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
     return col.field === 'actions';
   }
 
-  
+  performSearch() {
+    if (this.dataTable) {
+      this.dataTable.filterGlobal(this.globalFilterValue, 'contains');
+    }
+  }
+
+  onSearchInput() {
+    // Auto-search while typing with debounce effect
+    if (this.dataTable) {
+      this.dataTable.filterGlobal(this.globalFilterValue, 'contains');
+    }
+  }
 }

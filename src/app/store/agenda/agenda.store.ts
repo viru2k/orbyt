@@ -17,15 +17,17 @@ import {
   AvailableSlotResponseDto,
   AppointmentSummaryResponseDto,
 } from '../../api/models';
+import { AppointmentStatus } from '../../api/model/appointment-status.enum';
 import { AgendaService } from '../../api/services';
 
 // App Services and Models
 import { NotificationService, SpinnerService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
-import { CalendarDisplayEvent } from '@orb-components';
+import { ModernCalendarEvent as CalendarDisplayEvent } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
 
 // Global State
 import { linkToGlobalState } from '../component-state.reducer';
+import { STATUS_COLORS } from '../../features/agenda/constants/status-colors.map';
 
 // Interaces
 export interface LoadAppointmentsParams {
@@ -44,7 +46,8 @@ export interface LoadAvailableTimesParams {
 export interface LoadSummaryParams {
   from: string;
   to: string;
-  professionalId?: number;
+  professionalId?: number[];
+  status?: Array<'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled'>;
 }
 
 export interface AgendaState {
@@ -55,6 +58,7 @@ export interface AgendaState {
   summary: AppointmentSummaryResponseDto | null;
   selectedAppointment: AppointmentResponseDto | null;
   currentDateRange: { start: Date; end: Date } | null;
+  currentFilters: LoadAppointmentsParams | null;
   loading: boolean;
   error: HttpErrorResponse | string | null;
   configLoading: boolean;
@@ -70,6 +74,7 @@ export const initialAgendaState: AgendaState = {
   summary: null,
   selectedAppointment: null,
   currentDateRange: null,
+  currentFilters: null,
   loading: false,
   error: null,
   configLoading: false,
@@ -80,15 +85,15 @@ export const initialAgendaState: AgendaState = {
 function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): CalendarDisplayEvent {
 
   // Convert ISO string dates to Date objects for angular-calendar
-  const startDate = appointment.start ? new Date(appointment.start) : undefined;
-  const endDate = appointment.end ? new Date(appointment.end) : undefined;
+  const startDate = new Date(appointment.start!);
+  const endDate = new Date(appointment.end!);
 
 
   // Generate CSS classes based on status
   const statusClass = appointment.status ? `status-${appointment.status.toLowerCase()}` : '';
   const cssClasses = ['fc-event-modern', statusClass].filter(Boolean).join(' ');
 
-  const eventColor = appointment.color || '#3b82f6';
+  const eventColor = appointment.status ? STATUS_COLORS[appointment.status] : { primary: '#3b82f6', secondary: '#3b82f680' };
   
   return {
     id: appointment.id!.toString(),
@@ -99,13 +104,6 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
     color: eventColor,
     editable: true,
     cssClass: cssClasses,
-    // Add inline styles for custom color
-    ...(appointment.color && {
-      style: {
-        backgroundColor: eventColor,
-        borderColor: eventColor
-      }
-    }),
     meta: {
       resourceId: appointment.extendedProps?.resourceId || appointment.roomId,
       clientId: appointment.extendedProps?.clientId,
@@ -115,7 +113,7 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
       originalAppointment: appointment,
       professionalId: appointment.professional?.id,
       roomId: appointment.roomId,
-      appointmentColor: eventColor,
+      appointmentColor: eventColor.primary,
     },
     // Keep extendedProps for backward compatibility
     extendedProps: {
@@ -127,7 +125,7 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
       originalAppointment: appointment,
       professionalId: appointment.professional?.id,
       roomId: appointment.roomId,
-      appointmentColor: eventColor,
+      appointmentColor: eventColor.primary,
     },
   };
 }
@@ -151,6 +149,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
   readonly summary$ = this.select((state) => state.summary);
   readonly selectedAppointment$ = this.select((state) => state.selectedAppointment);
   readonly currentDateRange$ = this.select((state) => state.currentDateRange);
+  readonly currentFilters$ = this.select((state) => state.currentFilters);
   readonly loading$ = this.select((state) => state.loading);
   readonly configLoading$ = this.select((state) => state.configLoading);
   readonly holidaysLoading$ = this.select((state) => state.holidaysLoading);
@@ -193,6 +192,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
 
   readonly setSelectedAppointment = this.updater((state, appointment: AppointmentResponseDto | null) => ({ ...state, selectedAppointment: appointment }));
   readonly setCurrentDateRange = this.updater((state, dateRange: { start: Date; end: Date } | null) => ({ ...state, currentDateRange: dateRange }));
+  readonly setCurrentFilters = this.updater((state, filters: LoadAppointmentsParams | null) => ({ ...state, currentFilters: filters }));
 
 
   // EFFECTS
@@ -260,7 +260,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetSummary(params).pipe(
+        this.agendaService.agendaControllerGetSummary(params as any).pipe(
           tapResponse(
             (summary: AppointmentSummaryResponseDto) => {
               this.setSummary(summary);
@@ -280,6 +280,7 @@ export class AgendaStore extends ComponentStore<AgendaState> {
       tap((params) => {
         this.setLoading(true);
         this.spinner.show();
+        this.setCurrentFilters(params);
         // Actualizar el rango de fechas solo si tenemos from/to
         if (params.from && params.to) {
           this.setCurrentDateRange({ 
@@ -320,12 +321,9 @@ export class AgendaStore extends ComponentStore<AgendaState> {
               this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno creado con éxito.');
               this.spinner.hide();
               // Optionally reload all appointments for the current range
-              const range = this.get().currentDateRange;
-              if (range) {
-                this.loadAppointments({ 
-                  from: range.start.toISOString(), 
-                  to: range.end.toISOString()
-                });
+              const filters = this.get().currentFilters;
+              if (filters) {
+                this.loadAppointments(filters);
               }
             },
             (error: HttpErrorResponse) => {
@@ -353,12 +351,9 @@ export class AgendaStore extends ComponentStore<AgendaState> {
               this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno actualizado con éxito.');
               this.spinner.hide();
                // Optionally reload all appointments for the current range
-               const range = this.get().currentDateRange;
-               if (range) {
-                 this.loadAppointments({ 
-                   from: range.start.toISOString().split('T')[0], 
-                   to: range.end.toISOString().split('T')[0]
-                 });
+               const filters = this.get().currentFilters;
+               if (filters) {
+                 this.loadAppointments(filters);
                }
             },
             (error: HttpErrorResponse) => {
@@ -386,12 +381,9 @@ export class AgendaStore extends ComponentStore<AgendaState> {
               this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno eliminado con éxito.');
               this.spinner.hide();
                // Optionally reload all appointments for the current range
-               const range = this.get().currentDateRange;
-               if (range) {
-                 this.loadAppointments({ 
-                   from: range.start.toISOString().split('T')[0], 
-                   to: range.end.toISOString().split('T')[0]
-                 });
+               const filters = this.get().currentFilters;
+               if (filters) {
+                 this.loadAppointments(filters);
                }
             },
             (error: HttpErrorResponse) => {

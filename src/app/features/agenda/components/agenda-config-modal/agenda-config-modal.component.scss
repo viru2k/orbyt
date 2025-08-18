@@ -1,13 +1,18 @@
 .agenda-config-modal {
   .config-form {
-    max-width: 1000px;
+    max-width: 1400px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
     
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
     }
     
     .config-card {
@@ -23,7 +28,7 @@
       }
       
       .card-header {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        background: #ffffff;
         padding: 1rem 1.5rem;
         border-bottom: 1px solid #e5e7eb;
         
@@ -48,64 +53,72 @@
       margin-top: 1rem;
       
       .holidays-management {
-        .holidays-list {
-          max-height: 300px;
-          overflow-y: auto;
+        .add-holiday-header {
           margin-bottom: 1rem;
+          display: flex;
+          justify-content: flex-start;
+        }
+        
+        .holidays-table-container {
+          margin-top: 1rem;
           
-          .holiday-item {
+          .holiday-date-cell {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            background-color: #f8fafc;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #374151;
             
-            .holiday-info {
-              display: flex;
-              flex-direction: column;
-              gap: 0.25rem;
-              
-              .holiday-date {
-                font-weight: 600;
-                color: #374151;
-              }
-              
-              .holiday-reason {
-                font-size: 14px;
-                color: #6b7280;
-              }
+            i {
+              color: #3b82f6;
             }
           }
           
-          .no-holidays {
+          .holiday-description {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.4;
+          }
+          
+          .empty-state {
             text-align: center;
             padding: 2rem;
-            color: #6b7280;
-            font-style: italic;
+            
+            i {
+              display: block;
+              margin-bottom: 0.75rem;
+            }
+            
+            p {
+              margin-bottom: 0.25rem;
+              font-weight: 500;
+            }
+            
+            small {
+              color: #9ca3af;
+            }
           }
-        }
-        
-        .add-holiday {
-          margin-bottom: 1rem;
         }
         
         .add-holiday-form {
           margin-top: 1rem;
           padding: 1.5rem;
-          background-color: #f8fafc;
+          background-color: #ffffff;
           border-radius: 8px;
           border: 1px solid #e5e7eb;
           
           .holiday-form-inline {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             gap: 1rem;
+            flex-wrap: wrap;
+            
+            .input-group {
+              flex: 1;
+              min-width: 200px;
+            }
             
             .form-actions {
-              grid-column: 1 / -1;
+              width: 100%;
               display: flex;
               justify-content: flex-end;
               gap: 0.5rem;
@@ -113,7 +126,7 @@
             }
             
             @media (max-width: 768px) {
-              grid-template-columns: 1fr;
+              flex-direction: column;
             }
           }
         }
@@ -121,12 +134,15 @@
     }
       
       .time-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
         gap: 1rem;
         
+        .input-group {
+          flex: 1;
+        }
+        
         @media (max-width: 768px) {
-          grid-template-columns: 1fr;
+          flex-direction: column;
         }
       }
       
@@ -142,9 +158,19 @@
       }
       
       .working-days {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        display: flex;
+        flex-direction: column;
         gap: 0.75rem;
+        
+        .working-days-row {
+          display: flex;
+          gap: 2rem;
+          justify-content: flex-start;
+          
+          &:last-child {
+            justify-content: center;
+          }
+        }
         
         .day-checkbox {
           display: flex;
@@ -220,11 +246,12 @@
       }
     }
     
-    .modal-actions {
+  .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
-    padding-top: 1rem;
+    padding: 1.5rem 0;
+    margin: 0;
     border-top: 1px solid #e5e7eb;
   }
 }
@@ -233,13 +260,15 @@
 :host ::ng-deep {
   .agenda-config-modal {
     .p-dialog {
-      min-width: 500px;
-      max-width: 90vw;
+      min-width: 800px;
+      max-width: 95vw;
+      width: 1200px;
     }
     
     .p-dialog-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: #ffffff;
+      color: #1f2937;
+      border-bottom: 1px solid #e5e7eb;
       
       h3 {
         margin: 0;
@@ -255,6 +284,63 @@
     .p-dialog-footer {
       padding: 1rem 1.5rem;
       background: #f8fafc;
+      border-top: 1px solid #e5e7eb;
+    }
+  }
+  
+  // PrimeNG Table styling for holidays
+  .holidays-table-container {
+    .p-datatable {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      
+      .p-datatable-header {
+        background: #f8fafc;
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      
+      .p-datatable-thead > tr > th {
+        background: #f1f5f9;
+        color: #374151;
+        font-weight: 600;
+        padding: 0.75rem;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 14px;
+      }
+      
+      .p-datatable-tbody > tr > td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+      }
+      
+      .p-datatable-tbody > tr:hover {
+        background: #f8fafc;
+      }
+      
+      .p-paginator {
+        background: #f8fafc;
+        border: none;
+        padding: 0.75rem;
+        border-top: 1px solid #e5e7eb;
+        
+        .p-paginator-current {
+          color: #6b7280;
+          font-size: 13px;
+        }
+        
+        .p-paginator-pages .p-paginator-page {
+          border-radius: 6px;
+          margin: 0 2px;
+          
+          &.p-highlight {
+            background: #3b82f6;
+            border-color: #3b82f6;
+          }
+        }
+      }
     }
   }
 }

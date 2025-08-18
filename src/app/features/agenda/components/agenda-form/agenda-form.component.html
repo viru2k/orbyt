@@ -82,6 +82,16 @@
         ></orb-select>
       </orb-form-field>
     </div>
+    <div class="col-12 md:col-6">
+      <orb-form-field label="Estado" >
+        <orb-select
+          formControlName="status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+        ></orb-select>
+      </orb-form-field>
+    </div>
   </div>
 
   <div class="flex justify-between mt-4">

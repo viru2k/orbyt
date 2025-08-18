@@ -8,12 +8,22 @@ import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbMultiselectComponent } from '@orb-shared-components/orb-multiselect/orb-multiselect.component';
+import { DateRangePickerComponent, DateRange, DateRangePickerConfig } from '../../shared/components/date-range-picker';
 import { AgendaFormComponent } from './components/agenda-form/agenda-form.component';
 import { AppointmentResponseDto, UpdateAppointmentDto } from '../../api/model/models';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { OrbModernCalendarComponent, ModernCalendarEvent, DateSelectInfo, AdaptedEventClickArg, AdaptedDatesSetArg } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
+// import { OrbDevXSchedulerComponent, DevXSchedulerEvent, DevXEventClickArg, DevXDateSelectInfo, DevXDatesSetArg } from '@orb-shared-components/orb-devx-scheduler/orb-devx-scheduler.component';
 import { DateSelectArg, EventClickArg, DatesSetArg, EventDropArg } from '@fullcalendar/core';
 import { CalendarEventTimesChangedEvent } from 'angular-calendar';
+import { AuthStore } from '../../store/auth/auth.store';
+import { STATUS_COLORS } from './constants/status-colors.map';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { StatusLegendComponent } from './components/status-legend/status-legend.component';
+import { TagModule } from 'primeng/tag';
+import { STATUS_TRANSLATION } from './constants/status-translation.map';
+import { SUMMARY_KEY_MAP } from './constants/summary-key.map';
+import { STATUS_SEVERITY } from './constants/status-severity.map';
 
 @Component({
   selector: 'app-agenda',
@@ -25,9 +35,13 @@ import { CalendarEventTimesChangedEvent } from 'angular-calendar';
     OrbDialogComponent,
     OrbDatepickerComponent,
     OrbMultiselectComponent,
+    DateRangePickerComponent,
     AgendaFormComponent,
     OrbCardComponent,
     OrbModernCalendarComponent,
+    OverlayPanelModule,
+    StatusLegendComponent,
+    TagModule,
   ],
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss'],
@@ -36,11 +50,28 @@ export class AgendaComponent implements OnInit {
   displayAgendaForm = false;
   selectedAppointment: AppointmentResponseDto | null = null;
   dialogInitialDate: string | null = null;
+  showInfo = false;
+  statusColors = STATUS_COLORS;
 
   
   // Filtros de fecha
   selectedDateFrom: Date = new Date();
   selectedDateTo: Date = new Date();
+  
+  // Configuración para DateRangePicker
+  dateRangePickerConfig: DateRangePickerConfig = {
+    showTime: true,
+    showAvailability: true,
+    placeholder: 'Seleccionar rango de fechas',
+    minDate: new Date(2024, 0, 1), // Desde enero 2024
+    maxDate: new Date(2030, 11, 31) // Hasta diciembre 2030
+  };
+  
+  // Rango de fechas seleccionado
+  selectedDateRange: DateRange = {
+    start: new Date(),
+    end: new Date()
+  };
   
   // Filtros de usuarios y estados
   selectedUsers: any[] = [];
@@ -61,15 +92,29 @@ export class AgendaComponent implements OnInit {
   constructor(
     public agendaStore: AgendaStore,
     public usersStore: UsersStore,
+    private authStore: AuthStore,
     private router: Router
   ) {
     // Configurar fechas por defecto (hoy)
     this.setTodayDates();
   }
 
+  // No transformation needed for Modern Calendar - uses same event format
+
   ngOnInit(): void {
     // Cargar usuarios para el filtro
     this.usersStore.loadUsers();
+    this.authStore.user$.subscribe(user => {
+      if (user && user.id) {
+        this.agendaStore.loadAgendaConfig(user.id);
+        this.usersStore.users$.subscribe(users => {
+          const currentUser = users.find(u => u.id === user.id);
+          if (currentUser) {
+            this.selectedUsers = [currentUser];
+          }
+        });
+      }
+    });
     
     // Realizar búsqueda automática con la fecha de hoy al inicializar
     this.performSearch();
@@ -81,6 +126,36 @@ export class AgendaComponent implements OnInit {
     this.selectedDateFrom = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7, 0, 0, 0);
     // Fecha hasta: 7 días adelante a las 23:59:59
     this.selectedDateTo = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7, 23, 59, 59);
+    
+    // Sincronizar con DateRangePicker
+    this.selectedDateRange = {
+      start: this.selectedDateFrom,
+      end: this.selectedDateTo
+    };
+  }
+
+  // Métodos para DateRangePicker
+  onDateRangeChange(range: DateRange): void {
+    if (range.start && range.end) {
+      this.selectedDateFrom = range.start;
+      this.selectedDateTo = range.end;
+      this.selectedDateRange = range;
+      // Auto-buscar cuando cambia el rango
+      this.performSearch();
+    }
+  }
+
+  // Configuración dinámica para crear nueva cita
+  getNewAppointmentDateConfig(): DateRangePickerConfig {
+    const now = new Date();
+    return {
+      showTime: true,
+      showAvailability: true,
+      placeholder: 'Fecha y hora del turno',
+      minDate: now,
+      maxDate: new Date(now.getFullYear() + 1, 11, 31),
+      required: true
+    };
   }
 
   openNewAppointmentDialog(): void {
@@ -103,11 +178,17 @@ export class AgendaComponent implements OnInit {
     
     // Agregar filtros de estado si hay selecciones (array)  
     if (this.selectedStatuses.length > 0) {
-      filters.status = this.selectedStatuses.map(s => s.value);
+      filters.status = this.selectedStatuses;
     }
     
     
     this.agendaStore.loadAppointments(filters);
+    this.agendaStore.loadSummary({ 
+      from: filters.from, 
+      to: filters.to, 
+      professionalId: filters.professionalId,
+      status: filters.status
+    });
   }
 
   onDateFromChange(date: Date): void {
@@ -135,9 +216,22 @@ export class AgendaComponent implements OnInit {
   handleDatesSet(dateInfo: AdaptedDatesSetArg): void {
     // Solo actualizar si no es la carga inicial
     if (!this.isInitialLoad(dateInfo)) {
-      this.agendaStore.loadAppointments({
+      const filters: any = {
         from: dateInfo.start.toISOString(),
         to: dateInfo.end.toISOString(),
+      };
+      if (this.selectedUsers.length > 0) {
+        filters.professionalId = this.selectedUsers.map(u => u.id);
+      }
+      if (this.selectedStatuses.length > 0) {
+        filters.status = this.selectedStatuses;
+      }
+      this.agendaStore.loadAppointments(filters);
+      this.agendaStore.loadSummary({ 
+        from: filters.from, 
+        to: filters.to, 
+        professionalId: filters.professionalId,
+        status: filters.status
       });
     }
   }
@@ -189,4 +283,20 @@ export class AgendaComponent implements OnInit {
     this.dialogInitialDate = null;
   }
 
+  getKeyAsString(key: unknown): string {
+    return key as string;
+  }
+
+  getColor(statusKey: string): string {
+    const status = SUMMARY_KEY_MAP[statusKey];
+    return this.statusColors[status as keyof typeof this.statusColors].primary;
+  }
+
+  getTranslatedStatus(statusKey: string): string {
+    const status = SUMMARY_KEY_MAP[statusKey];
+    return STATUS_TRANSLATION[status as keyof typeof STATUS_TRANSLATION];
+  }
+
+  // DevExtreme handlers removed - using Angular Calendar handlers instead
 }
+

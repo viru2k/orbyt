@@ -1,0 +1,305 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+.payment-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-6, 1.5rem);
+}
+
+.invoice-summary {
+  background: linear-gradient(135deg, rgba(variables.$primary-blue, 0.05) 0%, rgba(variables.$primary-purple, 0.03) 100%);
+  border: 1px solid rgba(variables.$primary-blue, 0.2);
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  h3 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1, 0.25rem);
+
+    .label {
+      font-size: variables.$text-sm;
+      color: variables.$gray-600;
+      font-weight: variables.$font-medium;
+    }
+
+    .value {
+      font-size: variables.$text-base;
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-900;
+
+      &.amount {
+        color: variables.$primary-blue;
+        font-size: variables.$text-lg;
+      }
+
+      &.paid {
+        color: #10b981; // emerald-500
+      }
+
+      &.pending {
+        color: variables.$orbyt-coral;
+      }
+    }
+  }
+}
+
+.form-section {
+  background: white;
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  h3 {
+    margin: 0 0 var(--space-6, 1.5rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-4, 1rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.help-text {
+  color: variables.$gray-500;
+  font-size: variables.$text-xs;
+  margin-top: var(--space-1, 0.25rem);
+  display: block;
+}
+
+.payment-preview {
+  background: rgba(variables.$gray-50, 0.5);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  h4 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-base;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+
+  .preview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3, 0.75rem);
+    background: white;
+    border-radius: var(--radius-md, 0.5rem);
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+    &.status {
+      border-color: rgba(variables.$primary-blue, 0.3);
+      background: rgba(variables.$primary-blue, 0.05);
+    }
+
+    .label {
+      font-size: variables.$text-sm;
+      color: variables.$gray-600;
+      font-weight: variables.$font-medium;
+    }
+
+    .value {
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-900;
+
+      &.amount {
+        color: variables.$primary-blue;
+        font-size: variables.$text-lg;
+      }
+
+      &.status-paid {
+        color: #10b981; // emerald-500
+      }
+
+      &.status-partial {
+        color: #f59e0b; // amber-500
+      }
+    }
+  }
+}
+
+.quick-amounts {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-4, 1rem);
+  flex-wrap: wrap;
+
+  .quick-amount-btn {
+    padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+    border: 1px solid rgba(variables.$primary-blue, 0.3);
+    background: rgba(variables.$primary-blue, 0.05);
+    color: variables.$primary-blue;
+    border-radius: var(--radius-md, 0.5rem);
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+    cursor: pointer;
+    transition: all variables.$transition-fast;
+
+    &:hover {
+      background: rgba(variables.$primary-blue, 0.1);
+      border-color: variables.$primary-blue;
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
+
+// Input customizations for payment form
+:global(.p-inputnumber) {
+  width: 100%;
+
+  .p-inputnumber-input {
+    border-radius: var(--radius-md, 0.5rem);
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.3);
+    transition: all variables.$transition-fast;
+
+    &:focus {
+      border-color: variables.$primary-blue;
+      box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.1);
+    }
+  }
+}
+
+:global(.p-inputtext),
+:global(.p-dropdown),
+:global(.p-calendar) {
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.3);
+  transition: all variables.$transition-fast;
+
+  &:focus {
+    border-color: variables.$primary-blue;
+    box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.1);
+  }
+}
+
+:global(.p-button) {
+  border-radius: var(--radius-md, 0.5rem);
+  font-weight: variables.$font-medium;
+  transition: all variables.$transition-fast;
+
+  &.p-button-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .payment-form-container {
+    padding: var(--space-4, 1rem);
+  }
+
+  .invoice-summary,
+  .form-section,
+  .payment-preview {
+    padding: var(--space-4, 1rem);
+  }
+
+  .summary-grid,
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1, 0.25rem);
+
+    .value {
+      align-self: flex-end;
+    }
+  }
+}
+
+// Form field spacing
+:global(.orb-form-field) {
+  margin-bottom: var(--space-4, 1rem);
+}
+
+// Custom input styles
+.orb-input {
+  width: 100%;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.3);
+  border-radius: var(--radius-md, 0.5rem);
+  font-family: variables.$font-family;
+  font-size: variables.$text-sm;
+  transition: all variables.$transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: variables.$primary-blue;
+    box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.1);
+  }
+  
+  &::placeholder {
+    color: variables.$gray-400;
+  }
+}

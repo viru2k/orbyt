@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
 import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent } from '@orb-components';
+import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { CheckboxModule } from 'primeng/checkbox';
 
 // Store y DTOs
@@ -24,6 +25,7 @@ import { NotificationSeverity, FormButtonAction } from '@orb-models';
     OrbTextInputComponent,
     OrbFormFieldComponent,
     OrbFormFooterComponent,
+    OrbCardComponent,
     CheckboxModule
   ],
   templateUrl: './user-edit-form.component.html',

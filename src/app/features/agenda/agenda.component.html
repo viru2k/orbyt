@@ -1,107 +1,128 @@
-<!-- Card de filtros horizontal -->
-<orb-card>
+<!-- Card de filtros horizontal compacto -->
+<orb-card class="compact-card">
   <div orbHeader>
-    <h2>Agenda - Filtros</h2>
+    <h3 class="compact-title">Agenda - Filtros</h3>
   </div>
   
   <div orbBody>
-    <div class="filters-container" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; padding: 1rem 0;">
-      <!-- Filtros de fecha -->
-      <div style="display: flex; gap: 1rem; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <label for="date-from" class="text-sm font-medium text-gray-600">Desde:</label>
-          <orb-datepicker
-            id="date-from"
-            mode="datetime"
-            placeholder="dd/mm/yyyy hh:mm"
-            [ngModel]="selectedDateFrom"
-            (ngModelChange)="onDateFromChange($event)"
-            styleClass="w-48"
-          ></orb-datepicker>
-        </div>
-        
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <label for="date-to" class="text-sm font-medium text-gray-600">Hasta:</label>
-          <orb-datepicker
-            id="date-to"
-            mode="datetime"
-            placeholder="dd/mm/yyyy hh:mm"
-            [ngModel]="selectedDateTo"
-            (ngModelChange)="onDateToChange($event)"
-            styleClass="w-48"
-          ></orb-datepicker>
-        </div>
-      </div>
-      
-      <!-- Filtros de usuarios y estados -->
-      <div style="display: flex; gap: 1rem; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <label for="users-filter" class="text-sm font-medium text-gray-600">Profesionales:</label>
+    <div class="compact-filters-container">
+      <!-- Fila única con todos los filtros -->
+      <div class="filters-row">
+        <!-- Filtro de Profesionales -->
+        <div class="filter-item">
+          <label class="compact-label">Profesionales</label>
           <orb-multiselect
-            id="users-filter"
-            placeholder="Seleccionar profesionales"
+            placeholder="Todos"
             [options]="(usersStore.users$ | async) || []"
             optionLabel="fullName"
             [ngModel]="selectedUsers"
             (ngModelChange)="onUsersChange($event)"
-            styleClass="w-52"
+            styleClass="compact-multiselect"
             display="chip"
             [maxSelectedLabels]="1"
-            selectedItemsLabel="{0} profesionales"
+            selectedItemsLabel="{0} sel."
           ></orb-multiselect>
         </div>
-        
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <label for="status-filter" class="text-sm font-medium text-gray-600">Estados:</label>
+
+        <!-- Filtro de Estados -->
+        <div class="filter-item">
+          <label class="compact-label">Estados</label>
           <orb-multiselect
-            id="status-filter"
-            placeholder="Seleccionar estados"
+            placeholder="Todos"
             [options]="statusOptions"
             optionLabel="label"
             optionValue="value"
             [ngModel]="selectedStatuses"
             (ngModelChange)="onStatusesChange($event)"
-            styleClass="w-48"
+            styleClass="compact-multiselect"
             display="chip"
             [maxSelectedLabels]="1"
-            selectedItemsLabel="{0} estados"
+            selectedItemsLabel="{0} sel."
           ></orb-multiselect>
         </div>
-      </div>
-      
-      <!-- Botones de acción -->
-      <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-        <orb-button
-          label="Buscar"
-          icon="pi pi-search"
-          (click)="performSearch()"
-          size="small"
-        ></orb-button>
-        <orb-button
-          label="Hoy"
-          icon="pi pi-calendar"
-          severity="secondary"
-          (click)="resetToToday()"
-          size="small"
-        ></orb-button>
-        <orb-button
-          label="Nuevo Turno"
-          icon="pi pi-plus"
-          severity="success"
-          (click)="openNewAppointmentDialog()"
-          size="small"
-        ></orb-button>
-        
+
+        <!-- DateRangePicker -->
+        <div class="filter-item filter-date">
+          <label class="compact-label">Rango de fechas</label>
+          <orb-date-range-picker
+            [config]="dateRangePickerConfig"
+            [ngModel]="selectedDateRange"
+            (dateRangeChange)="onDateRangeChange($event)"
+          ></orb-date-range-picker>
+        </div>
+
+        <!-- Filtro individual de fecha y hora (para crear cita) -->
+        <div class="filter-item">
+          <label class="compact-label">Fecha específica</label>
+          <orb-datepicker
+            mode="datetime"
+            placeholder="dd/mm/yyyy hh:mm"
+            [ngModel]="selectedDateFrom"
+            (ngModelChange)="onDateFromChange($event)"
+            styleClass="compact-datepicker"
+          ></orb-datepicker>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="filter-actions">
+          <orb-button
+            icon="pi pi-search"
+            title="Buscar"
+            (click)="performSearch()"
+            size="small"
+            styleClass="compact-btn"
+          ></orb-button>
+          <orb-button
+            icon="pi pi-calendar"
+            title="Hoy"
+            severity="secondary"
+            (click)="resetToToday()"
+            size="small"
+            styleClass="compact-btn"
+          ></orb-button>
+          <orb-button
+            icon="pi pi-plus"
+            title="Nuevo Turno"
+            severity="success"
+            (click)="openNewAppointmentDialog()"
+            size="small"
+            styleClass="compact-btn"
+          ></orb-button>
+          <orb-button
+            icon="pi pi-info-circle"
+            title="Información"
+            severity="info"
+            (click)="op.toggle($event)"
+            size="small"
+            styleClass="compact-btn"
+          ></orb-button>
+          <p-overlayPanel #op>
+            <app-status-legend [statusColors]="statusColors"></app-status-legend>
+          </p-overlayPanel>
+        </div>
       </div>
     </div>
   </div>
 </orb-card>
 
-<!-- Card del calendario -->
+<!-- Card del calendario con estados -->
 <orb-card style="margin-top: 1rem;">
   <div orbBody>
+    <!-- Estados del resumen en la parte superior -->
+    <div class="calendar-summary" *ngIf="(agendaStore.summary$ | async) as summary">
+      <div class="summary-tags">
+        <div *ngFor="let item of summary | keyvalue">
+          <ng-container *ngIf="item.key !== 'total' && item.key !== 'byDate'">
+            <p-tag [style]="{ backgroundColor: getColor(getKeyAsString(item.key)) }" [value]="getTranslatedStatus(getKeyAsString(item.key)) + ': ' + item.value"></p-tag>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modern Calendar (Angular Calendar - Free) -->
     <orb-modern-calendar
       [events]="(agendaStore.calendarEvents$ | async) || []"
+      [slotDuration]="(agendaStore.agendaConfig$ | async)?.slotDurationMinutes || 30"
       (datesSetRange)="handleDatesSet($event)"
       (eventClick)="handleEventClick($event)"
       (dateSelect)="handleDateSelect($event)"

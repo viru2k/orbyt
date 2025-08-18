@@ -1,0 +1,277 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+@use 'sass:color';
+
+.invoice-form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6, 1.5rem);
+}
+
+.form-section {
+  margin-bottom: var(--space-8, 2rem);
+  background: white;
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+
+  h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 var(--space-6, 1.5rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    
+    i {
+      margin-right: var(--space-2, 0.5rem);
+      color: variables.$primary-blue;
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-4, 1rem);
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.items-table {
+  margin-bottom: var(--space-4, 1rem);
+  
+  :global(.p-datatable) {
+    border-radius: var(--radius-lg, 0.75rem);
+    overflow: hidden;
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+    
+    .p-datatable-header {
+      background: linear-gradient(135deg, variables.$primary-blue 0%, variables.$primary-purple 100%);
+      color: white;
+      padding: var(--space-4, 1rem);
+    }
+    
+    .p-datatable-thead > tr > th {
+      background: rgba(variables.$primary-blue, 0.1);
+      color: variables.$gray-800;
+      font-weight: variables.$font-semibold;
+      border-color: rgba(variables.$orbyt-lavender, 0.2);
+    }
+    
+    .p-datatable-tbody > tr > td {
+      border-color: rgba(variables.$orbyt-lavender, 0.1);
+      padding: var(--space-3, 0.75rem);
+      vertical-align: top;
+    }
+    
+    .p-datatable-tbody > tr:hover {
+      background: rgba(variables.$primary-blue, 0.05);
+    }
+  }
+}
+
+.discount-container {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  align-items: center;
+  
+  .discount-type-select {
+    min-width: 60px;
+    flex-shrink: 0;
+  }
+  
+  :global(.p-inputnumber) {
+    flex: 1;
+  }
+}
+
+.empty-items {
+  text-align: center;
+  padding: var(--space-8, 2rem);
+  color: variables.$gray-500;
+  
+  i {
+    font-size: 3rem;
+    color: variables.$gray-400;
+    margin-bottom: var(--space-4, 1rem);
+    display: block;
+  }
+  
+  p {
+    margin: 0;
+    font-size: variables.$text-base;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6, 1.5rem);
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summary-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
+
+.summary-right {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.summary-totals {
+  background: rgba(variables.$primary-blue, 0.05);
+  border: 1px solid rgba(variables.$primary-blue, 0.1);
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-4, 1rem);
+  min-width: 300px;
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2, 0.5rem) 0;
+    border-bottom: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+    font-family: variables.$font-family;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &.total {
+      border-top: 2px solid variables.$primary-blue;
+      margin-top: var(--space-2, 0.5rem);
+      padding-top: var(--space-3, 0.75rem);
+      font-size: variables.$text-lg;
+      color: variables.$primary-blue;
+    }
+    
+    span:first-child {
+      color: variables.$gray-700;
+      font-weight: variables.$font-medium;
+    }
+    
+    span:last-child {
+      color: variables.$gray-900;
+      font-weight: variables.$font-semibold;
+      margin-left: var(--space-4, 1rem);
+    }
+  }
+}
+
+// Input customizations
+:global(.p-inputtext),
+:global(.p-dropdown),
+:global(.p-calendar),
+:global(.p-inputnumber-input) {
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.3);
+  transition: all variables.$transition-fast;
+  
+  &:focus {
+    border-color: variables.$primary-blue;
+    box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.1);
+  }
+}
+
+:global(.p-button) {
+  border-radius: var(--radius-md, 0.5rem);
+  font-weight: variables.$font-medium;
+  transition: all variables.$transition-fast;
+  
+  &.p-button-success {
+    background: linear-gradient(135deg, variables.$primary-blue 0%, variables.$primary-purple 100%);
+    border: none;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(variables.$primary-blue, 0.3);
+    }
+  }
+  
+  &.p-button-secondary {
+    background: rgba(variables.$gray-100, 0.8);
+    color: variables.$gray-700;
+    border: 1px solid rgba(variables.$gray-300, 0.5);
+    
+    &:hover {
+      background: rgba(variables.$gray-200, 0.8);
+    }
+  }
+  
+  &.p-button-danger {
+    background: variables.$orbyt-coral;
+    border: none;
+    
+    &:hover {
+      background: color.adjust(variables.$orbyt-coral, $lightness: -10%);
+    }
+  }
+}
+
+// Table customizations
+:global(.p-inputnumber) {
+  width: 100%;
+  
+  .p-inputnumber-input {
+    width: 100%;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .invoice-form-container {
+    padding: var(--space-4, 1rem);
+  }
+  
+  .form-section {
+    padding: var(--space-4, 1rem);
+  }
+  
+  .items-table {
+    overflow-x: auto;
+  }
+  
+  .summary-totals {
+    min-width: auto;
+    width: 100%;
+  }
+}
+
+// Form field spacing
+:global(.orb-form-field) {
+  margin-bottom: var(--space-4, 1rem);
+}
+
+// Custom input styles
+.orb-input {
+  width: 100%;
+  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.3);
+  border-radius: var(--radius-md, 0.5rem);
+  font-family: variables.$font-family;
+  font-size: variables.$text-sm;
+  transition: all variables.$transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: variables.$primary-blue;
+    box-shadow: 0 0 0 2px rgba(variables.$primary-blue, 0.1);
+  }
+  
+  &::placeholder {
+    color: variables.$gray-400;
+  }
+}
