@@ -12,25 +12,8 @@
   min-height: 100vh;
   padding: var(--space-4, 1rem);
   font-family: variables.$font-family;
-  background: linear-gradient(135deg, 
-    #f8fafc 0%,
-    #e2e8f0 30%,
-    #cbd5e1 70%,
-    #94a3b8 100%
-  );
+  background: white;
   position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-  }
 }
 
 .login-container {
