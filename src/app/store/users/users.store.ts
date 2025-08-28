@@ -1,7 +1,25 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import { UserResponseDto, AdminUpdateUserDto, RoleDto } from '../../api/model/models';
+import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../api/model/models';
+
+// Interfaces extendidas para nuevos endpoints
+interface ExtendedCreateSubUserDto {
+  email: string;
+  password: string;
+  fullName?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  roles?: RoleResponseDto[];
+}
+
+interface ExtendedAdminUpdateUserDto {
+  email?: string;
+  fullName?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  roles?: RoleResponseDto[];
+}
 import { UsersService } from '../../api/services/users.service';
 import { RolesService } from '../../api/services/roles.service';
 import { NotificationService } from '@orb-services';
@@ -12,7 +30,7 @@ import { NotificationSeverity } from '@orb-models';
 
 export interface UsersState {
   users: UserResponseDto[];
-  roles: RoleDto[];
+  roles: RoleResponseDto[];
   loading: boolean;
   error: string | null;
 }
@@ -49,7 +67,7 @@ export class UsersStore extends ComponentStore<UsersState> {
     loading: false,
     error: null,
   }));
-  readonly setRoles = this.updater((state, roles: RoleDto[]) => ({
+  readonly setRoles = this.updater((state, roles: RoleResponseDto[]) => ({
     ...state,
     roles,
     loading: false,
@@ -61,6 +79,12 @@ export class UsersStore extends ComponentStore<UsersState> {
     loading: false,
     error: null,
   }));
+  readonly addUserToList = this.updater((state, newUser: UserResponseDto) => ({
+    ...state,
+    users: [...state.users, newUser],
+    loading: false,
+    error: null,
+  }));
   readonly setError = this.updater((state, error: string | null) => ({ ...state, error, loading: false }));
 
   // Effects
@@ -68,7 +92,7 @@ export class UsersStore extends ComponentStore<UsersState> {
     trigger$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(() =>
-        this.usersService.userControllerGetGroupUsers().pipe(
+        this.usersService.userControllerGetSubUsers().pipe(
           tapResponse(
             (users) => this.setUsers(users),
             (error: any) => {
@@ -100,11 +124,11 @@ export class UsersStore extends ComponentStore<UsersState> {
     )
   );
 
-  readonly updateUser = this.effect<{ userId: number; updateData: AdminUpdateUserDto }>((update$) =>
+  readonly updateUser = this.effect<{ userId: number; updateData: ExtendedAdminUpdateUserDto }>((update$) =>
     update$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(({ userId, updateData }) =>
-        this.usersService.userControllerUpdateSubUser({ id: userId, body: updateData }).pipe(
+        this.usersService.userControllerUpdateSubUser({ id: userId, body: updateData as any }).pipe(
           tapResponse(
             (updatedUser) => {
               this.updateUserInList(updatedUser);
@@ -112,6 +136,27 @@ export class UsersStore extends ComponentStore<UsersState> {
             },
             (error: any) => {
               const errorMessage = error?.error?.message || 'Error al actualizar el usuario.';
+              this.setError(errorMessage);
+              this.notificationService.show(NotificationSeverity.Error, errorMessage);
+            }
+          )
+        )
+      )
+    )
+  );
+
+  readonly createUser = this.effect<ExtendedCreateSubUserDto>((create$) =>
+    create$.pipe(
+      tap(() => this.setLoading(true)),
+      exhaustMap((createData) =>
+        this.usersService.userControllerCreateSubUser({ body: createData as any }).pipe(
+          tapResponse(
+            (newUser) => {
+              this.addUserToList(newUser);
+              this.notificationService.show(NotificationSeverity.Success, 'Usuario creado correctamente');
+            },
+            (error: any) => {
+              const errorMessage = error?.error?.message || 'Error al crear el usuario.';
               this.setError(errorMessage);
               this.notificationService.show(NotificationSeverity.Error, errorMessage);
             }

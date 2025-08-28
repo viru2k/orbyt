@@ -219,14 +219,19 @@ export class AgendaStore extends ComponentStore<AgendaState> {
   
   readonly loadAgendaHolidays = this.effect<number | undefined>((professionalId$) =>
     professionalId$.pipe(
-      tap(() => this.setHolidaysLoading(true)),
+      tap((professionalId) => {
+        console.log('AgendaStore - loadAgendaHolidays called with professionalId:', professionalId);
+        this.setHolidaysLoading(true);
+      }),
       exhaustMap((professionalId) =>
         this.agendaService.agendaControllerGetHolidays({ professionalId }).pipe(
           tapResponse(
             (holydays: Array<HolidayResponseDto>) => {
+              console.log('AgendaStore - loadAgendaHolidays success:', holydays);
               this.setAgendaHolidays(holydays);
             },
             (error: any) => {
+              console.error('AgendaStore - loadAgendaHolidays error:', error);
               this.setError(error);
               this.setHolidaysLoading(false);
               this.notificationService.showError(NotificationSeverity.Error, error.error?.message || 'Error al cargar los feriados de la agenda.');
