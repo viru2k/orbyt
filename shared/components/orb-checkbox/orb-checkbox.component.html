@@ -1,0 +1,19 @@
+<div class="orb-checkbox-wrapper">
+  <p-checkbox
+    [inputId]="inputId"
+    [value]="value"
+    [binary]="binary"
+    [disabled]="_disabled || disabled"
+    [ngModel]="isChecked"
+    [ngModelOptions]="{standalone: true}"
+    (onChange)="onCheckboxChange($event)"
+    [ngClass]="{'ng-invalid ng-dirty': isInvalid}"
+  ></p-checkbox>
+  <label 
+    *ngIf="label" 
+    [for]="inputId" 
+    class="orb-checkbox-label"
+    [ngClass]="{'disabled': _disabled || disabled}">
+    {{ label }}
+  </label>
+</div>

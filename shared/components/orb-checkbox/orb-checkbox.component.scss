@@ -1,0 +1,58 @@
+:host {
+  display: block;
+
+  .orb-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .orb-checkbox-label {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text-color);
+      transition: color 0.3s;
+      margin: 0;
+      line-height: 1.4;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        color: var(--text-color-secondary);
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+// PrimeNG checkbox styling overrides
+::ng-deep {
+  .orb-checkbox-wrapper {
+    .p-checkbox {
+      .p-checkbox-box {
+        border-radius: 4px;
+        transition: all 0.3s;
+
+        &:hover {
+          border-color: var(--primary-color);
+        }
+
+        &.p-focus {
+          box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+        }
+      }
+
+      &.ng-invalid.ng-dirty {
+        .p-checkbox-box {
+          border-color: var(--red-500);
+          
+          &:hover {
+            border-color: var(--red-600);
+          }
+        }
+      }
+    }
+  }
+}

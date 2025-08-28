@@ -1,0 +1,20 @@
+.currency-input-wrapper {
+  position: relative;
+  display: block;
+  
+  .currency-input {
+    padding-right: 2.5rem !important;
+  }
+  
+  .currency-symbol {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    pointer-events: none;
+    z-index: 2;
+  }
+}

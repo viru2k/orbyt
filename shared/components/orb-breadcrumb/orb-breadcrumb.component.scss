@@ -1,0 +1,62 @@
+.orb-breadcrumb {
+  margin-bottom: 0;
+  
+  ::ng-deep {
+    .p-breadcrumb {
+      background: transparent;
+      border: none;
+      padding: 0.5rem 0;
+      margin: 0;
+      
+      .p-breadcrumb-list {
+        margin: 0;
+        padding: 0;
+        
+        li {
+          display: inline-flex;
+          align-items: center;
+          
+          &:not(:last-child)::after {
+            content: '';
+            margin: 0;
+          }
+          
+          .p-menuitem-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.25rem 0;
+            
+            &:hover {
+              color: var(--primary-color);
+              text-decoration: underline;
+            }
+          }
+          
+          &.p-breadcrumb-home {
+            .p-menuitem-link {
+              display: flex;
+              align-items: center;
+              
+              .pi {
+                margin-right: 0.25rem;
+              }
+            }
+          }
+          
+          &:last-child {
+            .p-menuitem-link {
+              font-weight: 500;
+              color: var(--text-color);
+              cursor: default;
+              
+              &:hover {
+                text-decoration: none;
+                color: var(--text-color);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
