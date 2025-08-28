@@ -426,3 +426,17 @@ label {
   line-height: normal !important;
   padding: 0.25rem 0.5rem !important;
 }
+
+/* Fix z-index para calendarios globalmente */
+.p-calendar-panel,
+.p-datepicker,
+.p-overlay {
+  z-index: 1000 !important;
+}
+
+/* Asegurar que dropdowns no tapen calendarios */
+.p-dropdown-panel,
+.p-select-panel,
+.p-multiselect-panel {
+  z-index: 999 !important;
+}

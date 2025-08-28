@@ -1,0 +1,93 @@
+{
+  "BREADCRUMB": {
+    "AGENDA": "Calendar",
+    "CONFIGURATION": "Configuration",
+    "MANAGEMENT": "Management",
+    "PRODUCTS": "Products",
+    "CLIENTS": "Clients",
+    "USERS": "Users",
+    "MOVEMENTS": "Movements"
+  },
+  "AGENDA": {
+    "TITLE": "Calendar",
+    "FILTERS": "Filters",
+    "VIEW_CALENDAR": "Calendar View",
+    "VIEW_TABLE": "Table View",
+    "PROFESSIONALS": "Professionals",
+    "STATES": "States",
+    "DATE_RANGE": "Date range",
+    "SPECIFIC_DATE": "Specific date",
+    "SEARCH": "Search",
+    "TODAY": "Today",
+    "NEW_APPOINTMENT": "New Appointment",
+    "INFORMATION": "Information",
+    "EDIT_APPOINTMENT": "Edit Appointment",
+    "DATETIME": "Date/Time",
+    "CLIENT": "Client",
+    "PROFESSIONAL": "Professional",
+    "STATE": "Status",
+    "DURATION": "Duration",
+    "ACTIONS": "Actions",
+    "EDIT": "Edit",
+    "ALL": "All",
+    "SELECTED": "sel."
+  },
+  "USERS": {
+    "LIST": "Users List",
+    "FULL_NAME": "Full Name",
+    "EMAIL": "Email Address",
+    "ADMIN": "Admin",
+    "ACTIVE": "Active",
+    "CREATION_DATE": "Creation Date",
+    "ACTIONS": "Actions",
+    "EDIT": "Edit",
+    "AGENDA": "Calendar"
+  },
+  "DASHBOARD": {
+    "TITLE": "Control Panel",
+    "SUBTITLE": "Comprehensive management of consultations and revenue",
+    "NEW_CONSULTATION": "New Consultation"
+  },
+  "PRODUCTS": {
+    "NEW_PRODUCT": "New Product"
+  },
+  "CLIENTS": {
+    "NEW_CLIENT": "New Client"
+  },
+  "MOVEMENTS": {
+    "TITLE": "Movements",
+    "SELECT_PRODUCT": "Select Product:",
+    "SELECT_PRODUCT_PLACEHOLDER": "Select a product",
+    "NEW_MOVEMENT": "New Movement"
+  },
+  "CONFIG": {
+    "AGENDA_TITLE": "⚙️ Calendar Configuration",
+    "AGENDA_SUBTITLE": "Manage schedules, working days and calendar settings",
+    "SELECT_PROFESSIONAL": "👥 Select Professional",
+    "PROFESSIONAL": "Professional",
+    "SEARCH_PROFESSIONAL": "Search professional by name"
+  },
+  "STATUS": {
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "CHECKED_IN": "Check-in",
+    "IN_PROGRESS": "In Progress",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled",
+    "NO_SHOW": "No Show",
+    "RESCHEDULED": "Rescheduled"
+  },
+  "COMMON": {
+    "CANCEL": "Cancel",
+    "SAVE": "Save",
+    "DELETE": "Delete",
+    "CLOSE": "Close",
+    "YES": "Yes",
+    "NO": "No",
+    "LOADING": "Loading...",
+    "ERROR": "Error",
+    "SUCCESS": "Success",
+    "WARNING": "Warning",
+    "INFO": "Information"
+  }
+}

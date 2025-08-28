@@ -1,0 +1,93 @@
+{
+  "BREADCRUMB": {
+    "AGENDA": "Agenda",
+    "CONFIGURATION": "Configuración",
+    "MANAGEMENT": "Gestión",
+    "PRODUCTS": "Productos",
+    "CLIENTS": "Clientes",
+    "USERS": "Usuarios",
+    "MOVEMENTS": "Movimientos"
+  },
+  "AGENDA": {
+    "TITLE": "Agenda",
+    "FILTERS": "Filtros",
+    "VIEW_CALENDAR": "Vista Calendario",
+    "VIEW_TABLE": "Vista Tabla",
+    "PROFESSIONALS": "Profesionales",
+    "STATES": "Estados",
+    "DATE_RANGE": "Rango de fechas",
+    "SPECIFIC_DATE": "Fecha específica",
+    "SEARCH": "Buscar",
+    "TODAY": "Hoy",
+    "NEW_APPOINTMENT": "Nuevo Turno",
+    "INFORMATION": "Información",
+    "EDIT_APPOINTMENT": "Editar Turno",
+    "DATETIME": "Fecha/Hora",
+    "CLIENT": "Cliente",
+    "PROFESSIONAL": "Profesional",
+    "STATE": "Estado",
+    "DURATION": "Duración",
+    "ACTIONS": "Acciones",
+    "EDIT": "Editar",
+    "ALL": "Todos",
+    "SELECTED": "sel."
+  },
+  "USERS": {
+    "LIST": "Lista de Usuarios",
+    "FULL_NAME": "Nombre Completo",
+    "EMAIL": "Correo Electrónico",
+    "ADMIN": "Admin",
+    "ACTIVE": "Activo",
+    "CREATION_DATE": "Fecha Creación",
+    "ACTIONS": "Acciones",
+    "EDIT": "Editar",
+    "AGENDA": "Agenda"
+  },
+  "DASHBOARD": {
+    "TITLE": "Panel de Control",
+    "SUBTITLE": "Gestión integral de consultas e ingresos",
+    "NEW_CONSULTATION": "Nueva Consulta"
+  },
+  "PRODUCTS": {
+    "NEW_PRODUCT": "Nuevo Producto"
+  },
+  "CLIENTS": {
+    "NEW_CLIENT": "Nuevo Cliente"
+  },
+  "MOVEMENTS": {
+    "TITLE": "Movimientos",
+    "SELECT_PRODUCT": "Seleccionar Producto:",
+    "SELECT_PRODUCT_PLACEHOLDER": "Selecciona un producto",
+    "NEW_MOVEMENT": "Nuevo Movimiento"
+  },
+  "CONFIG": {
+    "AGENDA_TITLE": "⚙️ Configuración de Agenda",
+    "AGENDA_SUBTITLE": "Gestiona los horarios, días laborales y configuraciones de agenda",
+    "SELECT_PROFESSIONAL": "👥 Seleccionar Profesional",
+    "PROFESSIONAL": "Profesional",
+    "SEARCH_PROFESSIONAL": "Buscar profesional por nombre"
+  },
+  "STATUS": {
+    "PENDING": "Pendiente",
+    "CONFIRMED": "Confirmada",
+    "CHECKED_IN": "Check-in",
+    "IN_PROGRESS": "En Proceso",
+    "COMPLETED": "Completada",
+    "CANCELLED": "Cancelada",
+    "NO_SHOW": "No Show",
+    "RESCHEDULED": "Reprogramada"
+  },
+  "COMMON": {
+    "CANCEL": "Cancelar",
+    "SAVE": "Guardar",
+    "DELETE": "Eliminar",
+    "CLOSE": "Cerrar",
+    "YES": "Sí",
+    "NO": "No",
+    "LOADING": "Cargando...",
+    "ERROR": "Error",
+    "SUCCESS": "Éxito",
+    "WARNING": "Advertencia",
+    "INFO": "Información"
+  }
+}
