@@ -8,21 +8,22 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { NotificationResponseDto } from '../../models/notification-response-dto';
 
 export interface NotificationControllerGetUnread$Params {
 }
 
-export function notificationControllerGetUnread(http: HttpClient, rootUrl: string, params?: NotificationControllerGetUnread$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function notificationControllerGetUnread(http: HttpClient, rootUrl: string, params?: NotificationControllerGetUnread$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationResponseDto>>> {
   const rb = new RequestBuilder(rootUrl, notificationControllerGetUnread.PATH, 'get');
   if (params) {
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<Array<NotificationResponseDto>>;
     })
   );
 }

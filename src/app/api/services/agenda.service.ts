@@ -32,6 +32,8 @@ import { agendaControllerGetAvailabilityRange } from '../fn/agenda/agenda-contro
 import { AgendaControllerGetAvailabilityRange$Params } from '../fn/agenda/agenda-controller-get-availability-range';
 import { agendaControllerGetAvailable } from '../fn/agenda/agenda-controller-get-available';
 import { AgendaControllerGetAvailable$Params } from '../fn/agenda/agenda-controller-get-available';
+import { agendaControllerGetCalendarAvailability } from '../fn/agenda/agenda-controller-get-calendar-availability';
+import { AgendaControllerGetCalendarAvailability$Params } from '../fn/agenda/agenda-controller-get-calendar-availability';
 import { agendaControllerGetConfig } from '../fn/agenda/agenda-controller-get-config';
 import { AgendaControllerGetConfig$Params } from '../fn/agenda/agenda-controller-get-config';
 import { agendaControllerGetDayOverrides } from '../fn/agenda/agenda-controller-get-day-overrides';
@@ -48,16 +50,21 @@ import { agendaControllerGetWeek } from '../fn/agenda/agenda-controller-get-week
 import { AgendaControllerGetWeek$Params } from '../fn/agenda/agenda-controller-get-week';
 import { agendaControllerRegisterProductsUsed } from '../fn/agenda/agenda-controller-register-products-used';
 import { AgendaControllerRegisterProductsUsed$Params } from '../fn/agenda/agenda-controller-register-products-used';
+import { agendaControllerTestSimple } from '../fn/agenda/agenda-controller-test-simple';
+import { AgendaControllerTestSimple$Params } from '../fn/agenda/agenda-controller-test-simple';
 import { agendaControllerUnblockDates } from '../fn/agenda/agenda-controller-unblock-dates';
 import { AgendaControllerUnblockDates$Params } from '../fn/agenda/agenda-controller-unblock-dates';
 import { agendaControllerUpdate } from '../fn/agenda/agenda-controller-update';
 import { AgendaControllerUpdate$Params } from '../fn/agenda/agenda-controller-update';
 import { agendaControllerUpdateConfig } from '../fn/agenda/agenda-controller-update-config';
 import { AgendaControllerUpdateConfig$Params } from '../fn/agenda/agenda-controller-update-config';
+import { agendaControllerUpdateConfigTest } from '../fn/agenda/agenda-controller-update-config-test';
+import { AgendaControllerUpdateConfigTest$Params } from '../fn/agenda/agenda-controller-update-config-test';
 import { AppointmentProductLogResponseDto } from '../models/appointment-product-log-response-dto';
 import { AppointmentResponseDto } from '../models/appointment-response-dto';
 import { AppointmentSummaryResponseDto } from '../models/appointment-summary-response-dto';
 import { AvailableSlotResponseDto } from '../models/available-slot-response-dto';
+import { CalendarAvailabilityDto } from '../models/calendar-availability-dto';
 import { HolidayResponseDto } from '../models/holiday-response-dto';
 
 @Injectable({ providedIn: 'root' })
@@ -297,8 +304,58 @@ export class AgendaService extends BaseService {
     );
   }
 
+  /** Path part for operation `agendaControllerUpdateConfigTest()` */
+  static readonly AgendaControllerUpdateConfigTestPath = '/agenda/config-test';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerUpdateConfigTest()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerUpdateConfigTest$Response(params: AgendaControllerUpdateConfigTest$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerUpdateConfigTest(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerUpdateConfigTest$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerUpdateConfigTest(params: AgendaControllerUpdateConfigTest$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerUpdateConfigTest$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerTestSimple()` */
+  static readonly AgendaControllerTestSimplePath = '/agenda/test-simple';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerTestSimple()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerTestSimple$Response(params?: AgendaControllerTestSimple$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return agendaControllerTestSimple(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerTestSimple$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerTestSimple(params?: AgendaControllerTestSimple$Params, context?: HttpContext): Observable<void> {
+    return this.agendaControllerTestSimple$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
   /** Path part for operation `agendaControllerUpdateConfig()` */
-  static readonly AgendaControllerUpdateConfigPath = '/agenda/config';
+  static readonly AgendaControllerUpdateConfigPath = '/agenda/config/update';
 
   /**
    * Actualizar configuración de agenda del profesional actual (o especificado).
@@ -756,6 +813,39 @@ export class AgendaService extends BaseService {
   agendaControllerGetAvailabilityRange(params: AgendaControllerGetAvailabilityRange$Params, context?: HttpContext): Observable<void> {
     return this.agendaControllerGetAvailabilityRange$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `agendaControllerGetCalendarAvailability()` */
+  static readonly AgendaControllerGetCalendarAvailabilityPath = '/agenda/calendar-availability';
+
+  /**
+   * Obtener disponibilidad del calendario mensual.
+   *
+   * Retorna la disponibilidad de cada día del mes con estados: disponible, limitado, lleno, bloqueado, feriado, pasado
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `agendaControllerGetCalendarAvailability()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerGetCalendarAvailability$Response(params: AgendaControllerGetCalendarAvailability$Params, context?: HttpContext): Observable<StrictHttpResponse<CalendarAvailabilityDto>> {
+    return agendaControllerGetCalendarAvailability(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener disponibilidad del calendario mensual.
+   *
+   * Retorna la disponibilidad de cada día del mes con estados: disponible, limitado, lleno, bloqueado, feriado, pasado
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `agendaControllerGetCalendarAvailability$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  agendaControllerGetCalendarAvailability(params: AgendaControllerGetCalendarAvailability$Params, context?: HttpContext): Observable<CalendarAvailabilityDto> {
+    return this.agendaControllerGetCalendarAvailability$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CalendarAvailabilityDto>): CalendarAvailabilityDto => r.body)
     );
   }
 

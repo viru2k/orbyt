@@ -9,6 +9,7 @@ export interface UpdateClientDto {
   fullname?: string;
   gender?: 'male' | 'female' | 'other';
   lastName?: string;
+  membershipNumber?: string;
   name?: string;
   notes?: string;
   phone?: string;

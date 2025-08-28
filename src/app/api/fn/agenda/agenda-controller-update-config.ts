@@ -17,7 +17,7 @@ export interface AgendaControllerUpdateConfig$Params {
 }
 
 export function agendaControllerUpdateConfig(http: HttpClient, rootUrl: string, params: AgendaControllerUpdateConfig$Params, context?: HttpContext): Observable<StrictHttpResponse<AgendaConfigResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, agendaControllerUpdateConfig.PATH, 'patch');
+  const rb = new RequestBuilder(rootUrl, agendaControllerUpdateConfig.PATH, 'post');
   if (params) {
     rb.query('professionalId', params.professionalId, {});
     rb.body(params.body, 'application/json');
@@ -33,4 +33,4 @@ export function agendaControllerUpdateConfig(http: HttpClient, rootUrl: string, 
   );
 }
 
-agendaControllerUpdateConfig.PATH = '/agenda/config';
+agendaControllerUpdateConfig.PATH = '/agenda/config/update';

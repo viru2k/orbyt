@@ -6,6 +6,11 @@ import { RoleDto } from '../models/role-dto';
 export interface AdminUpdateUserDto {
 
   /**
+   * Email del usuario
+   */
+  email?: string;
+
+  /**
    * Nombre completo del usuario
    */
   fullName?: string;
@@ -14,6 +19,11 @@ export interface AdminUpdateUserDto {
    * Habilitar o deshabilitar la cuenta del usuario
    */
   isActive?: boolean;
+
+  /**
+   * Es administrador del grupo
+   */
+  isAdmin?: boolean;
 
   /**
    * Array de objetos de rol a asignar al usuario

@@ -11,6 +11,7 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { FailedNotificationResponseDto } from '../models/failed-notification-response-dto';
 import { notificationControllerCreateNotification } from '../fn/notifications/notification-controller-create-notification';
 import { NotificationControllerCreateNotification$Params } from '../fn/notifications/notification-controller-create-notification';
 import { notificationControllerGetAll } from '../fn/notifications/notification-controller-get-all';
@@ -31,8 +32,11 @@ import { notificationControllerTestBroadcast } from '../fn/notifications/notific
 import { NotificationControllerTestBroadcast$Params } from '../fn/notifications/notification-controller-test-broadcast';
 import { notificationControllerTestWebSocket } from '../fn/notifications/notification-controller-test-web-socket';
 import { NotificationControllerTestWebSocket$Params } from '../fn/notifications/notification-controller-test-web-socket';
+import { NotificationOperationDto } from '../models/notification-operation-dto';
 import { NotificationResponseDto } from '../models/notification-response-dto';
 import { NotificationSummaryResponseDto } from '../models/notification-summary-response-dto';
+import { WebSocketStatsDto } from '../models/web-socket-stats-dto';
+import { WebSocketTestResponseDto } from '../models/web-socket-test-response-dto';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService extends BaseService {
@@ -86,7 +90,7 @@ export class NotificationsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  notificationControllerCreateNotification$Response(params: NotificationControllerCreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  notificationControllerCreateNotification$Response(params: NotificationControllerCreateNotification$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponseDto>> {
     return notificationControllerCreateNotification(this.http, this.rootUrl, params, context);
   }
 
@@ -100,9 +104,9 @@ export class NotificationsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  notificationControllerCreateNotification(params: NotificationControllerCreateNotification$Params, context?: HttpContext): Observable<void> {
+  notificationControllerCreateNotification(params: NotificationControllerCreateNotification$Params, context?: HttpContext): Observable<NotificationResponseDto> {
     return this.notificationControllerCreateNotification$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<NotificationResponseDto>): NotificationResponseDto => r.body)
     );
   }
 
@@ -119,7 +123,7 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerMarkAsRead$Response(params: NotificationControllerMarkAsRead$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  notificationControllerMarkAsRead$Response(params: NotificationControllerMarkAsRead$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponseDto>> {
     return notificationControllerMarkAsRead(this.http, this.rootUrl, params, context);
   }
 
@@ -133,9 +137,9 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerMarkAsRead(params: NotificationControllerMarkAsRead$Params, context?: HttpContext): Observable<any> {
+  notificationControllerMarkAsRead(params: NotificationControllerMarkAsRead$Params, context?: HttpContext): Observable<NotificationResponseDto> {
     return this.notificationControllerMarkAsRead$Response(params, context).pipe(
-      map((r: StrictHttpResponse<any>): any => r.body)
+      map((r: StrictHttpResponse<NotificationResponseDto>): NotificationResponseDto => r.body)
     );
   }
 
@@ -152,7 +156,7 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerGetFailed$Response(params?: NotificationControllerGetFailed$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  notificationControllerGetFailed$Response(params?: NotificationControllerGetFailed$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FailedNotificationResponseDto>>> {
     return notificationControllerGetFailed(this.http, this.rootUrl, params, context);
   }
 
@@ -166,9 +170,9 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerGetFailed(params?: NotificationControllerGetFailed$Params, context?: HttpContext): Observable<void> {
+  notificationControllerGetFailed(params?: NotificationControllerGetFailed$Params, context?: HttpContext): Observable<Array<FailedNotificationResponseDto>> {
     return this.notificationControllerGetFailed$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<FailedNotificationResponseDto>>): Array<FailedNotificationResponseDto> => r.body)
     );
   }
 
@@ -185,7 +189,7 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerRetry$Response(params: NotificationControllerRetry$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  notificationControllerRetry$Response(params: NotificationControllerRetry$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
     return notificationControllerRetry(this.http, this.rootUrl, params, context);
   }
 
@@ -199,9 +203,9 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerRetry(params: NotificationControllerRetry$Params, context?: HttpContext): Observable<void> {
+  notificationControllerRetry(params: NotificationControllerRetry$Params, context?: HttpContext): Observable<NotificationOperationDto> {
     return this.notificationControllerRetry$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
     );
   }
 
@@ -218,7 +222,7 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerGetUnread$Response(params?: NotificationControllerGetUnread$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  notificationControllerGetUnread$Response(params?: NotificationControllerGetUnread$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<NotificationResponseDto>>> {
     return notificationControllerGetUnread(this.http, this.rootUrl, params, context);
   }
 
@@ -232,9 +236,9 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerGetUnread(params?: NotificationControllerGetUnread$Params, context?: HttpContext): Observable<void> {
+  notificationControllerGetUnread(params?: NotificationControllerGetUnread$Params, context?: HttpContext): Observable<Array<NotificationResponseDto>> {
     return this.notificationControllerGetUnread$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<Array<NotificationResponseDto>>): Array<NotificationResponseDto> => r.body)
     );
   }
 
@@ -282,9 +286,9 @@ export class NotificationsService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `notificationControllerTestWebSocket()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  notificationControllerTestWebSocket$Response(params?: NotificationControllerTestWebSocket$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  notificationControllerTestWebSocket$Response(params: NotificationControllerTestWebSocket$Params, context?: HttpContext): Observable<StrictHttpResponse<WebSocketTestResponseDto>> {
     return notificationControllerTestWebSocket(this.http, this.rootUrl, params, context);
   }
 
@@ -296,11 +300,11 @@ export class NotificationsService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `notificationControllerTestWebSocket$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  notificationControllerTestWebSocket(params?: NotificationControllerTestWebSocket$Params, context?: HttpContext): Observable<any> {
+  notificationControllerTestWebSocket(params: NotificationControllerTestWebSocket$Params, context?: HttpContext): Observable<WebSocketTestResponseDto> {
     return this.notificationControllerTestWebSocket$Response(params, context).pipe(
-      map((r: StrictHttpResponse<any>): any => r.body)
+      map((r: StrictHttpResponse<WebSocketTestResponseDto>): WebSocketTestResponseDto => r.body)
     );
   }
 
@@ -315,9 +319,9 @@ export class NotificationsService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `notificationControllerTestBroadcast()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  notificationControllerTestBroadcast$Response(params?: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+  notificationControllerTestBroadcast$Response(params: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<StrictHttpResponse<WebSocketTestResponseDto>> {
     return notificationControllerTestBroadcast(this.http, this.rootUrl, params, context);
   }
 
@@ -329,11 +333,11 @@ export class NotificationsService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `notificationControllerTestBroadcast$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  notificationControllerTestBroadcast(params?: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<any> {
+  notificationControllerTestBroadcast(params: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<WebSocketTestResponseDto> {
     return this.notificationControllerTestBroadcast$Response(params, context).pipe(
-      map((r: StrictHttpResponse<any>): any => r.body)
+      map((r: StrictHttpResponse<WebSocketTestResponseDto>): WebSocketTestResponseDto => r.body)
     );
   }
 
@@ -350,7 +354,7 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerGetWebSocketStats$Response(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  notificationControllerGetWebSocketStats$Response(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<StrictHttpResponse<WebSocketStatsDto>> {
     return notificationControllerGetWebSocketStats(this.http, this.rootUrl, params, context);
   }
 
@@ -364,9 +368,9 @@ export class NotificationsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  notificationControllerGetWebSocketStats(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<void> {
+  notificationControllerGetWebSocketStats(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<WebSocketStatsDto> {
     return this.notificationControllerGetWebSocketStats$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<WebSocketStatsDto>): WebSocketStatsDto => r.body)
     );
   }
 

@@ -8,13 +8,17 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { WebSocketTestDto } from '../../models/web-socket-test-dto';
+import { WebSocketTestResponseDto } from '../../models/web-socket-test-response-dto';
 
 export interface NotificationControllerTestBroadcast$Params {
+      body: WebSocketTestDto
 }
 
-export function notificationControllerTestBroadcast(http: HttpClient, rootUrl: string, params?: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function notificationControllerTestBroadcast(http: HttpClient, rootUrl: string, params: NotificationControllerTestBroadcast$Params, context?: HttpContext): Observable<StrictHttpResponse<WebSocketTestResponseDto>> {
   const rb = new RequestBuilder(rootUrl, notificationControllerTestBroadcast.PATH, 'post');
   if (params) {
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -22,7 +26,7 @@ export function notificationControllerTestBroadcast(http: HttpClient, rootUrl: s
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return r as StrictHttpResponse<WebSocketTestResponseDto>;
     })
   );
 }

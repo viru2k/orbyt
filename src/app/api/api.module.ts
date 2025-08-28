@@ -13,6 +13,8 @@ import { RolesService } from './services/roles.service';
 import { SubscriptionService } from './services/subscription.service';
 import { AgendaService } from './services/agenda.service';
 import { NotificationsService } from './services/notifications.service';
+import { RewardsService } from './services/rewards.service';
+import { EmailManagementService } from './services/email-management.service';
 import { ProductsService } from './services/products.service';
 import { StockService } from './services/stock.service';
 import { ClientsService } from './services/clients.service';
@@ -20,8 +22,11 @@ import { SubscriptionPlanService } from './services/subscription-plan.service';
 import { PermissionsService } from './services/permissions.service';
 import { UploadService } from './services/upload.service';
 import { ConsultationsService } from './services/consultations.service';
+import { PublicConsultationService } from './services/public-consultation.service';
 import { InvoicesService } from './services/invoices.service';
 import { DashboardService } from './services/dashboard.service';
+import { BusinessTypesService } from './services/business-types.service';
+import { BusinessTypesPublicService } from './services/business-types-public.service';
 
 /**
  * Module that provides all services and configuration.
@@ -38,6 +43,8 @@ import { DashboardService } from './services/dashboard.service';
     SubscriptionService,
     AgendaService,
     NotificationsService,
+    RewardsService,
+    EmailManagementService,
     ProductsService,
     StockService,
     ClientsService,
@@ -45,8 +52,11 @@ import { DashboardService } from './services/dashboard.service';
     PermissionsService,
     UploadService,
     ConsultationsService,
+    PublicConsultationService,
     InvoicesService,
     DashboardService,
+    BusinessTypesService,
+    BusinessTypesPublicService,
     ApiConfiguration
   ],
 })

@@ -8,12 +8,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { NotificationResponseDto } from '../../models/notification-response-dto';
 
 export interface NotificationControllerMarkAsRead$Params {
   id: number;
 }
 
-export function notificationControllerMarkAsRead(http: HttpClient, rootUrl: string, params: NotificationControllerMarkAsRead$Params, context?: HttpContext): Observable<StrictHttpResponse<any>> {
+export function notificationControllerMarkAsRead(http: HttpClient, rootUrl: string, params: NotificationControllerMarkAsRead$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationResponseDto>> {
   const rb = new RequestBuilder(rootUrl, notificationControllerMarkAsRead.PATH, 'patch');
   if (params) {
     rb.path('id', params.id, {});
@@ -24,7 +25,7 @@ export function notificationControllerMarkAsRead(http: HttpClient, rootUrl: stri
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<any>;
+      return r as StrictHttpResponse<NotificationResponseDto>;
     })
   );
 }

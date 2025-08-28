@@ -11,6 +11,7 @@ export interface ClientResponseDto {
   gender?: 'male' | 'female' | 'other';
   id: number;
   lastName: string;
+  membershipNumber?: string;
   name: string;
   notes?: string;
   phone?: string;

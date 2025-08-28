@@ -13,6 +13,12 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { consultationControllerCreate } from '../fn/consultations/consultation-controller-create';
 import { ConsultationControllerCreate$Params } from '../fn/consultations/consultation-controller-create';
+import { consultationControllerCreateAutoTokens } from '../fn/consultations/consultation-controller-create-auto-tokens';
+import { ConsultationControllerCreateAutoTokens$Params } from '../fn/consultations/consultation-controller-create-auto-tokens';
+import { consultationControllerCreateToken } from '../fn/consultations/consultation-controller-create-token';
+import { ConsultationControllerCreateToken$Params } from '../fn/consultations/consultation-controller-create-token';
+import { consultationControllerCreateTokenByScenario } from '../fn/consultations/consultation-controller-create-token-by-scenario';
+import { ConsultationControllerCreateTokenByScenario$Params } from '../fn/consultations/consultation-controller-create-token-by-scenario';
 import { consultationControllerFindAll } from '../fn/consultations/consultation-controller-find-all';
 import { ConsultationControllerFindAll$Params } from '../fn/consultations/consultation-controller-find-all';
 import { consultationControllerFindOne } from '../fn/consultations/consultation-controller-find-one';
@@ -23,15 +29,21 @@ import { consultationControllerGetStats } from '../fn/consultations/consultation
 import { ConsultationControllerGetStats$Params } from '../fn/consultations/consultation-controller-get-stats';
 import { consultationControllerGetTodayConsultations } from '../fn/consultations/consultation-controller-get-today-consultations';
 import { ConsultationControllerGetTodayConsultations$Params } from '../fn/consultations/consultation-controller-get-today-consultations';
+import { consultationControllerGetTokensForConsultation } from '../fn/consultations/consultation-controller-get-tokens-for-consultation';
+import { ConsultationControllerGetTokensForConsultation$Params } from '../fn/consultations/consultation-controller-get-tokens-for-consultation';
 import { consultationControllerRemove } from '../fn/consultations/consultation-controller-remove';
 import { ConsultationControllerRemove$Params } from '../fn/consultations/consultation-controller-remove';
+import { consultationControllerRevokeToken } from '../fn/consultations/consultation-controller-revoke-token';
+import { ConsultationControllerRevokeToken$Params } from '../fn/consultations/consultation-controller-revoke-token';
 import { consultationControllerUpdate } from '../fn/consultations/consultation-controller-update';
 import { ConsultationControllerUpdate$Params } from '../fn/consultations/consultation-controller-update';
 import { consultationControllerUpdateStatus } from '../fn/consultations/consultation-controller-update-status';
 import { ConsultationControllerUpdateStatus$Params } from '../fn/consultations/consultation-controller-update-status';
 import { consultationControllerUploadFile } from '../fn/consultations/consultation-controller-upload-file';
 import { ConsultationControllerUploadFile$Params } from '../fn/consultations/consultation-controller-upload-file';
+import { ConsultationOperationResultDto } from '../models/consultation-operation-result-dto';
 import { ConsultationResponseDto } from '../models/consultation-response-dto';
+import { ConsultationTokenResponseDto } from '../models/consultation-token-response-dto';
 
 @Injectable({ providedIn: 'root' })
 export class ConsultationsService extends BaseService {
@@ -366,6 +378,171 @@ export class ConsultationsService extends BaseService {
   consultationControllerUploadFile(params: ConsultationControllerUploadFile$Params, context?: HttpContext): Observable<void> {
     return this.consultationControllerUploadFile$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `consultationControllerGetTokensForConsultation()` */
+  static readonly ConsultationControllerGetTokensForConsultationPath = '/consultations/{id}/tokens';
+
+  /**
+   * Obtener todos los tokens de una consulta.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `consultationControllerGetTokensForConsultation()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerGetTokensForConsultation$Response(params: ConsultationControllerGetTokensForConsultation$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ConsultationTokenResponseDto>>> {
+    return consultationControllerGetTokensForConsultation(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener todos los tokens de una consulta.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `consultationControllerGetTokensForConsultation$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerGetTokensForConsultation(params: ConsultationControllerGetTokensForConsultation$Params, context?: HttpContext): Observable<Array<ConsultationTokenResponseDto>> {
+    return this.consultationControllerGetTokensForConsultation$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<ConsultationTokenResponseDto>>): Array<ConsultationTokenResponseDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `consultationControllerCreateToken()` */
+  static readonly ConsultationControllerCreateTokenPath = '/consultations/{id}/tokens';
+
+  /**
+   * Crear token manual para consulta.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `consultationControllerCreateToken()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  consultationControllerCreateToken$Response(params: ConsultationControllerCreateToken$Params, context?: HttpContext): Observable<StrictHttpResponse<ConsultationTokenResponseDto>> {
+    return consultationControllerCreateToken(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Crear token manual para consulta.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `consultationControllerCreateToken$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  consultationControllerCreateToken(params: ConsultationControllerCreateToken$Params, context?: HttpContext): Observable<ConsultationTokenResponseDto> {
+    return this.consultationControllerCreateToken$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ConsultationTokenResponseDto>): ConsultationTokenResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `consultationControllerCreateAutoTokens()` */
+  static readonly ConsultationControllerCreateAutoTokensPath = '/consultations/{id}/tokens/auto';
+
+  /**
+   * Crear tokens automáticos para consulta.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `consultationControllerCreateAutoTokens()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerCreateAutoTokens$Response(params: ConsultationControllerCreateAutoTokens$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ConsultationTokenResponseDto>>> {
+    return consultationControllerCreateAutoTokens(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Crear tokens automáticos para consulta.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `consultationControllerCreateAutoTokens$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerCreateAutoTokens(params: ConsultationControllerCreateAutoTokens$Params, context?: HttpContext): Observable<Array<ConsultationTokenResponseDto>> {
+    return this.consultationControllerCreateAutoTokens$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<ConsultationTokenResponseDto>>): Array<ConsultationTokenResponseDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `consultationControllerCreateTokenByScenario()` */
+  static readonly ConsultationControllerCreateTokenByScenarioPath = '/consultations/{id}/tokens/scenario/{scenario}';
+
+  /**
+   * Crear token por escenario específico.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `consultationControllerCreateTokenByScenario()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerCreateTokenByScenario$Response(params: ConsultationControllerCreateTokenByScenario$Params, context?: HttpContext): Observable<StrictHttpResponse<ConsultationTokenResponseDto>> {
+    return consultationControllerCreateTokenByScenario(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Crear token por escenario específico.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `consultationControllerCreateTokenByScenario$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerCreateTokenByScenario(params: ConsultationControllerCreateTokenByScenario$Params, context?: HttpContext): Observable<ConsultationTokenResponseDto> {
+    return this.consultationControllerCreateTokenByScenario$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ConsultationTokenResponseDto>): ConsultationTokenResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `consultationControllerRevokeToken()` */
+  static readonly ConsultationControllerRevokeTokenPath = '/consultations/tokens/{tokenId}';
+
+  /**
+   * Revocar token específico.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `consultationControllerRevokeToken()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerRevokeToken$Response(params: ConsultationControllerRevokeToken$Params, context?: HttpContext): Observable<StrictHttpResponse<ConsultationOperationResultDto>> {
+    return consultationControllerRevokeToken(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Revocar token específico.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `consultationControllerRevokeToken$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  consultationControllerRevokeToken(params: ConsultationControllerRevokeToken$Params, context?: HttpContext): Observable<ConsultationOperationResultDto> {
+    return this.consultationControllerRevokeToken$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ConsultationOperationResultDto>): ConsultationOperationResultDto => r.body)
     );
   }
 
