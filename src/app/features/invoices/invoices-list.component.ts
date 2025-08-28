@@ -109,8 +109,7 @@ import { PaymentFormComponent } from './components/payment-form.component';
               <label>Estado:</label>
               <p-dropdown 
                 [options]="statusOptions" 
-                [(ngModel)]="selectedStatus"
-                placeholder="Todos los estados"
+                [(ngModel)]="selectedStatus"                
                 optionLabel="label"
                 optionValue="value"
                 [showClear]="true"
@@ -125,7 +124,6 @@ import { PaymentFormComponent } from './components/payment-form.component';
                   type="text" 
                   pInputText 
                   [(ngModel)]="searchTerm"
-                  placeholder="Buscar por número, cliente..."
                   (input)="onSearch()">
               </span>
             </div>

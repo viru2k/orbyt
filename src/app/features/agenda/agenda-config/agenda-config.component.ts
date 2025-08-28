@@ -5,9 +5,11 @@ import { Subject, takeUntil, map, combineLatest } from 'rxjs';
 
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
+import { OrbBreadcrumbComponent } from '@orb-shared-components/orb-breadcrumb/orb-breadcrumb.component';
 import { OrbLabelComponent } from '@orb-shared-components/orb-label/orb-label.component';
 import { OrbSelectComponent } from '@orb-shared-components/orb-select/orb-select.component';
 import { OrbInputNumberComponent } from '@orb-shared-components/orb-input-number/orb-input-number.component';
+import { OrbCheckboxComponent } from '@orb-shared-components/orb-checkbox/orb-checkbox.component';
 import { HolidaysModalComponent } from '../components/holidays-modal/holidays-modal.component';
 
 import { AgendaStore } from '../../../store/agenda/agenda.store';
@@ -23,15 +25,21 @@ import { AgendaConfigResponseDto, UpdateAgendaConfigDto, UserResponseDto } from 
     ReactiveFormsModule,
     OrbCardComponent,
     OrbButtonComponent,
+    OrbBreadcrumbComponent,
     OrbLabelComponent,
     OrbSelectComponent,
     OrbInputNumberComponent,
+    OrbCheckboxComponent,
     HolidaysModalComponent
   ],
   templateUrl: './agenda-config.component.html',
   styleUrls: ['./agenda-config.component.scss']
 })
 export class AgendaConfigComponent implements OnInit, OnDestroy {
+  breadcrumbItems = [
+    { label: 'Configuración' }
+  ];
+
   configForm!: FormGroup;
   selectedProfessionalId: number | null = null;
   displayHolidaysModal = false;

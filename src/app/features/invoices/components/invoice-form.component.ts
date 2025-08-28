@@ -24,6 +24,7 @@ import { ClientResponseDto } from '../../../api/models/client-response-dto';
 import { ProductResponseDto } from '../../../api/models/product-response-dto';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormButtonAction } from '@orb-models';
+import { FloatLabelModule } from 'primeng/floatlabel';
 
 interface InvoiceItem {
   itemId: number;
@@ -53,7 +54,8 @@ interface InvoiceItem {
     OrbSelectComponent,
     OrbDatepickerComponent,
     OrbTextAreaComponent,
-    OrbButtonComponent
+    OrbButtonComponent,
+    FloatLabelModule
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -64,11 +66,10 @@ interface InvoiceItem {
           <h3><i class="fa fa-info-circle"></i> Información Básica</h3>
           
           <div class="form-grid">
-            <orb-form-field label="Cliente *" [required]="true">
+            <orb-form-field label="Cliente" [required]="true">
               <orb-select
                 formControlName="clientId"
                 [options]="clientOptions()"
-                placeholder="Buscar cliente por nombre o email"
                 optionLabel="fullname"
                 optionValue="id"
                 [showClear]="true"
@@ -78,19 +79,20 @@ interface InvoiceItem {
             </orb-form-field>
 
             <orb-form-field label="Fecha de Vencimiento">
-              <orb-datepicker
+                 <p-floatlabel variant="on">
+  <orb-datepicker
                 formControlName="dueDate"
-                placeholder="Fecha de vencimiento"
                 [showIcon]="true"
                 dateFormat="dd/mm/yy">
               </orb-datepicker>
+                 </p-floatlabel>
+            
             </orb-form-field>
 
             <orb-form-field label="Estado">
               <orb-select
                 formControlName="status"
-                [options]="statusOptions"
-                placeholder="Estado de la factura"
+                [options]="statusOptions"                
                 optionLabel="label"
                 optionValue="value">
               </orb-select>
@@ -99,8 +101,7 @@ interface InvoiceItem {
             <orb-form-field label="Método de Pago">
               <orb-select
                 formControlName="paymentMethod"
-                [options]="paymentMethodOptions"
-                placeholder="Método de pago preferido"
+                [options]="paymentMethodOptions"                
                 optionLabel="label"
                 optionValue="value">
               </orb-select>
@@ -140,7 +141,7 @@ interface InvoiceItem {
                       [(ngModel)]="item.description"
                       [ngModelOptions]="{standalone: true}"
                       (ngModelChange)="updateItemTotal(i)"
-                      placeholder="Descripción del item">
+                      >
                     </orb-text-input>
                   </td>
                   <td>
@@ -235,15 +236,19 @@ interface InvoiceItem {
               </orb-form-field>
 
               <orb-form-field label="Tasa de Impuestos (%)">
-                <input
-                  type="number"
-                  class="orb-input"
-                  formControlName="taxRate"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  placeholder="21"
-                  (input)="calculateTotals()">
+                                <div class="discount-container">
+  <input
+                    type="number"
+                    class="orb-input"
+                    formControlName="taxRate"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    placeholder="21"
+                    (input)="calculateTotals()">
+                                </div>
+              
+
               </orb-form-field>
             </div>
 
@@ -278,7 +283,6 @@ interface InvoiceItem {
             <orb-form-field label="Notas de la Factura">
               <orb-text-area
                 formControlName="notes"
-                placeholder="Notas adicionales sobre la factura"
                 [rows]="3">
               </orb-text-area>
             </orb-form-field>
@@ -286,14 +290,13 @@ interface InvoiceItem {
             <orb-form-field label="Referencia de Pago">
               <orb-text-input
                 formControlName="paymentReference"
-                placeholder="Número de referencia">
+                >
               </orb-text-input>
             </orb-form-field>
 
             <orb-form-field label="Notas de Pago">
               <orb-text-area
-                formControlName="paymentNotes"
-                placeholder="Notas sobre el pago"
+                formControlName="paymentNotes"                
                 [rows]="3">
               </orb-text-area>
             </orb-form-field>

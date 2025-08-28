@@ -9,7 +9,7 @@ import { FormButtonAction } from '@orb-models';
 // PrimeNG & Orb Components
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTextAreaComponent } from '@orb-components';
+import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent, OrbSimpleTextareaComponent } from '@orb-components';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 
@@ -28,7 +28,8 @@ TextareaModule,
         OrbTextInputComponent,
         OrbFormFieldComponent,
         OrbFormFooterComponent,
-        OrbTextAreaComponent
+        OrbCurrencyInputComponent,
+        OrbSimpleTextareaComponent
       , ToastModule
     
   ],

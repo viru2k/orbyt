@@ -4,7 +4,7 @@ import { ProductStore } from '@orb-stores';
 import { ProductResponseDto } from '../../../../api/model/models';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent } from '@orb-components';
 import { ProductFormComponent } from '../modal/product-form.component';
 import { NotificationService } from '@orb-services';
 import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } from '@orb-models';
@@ -20,6 +20,7 @@ import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } fr
     ProductFormComponent,
     OrbButtonComponent,
     OrbCardComponent,
+    OrbBreadcrumbComponent,
     OrbToolbarComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
@@ -33,6 +34,11 @@ export class ProductListComponent implements OnInit {
   private productStore = inject(ProductStore);
   private confirmationService = inject(ConfirmationService);
   private notificationService = inject(NotificationService);
+
+  breadcrumbItems = [
+    { label: 'Gestión' },
+    { label: 'Productos' }
+  ];
 
   displayProductModal = signal(false);
   productToEdit = signal<ProductResponseDto | null>(null);

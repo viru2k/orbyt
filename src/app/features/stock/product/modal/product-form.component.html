@@ -1,9 +1,9 @@
 <p-toast />
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="col-12">
+  <div class="grid">
 
     <!-- Nombre -->
-    <div class="field col-12 md:col-6">
+    <div class="col-12">
        <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))" >
                 <orb-text-input formControlName="name"   inputId="name"></orb-text-input>
       </orb-form-field>
@@ -12,20 +12,15 @@
     <!-- Precio -->
     <div class="col-12">
         <orb-form-field label="Precio" [required]="utilsService.isRequired(form.get('price'))" >
-        <orb-text-input formControlName="price" type="number"  inputId="price"></orb-text-input>
+        <orb-currency-input formControlName="price" inputId="price" placeholder="Precio"></orb-currency-input>
       </orb-form-field>
     </div>
     
+    
     <!-- Descripción -->
-         <div class="col-12">
-      <orb-form-field label="Descripción" [required]="utilsService.isRequired(form.get('name'))">
-        <orb-text-input  id="name" formControlName="name"></orb-text-input>
-      </orb-form-field>
-    </div>
-
     <div class="col-12">
       <orb-form-field label="Descripción" [required]="utilsService.isRequired(form.get('description'))">
-        <orb-text-area pInputTextarea id="description" formControlName="description" [rows]="3" [autoResize]="true"></orb-text-area>
+        <orb-simple-textarea formControlName="description" [rows]="3" [autoResize]="true" inputId="description"></orb-simple-textarea>
       </orb-form-field>
     </div>
 

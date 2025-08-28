@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, OnInit, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { of } from 'rxjs';
 
 // PrimeNG Components
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +14,26 @@ import { OrbButtonComponent, OrbCardComponent, OrbDialogComponent } from '@orb-c
 
 // Services and Models
 import { ConsultationResponseDto } from '../../../api/models/consultation-response-dto';
+import { ConsultationTokenResponseDto } from '../../../api/models/consultation-token-response-dto';
+
+// Extended interface to handle missing properties
+interface ExtendedConsultationToken extends ConsultationTokenResponseDto {
+  id?: string;
+  token?: string;
+  status?: string;
+  expiresAt?: string;
+  usedAt?: string;
+  usageCount?: number;
+  maxUses?: number;
+}
 import { MessageService } from 'primeng/api';
+import { ConsultationsService } from '../../../api/services/consultations.service';
+
+// Import consultation tokens store
+import { Store } from '@ngrx/store';
+// Disabled until consultation tokens store is implemented
+// import { ConsultationTokensActions } from '../../../store/consultation-tokens/consultation-tokens.actions';
+// import { ConsultationTokensSelectors } from '../../../store/consultation-tokens/consultation-tokens.selectors';
 
 @Component({
   selector: 'app-consultation-details',
@@ -57,6 +77,20 @@ import { MessageService } from 'primeng/api';
               label="Editar"
               icon="fa fa-edit"
               (clicked)="onEdit()"
+              variant="secondary">
+            </orb-button>
+            <orb-button
+              *ngIf="consultation.status === 'completed'"
+              label="Generar Token"
+              icon="fa fa-key"
+              (clicked)="onGenerateToken()"
+              variant="primary">
+            </orb-button>
+            <orb-button
+              *ngIf="consultation.status === 'completed'"
+              label="Ver Tokens"
+              icon="fa fa-list"
+              (clicked)="onViewTokens()"
               variant="secondary">
             </orb-button>
             <orb-button
@@ -281,6 +315,57 @@ import { MessageService } from 'primeng/api';
             <p class="notes-content">{{ consultation.notes }}</p>
           </div>
         </orb-card>
+
+        <!-- Active Tokens Section -->
+        <orb-card *ngIf="consultation.status === 'completed' && activeTokens.length > 0">
+          <div orbHeader>
+            <h3><i class="fa fa-key"></i> Tokens Activos</h3>
+          </div>
+          <div orbBody>
+            <div class="tokens-list">
+              <div class="token-item" *ngFor="let token of activeTokens">
+                <div class="token-info">
+                  <div class="token-header">
+                    <span class="token-code">{{ token.token }}</span>
+                    <span class="token-status" [class]="'status-' + token.status">{{ getTokenStatusLabel(token.status || '') }}</span>
+                  </div>
+                  <div class="token-details">
+                    <span class="token-detail">
+                      <i class="fa fa-calendar"></i>
+                      Expira: {{ formatDate(token.expiresAt || '') }}
+                    </span>
+                    <span class="token-detail" *ngIf="token.usedAt">
+                      <i class="fa fa-check"></i>
+                      Usado: {{ formatDate(token.usedAt || '') }}
+                    </span>
+                    <span class="token-detail">
+                      <i class="fa fa-eye"></i>
+                      Usos: {{ token.usageCount || 0 }} / {{ token.maxUses || 0 }}
+                    </span>
+                  </div>
+                </div>
+                <div class="token-actions">
+                  <orb-button
+                    *ngIf="token.status === 'active'"
+                    label="Copiar Link"
+                    icon="fa fa-copy"
+                    size="small"
+                    variant="info"
+                    (clicked)="copyTokenLink(token)">
+                  </orb-button>
+                  <orb-button
+                    *ngIf="token.status === 'active'"
+                    label="Revocar"
+                    icon="fa fa-ban"
+                    size="small"
+                    variant="danger"
+                    (clicked)="revokeToken(token)">
+                  </orb-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </orb-card>
       </div>
 
       <p-toast></p-toast>
@@ -288,7 +373,7 @@ import { MessageService } from 'primeng/api';
   `,
   styleUrls: ['./consultation-details.component.scss']
 })
-export class ConsultationDetailsComponent {
+export class ConsultationDetailsComponent implements OnInit, OnChanges {
   @Input() visible = false;
   @Input() consultation?: ConsultationResponseDto;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -296,6 +381,32 @@ export class ConsultationDetailsComponent {
   @Output() generateInvoice = new EventEmitter<ConsultationResponseDto>();
 
   private messageService = inject(MessageService);
+  private store = inject(Store);
+  private consultationsService = inject(ConsultationsService);
+
+  activeTokens: ExtendedConsultationToken[] = [];
+  showTokenDialog = false;
+
+  ngOnInit(): void {
+    // Load tokens for the consultation when visible
+    if (this.visible && this.consultation?.id) {
+      this.loadConsultationTokens();
+    }
+
+    // Subscribe to tokens loading events
+    // TODO: Replace with actual consultation tokens selector when available
+    // this.store.select(ConsultationTokensSelectors.selectConsultationTokensForConsultation(this.consultation?.id || 0))
+    of([])
+      .subscribe(tokens => {
+        this.activeTokens = tokens;
+      });
+  }
+
+  ngOnChanges(): void {
+    if (this.visible && this.consultation?.id) {
+      this.loadConsultationTokens();
+    }
+  }
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('es-ES', {
@@ -411,5 +522,80 @@ export class ConsultationDetailsComponent {
 
   getClientBirthDate(consultation: ConsultationResponseDto): string {
     return (consultation.client as any)?.birthDate || '';
+  }
+
+  // Token management methods
+  loadConsultationTokens(): void {
+    if (this.consultation?.id) {
+      // TODO: Replace with actual store dispatch when available
+      // this.store.dispatch(ConsultationTokensActions.loadTokensForConsultation({ 
+      //   consultationId: this.consultation.id 
+      // }));
+    }
+  }
+
+  onGenerateToken(): void {
+    if (!this.consultation?.id) return;
+
+    const tokenData = {
+      consultationId: this.consultation.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+      maxUses: 5,
+      scenario: 'client_access'
+    };
+
+    // TODO: Replace with actual store dispatch when available
+    // this.store.dispatch(ConsultationTokensActions.createToken({ tokenData }));
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Token Generado',
+      detail: 'Token de acceso creado exitosamente'
+    });
+  }
+
+  onViewTokens(): void {
+    this.showTokenDialog = true;
+    this.loadConsultationTokens();
+  }
+
+  copyTokenLink(token: ExtendedConsultationToken): void {
+    const baseUrl = window.location.origin;
+    const tokenLink = `${baseUrl}/consultation/public/${token.token || ''}`;
+    
+    navigator.clipboard.writeText(tokenLink).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Link Copiado',
+        detail: 'El enlace del token ha sido copiado al portapapeles'
+      });
+    }).catch(() => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo copiar el enlace'
+      });
+    });
+  }
+
+  revokeToken(token: ExtendedConsultationToken): void {
+    if (token.id) {
+      // TODO: Replace with actual store action when available
+      // this.store.dispatch(ConsultationTokensActions.revokeToken({ tokenId: token.id }));
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Token Revocado',
+        detail: 'El token ha sido revocado exitosamente'
+      });
+    }
+  }
+
+  getTokenStatusLabel(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'active': 'Activo',
+      'used': 'Usado',
+      'expired': 'Expirado',
+      'revoked': 'Revocado'
+    };
+    return statusMap[status] || status;
   }
 }

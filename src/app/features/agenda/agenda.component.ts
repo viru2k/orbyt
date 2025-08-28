@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AgendaStore } from '../../store/agenda/agenda.store';
 import { UsersStore } from '../../store/users/users.store';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
+import { OrbBreadcrumbComponent } from '@orb-shared-components/orb-breadcrumb/orb-breadcrumb.component';
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbMultiselectComponent } from '@orb-shared-components/orb-multiselect/orb-multiselect.component';
@@ -12,6 +15,8 @@ import { DateRangePickerComponent, DateRange, DateRangePickerConfig } from '../.
 import { AgendaFormComponent } from './components/agenda-form/agenda-form.component';
 import { AppointmentResponseDto, UpdateAppointmentDto } from '../../api/model/models';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
+import { OrbTagComponent } from '@orb-shared-components/orb-tag/orb-tag.component';
+import { OrbTableComponent } from '@orb-shared-components/orb-table/orb-table.component';
 import { OrbModernCalendarComponent, ModernCalendarEvent, DateSelectInfo, AdaptedEventClickArg, AdaptedDatesSetArg } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
 // import { OrbDevXSchedulerComponent, DevXSchedulerEvent, DevXEventClickArg, DevXDateSelectInfo, DevXDatesSetArg } from '@orb-shared-components/orb-devx-scheduler/orb-devx-scheduler.component';
 import { DateSelectArg, EventClickArg, DatesSetArg, EventDropArg } from '@fullcalendar/core';
@@ -31,13 +36,17 @@ import { STATUS_SEVERITY } from './constants/status-severity.map';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     OrbButtonComponent,
+    OrbBreadcrumbComponent,
     OrbDialogComponent,
     OrbDatepickerComponent,
     OrbMultiselectComponent,
     DateRangePickerComponent,
     AgendaFormComponent,
     OrbCardComponent,
+    OrbTagComponent,
+    OrbTableComponent,
     OrbModernCalendarComponent,
     OverlayPanelModule,
     StatusLegendComponent,
@@ -52,7 +61,12 @@ export class AgendaComponent implements OnInit {
   dialogInitialDate: string | null = null;
   showInfo = false;
   statusColors = STATUS_COLORS;
+  SUMMARY_KEY_MAP = SUMMARY_KEY_MAP;
 
+  breadcrumbItems: any[] = [];
+
+  // Vista actual (calendario o tabla)
+  currentView: 'calendar' | 'table' = 'calendar';
   
   // Filtros de fecha
   selectedDateFrom: Date = new Date();
@@ -61,7 +75,7 @@ export class AgendaComponent implements OnInit {
   // Configuración para DateRangePicker
   dateRangePickerConfig: DateRangePickerConfig = {
     showTime: true,
-    showAvailability: true,
+    showAvailability: false, // Desactivado temporalmente hasta implementar el endpoint
     placeholder: 'Seleccionar rango de fechas',
     minDate: new Date(2024, 0, 1), // Desde enero 2024
     maxDate: new Date(2030, 11, 31) // Hasta diciembre 2030
@@ -78,22 +92,17 @@ export class AgendaComponent implements OnInit {
   selectedStatuses: any[] = [];
   
   // Opciones para los filtros (según nueva API)
-  statusOptions = [
-    { label: 'Pendiente', value: 'pending' },
-    { label: 'Confirmada', value: 'confirmed' },
-    { label: 'Check-in', value: 'checked_in' },
-    { label: 'En Proceso', value: 'in_progress' },
-    { label: 'Completada', value: 'completed' },
-    { label: 'Cancelada', value: 'cancelled' },
-    { label: 'No Show', value: 'no_show' },
-    { label: 'Reprogramada', value: 'rescheduled' }
-  ];
+  statusOptions: any[] = [];
+
+  // Columnas para la tabla
+  tableColumns: any[] = [];
 
   constructor(
     public agendaStore: AgendaStore,
     public usersStore: UsersStore,
     private authStore: AuthStore,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     // Configurar fechas por defecto (hoy)
     this.setTodayDates();
@@ -102,6 +111,16 @@ export class AgendaComponent implements OnInit {
   // No transformation needed for Modern Calendar - uses same event format
 
   ngOnInit(): void {
+    // Esperar a que las traducciones se carguen
+    this.translate.get('AGENDA.FILTERS').subscribe(() => {
+      this.initializeTranslations();
+    });
+    
+    // También escuchar cambios de idioma
+    this.translate.onLangChange.subscribe(() => {
+      this.initializeTranslations();
+    });
+    
     // Cargar usuarios para el filtro
     this.usersStore.loadUsers();
     this.authStore.user$.subscribe(user => {
@@ -295,6 +314,56 @@ export class AgendaComponent implements OnInit {
   getTranslatedStatus(statusKey: string): string {
     const status = SUMMARY_KEY_MAP[statusKey];
     return STATUS_TRANSLATION[status as keyof typeof STATUS_TRANSLATION];
+  }
+
+  toggleView(view: 'calendar' | 'table'): void {
+    this.currentView = view;
+  }
+
+  getStatusSeverity(status: string): any {
+    const severityMap: { [key: string]: any } = {
+      'pending': 'pending',
+      'confirmed': 'confirmed', 
+      'checked_in': 'info',
+      'in_progress': 'in-progress',
+      'completed': 'completed',
+      'cancelled': 'cancelled',
+      'no_show': 'no-show',
+      'rescheduled': 'rescheduled'
+    };
+    return severityMap[status] || 'secondary';
+  }
+
+  editAppointment(appointment: AppointmentResponseDto): void {
+    this.selectedAppointment = appointment;
+    this.dialogInitialDate = null;
+    this.displayAgendaForm = true;
+  }
+
+  private initializeTranslations(): void {
+    this.breadcrumbItems = [
+      { label: this.translate.instant('BREADCRUMB.AGENDA') }
+    ];
+
+    this.statusOptions = [
+      { label: this.translate.instant('STATUS.PENDING'), value: 'pending' },
+      { label: this.translate.instant('STATUS.CONFIRMED'), value: 'confirmed' },
+      { label: this.translate.instant('STATUS.CHECKED_IN'), value: 'checked_in' },
+      { label: this.translate.instant('STATUS.IN_PROGRESS'), value: 'in_progress' },
+      { label: this.translate.instant('STATUS.COMPLETED'), value: 'completed' },
+      { label: this.translate.instant('STATUS.CANCELLED'), value: 'cancelled' },
+      { label: this.translate.instant('STATUS.NO_SHOW'), value: 'no_show' },
+      { label: this.translate.instant('STATUS.RESCHEDULED'), value: 'rescheduled' }
+    ];
+
+    this.tableColumns = [
+      { field: 'startDateTime', header: this.translate.instant('AGENDA.DATETIME'), sortable: true },
+      { field: 'clientName', header: this.translate.instant('AGENDA.CLIENT'), sortable: true },
+      { field: 'professionalName', header: this.translate.instant('AGENDA.PROFESSIONAL'), sortable: true },
+      { field: 'status', header: this.translate.instant('AGENDA.STATE'), sortable: true },
+      { field: 'duration', header: this.translate.instant('AGENDA.DURATION'), sortable: false },
+      { field: 'actions', header: this.translate.instant('AGENDA.ACTIONS'), sortable: false, width: '120px' }
+    ];
   }
 
   // DevExtreme handlers removed - using Angular Calendar handlers instead

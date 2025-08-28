@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
+import { OrbFormFooterComponent } from '@orb-shared-components/application/orb-form-footer/orb-form-footer.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -17,6 +18,8 @@ import { AgendaStore } from '../../../../store/agenda/agenda.store';
 import { AgendaConfigResponseDto, UpdateAgendaConfigDto, HolidayResponseDto, CreateHolidayDto } from '../../../../api/model/models';
 import { ConfirmationService } from 'primeng/api';
 import { OrbSwitchComponent } from "@orb-components";
+import { OrbCheckboxComponent } from '@orb-shared-components/orb-checkbox/orb-checkbox.component';
+import { FormButtonAction } from '@orb-models';
 
 @Component({
   selector: 'app-agenda-config-modal',
@@ -26,6 +29,7 @@ import { OrbSwitchComponent } from "@orb-components";
     ReactiveFormsModule,
     OrbDialogComponent,
     OrbButtonComponent,
+    OrbFormFooterComponent,
     ConfirmDialogModule,
     TooltipModule,
     FloatLabelModule,
@@ -33,13 +37,14 @@ import { OrbSwitchComponent } from "@orb-components";
     InputNumberModule,
     CalendarModule,
     TableModule,
-    OrbSwitchComponent
+    OrbSwitchComponent,
+    OrbCheckboxComponent
 ],
   templateUrl: './agenda-config-modal.component.html',
   styleUrls: ['./agenda-config-modal.component.scss'],
   providers: [ConfirmationService]
 })
-export class AgendaConfigModalComponent implements OnInit, OnDestroy {
+export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() visible = false;
   @Input() config: AgendaConfigResponseDto | null = null;
   @Input() professionalId: number | null = null;
@@ -50,6 +55,21 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
   holidayForm!: FormGroup;
   showAddHolidayForm = false;
   private destroy$ = new Subject<void>();
+
+  footerButtons: FormButtonAction[] = [
+    {
+      label: 'Cancelar',
+      action: 'cancel',
+      severity: 'secondary',
+      styleType: 'text'
+    },
+    {
+      label: 'Guardar Configuración',
+      action: 'save',
+      severity: 'success',
+      icon: 'pi pi-save'
+    }
+  ];
 
   weekDays = [
     { value: 'MONDAY', label: 'Lunes', number: 1 },
@@ -71,14 +91,8 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Load current config if not provided
-    if (!this.config) {
-      this.agendaStore.loadAgendaConfig(this.professionalId || undefined);
-    }
-
-    // Load holidays for the professional
-    this.agendaStore.loadAgendaHolidays(this.professionalId || undefined);
-
+    console.log('AgendaConfigModal - ngOnInit called');
+    
     // Subscribe to config changes
     this.agendaStore.agendaConfig$
       .pipe(takeUntil(this.destroy$))
@@ -87,6 +101,59 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
           this.populateForm(config);
         }
       });
+
+    // Subscribe to holidays to debug
+    this.agendaStore.agendaHolydays$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(holidays => {
+        console.log('AgendaConfigModal - Holidays received:', holidays);
+      });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('AgendaConfigModal - ngOnChanges called with:', changes);
+    
+    // When visible changes to true, load data
+    if (changes['visible']) {
+      console.log('AgendaConfigModal - Visible changed from', changes['visible'].previousValue, 'to', changes['visible'].currentValue);
+      
+      if (changes['visible'].currentValue === true) {
+        console.log('AgendaConfigModal - Modal opened - professionalId:', this.professionalId);
+        // Add a small delay to ensure the modal is fully rendered before loading data
+        setTimeout(() => {
+          this.loadModalData();
+        }, 100);
+      } else if (changes['visible'].currentValue === false) {
+        console.log('AgendaConfigModal - Modal closed');
+        // Clear the store data to avoid stale data issues
+        // But don't reset the form immediately as it might cause issues
+        this.showAddHolidayForm = false;
+        this.holidayForm.reset();
+      }
+    }
+    
+    // When professionalId changes, reload data if modal is visible
+    if (changes['professionalId'] && this.visible) {
+      console.log('AgendaConfigModal - ProfessionalId changed to:', this.professionalId);
+      this.loadModalData();
+    }
+  }
+
+  private loadModalData(): void {
+    console.log('AgendaConfigModal - loadModalData - professionalId:', this.professionalId);
+    
+    // Load current config if not provided
+    if (!this.config) {
+      this.agendaStore.loadAgendaConfig(this.professionalId || undefined);
+    }
+
+    // Load holidays for the professional - only if professionalId exists
+    if (this.professionalId) {
+      console.log('AgendaConfigModal - Loading holidays for professionalId:', this.professionalId);
+      this.agendaStore.loadAgendaHolidays(this.professionalId);
+    } else {
+      console.warn('AgendaConfigModal - No professionalId provided, skipping holidays load');
+    }
   }
 
   ngOnDestroy(): void {
@@ -116,21 +183,32 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  private populateForm(config: AgendaConfigResponseDto): void {
+  private populateForm(config: any): void {
+    console.log('AgendaConfigModal - populateForm called with config:', config);
+    
+    // Adapt the backend response to the form structure
     this.configForm.patchValue({
-      startTime: config.workStart,
-      endTime: config.workEnd,
-      slotDuration: config.slotDurationMinutes,
-      overbookingAllowed: config.allowOverbooking,
+      startTime: config.startTime?.substring(0, 5) || config.workStart, // "09:00:00" -> "09:00"
+      endTime: config.endTime?.substring(0, 5) || config.workEnd,       // "18:00:00" -> "18:00"
+      slotDuration: config.slotDuration || config.slotDurationMinutes,
+      overbookingAllowed: config.overbookingAllowed ?? config.allowOverbooking,
       allowBookingOnBlockedDays: config.allowBookingOnBlockedDays
     });
 
-    // Set working days
+    // Set working days - backend returns ["TUESDAY", "WEDNESDAY"] (UPPERCASE)
     const workingDaysArray = this.configForm.get('workingDays') as FormArray;
     this.weekDays.forEach((day, index) => {
-      const isWorkingDay = config.workingDays.includes(day.number);
+      // Backend might return days in different formats, so we check both
+      const backendDayCapitalized = day.value.charAt(0).toUpperCase() + day.value.slice(1).toLowerCase(); // "TUESDAY" -> "Tuesday"
+      const isWorkingDay = config.workingDays?.includes(day.value) || // Check UPPERCASE ("TUESDAY")
+                          config.workingDays?.includes(backendDayCapitalized) || // Check Capitalized ("Tuesday") 
+                          config.workingDays?.includes(day.number); // Check by number
+      
+      console.log(`Day ${day.label} (${day.value}): ${isWorkingDay ? 'ENABLED' : 'DISABLED'}`);
       workingDaysArray.at(index).setValue(isWorkingDay);
     });
+    
+    console.log('AgendaConfigModal - Form populated with values:', this.configForm.value);
   }
 
   get workingDaysControls() {
@@ -138,8 +216,13 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
   }
 
   onHide(): void {
-    this.visible = false;
-    this.visibleChange.emit(false);
+    console.log('AgendaConfigModal - onHide called');
+    // Reset form state when manually closing
+    this.configForm.reset();
+    this.initForm();
+    this.showAddHolidayForm = false;
+    this.holidayForm.reset();
+    // Let the parent handle the visibility change
     this.close.emit();
   }
 
@@ -147,10 +230,10 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
     if (this.configForm.valid) {
       const formValue = this.configForm.value;
       
-      // Build working days array
+      // Build working days array - backend expects UPPERCASE format
       const selectedWorkingDays = this.weekDays
         .filter((day, index) => formValue.workingDays[index])
-        .map(day => day.value);
+        .map(day => day.value); // day.value is already "TUESDAY", "WEDNESDAY", etc.
 
       const updateDto: UpdateAgendaConfigDto = {
         startTime: formValue.startTime,
@@ -161,24 +244,30 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy {
         workingDays: selectedWorkingDays
       };
 
+      console.log('AgendaConfigModal - Saving config with payload:', updateDto);
+      console.log('AgendaConfigModal - professionalId:', this.professionalId);
+
       this.agendaStore.updateAgendaConfig({ 
         professionalId: this.professionalId || undefined,
         config: updateDto 
       });
       
-      // Subscribe to success to close modal
-      this.agendaStore.configLoading$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(loading => {
-          if (!loading) {
-            this.onHide();
-          }
-        });
+      // Don't auto-close the modal after saving
+      // Let the user manually close it if they want to make more changes
     }
   }
 
   onCancel(): void {
     this.onHide();
+  }
+
+  handleFooterAction(action: string): void {
+    console.log('AgendaConfigModal - handleFooterAction called with:', action);
+    if (action === 'save') {
+      this.onSave();
+    } else if (action === 'cancel') {
+      this.onCancel();
+    }
   }
 
   private initHolidayForm(): void {

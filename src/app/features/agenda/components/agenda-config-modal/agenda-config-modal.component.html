@@ -14,150 +14,148 @@
   
   <div slot="content">
     <form [formGroup]="configForm" class="config-form">
-      
-      <!-- Card: Horario de trabajo -->
-      <div class="config-card">
-        <div class="card-header">
-          <h4><i class="pi pi-clock" style="color: #3b82f6;"></i> Horario de Trabajo</h4>
-        </div>
-        <div class="card-content">
-          <div class="time-inputs">
-            <div class="input-group">
-              <p-floatLabel>
-                <input 
-                  pInputText 
-                  id="startTime"
-                  type="time" 
-                  formControlName="startTime"
-                  class="w-full"
-                />
-                <label for="startTime">Hora de inicio</label>
-              </p-floatLabel>
+      <!-- Main grid layout -->
+      <div class="row">
+        <!-- Left column: Settings cards -->
+        <div class="settings-column">
+          <!-- Card: Horario de trabajo -->
+          <div class="config-card">
+            <div class="card-header">
+              <h4><i class="pi pi-clock" style="color: #3b82f6;"></i> Horario de Trabajo</h4>
             </div>
-            
-            <div class="input-group">
-              <p-floatLabel>
-                <input 
-                  pInputText 
-                  id="endTime"
-                  type="time" 
-                  formControlName="endTime"
-                  class="w-full"
-                />
-                <label for="endTime">Hora de fin</label>
-              </p-floatLabel>
+            <div class="card-content">
+              <div class="time-inputs gap-1">
+                <div class="input-group ">
+                  <p-floatLabel>
+                    <input 
+                      pInputText 
+                      id="startTime"
+                      type="time" 
+                      formControlName="startTime"
+                      class="w-full"
+                    />                   
+                  </p-floatLabel>
+                </div>
+                
+                <div class="input-group">
+                  <p-floatLabel>
+                    <input 
+                      pInputText 
+                      id="endTime"
+                      type="time" 
+                      formControlName="endTime"
+                      class="w-full"
+                    />
+
+                  </p-floatLabel>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Configuración de turnos -->
+          <div class="config-card">
+            <div class="card-header">
+              <h4><i class="pi pi-stopwatch" style="color: #10b981;"></i> Configuración de Turnos</h4>
+            </div>
+            <div class="card-content">
+              <div class="input-group">
+                <p-floatLabel>
+                  <p-inputNumber 
+                    id="slotDuration"
+                    formControlName="slotDuration"
+                    [min]="15"
+                    [max]="120"
+                    suffix=" min"
+                    styleClass="w-full"
+                  />
+                  <label for="slotDuration">Duración de cada turno</label>
+                </p-floatLabel>
+                <small class="help-text">Entre 15 y 120 minutos</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Configuraciones adicionales -->
+          <div class="config-card">
+            <div class="card-header">
+              <h4><i class="pi pi-cog" style="color: #f59e0b;"></i> Configuraciones Adicionales</h4>
+            </div>
+            <div class="card-content">
+              <div class="checkbox-group">
+                <div class="checkbox-item">
+                  <orb-checkbox
+                    inputId="overbooking"
+                    formControlName="overbookingAllowed"
+                    label="Permitir sobrebooking"
+                  />
+                  <small class="help-text">Permitir más citas de las que el horario normalmente permite</small>
+                </div>
+                
+                <div class="checkbox-item">
+                  <orb-checkbox
+                    inputId="blockedDays"
+                    formControlName="allowBookingOnBlockedDays"
+                    label="Permitir reservas en días bloqueados"
+                  />
+                  <small class="help-text">Los clientes pueden reservar en días marcados como feriados</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Working Days -->
+        <div class="working-days-column">
+          <div class="config-card">
+            <div class="card-header">
+              <h4><i class="pi pi-calendar" style="color: #8b5cf6;"></i> Días Laborales</h4>
+            </div>
+            <div class="card-content">
+              <div class="working-days">
+                <!-- Row 1: Monday and Tuesday -->
+                <div class="working-days-row">
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[0].label }}" [formControl]="workingDaysControls[0]"></orb-switch>
+                  </div>
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[1].label }}" [formControl]="workingDaysControls[1]"></orb-switch>
+                  </div>
+                </div>
+                
+                <!-- Row 2: Wednesday and Thursday -->
+                <div class="working-days-row">
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[2].label }}" [formControl]="workingDaysControls[2]"></orb-switch>
+                  </div>
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[3].label }}" [formControl]="workingDaysControls[3]"></orb-switch>
+                  </div>
+                </div>
+                
+                <!-- Row 3: Friday and Saturday -->
+                <div class="working-days-row">
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[4].label }}" [formControl]="workingDaysControls[4]"></orb-switch>
+                  </div>
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[5].label }}" [formControl]="workingDaysControls[5]"></orb-switch>
+                  </div>
+                </div>
+                
+                <!-- Row 4: Sunday centered -->
+                <div class="working-days-row">
+                  <div class="day-checkbox">
+                    <orb-switch label="     {{ weekDays[6].label }}" [formControl]="workingDaysControls[6]"></orb-switch>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Card: Configuración de turnos -->
-      <div class="config-card">
-        <div class="card-header">
-          <h4><i class="pi pi-stopwatch" style="color: #10b981;"></i> Configuración de Turnos</h4>
-        </div>
-        <div class="card-content">
-          <div class="input-group">
-            <p-floatLabel>
-              <p-inputNumber 
-                id="slotDuration"
-                formControlName="slotDuration"
-                [min]="15"
-                [max]="120"
-                suffix=" min"
-                styleClass="w-full"
-              />
-              <label for="slotDuration">Duración de cada turno</label>
-            </p-floatLabel>
-            <small class="help-text">Entre 15 y 120 minutos</small>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card: Configuraciones adicionales -->
-      <div class="config-card">
-        <div class="card-header">
-          <h4><i class="pi pi-cog" style="color: #f59e0b;"></i> Configuraciones Adicionales</h4>
-        </div>
-        <div class="card-content">
-          <div class="checkbox-group">
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="overbooking"
-                formControlName="overbookingAllowed"
-                class="config-checkbox"
-              />
-              <label for="overbooking" class="checkbox-label">
-                Permitir sobrebooking
-              </label>
-              <small class="help-text">Permitir más citas de las que el horario normalmente permite</small>
-            </div>
-            
-            <div class="checkbox-item">
-              <input
-                type="checkbox"
-                id="blockedDays"
-                formControlName="allowBookingOnBlockedDays"
-                class="config-checkbox"
-              />
-              <label for="blockedDays" class="checkbox-label">
-                Permitir reservas en días bloqueados
-              </label>
-              <small class="help-text">Los clientes pueden reservar en días marcados como feriados</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card: Días laborales - Now spans 2 columns for better layout -->
-      <div class="config-card" style="grid-column: span 2;">
-        <div class="card-header">
-          <h4><i class="pi pi-calendar" style="color: #8b5cf6;"></i> Días Laborales</h4>
-        </div>
-        <div class="card-content">
-          <div class="working-days">
-            <!-- Row 1: Monday and Tuesday -->
-            <div class="working-days-row">
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[0].label }}" [formControl]="workingDaysControls[0]"></orb-switch>
-              </div>
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[1].label }}" [formControl]="workingDaysControls[1]"></orb-switch>
-              </div>
-            </div>
-            
-            <!-- Row 2: Wednesday and Thursday -->
-            <div class="working-days-row">
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[2].label }}" [formControl]="workingDaysControls[2]"></orb-switch>
-              </div>
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[3].label }}" [formControl]="workingDaysControls[3]"></orb-switch>
-              </div>
-            </div>
-            
-            <!-- Row 3: Friday and Saturday -->
-            <div class="working-days-row">
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[4].label }}" [formControl]="workingDaysControls[4]"></orb-switch>
-              </div>
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[5].label }}" [formControl]="workingDaysControls[5]"></orb-switch>
-              </div>
-            </div>
-            
-            <!-- Row 4: Sunday centered -->
-            <div class="working-days-row">
-              <div class="day-checkbox">
-                <orb-switch label="     {{ weekDays[6].label }}" [formControl]="workingDaysControls[6]"></orb-switch>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card: Días Festivos / Vacaciones -->
+      <!-- Bottom section: Holidays card (full width) -->
       <div class="config-card holidays-card">
         <div class="card-header">
           <h4><i class="pi pi-sun" style="color: #ef4444;"></i> Días Festivos y Vacaciones</h4>
@@ -179,15 +177,16 @@
             <div *ngIf="showAddHolidayForm" class="add-holiday-form" style="margin-bottom: 2rem;">
               <form [formGroup]="holidayForm" class="holiday-form-inline">
                 <div class="input-group">
-                  <p-floatLabel>
+                  <div class="p-float-label">
                     <p-calendar 
                       id="holidayDate"
                       formControlName="date"
                       dateFormat="dd/mm/yy"
                       styleClass="w-full"
+                      inputId="holidayDate"
                     />
                     <label for="holidayDate">Fecha</label>
-                  </p-floatLabel>
+                  </div>
                 </div>
                 
                 <div class="input-group">
@@ -291,22 +290,11 @@
   </div>
   
   <div slot="footer">
-    <div class="modal-actions">
-      <orb-button
-        label="Cancelar"
-        severity="secondary"
-        (click)="onCancel()"
-        [disabled]="!!(agendaStore.configLoading$ | async)"
-      />
-      <orb-button
-        label="Guardar Configuración"
-        severity="success"
-        icon="pi pi-save"
-        (click)="onSave()"
-        [loading]="!!(agendaStore.configLoading$ | async)"
-        [disabled]="configForm.invalid"
-      />
-    </div>
+    <orb-form-footer 
+      [buttons]="footerButtons" 
+      alignment="right"
+      (actionClicked)="handleFooterAction($event)">
+    </orb-form-footer>
   </div>
 </orb-dialog>
 

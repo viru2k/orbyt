@@ -1,7 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextarea } from 'primeng/inputtextarea';
@@ -13,9 +12,313 @@ import { MessageService } from 'primeng/api';
 
 import { ConsultationsService } from '../../../api/services/consultations.service';
 import { ClientsService } from '../../../api/services/clients.service';
+import { BusinessTypesService } from '../../../api/services/business-types.service';
 import { ConsultationResponseDto } from '../../../api/models/consultation-response-dto';
 import { ClientResponseDto } from '../../../api/models/client-response-dto';
 import { CreateConsultationDto } from '../../../api/models/create-consultation-dto';
+import { BusinessTypeResponseDto } from '../../../api/models/business-type-response-dto';
+import { ConsultationTypeResponseDto } from '../../../api/models/consultation-type-response-dto';
+
+// Interfaces para configuraciones específicas por tipo de negocio
+interface FormField {
+  key: string;
+  label: string;
+  type: 'text' | 'textarea' | 'number' | 'time' | 'select' | 'checkbox';
+  required: boolean;
+  placeholder?: string;
+  options?: { label: string; value: string }[];
+  suffix?: string;
+  min?: number;
+  max?: number;
+}
+
+interface FormSection {
+  key: string;
+  title: string;
+  icon: string;
+  fields: FormField[];
+}
+
+interface BusinessTypeFormConfig {
+  businessTypeCode: string;
+  sections: FormSection[];
+}
+
+// Configuraciones específicas por tipo de negocio
+const BUSINESS_TYPE_CONFIGS: BusinessTypeFormConfig[] = [
+  {
+    businessTypeCode: 'medical',
+    sections: [
+      {
+        key: 'patient_info',
+        title: 'Información del Paciente',
+        icon: 'fa fa-user-md',
+        fields: []
+      },
+      {
+        key: 'consultation_info',
+        title: 'Información de la Consulta',
+        icon: 'fa fa-calendar-clock',
+        fields: [
+          { key: 'startTime', label: 'Hora de Inicio', type: 'time', required: false },
+          { key: 'endTime', label: 'Hora de Fin', type: 'time', required: false }
+        ]
+      },
+      {
+        key: 'symptoms',
+        title: 'Síntomas y Motivo de Consulta',
+        icon: 'fa fa-clipboard-list',
+        fields: [
+          { key: 'symptoms', label: 'Síntomas', type: 'textarea', required: false, placeholder: 'Describe los síntomas del paciente...' }
+        ]
+      },
+      {
+        key: 'vital_signs',
+        title: 'Examen Físico y Signos Vitales',
+        icon: 'fa fa-heartbeat',
+        fields: [
+          { key: 'temperature', label: 'Temperatura', type: 'number', required: false, suffix: '°C', min: 30, max: 45 },
+          { key: 'bloodPressure', label: 'Presión Arterial', type: 'text', required: false, placeholder: 'ej: 120/80' },
+          { key: 'heartRate', label: 'Frecuencia Cardíaca', type: 'number', required: false, suffix: 'bpm', min: 30, max: 200 },
+          { key: 'weight', label: 'Peso', type: 'number', required: false, suffix: 'kg', min: 0, max: 300 },
+          { key: 'height', label: 'Altura', type: 'number', required: false, suffix: 'm', min: 0, max: 3 }
+        ]
+      },
+      {
+        key: 'diagnosis_treatment',
+        title: 'Diagnóstico y Tratamiento',
+        icon: 'fa fa-stethoscope',
+        fields: [
+          { key: 'diagnosis', label: 'Diagnóstico', type: 'textarea', required: false, placeholder: 'Diagnóstico médico...' },
+          { key: 'treatment', label: 'Tratamiento', type: 'textarea', required: false, placeholder: 'Plan de tratamiento...' },
+          { key: 'recommendations', label: 'Recomendaciones', type: 'textarea', required: false, placeholder: 'Recomendaciones para el paciente...' }
+        ]
+      },
+      {
+        key: 'medications_allergies',
+        title: 'Medicamentos y Alergias',
+        icon: 'fa fa-pills',
+        fields: [
+          { key: 'medications', label: 'Medicamentos Actuales', type: 'textarea', required: false, placeholder: 'Lista de medicamentos...' },
+          { key: 'allergies', label: 'Alergias Conocidas', type: 'textarea', required: false, placeholder: 'Alergias del paciente...' }
+        ]
+      },
+      {
+        key: 'follow_up',
+        title: 'Seguimiento',
+        icon: 'fa fa-calendar-check',
+        fields: [
+          { key: 'followUpRequired', label: 'Requiere Seguimiento', type: 'checkbox', required: false },
+          { key: 'followUpDate', label: 'Fecha de Seguimiento', type: 'time', required: false },
+          { key: 'notes', label: 'Notas Adicionales', type: 'textarea', required: false, placeholder: 'Observaciones generales...' }
+        ]
+      }
+    ]
+  },
+  {
+    businessTypeCode: 'veterinary',
+    sections: [
+      {
+        key: 'pet_owner_info',
+        title: 'Información de la Mascota y Propietario',
+        icon: 'fa fa-paw',
+        fields: []
+      },
+      {
+        key: 'appointment_info',
+        title: 'Información de la Cita',
+        icon: 'fa fa-calendar',
+        fields: [
+          { key: 'startTime', label: 'Hora de Inicio', type: 'time', required: false },
+          { key: 'endTime', label: 'Hora de Fin', type: 'time', required: false }
+        ]
+      },
+      {
+        key: 'symptoms_behavior',
+        title: 'Síntomas y Comportamiento',
+        icon: 'fa fa-eye',
+        fields: [
+          { key: 'symptoms', label: 'Síntomas Observados', type: 'textarea', required: false, placeholder: 'Comportamiento, síntomas físicos, cambios observados...' }
+        ]
+      },
+      {
+        key: 'veterinary_exam',
+        title: 'Examen Veterinario',
+        icon: 'fa fa-stethoscope',
+        fields: [
+          { key: 'temperature', label: 'Temperatura Corporal', type: 'number', required: false, suffix: '°C', min: 35, max: 42 },
+          { key: 'heartRate', label: 'Frecuencia Cardíaca', type: 'number', required: false, suffix: 'bpm', min: 60, max: 220 },
+          { key: 'weight', label: 'Peso de la Mascota', type: 'number', required: false, suffix: 'kg', min: 0, max: 100 }
+        ]
+      },
+      {
+        key: 'diagnosis_treatment',
+        title: 'Diagnóstico Veterinario y Tratamiento',
+        icon: 'fa fa-user-md',
+        fields: [
+          { key: 'diagnosis', label: 'Diagnóstico Veterinario', type: 'textarea', required: false, placeholder: 'Diagnóstico profesional...' },
+          { key: 'treatment', label: 'Tratamiento Prescrito', type: 'textarea', required: false, placeholder: 'Medicación y cuidados...' },
+          { key: 'recommendations', label: 'Recomendaciones al Propietario', type: 'textarea', required: false, placeholder: 'Cuidados en casa...' }
+        ]
+      },
+      {
+        key: 'medications_follow_up',
+        title: 'Medicamentos y Seguimiento',
+        icon: 'fa fa-calendar-check',
+        fields: [
+          { key: 'medications', label: 'Medicamentos Prescritos', type: 'textarea', required: false, placeholder: 'Medicación veterinaria...' },
+          { key: 'followUpRequired', label: 'Requiere Control', type: 'checkbox', required: false },
+          { key: 'followUpDate', label: 'Fecha de Control', type: 'time', required: false },
+          { key: 'notes', label: 'Observaciones Veterinarias', type: 'textarea', required: false, placeholder: 'Notas del veterinario...' }
+        ]
+      }
+    ]
+  },
+  {
+    businessTypeCode: 'beauty',
+    sections: [
+      {
+        key: 'client_info',
+        title: 'Información del Cliente',
+        icon: 'fa fa-user',
+        fields: []
+      },
+      {
+        key: 'appointment_info',
+        title: 'Información de la Cita',
+        icon: 'fa fa-calendar',
+        fields: [
+          { key: 'startTime', label: 'Hora de Inicio', type: 'time', required: false },
+          { key: 'endTime', label: 'Hora de Fin', type: 'time', required: false }
+        ]
+      },
+      {
+        key: 'desired_treatment',
+        title: 'Tipo de Tratamiento Deseado',
+        icon: 'fa fa-spa',
+        fields: [
+          { key: 'symptoms', label: 'Tratamiento Solicitado', type: 'textarea', required: false, placeholder: 'Facial, masajes, tratamientos corporales...' }
+        ]
+      },
+      {
+        key: 'skin_evaluation',
+        title: 'Evaluación de Piel/Estado Actual',
+        icon: 'fa fa-search',
+        fields: [
+          { key: 'diagnosis', label: 'Evaluación de la Piel', type: 'textarea', required: false, placeholder: 'Tipo de piel, estado actual, problemas observados...' }
+        ]
+      },
+      {
+        key: 'treatment_plan',
+        title: 'Plan de Tratamiento y Cuidados',
+        icon: 'fa fa-list-check',
+        fields: [
+          { key: 'treatment', label: 'Tratamiento Realizado', type: 'textarea', required: false, placeholder: 'Productos utilizados, técnicas aplicadas...' },
+          { key: 'recommendations', label: 'Cuidados Post-Tratamiento', type: 'textarea', required: false, placeholder: 'Recomendaciones de cuidado en casa...' },
+          { key: 'followUpRequired', label: 'Requiere Seguimiento', type: 'checkbox', required: false },
+          { key: 'followUpDate', label: 'Próxima Cita Sugerida', type: 'time', required: false },
+          { key: 'notes', label: 'Notas del Tratamiento', type: 'textarea', required: false, placeholder: 'Observaciones generales...' }
+        ]
+      }
+    ]
+  },
+  {
+    businessTypeCode: 'hair_salon',
+    sections: [
+      {
+        key: 'client_info',
+        title: 'Información del Cliente',
+        icon: 'fa fa-user',
+        fields: []
+      },
+      {
+        key: 'appointment_info',
+        title: 'Información de la Cita',
+        icon: 'fa fa-calendar',
+        fields: [
+          { key: 'startTime', label: 'Hora de Inicio', type: 'time', required: false },
+          { key: 'endTime', label: 'Hora de Fin', type: 'time', required: false }
+        ]
+      },
+      {
+        key: 'hair_service',
+        title: 'Servicio de Peluquería',
+        icon: 'fa fa-cut',
+        fields: [
+          { key: 'symptoms', label: 'Servicio Solicitado', type: 'textarea', required: false, placeholder: 'Corte, color, peinado, tratamiento capilar...' }
+        ]
+      },
+      {
+        key: 'hair_condition',
+        title: 'Estado y Tipo de Cabello',
+        icon: 'fa fa-eye',
+        fields: [
+          { key: 'diagnosis', label: 'Análisis del Cabello', type: 'textarea', required: false, placeholder: 'Tipo de cabello, estado, tratamientos previos...' }
+        ]
+      },
+      {
+        key: 'treatment_result',
+        title: 'Tratamiento Realizado',
+        icon: 'fa fa-magic',
+        fields: [
+          { key: 'treatment', label: 'Servicio Realizado', type: 'textarea', required: false, placeholder: 'Productos utilizados, técnicas aplicadas...' },
+          { key: 'recommendations', label: 'Cuidados del Cabello', type: 'textarea', required: false, placeholder: 'Productos recomendados para el hogar...' },
+          { key: 'followUpRequired', label: 'Requiere Mantenimiento', type: 'checkbox', required: false },
+          { key: 'followUpDate', label: 'Próxima Cita Sugerida', type: 'time', required: false },
+          { key: 'notes', label: 'Observaciones', type: 'textarea', required: false, placeholder: 'Notas del estilista...' }
+        ]
+      }
+    ]
+  },
+  {
+    businessTypeCode: 'psychology',
+    sections: [
+      {
+        key: 'patient_info',
+        title: 'Información del Paciente',
+        icon: 'fa fa-user',
+        fields: []
+      },
+      {
+        key: 'session_info',
+        title: 'Información de la Sesión',
+        icon: 'fa fa-calendar',
+        fields: [
+          { key: 'startTime', label: 'Hora de Inicio', type: 'time', required: false },
+          { key: 'endTime', label: 'Hora de Fin', type: 'time', required: false }
+        ]
+      },
+      {
+        key: 'consultation_reason',
+        title: 'Motivo de Consulta Psicológica',
+        icon: 'fa fa-comments',
+        fields: [
+          { key: 'symptoms', label: 'Motivo de Consulta', type: 'textarea', required: false, placeholder: 'Situación actual, síntomas, problemas presentados...' }
+        ]
+      },
+      {
+        key: 'psychological_evaluation',
+        title: 'Evaluación Psicológica',
+        icon: 'fa fa-brain',
+        fields: [
+          { key: 'diagnosis', label: 'Observaciones Clínicas', type: 'textarea', required: false, placeholder: 'Estado mental, comportamiento, evaluación profesional...' }
+        ]
+      },
+      {
+        key: 'therapeutic_plan',
+        title: 'Plan Terapéutico',
+        icon: 'fa fa-route',
+        fields: [
+          { key: 'treatment', label: 'Intervención Terapéutica', type: 'textarea', required: false, placeholder: 'Técnicas aplicadas, ejercicios, estrategias...' },
+          { key: 'recommendations', label: 'Recomendaciones', type: 'textarea', required: false, placeholder: 'Tareas, ejercicios para casa...' },
+          { key: 'followUpRequired', label: 'Requiere Seguimiento', type: 'checkbox', required: false },
+          { key: 'followUpDate', label: 'Próxima Sesión', type: 'time', required: false },
+          { key: 'notes', label: 'Notas de la Sesión', type: 'textarea', required: false, placeholder: 'Observaciones profesionales confidenciales...' }
+        ]
+      }
+    ]
+  }
+];
 
 @Component({
   selector: 'app-consultation-form',
@@ -23,7 +326,6 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DialogModule,
     ButtonModule,
     InputTextModule,
     InputTextarea,
@@ -33,18 +335,9 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
     CheckboxModule
   ],
   template: `
-    <p-dialog 
-      [(visible)]="visible" 
-      [header]="isEdit ? 'Editar Consulta' : 'Nueva Consulta'"
-      [modal]="true"
-      [style]="{width: '900px'}"
-      [maximizable]="true"
-      [closable]="true"
-      (onHide)="onCancel()">
-      
       <form [formGroup]="consultationForm" (ngSubmit)="onSubmit()">
         <div class="form-grid">
-          <!-- Cliente -->
+          <!-- Cliente y Tipo de Consulta (Siempre visible) -->
           <div class="form-section">
             <h4><i class="fa fa-user"></i> Información del Cliente</h4>
             <div class="form-row">
@@ -55,7 +348,6 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                   [options]="clients()"
                   optionLabel="name"
                   optionValue="id"
-                  placeholder="Buscar paciente por nombre o email"
                   [filter]="true"
                   filterBy="name,email"
                   [showClear]="true"
@@ -74,10 +366,93 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                   </ng-template>
                 </p-dropdown>
               </div>
+              <div class="form-field">
+                <label>Tipo de Consulta *</label>
+                <p-dropdown
+                  formControlName="consultationTypeId"
+                  [options]="consultationTypes()"
+                  optionLabel="name"
+                  optionValue="id"                  
+                  [showClear]="false"
+                  class="w-full"
+                  (onChange)="onConsultationTypeChange($event)">
+                  <ng-template pTemplate="selectedItem" let-type>
+                    <div *ngIf="type">
+                      <strong>{{ type.name }}</strong>
+                      <small class="block">{{ type.description }}</small>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-type>
+                    <div>
+                      <strong>{{ type.name }}</strong>
+                      <small class="block">{{ type.description }}</small>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </div>
             </div>
           </div>
 
-          <!-- Información de la Consulta -->
+          <!-- Secciones dinámicas basadas en el tipo de negocio -->
+          @if (currentFormConfig()) {
+            @for (section of currentFormConfig()!.sections; track section.key) {
+              <div class="form-section">
+                <h4><i class="{{ section.icon }}"></i> {{ section.title }}</h4>
+                @if (section.fields.length > 0) {
+                  <div class="form-row">
+                    @for (field of section.fields; track field.key) {
+                      <div class="form-field" [class.full-width]="field.type === 'textarea'">
+                        <label>{{ field.label }}@if (field.required) { * }</label>
+                        
+                        @switch (field.type) {
+                          @case ('text') {
+                            <input 
+                              type="text" 
+                              pInputText 
+                              [formControlName]="field.key"                              
+                              class="w-full">
+                          }
+                          @case ('textarea') {
+                            <textarea 
+                              pInputTextarea 
+                              [formControlName]="field.key"                              
+                              rows="3"
+                              class="w-full">
+                            </textarea>
+                          }
+                          @case ('number') {
+                            <p-inputNumber
+                              [formControlName]="field.key"
+                              [minFractionDigits]="field.key === 'temperature' ? 1 : 0"
+                              [maxFractionDigits]="field.key === 'temperature' ? 1 : 0"
+                              [min]="field.min || 0"
+                              [max]="field.max"
+                              [suffix]="field.suffix ? ' ' + field.suffix : ''"
+                              class="w-full">
+                            </p-inputNumber>
+                          }
+                          @case ('time') {
+                            <input 
+                              type="time" 
+                              pInputText 
+                              [formControlName]="field.key"
+                              class="w-full">
+                          }
+                          @case ('checkbox') {
+                            <p-checkbox
+                              [formControlName]="field.key"
+                              [binary]="true">
+                            </p-checkbox>
+                          }
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          }
+        </div>
           <div class="form-section">
             <h4><i class="fa fa-clipboard-list"></i> Información de la Consulta</h4>
             <div class="form-row">
@@ -103,8 +478,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <label>Síntomas</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="symptoms"
-                  placeholder="Describe los síntomas del paciente..."
+                  formControlName="symptoms"                  
                   rows="3"
                   class="w-full">
                 </textarea>
@@ -133,8 +507,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <input 
                   type="text" 
                   pInputText 
-                  formControlName="bloodPressure"
-                  placeholder="120/80"
+                  formControlName="bloodPressure"                  
                   class="w-full">
               </div>
             </div>
@@ -184,8 +557,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <label>Diagnóstico</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="diagnosis"
-                  placeholder="Diagnóstico médico..."
+                  formControlName="diagnosis"                  
                   rows="3"
                   class="w-full">
                 </textarea>
@@ -196,8 +568,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <label>Tratamiento</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="treatment"
-                  placeholder="Tratamiento prescrito..."
+                  formControlName="treatment"                  
                   rows="3"
                   class="w-full">
                 </textarea>
@@ -208,8 +579,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <label>Recomendaciones</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="recommendations"
-                  placeholder="Recomendaciones para el paciente..."
+                  formControlName="recommendations"                  
                   rows="2"
                   class="w-full">
                 </textarea>
@@ -225,8 +595,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <label>Medicamentos</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="medications"
-                  placeholder="Lista de medicamentos (uno por línea)..."
+                  formControlName="medications"                  
                   rows="3"
                   class="w-full">
                 </textarea>
@@ -237,8 +606,7 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
                 <label>Alergias</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="allergies"
-                  placeholder="Lista de alergias conocidas (una por línea)..."
+                  formControlName="allergies"                  
                   rows="2"
                   class="w-full">
                 </textarea>
@@ -260,13 +628,13 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
             </div>
             <div class="form-row" *ngIf="consultationForm.get('followUpRequired')?.value">
               <div class="form-field">
-                <label>Fecha de Seguimiento</label>
+                <label>Fecha para próxima cita</label>
                 <p-calendar
                   formControlName="followUpDate"
                   [showIcon]="true"
                   [showButtonBar]="true"
                   dateFormat="dd/mm/yy"
-                  placeholder="Fecha para próxima cita"
+                  
                   class="w-full">
                 </p-calendar>
               </div>
@@ -278,39 +646,34 @@ import { CreateConsultationDto } from '../../../api/models/create-consultation-d
             <h4><i class="fa fa-sticky-note"></i> Notas Adicionales</h4>
             <div class="form-row">
               <div class="form-field full-width">
-                <label>Notas</label>
+                <label>Notas adicionales sobre la consulta</label>
                 <textarea 
                   pInputTextarea 
-                  formControlName="notes"
-                  placeholder="Notas adicionales sobre la consulta..."
+                  formControlName="notes"                  
                   rows="3"
                   class="w-full">
                 </textarea>
               </div>
             </div>
           </div>
-        </div>
       </form>
 
-      <ng-template pTemplate="footer">
-        <div class="dialog-footer">
-          <p-button 
-            label="Cancelar" 
-            icon="fa fa-times" 
-            [text]="true"
-            (onClick)="onCancel()"
-            class="p-button-secondary">
-          </p-button>
-          <p-button 
-            label="Guardar" 
-            icon="fa fa-save"
-            (onClick)="onSubmit()"
-            [loading]="saving()"
-            [disabled]="consultationForm.invalid">
-          </p-button>
-        </div>
-      </ng-template>
-    </p-dialog>
+      <div class="dialog-footer">
+        <p-button 
+          label="Cancelar" 
+          icon="fa fa-times" 
+          [text]="true"
+          (onClick)="onCancel()"
+          class="p-button-secondary">
+        </p-button>
+        <p-button 
+          label="Guardar" 
+          icon="fa fa-save"
+          (onClick)="onSubmit()"
+          [loading]="saving()"
+          [disabled]="consultationForm.invalid">
+        </p-button>
+      </div>
   `,
   styleUrls: ['./consultation-form.component.scss']
 })
@@ -322,13 +685,28 @@ export class ConsultationFormComponent implements OnInit {
 
   consultationForm: FormGroup;
   clients = signal<ClientResponseDto[]>([]);
+  consultationTypes = signal<ConsultationTypeResponseDto[]>([]);
+  selectedConsultationType = signal<ConsultationTypeResponseDto | null>(null);
   saving = signal(false);
   isEdit = false;
+
+  // Computed para obtener la configuración dinámica basada en el tipo seleccionado
+  currentFormConfig = computed(() => {
+    const selectedType = this.selectedConsultationType();
+    if (!selectedType) return null;
+    
+    // Obtener el business type code desde el tipo de consulta
+    const businessTypes = this.businessTypesService;
+    // Por ahora usaremos una configuración por defecto (medical)
+    // TODO: Obtener el business type real desde la consulta
+    return BUSINESS_TYPE_CONFIGS.find(config => config.businessTypeCode === 'medical') || null;
+  });
 
   constructor(
     private fb: FormBuilder,
     private consultationsService: ConsultationsService,
     private clientsService: ClientsService,
+    private businessTypesService: BusinessTypesService,
     private messageService: MessageService
   ) {
     this.consultationForm = this.createForm();
@@ -336,6 +714,7 @@ export class ConsultationFormComponent implements OnInit {
 
   ngOnInit() {
     this.loadClients();
+    this.loadConsultationTypes();
     if (this.consultation) {
       this.isEdit = true;
       this.populateForm();
@@ -345,6 +724,7 @@ export class ConsultationFormComponent implements OnInit {
   createForm(): FormGroup {
     return this.fb.group({
       clientId: [null, Validators.required],
+      consultationTypeId: [null, Validators.required],
       startTime: [''],
       endTime: [''],
       symptoms: [''],
@@ -378,6 +758,64 @@ export class ConsultationFormComponent implements OnInit {
         });
       }
     });
+  }
+
+  loadConsultationTypes() {
+    // Cargar todos los tipos de consulta disponibles
+    this.businessTypesService.businessTypeControllerFindAllBusinessTypes().subscribe({
+      next: (businessTypes) => {
+        const allTypes: ConsultationTypeResponseDto[] = [];
+        businessTypes.forEach(bt => {
+          if (bt.consultationTypes) {
+            allTypes.push(...bt.consultationTypes);
+          }
+        });
+        this.consultationTypes.set(allTypes);
+      },
+      error: (error) => {
+        console.error('Error loading consultation types:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cargar los tipos de consulta'
+        });
+      }
+    });
+  }
+
+  onConsultationTypeChange(event: any) {
+    const selectedType = this.consultationTypes().find(t => t.id === event.value);
+    this.selectedConsultationType.set(selectedType || null);
+    
+    // Aquí podríamos aplicar validaciones específicas basadas en el tipo
+    if (selectedType) {
+      this.applyTypeSpecificValidations(selectedType);
+    }
+  }
+
+  private applyTypeSpecificValidations(type: ConsultationTypeResponseDto) {
+    // Implementar validaciones específicas según el tipo de consulta
+    // Por ejemplo, para veterinaria podrían ser obligatorios ciertos campos
+    
+    const formControls = this.consultationForm.controls;
+    
+    // Reset all validations first
+    Object.keys(formControls).forEach(key => {
+      if (key !== 'clientId' && key !== 'consultationTypeId') {
+        formControls[key].clearValidators();
+        formControls[key].updateValueAndValidity();
+      }
+    });
+    
+    // Apply specific validations based on required fields
+    if (type.requiredFields) {
+      type.requiredFields.forEach(fieldName => {
+        if (formControls[fieldName]) {
+          formControls[fieldName].setValidators([Validators.required]);
+          formControls[fieldName].updateValueAndValidity();
+        }
+      });
+    }
   }
 
   populateForm() {

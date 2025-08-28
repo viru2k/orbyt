@@ -48,13 +48,31 @@ export class CalendarAvailabilityService {
     return this.http.get<CalendarAvailability>(`${this.baseUrl}/calendar-availability`, { params })
       .pipe(
         map(availability => {
-          // Guardar en cache
-          this.availabilityCache.set(cacheKey, availability);
-          this.loading$.next(false);
-          return availability;
+          // Validar que la respuesta tenga la estructura esperada
+          if (availability && typeof availability === 'object' && Array.isArray(availability.days)) {
+            // Guardar en cache
+            this.availabilityCache.set(cacheKey, availability);
+            this.loading$.next(false);
+            return availability;
+          } else {
+            console.warn('Calendar availability response has invalid structure:', availability);
+            this.loading$.next(false);
+            return null;
+          }
         }),
         catchError(error => {
-          console.error('Error loading calendar availability:', error);
+          // Log más detallado del error
+          if (error.status === 404) {
+            console.warn('Calendar availability endpoint not found (404). Feature disabled.');
+          } else if (error.status === 0) {
+            console.warn('Calendar availability service unavailable. Feature disabled.');
+          } else {
+            console.error('Error loading calendar availability:', {
+              status: error.status,
+              message: error.message,
+              url: error.url
+            });
+          }
           this.loading$.next(false);
           return of(null);
         })

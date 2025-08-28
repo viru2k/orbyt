@@ -1,3 +1,6 @@
+<!-- Breadcrumb superior -->
+<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+
 <orb-toolbar>
   <div body></div>
   <div footer>
@@ -20,7 +23,7 @@
       [tableHeaderActions]="productTableHeaderActions"
       dataKey="id"
       paginatorPosition="both"
-      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [rowsPerPageOptions]="[15, 30, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} productos"
     >
       <ng-template pTemplate="body" let-product let-columns="columns">
@@ -54,7 +57,7 @@
 <orb-dialog
   [visible]="displayProductModal()"
   [header]="isEditMode() ? 'Editar Producto' : 'Nuevo Producto'"
-  size="md"
+  size="sm"
   (onHide)="onCancelForm()"
 >
   @if (displayProductModal()) {

@@ -1,1 +1,49 @@
-/* No hay estilos específicos por ahora, pero el archivo se crea para futuras necesidades. */
+:host {
+  display: block;
+}
+
+// Footer button styling to match modal standards
+.flex.justify-between.mt-4 {
+  padding: var(--space-4, 1rem) 0 !important;
+  border-top: 1px solid var(--surface-border) !important;
+  margin-top: var(--space-6, 1.5rem) !important;
+  
+  .flex.gap-2 {
+    display: flex !important;
+    gap: var(--space-3, 0.75rem) !important;
+    
+    ::ng-deep orb-button {
+      .p-button {
+        &.p-button-secondary {
+          background: white !important;
+          border: 1px solid var(--surface-border) !important;
+          color: var(--text-color) !important;
+          
+          &:hover {
+            background: var(--surface-hover) !important;
+          }
+        }
+        
+        &:not(.p-button-secondary):not(.p-button-danger) {
+          background: var(--primary-color) !important;
+          border: 1px solid var(--primary-color) !important;
+          color: white !important;
+          
+          &:hover {
+            background: var(--primary-color-dark) !important;
+          }
+        }
+        
+        &.p-button-danger {
+          background: var(--red-500) !important;
+          border: 1px solid var(--red-500) !important;
+          color: white !important;
+          
+          &:hover {
+            background: var(--red-600) !important;
+          }
+        }
+      }
+    }
+  }
+}

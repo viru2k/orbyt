@@ -1,136 +1,127 @@
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  
-  <!-- Información del producto -->
-  <div class="mb-4 p-3 bg-blue-50 border border-blue-200 border-radius">
-    <div class="flex align-items-center gap-2">
-      <i class="pi pi-info-circle text-blue-600"></i>
-      <span class="font-semibold text-blue-800">Producto seleccionado:</span>
-      <span class="text-blue-700">{{ productName }}</span>
-      <span class="text-sm text-gray-500">(ID: {{ productId }})</span>
-    </div>
-  </div>
-
-  <!-- Tipo de movimiento -->
-  <orb-form-field>
-    <label for="type">Tipo de Movimiento *</label>
-    <p-dropdown
-      id="type"
-      formControlName="type"
-      [options]="movementTypes"
-      optionLabel="label"
-      optionValue="value"
-      placeholder="Selecciona el tipo de movimiento"
-      styleClass="w-full"
-    >
-      <ng-template pTemplate="selectedItem" let-selectedType>
-        <div class="flex align-items-center gap-2" *ngIf="selectedType">
-          <i [class]="selectedType.icon" class="text-gray-600"></i>
-          <span>{{ selectedType.label }}</span>
+  <div class="grid">
+    <!-- Información del producto -->
+    <div class="col-12">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-info-circle mr-2"></i>
+          <h3 class="m-0">Información del Producto</h3>
         </div>
-      </ng-template>
-      <ng-template pTemplate="item" let-typeOption>
-        <div class="flex flex-column gap-1 p-2">
-          <div class="flex align-items-center gap-2">
-            <i [class]="typeOption.icon" class="text-gray-600"></i>
-            <span class="font-semibold">{{ typeOption.label }}</span>
+        <div orbBody>
+          <div class="flex align-items-center gap-2 p-3 bg-blue-50 border border-blue-200 border-radius">
+            <i class="pi pi-box text-blue-600"></i>
+            <span class="font-semibold text-blue-800">Producto seleccionado:</span>
+            <span class="text-blue-700">{{ productName }}</span>
+            <span class="text-sm text-gray-500">(ID: {{ productId }})</span>
           </div>
-          <small class="text-gray-500">{{ typeOption.description }}</small>
         </div>
-      </ng-template>
-    </p-dropdown>
-    
-    @if (getSelectedTypeDescription()) {
-      <small class="text-gray-600 mt-1 block">{{ getSelectedTypeDescription() }}</small>
-    }
-    
-    @if (form.get('type')?.invalid && (form.get('type')?.dirty || form.get('type')?.touched)) {
-      <small class="text-red-500 mt-1 block">El tipo de movimiento es obligatorio</small>
-    }
-  </orb-form-field>
-
-  <!-- Cantidad -->
-  <orb-form-field>
-    <label for="quantity">Cantidad *</label>
-    <p-inputNumber
-      id="quantity"
-      formControlName="quantity"
-      [min]="1"
-      [step]="1"
-      mode="decimal"
-      [showButtons]="true"
-      buttonLayout="horizontal"
-      incrementButtonIcon="pi pi-plus"
-      decrementButtonIcon="pi pi-minus"
-      placeholder="Cantidad del movimiento"
-      styleClass="w-full"
-    />
-    
-    @if (form.get('quantity')?.invalid && (form.get('quantity')?.dirty || form.get('quantity')?.touched)) {
-      <small class="text-red-500 mt-1 block">
-        @if (form.get('quantity')?.errors?.['required']) {
-          La cantidad es obligatoria
-        }
-        @if (form.get('quantity')?.errors?.['min']) {
-          La cantidad debe ser mayor a 0
-        }
-      </small>
-    }
-  </orb-form-field>
-
-  <!-- Razón/Comentario -->
-  <orb-form-field>
-    <label for="reason">Razón o Comentario</label>
-    <textarea
-      id="reason"
-      formControlName="reason"
-      pInputTextarea
-      rows="3"
-      placeholder="Opcional: especifica la razón del movimiento..."
-      class="w-full"
-    ></textarea>
-    <small class="text-gray-600 mt-1 block">Campo opcional para agregar contexto al movimiento</small>
-  </orb-form-field>
-
-  <!-- Vista previa del efecto -->
-  @if (form.get('type')?.value) {
-    <div class="mt-4 p-3 border border-gray-200 border-radius">
-      <div class="flex align-items-center gap-2 mb-2">
-        <i class="pi pi-eye text-gray-600"></i>
-        <span class="font-semibold">Vista previa del efecto:</span>
-      </div>
-      
-      <div class="flex align-items-center gap-3">
-        <span class="text-gray-600">Stock del producto:</span>
-        
-        @if (form.get('type')?.value === 'in') {
-          <span class="text-green-600 font-semibold">
-            <i class="pi pi-arrow-up mr-1"></i>
-            Se incrementará en {{ form.get('quantity')?.value || 0 }} unidades
-          </span>
-        }
-        
-        @if (form.get('type')?.value === 'out' || form.get('type')?.value === 'usage') {
-          <span class="text-red-600 font-semibold">
-            <i class="pi pi-arrow-down mr-1"></i>
-            Se reducirá en {{ form.get('quantity')?.value || 0 }} unidades
-          </span>
-        }
-        
-        @if (form.get('type')?.value === 'adjustment') {
-          <span class="text-blue-600 font-semibold">
-            <i class="pi pi-sliders-h mr-1"></i>
-            Se ajustará según el valor especificado
-          </span>
-        }
-      </div>
+      </orb-card>
     </div>
-  }
 
-  <!-- Footer con botones -->
-  <orb-form-footer
-    [buttons]="footerActions"
-    alignment="right"
-    (actionClicked)="handleFooterAction($event)"
-  />
-  
+    <!-- Detalles del movimiento -->
+    <div class="col-12">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-arrows-h mr-2"></i>
+          <h3 class="m-0">Detalles del Movimiento</h3>
+        </div>
+        <div orbBody class="grid">
+          <!-- Tipo de movimiento -->
+          <div class="field col-12">
+            <orb-form-field label="Tipo de Movimiento" [required]="true">
+              <p-dropdown
+                id="type"
+                formControlName="type"
+                [options]="movementTypes"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Selecciona un tipo de movimiento"
+                styleClass="w-full"                
+              />
+              
+              @if (getSelectedTypeDescription()) {
+                <small class="text-gray-600 mt-1 block">{{ getSelectedTypeDescription() }}</small>
+              }
+            </orb-form-field>
+          </div>
+
+          <!-- Cantidad -->
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Cantidad" [required]="true">
+              <p-inputNumber
+                id="quantity"
+                formControlName="quantity"
+                [min]="1"
+                [step]="1"
+                mode="decimal"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                styleClass="w-full"
+              />
+            </orb-form-field>
+          </div>
+
+          <!-- Razón/Comentario -->
+          <div class="field col-12">
+            <orb-form-field label="Razón o Comentario">
+              <orb-text-area
+                formControlName="reason"
+                inputId="reason"
+                [rows]="3"
+                [autoResize]="true"
+              ></orb-text-area>
+              <small class="text-gray-600 mt-1 block">Campo opcional para agregar contexto al movimiento</small>
+            </orb-form-field>
+          </div>
+        </div>
+      </orb-card>
+    </div>
+
+    <!-- Vista previa del efecto -->
+    @if (form.get('type')?.value) {
+      <div class="col-12">
+        <orb-card>
+          <div orbHeader class="flex align-items-center">
+            <i class="pi pi-eye mr-2"></i>
+            <h3 class="m-0">Vista Previa del Efecto</h3>
+          </div>
+          <div orbBody>
+            <div class="flex align-items-center gap-3">
+              <span class="text-gray-600">Stock del producto:</span>
+              
+              @if (form.get('type')?.value === 'in') {
+                <span class="text-green-600 font-semibold">
+                  <i class="pi pi-arrow-up mr-1"></i>
+                  Se incrementará en {{ form.get('quantity')?.value || 0 }} unidades
+                </span>
+              }
+              
+              @if (form.get('type')?.value === 'out' || form.get('type')?.value === 'usage') {
+                <span class="text-red-600 font-semibold">
+                  <i class="pi pi-arrow-down mr-1"></i>
+                  Se reducirá en {{ form.get('quantity')?.value || 0 }} unidades
+                </span>
+              }
+              
+              @if (form.get('type')?.value === 'adjustment') {
+                <span class="text-blue-600 font-semibold">
+                  <i class="pi pi-sliders-h mr-1"></i>
+                  Se ajustará según el valor especificado
+                </span>
+              }
+            </div>
+          </div>
+        </orb-card>
+      </div>
+    }
+  </div>
 </form>
+
+<orb-form-footer
+  [buttons]="footerActions"
+  alignment="right"
+  (actionClicked)="handleFooterAction($event)"
+/>

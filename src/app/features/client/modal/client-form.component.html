@@ -1,71 +1,103 @@
-<form [formGroup]="form" (ngSubmit)="accept()" >
-  <div class="col-12">
-
-    <div class="field col-12">
-      <orb-form-field label="Nombre Completo" [required]="utilsService.isRequired(form.get('fullname'))">
-        <orb-text-input formControlName="fullname" inputId="fullname"></orb-text-input>
-      </orb-form-field>
-    </div>
-    <div class="field col-12 md:col-4">
-      <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))" >
-        <orb-text-input formControlName="name" inputId="name"></orb-text-input>
-      </orb-form-field>
-    </div>
-
-    <div class="field col-12 md:col-4">
-      <orb-form-field label="Apellidos" [required]="utilsService.isRequired(form.get('lastName'))" >
-        <orb-text-input formControlName="lastName" inputId="lastName"></orb-text-input>
-      </orb-form-field>
-    </div>
-
-    <div class="field col-12 md:col-6">
-      <orb-form-field label="Email" [required]="utilsService.isRequired(form.get('email'))" >
-        <orb-text-input formControlName="email" inputId="email" type="email"></orb-text-input>
-      </orb-form-field>
-    </div>
-
-    <div class="field col-12 md:col-6">
-      <orb-form-field label="Teléfono" [required]="utilsService.isRequired(form.get('phone'))" >
-        <orb-text-input formControlName="phone" inputId="phone" type="tel"></orb-text-input>
-      </orb-form-field>
-    </div>
-
-    <div class="field col-12 md:col-6">
-      <orb-form-field label="Dirección" [required]="utilsService.isRequired(form.get('address'))" >
-        <orb-text-input formControlName="address" inputId="address"></orb-text-input>
-      </orb-form-field>
+<form [formGroup]="form" (ngSubmit)="accept()">
+  <div class="grid">
+    <!-- Información Básica -->
+    <div class="col-12">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-user mr-2"></i>
+          <h3 class="m-0">Información Básica</h3>
+        </div>
+        <div orbBody class="grid">
+          <div class="field col-12">
+            <orb-form-field label="Nombre Completo" [required]="utilsService.isRequired(form.get('fullname'))">
+              <orb-text-input formControlName="fullname" inputId="fullname"></orb-text-input>
+            </orb-form-field>
+          </div>
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))">
+              <orb-text-input formControlName="name" inputId="name"></orb-text-input>
+            </orb-form-field>
+          </div>
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Apellidos" [required]="utilsService.isRequired(form.get('lastName'))">
+              <orb-text-input formControlName="lastName" inputId="lastName"></orb-text-input>
+            </orb-form-field>
+          </div>
+          <div class="field col-12">
+            <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))">
+              <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value" appendTo="body" [styleClass]="'display-block'"></orb-select>
+            </orb-form-field>
+          </div>
+        </div>
+      </orb-card>
     </div>
 
-    <div class="field col-12 md:col-6">
-         <orb-form-field label="Fecha de Nacimiento" [required]="utilsService.isRequired(form.get('birthDate'))" >
-   <orb-datepicker id="birthDateClientForm" formControlName="birthDate" [showIcon]="true" dateFormat="dd/mm/yy" dataType="date"  appendTo="body"></orb-datepicker>
-      </orb-form-field>
-      </div>
-    <div class="field col-12 md:col-6">
-          <orb-form-field label="Género" [required]="utilsService.isRequired(form.get('gender'))" >
-          <orb-select id="genderClientForm" [options]="genderOptions" formControlName="gender"  optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
-      </orb-form-field>
-      </div>
+    <!-- Información de Contacto -->
+    <div class="col-12">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-envelope mr-2"></i>
+          <h3 class="m-0">Información de Contacto</h3>
+        </div>
+        <div orbBody class="grid">
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Email" [required]="utilsService.isRequired(form.get('email'))">
+              <orb-text-input formControlName="email" inputId="email" type="email"></orb-text-input>
+            </orb-form-field>
+          </div>
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Teléfono" [required]="utilsService.isRequired(form.get('phone'))">
+              <orb-text-input formControlName="phone" inputId="phone" type="tel"></orb-text-input>
+            </orb-form-field>
+          </div>
+          <div class="field col-12">
+            <orb-form-field label="Dirección" [required]="utilsService.isRequired(form.get('address'))">
+              <orb-text-input formControlName="address" inputId="address"></orb-text-input>
+            </orb-form-field>
+          </div>
+        </div>
+      </orb-card>
+    </div>
 
+    <!-- Información Personal -->
+    <div class="col-12">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-id-card mr-2"></i>
+          <h3 class="m-0">Información Personal</h3>
+        </div>
+        <div orbBody class="grid">
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Fecha de Nacimiento" [required]="utilsService.isRequired(form.get('birthDate'))">
+              <orb-datepicker id="birthDateClientForm" formControlName="birthDate" [showIcon]="true" dateFormat="dd/mm/yy" dataType="date" appendTo="body"></orb-datepicker>
+            </orb-form-field>
+          </div>
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Género" [required]="utilsService.isRequired(form.get('gender'))">
+              <orb-select id="genderClientForm" [options]="genderOptions" formControlName="gender" optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
+            </orb-form-field>
+          </div>
+        </div>
+      </orb-card>
+    </div>
 
-   <div class="field col-12">
-          <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))" >
-      <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status"  optionLabel="label" optionValue="value" appendTo="body" [styleClass]="'display-block'"></orb-select>
-      </orb-form-field>
-      </div>
-
-
-
-    <div class="field col-12">
-      <orb-form-field label="Notas" [required]="utilsService.isRequired(form.get('notes'))" >
-        <orb-text-area formControlName="notes" inputId="notesClientForm" [rows]="3" [autoResize]="true"></orb-text-area>
-      </orb-form-field>
+    <!-- Notas Adicionales -->
+    <div class="col-12">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-comment mr-2"></i>
+          <h3 class="m-0">Notas Adicionales</h3>
+        </div>
+        <div orbBody>
+          <div class="field col-12">
+            <orb-form-field label="Notas" [required]="utilsService.isRequired(form.get('notes'))">
+              <orb-text-area formControlName="notes" inputId="notesClientForm" [rows]="3" [autoResize]="true"></orb-text-area>
+            </orb-form-field>
+          </div>
+        </div>
+      </orb-card>
     </div>
   </div>
-
-
-
-
 </form><orb-form-footer
     [buttons]="footerActions"
     alignment="right" (actionClicked)="handleFooterAction($event)"

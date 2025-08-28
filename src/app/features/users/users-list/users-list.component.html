@@ -1,66 +1,75 @@
-<orb-card>
-  <div orbHeader>
-    <h2>Gestión de Usuarios</h2>
+<!-- Breadcrumb superior -->
+<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+
+<orb-toolbar>
+  <div body></div>
+  <div footer>
+    <orb-button label="Nuevo Usuario" (click)="openUserEditModal()" />
   </div>
+</orb-toolbar>
 
-  <div orbBody>
-    <p-message *ngIf="error$ | async as error" severity="error" [text]="error"></p-message>
-
+<orb-card>
+  <div class="grid" orbBody>
     <orb-table
       [value]="(users$ | async) || []"
       [columns]="columns"
       [loading]="(loading$ | async) || false"
+      [totalRecords]="(users$ | async)?.length || 0"
+      [rows]="tableRows()"
+      [first]="tableFirst()"
+      [tableFeatures]="tableFeaturesConfig"
+      [globalFilterFields]="['email', 'fullName']"
       [rowActions]="actions"
-      [paginator]="true"
-      [rows]="10"
-      [rowsPerPageOptions]="[10, 25, 50]"
+      dataKey="id"
+      paginatorPosition="both"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
     >
       <ng-template pTemplate="body" let-user let-columns="columns">
         <tr>
           <td *ngFor="let col of columns">
             <ng-container [ngSwitch]="col.field">
+              
+              <!-- Caso para la columna de fecha: mostramos el valor formateado -->
+              <ng-container *ngSwitchCase="'createdAt'">
+                {{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              </ng-container>
+
+              <!-- Caso para la columna de estado activo: mostramos badge -->
+              <ng-container *ngSwitchCase="'active'">
+                <span [ngClass]="user.active ? 'status-active' : 'status-inactive'">
+                  {{ user.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </ng-container>
+
+              <!-- Caso para la columna de admin: mostramos Sí/No -->
+              <ng-container *ngSwitchCase="'isAdmin'">
+                {{ user.isAdmin ? 'Sí' : 'No' }}
+              </ng-container>
+
+              <!-- Caso para la columna de acciones: dibujamos los botones -->
               <ng-container *ngSwitchCase="'actions'">
                 <orb-actions-popover
                   [actions]="actions"
                   [itemData]="user">
                 </orb-actions-popover>
               </ng-container>
-              
+
+              <!-- Caso por defecto para todas las demás columnas -->
               <ng-container *ngSwitchDefault>
                 {{ user[col.field] }}
               </ng-container>
+              
             </ng-container>
           </td>
         </tr>
-      </ng-template>
-
-      <ng-template pTemplate="rowexpansion" let-user>
-        <div class="user-details-expansion">
-          <div class="detail-section">
-            <h3>Roles Asignados:</h3>
-            <div class="roles-container">
-              <p-tag *ngFor="let role of user.roles" [value]="role.name" severity="info"></p-tag>
-            </div>
-          </div>
-
-          <div class="detail-section">
-            <h3>Permisos por Rol:</h3>
-            <div *ngFor="let role of user.roles" class="role-permissions">
-              <h4>{{ role.name }}</h4>
-              <div class="permissions-container">
-                <p-chip *ngFor="let permission of role.permissions" [label]="permission.name"></p-chip>
-              </div>
-            </div>
-          </div>
-        </div>
       </ng-template>
     </orb-table>
   </div>
 </orb-card>
 
 <orb-dialog
-  [(visible)]="displayUserEditModal"
-  header="Editar Usuario"
+  [visible]="displayUserEditModal()"
+  [header]="isEditMode() ? 'Editar Usuario' : 'Nuevo Usuario'"
   size="lg"
   (onHide)="onUserFormCancel()"
 >
@@ -76,8 +85,10 @@
 
 <!-- Agenda Configuration Modal -->
 <app-agenda-config-modal
-  [(visible)]="displayAgendaConfigModal"
+  [visible]="displayAgendaConfigModal()"
   [professionalId]="selectedProfessionalId()"
   (close)="onAgendaConfigModalClose()"
 >
 </app-agenda-config-modal>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

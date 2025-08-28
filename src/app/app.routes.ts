@@ -92,6 +92,75 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'consultations/tokens',
+        loadComponent: () =>
+          import('./features/consultation-tokens/components/token-management/token-management.component').then(
+            (m) => m.TokenManagementComponent
+          ),
+      },
+      {
+        path: 'rewards',
+        children: [
+          {
+            path: '',
+            redirectTo: 'dashboard',
+            pathMatch: 'full'
+          },
+          {
+            path: 'dashboard',
+            loadComponent: () =>
+              import('./features/rewards/components/rewards-dashboard/rewards-dashboard.component').then(
+                (m) => m.RewardsDashboardComponent
+              ),
+          },
+          {
+            path: 'management',
+            loadComponent: () =>
+              import('./features/rewards/components/rewards-management/rewards-management.component').then(
+                (m) => m.RewardsManagementComponent
+              ),
+          },
+          {
+            path: 'client-view',
+            loadComponent: () =>
+              import('./features/rewards/components/client-rewards-view/client-rewards-view.component').then(
+                (m) => m.ClientRewardsViewComponent
+              ),
+          },
+        ],
+      },
+      {
+        path: 'email',
+        children: [
+          {
+            path: '',
+            redirectTo: 'dashboard',
+            pathMatch: 'full'
+          },
+          {
+            path: 'dashboard',
+            loadComponent: () =>
+              import('./features/email-management/components/email-dashboard/email-dashboard.component').then(
+                (m) => m.EmailDashboardComponent
+              ),
+          },
+          {
+            path: 'settings',
+            loadComponent: () =>
+              import('./features/email-management/components/email-settings/email-settings.component').then(
+                (m) => m.EmailSettingsComponent
+              ),
+          },
+          {
+            path: 'test',
+            loadComponent: () =>
+              import('./features/email-management/components/test-email/test-email.component').then(
+                (m) => m.TestEmailComponent
+              ),
+          },
+        ],
+      },
+      {
         path: 'invoices',
         loadComponent: () =>
           import('./features/invoices/invoices-list.component').then(
@@ -99,6 +168,14 @@ export const appRoutes: Route[] = [
           ),
       },
     ],
+  },
+  // Public routes (no authentication required)
+  {
+    path: 'consulta/:token',
+    loadComponent: () =>
+      import('./features/consultation-tokens/components/public-consultation/public-consultation.component').then(
+        (m) => m.PublicConsultationComponent
+      ),
   },
   { path: '**', redirectTo: 'dashboard' },
 ];

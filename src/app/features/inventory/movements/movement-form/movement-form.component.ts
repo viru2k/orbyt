@@ -12,7 +12,9 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
+import { SharedModule } from 'primeng/api';
 import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTextAreaComponent } from '@orb-components';
+import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 
@@ -35,8 +37,11 @@ export interface MovementTypeOption {
     InputNumberModule,
     CalendarModule,
     TextareaModule,
+    SharedModule,
     OrbFormFooterComponent,
     OrbFormFieldComponent,
+    OrbTextAreaComponent,
+    OrbCardComponent,
     ToastModule
   ],
   templateUrl: './movement-form.component.html',
@@ -54,7 +59,8 @@ export class MovementFormComponent implements OnInit {
 
   form!: FormGroup;
 
-  movementTypes: MovementTypeOption[] = [
+  get movementTypes(): MovementTypeOption[] {
+    return [
     {
       label: 'Entrada',
       value: 'in',
@@ -79,7 +85,8 @@ export class MovementFormComponent implements OnInit {
       icon: 'pi pi-cog',
       description: 'Consumo interno, muestras, degustación'
     }
-  ];
+    ];
+  }
 
   footerActions: FormButtonAction[] = [
     { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text', severity: 'secondary' },

@@ -3,13 +3,31 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent } from '@orb-components';
-import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { CheckboxModule } from 'primeng/checkbox';
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbCheckboxComponent } from '@orb-components';
+import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 
 // Store y DTOs
 import { UsersStore } from '@orb-stores';
-import { UserResponseDto, AdminUpdateUserDto, RoleDto } from '../../../api/model/models';
+import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../../api/model/models';
+
+// Interfaces temporales hasta que se actualicen los DTOs generados
+interface ExtendedCreateSubUserDto {
+  email: string;
+  password: string;
+  fullName?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  roles?: RoleResponseDto[];
+}
+
+interface ExtendedAdminUpdateUserDto {
+  email?: string;
+  fullName?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  roles?: RoleResponseDto[];
+}
 
 // Servicios y Modelos
 import { NotificationService } from '@orb-services';
@@ -22,13 +40,15 @@ import { NotificationSeverity, FormButtonAction } from '@orb-models';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    CheckboxModule,
     OrbTextInputComponent,
     OrbFormFieldComponent,
     OrbFormFooterComponent,
     OrbCardComponent,
-    CheckboxModule
+    OrbCheckboxComponent
   ],
   templateUrl: './user-edit-form.component.html',
+  styleUrls: ['./user-edit-form.component.scss'],
 })
 export class UserEditFormComponent implements OnInit {
   @Input() user?: UserResponseDto;
@@ -42,6 +62,9 @@ export class UserEditFormComponent implements OnInit {
   form!: FormGroup;
   availableRoles$ = this.usersStore.roles$;
   loading$ = this.usersStore.loading$;
+  isEditMode: boolean = false;
+  pizza: string[] = [];
+  selectedRoles: number[] = [];
 
   footerButtons: FormButtonAction[] = [
     {
@@ -60,48 +83,48 @@ export class UserEditFormComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.isEditMode = !!this.user;
     this.initForm();
     this.usersStore.loadRoles(); // Cargar roles disponibles
     
     if (this.user) {
+      const userRoles = this.user.roles?.map(role => role.id) || [];
       this.form.patchValue({
         fullName: this.user.fullName,
+        email: this.user.email,
         isActive: this.user.active,
-        roles: this.user.roles?.map(role => role.id) || []
+        isAdmin: this.user.isAdmin,
+        roles: userRoles
       });
+      this.selectedRoles = [...userRoles]; // Sincronizar con selectedRoles
     }
   }
 
   private initForm(): void {
-    this.form = this.fb.group({
+    const formConfig: any = {
       fullName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       isActive: [true, Validators.required],
-      roles: [[], Validators.required]
-    });
+      isAdmin: [false],
+      roles: [[]]
+    };
+
+    // Solo agregar password si es creación
+    if (!this.isEditMode) {
+      formConfig.password = ['', [Validators.required, Validators.minLength(6)]];
+    }
+
+    this.form = this.fb.group(formConfig);
   }
 
   isRoleSelected(roleId: number): boolean {
-    const selectedRoles = this.form.get('roles')?.value || [];
-    return selectedRoles.includes(roleId);
+    return this.selectedRoles.includes(roleId);
   }
 
-  onRoleChange(roleId: number, event: any): void {
-    const selectedRoles = this.form.get('roles')?.value || [];
-    
-    if (event.checked) {
-      // Añadir el rol si no está presente
-      if (!selectedRoles.includes(roleId)) {
-        selectedRoles.push(roleId);
-      }
-    } else {
-      // Remover el rol si está presente
-      const index = selectedRoles.indexOf(roleId);
-      if (index > -1) {
-        selectedRoles.splice(index, 1);
-      }
-    }
-    
+  onRolesChange(selectedRoles: number[]): void {
+    // Sincronizar con el FormControl
     this.form.get('roles')?.setValue(selectedRoles);
+    console.log('Roles seleccionados:', selectedRoles);
   }
   
   // Se llama con (ngSubmit) o desde el footer
@@ -112,29 +135,54 @@ export class UserEditFormComponent implements OnInit {
       return;
     }
 
-    if (!this.user?.id) {
-      this.notificationService.show(NotificationSeverity.Error, 'Error: ID de usuario no encontrado.');
-      return;
+    const formValue = this.form.getRawValue();
+
+    if (this.isEditMode) {
+      // MODO EDICIÓN
+      if (!this.user?.id) {
+        this.notificationService.show(NotificationSeverity.Error, 'Error: ID de usuario no encontrado.');
+        return;
+      }
+
+      // Obtener los roles completos basados en los IDs seleccionados
+      const selectedRoleIds: number[] = this.selectedRoles;
+      let selectedRolesFull: RoleResponseDto[] = [];
+      
+      this.usersStore.roles$.subscribe(roles => {
+        selectedRolesFull = roles.filter(role => selectedRoleIds.includes(role.id));
+      }).unsubscribe();
+
+      const updateDto: ExtendedAdminUpdateUserDto = {
+        email: formValue.email,
+        fullName: formValue.fullName,
+        isActive: formValue.isActive,
+        isAdmin: formValue.isAdmin,
+        roles: selectedRolesFull
+      };
+
+      this.usersStore.updateUser({ userId: this.user.id, updateData: updateDto });
+    } else {
+      // MODO CREACIÓN
+      // Obtener los roles completos para crear
+      const selectedRoleIds: number[] = this.selectedRoles;
+      let selectedRolesFull: RoleResponseDto[] = [];
+      
+      this.usersStore.roles$.subscribe(roles => {
+        selectedRolesFull = roles.filter(role => selectedRoleIds.includes(role.id));
+      }).unsubscribe();
+
+      const createDto: ExtendedCreateSubUserDto = {
+        email: formValue.email,
+        password: formValue.password,
+        fullName: formValue.fullName,
+        isActive: formValue.isActive,
+        isAdmin: formValue.isAdmin,
+        roles: selectedRolesFull
+      };
+
+      this.usersStore.createUser(createDto);
     }
 
-    // Preparar los datos para la actualización
-    const formValue = this.form.getRawValue();
-    
-    // Obtener los roles completos basados en los IDs seleccionados
-    const selectedRoleIds: number[] = formValue.roles;
-    let selectedRoles: RoleDto[] = [];
-    
-    this.usersStore.roles$.subscribe(roles => {
-      selectedRoles = roles.filter(role => selectedRoleIds.includes(role.id));
-    }).unsubscribe();
-
-    const updateDto: AdminUpdateUserDto = {
-      fullName: formValue.fullName,
-      isActive: formValue.isActive,
-      roles: selectedRoles
-    };
-
-    this.usersStore.updateUser({ userId: this.user.id, updateData: updateDto });
     this.saved.emit();
   }
 

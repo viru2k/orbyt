@@ -1,3 +1,6 @@
+<!-- Breadcrumb superior -->
+<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+
 <orb-toolbar>
   <div body>
     <!-- Este espacio puede ser para filtros avanzados en el futuro -->
@@ -22,7 +25,6 @@
       [tableHeaderActions]="clientTableHeaderActions"
       dataKey="id"
       paginatorPosition="both"
-      [rowsPerPageOptions]="[5, 10, 20, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
     >
       <!--

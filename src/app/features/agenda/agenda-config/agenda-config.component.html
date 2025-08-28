@@ -1,3 +1,6 @@
+<!-- Breadcrumb superior -->
+<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+
 <!-- Header Card -->
 <orb-card>
   <div orbHeader>
@@ -57,19 +60,19 @@
         <h4>🕐 Horario de Trabajo</h4>
         <div class="form-row-group">
           <div class="form-field">
-            <orb-label for="workStart" text="Hora de Inicio"></orb-label>
+            <orb-label for="workStart" text="Hora de Inicio *"></orb-label>
             <input 
               id="workStart"
-              type="time" 
+              type="time"
               formControlName="workStart"
               class="form-control"
             />
           </div>
           <div class="form-field">
-            <orb-label for="workEnd" text="Hora de Fin"></orb-label>
+            <orb-label for="workEnd" text="Hora de Fin *"></orb-label>
             <input 
               id="workEnd"
-              type="time" 
+              type="time"
               formControlName="workEnd"
               class="form-control"
             />
@@ -100,29 +103,21 @@
         
         <div class="switch-group">
           <div class="switch-item">
-            <input 
-              type="checkbox"
-              id="allowOverbooking"
+            <orb-checkbox
+              inputId="allowOverbooking"
               formControlName="allowOverbooking"
-              class="config-checkbox"
+              label="Permitir Sobreturnos"
             />
-            <div class="switch-content">
-              <label for="allowOverbooking" class="switch-label">Permitir Sobreturnos</label>
-              <p class="switch-description">Permite agendar turnos adicionales en horarios ocupados</p>
-            </div>
+            <p class="switch-description">Permite agendar turnos adicionales en horarios ocupados</p>
           </div>
 
           <div class="switch-item">
-            <input 
-              type="checkbox"
-              id="allowBookingOnBlockedDays"
+            <orb-checkbox
+              inputId="allowBookingOnBlockedDays"
               formControlName="allowBookingOnBlockedDays"
-              class="config-checkbox"
+              label="Reservas en Días Bloqueados"
             />
-            <div class="switch-content">
-              <label for="allowBookingOnBlockedDays" class="switch-label">Reservas en Días Bloqueados</label>
-              <p class="switch-description">Permite agendar en días marcados como no laborales</p>
-            </div>
+            <p class="switch-description">Permite agendar en días marcados como no laborales</p>
           </div>
         </div>
       </div>

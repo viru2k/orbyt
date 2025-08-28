@@ -1,25 +1,5 @@
-:host ::ng-deep {
-  .p-dropdown {
-    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
-      padding: 0.5rem 0.75rem;
-      
-      &:hover {
-        background-color: #f8f9fa;
-      }
-    }
-  }
-  
-  .p-inputnumber {
-    width: 100%;
-    
-    .p-inputnumber-input {
-      text-align: center;
-    }
-    
-    .p-inputnumber-button {
-      width: 2.5rem;
-    }
-  }
+:host {
+  display: block;
   
   .border-radius {
     border-radius: 0.5rem;
@@ -43,5 +23,16 @@
   
   .text-blue-800 {
     color: #1e40af;
+  }
+}
+
+:host ::ng-deep {
+  .p-inputnumber {
+    width: 100%;
+    
+    .p-inputnumber-input {
+      text-align: center;
+      width: 100%;
+    }
   }
 }

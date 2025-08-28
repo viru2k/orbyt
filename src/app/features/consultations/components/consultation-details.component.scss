@@ -316,6 +316,101 @@
   }
 }
 
+// Tokens section styles
+.tokens-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
+
+.token-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4, 1rem);
+  background: rgba(variables.$gray-50, 0.5);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+  border-radius: var(--radius-lg, 0.75rem);
+  transition: all variables.$transition-fast;
+
+  &:hover {
+    background: rgba(variables.$gray-50, 0.8);
+    border-color: rgba(variables.$primary-blue, 0.3);
+  }
+
+  .token-info {
+    flex: 1;
+    
+    .token-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3, 0.75rem);
+      margin-bottom: var(--space-2, 0.5rem);
+      
+      .token-code {
+        font-family: 'Courier New', monospace;
+        font-size: variables.$text-sm;
+        font-weight: variables.$font-semibold;
+        color: variables.$gray-800;
+        background: rgba(variables.$primary-blue, 0.1);
+        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        border-radius: var(--radius-sm, 0.25rem);
+      }
+      
+      .token-status {
+        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        border-radius: var(--radius-full, 9999px);
+        font-size: variables.$text-xs;
+        font-weight: variables.$font-medium;
+        text-transform: uppercase;
+        
+        &.status-active {
+          background: rgba(#10b981, 0.1);
+          color: #10b981;
+        }
+        
+        &.status-used {
+          background: rgba(variables.$primary-blue, 0.1);
+          color: variables.$primary-blue;
+        }
+        
+        &.status-expired {
+          background: rgba(#f59e0b, 0.1);
+          color: #f59e0b;
+        }
+        
+        &.status-revoked {
+          background: rgba(#ef4444, 0.1);
+          color: #ef4444;
+        }
+      }
+    }
+    
+    .token-details {
+      display: flex;
+      gap: var(--space-4, 1rem);
+      flex-wrap: wrap;
+      
+      .token-detail {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1, 0.25rem);
+        font-size: variables.$text-xs;
+        color: variables.$gray-600;
+        
+        i {
+          color: variables.$primary-blue;
+        }
+      }
+    }
+  }
+  
+  .token-actions {
+    display: flex;
+    gap: var(--space-2, 0.5rem);
+  }
+}
+
 // Print styles
 @media print {
   .consultation-header .header-actions {
@@ -326,9 +421,30 @@
     padding: 0;
   }
 
+  .tokens-list {
+    display: none; // Hide tokens in print
+  }
+
   :global(.orb-card) {
     box-shadow: none;
     border: 1px solid #ddd;
     page-break-inside: avoid;
+  }
+}
+
+// Responsive tokens
+@media (max-width: 768px) {
+  .token-item {
+    flex-direction: column;
+    gap: var(--space-3, 0.75rem);
+    text-align: center;
+    
+    .token-details {
+      justify-content: center;
+    }
+    
+    .token-actions {
+      justify-content: center;
+    }
   }
 }

@@ -1,7 +1,28 @@
+<!-- Breadcrumb superior -->
+<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+
 <!-- Card de filtros horizontal compacto -->
 <orb-card class="compact-card">
   <div orbHeader>
-    <h3 class="compact-title">Agenda - Filtros</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 class="compact-title">{{ 'AGENDA.FILTERS' | translate }}</h3>
+      <div style="display: flex; gap: 0.5rem;">
+        <orb-button
+          icon="pi pi-calendar"
+          [title]="'AGENDA.VIEW_CALENDAR' | translate"
+          [severity]="currentView === 'calendar' ? 'primary' : 'secondary'"
+          (click)="toggleView('calendar')"
+          size="small"
+        ></orb-button>
+        <orb-button
+          icon="pi pi-table"
+          [title]="'AGENDA.VIEW_TABLE' | translate"
+          [severity]="currentView === 'table' ? 'primary' : 'secondary'"
+          (click)="toggleView('table')"
+          size="small"
+        ></orb-button>
+      </div>
+    </div>
   </div>
   
   <div orbBody>
@@ -10,9 +31,8 @@
       <div class="filters-row">
         <!-- Filtro de Profesionales -->
         <div class="filter-item">
-          <label class="compact-label">Profesionales</label>
-          <orb-multiselect
-            placeholder="Todos"
+          <label class="compact-label">{{ 'AGENDA.PROFESSIONALS' | translate }}</label>
+          <orb-multiselect            
             [options]="(usersStore.users$ | async) || []"
             optionLabel="fullName"
             [ngModel]="selectedUsers"
@@ -20,15 +40,15 @@
             styleClass="compact-multiselect"
             display="chip"
             [maxSelectedLabels]="1"
-            selectedItemsLabel="{0} sel."
+            [selectedItemsLabel]="'{0} ' + ('AGENDA.SELECTED' | translate)"
           ></orb-multiselect>
         </div>
 
         <!-- Filtro de Estados -->
         <div class="filter-item">
-          <label class="compact-label">Estados</label>
+          <label class="compact-label">{{ 'AGENDA.STATES' | translate }}</label>
           <orb-multiselect
-            placeholder="Todos"
+            [placeholder]="'AGENDA.ALL' | translate"
             [options]="statusOptions"
             optionLabel="label"
             optionValue="value"
@@ -37,13 +57,13 @@
             styleClass="compact-multiselect"
             display="chip"
             [maxSelectedLabels]="1"
-            selectedItemsLabel="{0} sel."
+            [selectedItemsLabel]="'{0} ' + ('AGENDA.SELECTED' | translate)"
           ></orb-multiselect>
         </div>
 
         <!-- DateRangePicker -->
         <div class="filter-item filter-date">
-          <label class="compact-label">Rango de fechas</label>
+          <label class="compact-label">{{ 'AGENDA.DATE_RANGE' | translate }}</label>
           <orb-date-range-picker
             [config]="dateRangePickerConfig"
             [ngModel]="selectedDateRange"
@@ -53,10 +73,9 @@
 
         <!-- Filtro individual de fecha y hora (para crear cita) -->
         <div class="filter-item">
-          <label class="compact-label">Fecha específica</label>
+          <label class="compact-label">{{ 'AGENDA.SPECIFIC_DATE' | translate }}</label>
           <orb-datepicker
-            mode="datetime"
-            placeholder="dd/mm/yyyy hh:mm"
+            mode="datetime"            
             [ngModel]="selectedDateFrom"
             (ngModelChange)="onDateFromChange($event)"
             styleClass="compact-datepicker"
@@ -67,14 +86,14 @@
         <div class="filter-actions">
           <orb-button
             icon="pi pi-search"
-            title="Buscar"
+            [title]="'AGENDA.SEARCH' | translate"
             (click)="performSearch()"
             size="small"
             styleClass="compact-btn"
           ></orb-button>
           <orb-button
             icon="pi pi-calendar"
-            title="Hoy"
+            [title]="'AGENDA.TODAY' | translate"
             severity="secondary"
             (click)="resetToToday()"
             size="small"
@@ -82,7 +101,7 @@
           ></orb-button>
           <orb-button
             icon="pi pi-plus"
-            title="Nuevo Turno"
+            [title]="'AGENDA.NEW_APPOINTMENT' | translate"
             severity="success"
             (click)="openNewAppointmentDialog()"
             size="small"
@@ -90,7 +109,7 @@
           ></orb-button>
           <orb-button
             icon="pi pi-info-circle"
-            title="Información"
+            [title]="'AGENDA.INFORMATION' | translate"
             severity="info"
             (click)="op.toggle($event)"
             size="small"
@@ -105,7 +124,7 @@
   </div>
 </orb-card>
 
-<!-- Card del calendario con estados -->
+<!-- Card del calendario/tabla con estados -->
 <orb-card style="margin-top: 1rem;">
   <div orbBody>
     <!-- Estados del resumen en la parte superior -->
@@ -113,25 +132,74 @@
       <div class="summary-tags">
         <div *ngFor="let item of summary | keyvalue">
           <ng-container *ngIf="item.key !== 'total' && item.key !== 'byDate'">
-            <p-tag [style]="{ backgroundColor: getColor(getKeyAsString(item.key)) }" [value]="getTranslatedStatus(getKeyAsString(item.key)) + ': ' + item.value"></p-tag>
+            <orb-tag 
+              [value]="getTranslatedStatus(getKeyAsString(item.key)) + ': ' + item.value"
+              [severity]="getStatusSeverity(SUMMARY_KEY_MAP[getKeyAsString(item.key)])"
+            ></orb-tag>
           </ng-container>
         </div>
       </div>
     </div>
     
-    <!-- Modern Calendar (Angular Calendar - Free) -->
-    <orb-modern-calendar
-      [events]="(agendaStore.calendarEvents$ | async) || []"
-      [slotDuration]="(agendaStore.agendaConfig$ | async)?.slotDurationMinutes || 30"
-      (datesSetRange)="handleDatesSet($event)"
-      (eventClick)="handleEventClick($event)"
-      (dateSelect)="handleDateSelect($event)"
-      (eventDrop)="handleEventDrop($event)"
-    ></orb-modern-calendar>
+    <!-- Vista Calendario -->
+    <div *ngIf="currentView === 'calendar'">
+      <orb-modern-calendar
+        [events]="(agendaStore.calendarEvents$ | async) || []"
+        [slotDuration]="(agendaStore.agendaConfig$ | async)?.slotDurationMinutes || 30"
+        (datesSetRange)="handleDatesSet($event)"
+        (eventClick)="handleEventClick($event)"
+        (dateSelect)="handleDateSelect($event)"
+        (eventDrop)="handleEventDrop($event)"
+      ></orb-modern-calendar>
+    </div>
+    
+    <!-- Vista Tabla -->
+    <div *ngIf="currentView === 'table'">
+      <orb-table
+        [value]="(agendaStore.appointments$ | async) || []"
+        [columns]="tableColumns"
+        [loading]="(agendaStore.loading$ | async) || false"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <ng-template pTemplate="body" let-appointment let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">
+              <ng-container [ngSwitch]="col.field">
+                <span *ngSwitchCase="'startDateTime'">
+                  {{ appointment.startDateTime | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+                <span *ngSwitchCase="'clientName'">{{ appointment.clientName }}</span>
+                <span *ngSwitchCase="'professionalName'">{{ appointment.professionalName }}</span>
+                <span *ngSwitchCase="'status'">
+                  <orb-tag 
+                    [value]="getTranslatedStatus(appointment.status)"
+                    [severity]="getStatusSeverity(appointment.status)"
+                    size="small"
+                  ></orb-tag>
+                </span>
+                <span *ngSwitchCase="'duration'">{{ appointment.durationMinutes }} min</span>
+                <div *ngSwitchCase="'actions'" style="display: flex; gap: 0.5rem;">
+                  <orb-button
+                    icon="pi pi-pencil"
+                    [title]="'AGENDA.EDIT' | translate"
+                    size="small"
+                    severity="info"
+                    (click)="editAppointment(appointment)"
+                  ></orb-button>
+                </div>
+                <span *ngSwitchDefault>{{ appointment[col.field] }}</span>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+      </orb-table>
+    </div>
   </div>
 </orb-card>
 
-<orb-dialog [(visible)]="displayAgendaForm" (onHide)="onFormClose()" [header]="selectedAppointment ? 'Editar Turno' : 'Nuevo Turno'">
+<orb-dialog [(visible)]="displayAgendaForm" (onHide)="onFormClose()" [header]="selectedAppointment ? ('AGENDA.EDIT_APPOINTMENT' | translate) : ('AGENDA.NEW_APPOINTMENT' | translate)">
   <app-agenda-form
     *ngIf="displayAgendaForm"
     [appointment]="selectedAppointment"

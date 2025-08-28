@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 // PrimeNG Components
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 // Orb Components
 import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent } from '@orb-components';
@@ -24,6 +25,7 @@ import { FormButtonAction } from '@orb-models';
     ReactiveFormsModule,
     ToastModule,
     DividerModule,
+    InputNumberModule,
     OrbTextInputComponent,
     OrbFormFieldComponent,
     OrbFormFooterComponent,
@@ -69,15 +71,21 @@ import { FormButtonAction } from '@orb-models';
           <h3><i class="fa fa-credit-card"></i> Información del Pago</h3>
           
           <div class="form-grid">
-            <orb-form-field label="Monto a Pagar *" [required]="true">
-              <input
-                type="number"
-                class="orb-input"
+            <orb-form-field label="Monto a Pagar" [required]="true">
+              <p-inputNumber
                 formControlName="amount"
                 [min]="0.01"
                 [max]="invoice.remainingAmount"
-                step="0.01"
-                placeholder="0.00">
+                [step]="0.01"
+                mode="currency"
+                currency="EUR"
+                locale="es-ES"
+                [showButtons]="true"
+                buttonLayout="horizontal"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                styleClass="w-full"
+                />
               <small class="help-text">
                 Máximo disponible: {{ invoice.remainingAmount | currency:'EUR':'symbol':'1.2-2' }}
               </small>
@@ -87,7 +95,7 @@ import { FormButtonAction } from '@orb-models';
               <orb-select
                 formControlName="paymentMethod"
                 [options]="paymentMethodOptions"
-                placeholder="Método de pago utilizado"
+                
                 optionLabel="label"
                 optionValue="value">
               </orb-select>
@@ -96,7 +104,7 @@ import { FormButtonAction } from '@orb-models';
             <orb-form-field label="Fecha de Pago">
               <orb-datepicker
                 formControlName="paymentDate"
-                placeholder="Fecha del pago recibido"
+                
                 [showIcon]="true"
                 dateFormat="dd/mm/yy"
                 [maxDate]="today">
@@ -106,7 +114,7 @@ import { FormButtonAction } from '@orb-models';
             <orb-form-field label="Referencia de Pago">
               <orb-text-input
                 formControlName="paymentReference"
-                placeholder="Número de referencia, transacción, etc.">
+                >
               </orb-text-input>
             </orb-form-field>
           </div>
@@ -114,7 +122,7 @@ import { FormButtonAction } from '@orb-models';
           <orb-form-field label="Notas del Pago">
             <orb-text-area
               formControlName="paymentNotes"
-              placeholder="Notas adicionales sobre el pago"
+              
               [rows]="3">
             </orb-text-area>
           </orb-form-field>

@@ -64,15 +64,15 @@
             
             <form *ngIf="isEditMode" [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="edit-form">
               <div class="form-row">
-                <orb-form-field label="Nombre">
+                <orb-form-field>
                   <orb-text-input formControlName="name" placeholder="Tu nombre"></orb-text-input>
                 </orb-form-field>
-                <orb-form-field label="Apellidos">
+                <orb-form-field>
                   <orb-text-input formControlName="lastName" placeholder="Tus apellidos"></orb-text-input>
                 </orb-form-field>
               </div>
-              <orb-form-field label="Email">
-                <orb-text-input formControlName="email" type="email"  placeholder="Tu correo electrónico"></orb-text-input>
+              <orb-form-field>
+                <orb-text-input formControlName="email" type="email" placeholder="Tu correo electrónico"></orb-text-input>
               </orb-form-field>
               
               <orb-form-footer 

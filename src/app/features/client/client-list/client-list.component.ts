@@ -6,7 +6,7 @@ import { ClientStore } from '@orb-stores';
 import { ClientResponseDto } from '../../../api/model/models';
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent } from '@orb-components';
 import { ClientFormComponent } from '../modal/client-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -23,11 +23,11 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
     OrbCardComponent,
     OrbTableComponent,
     OrbButtonComponent,
+    OrbBreadcrumbComponent,
     OrbDialogComponent,
     ClientFormComponent,
     ConfirmDialogModule,
     OrbToolbarComponent,
-    OrbButtonComponent,
     OrbActionsPopoverComponent
   ],
   templateUrl: './client-list.component.html',
@@ -38,6 +38,11 @@ export class ClientListComponent implements OnInit {
   readonly clientStore = inject(ClientStore);
   private confirmationService = inject(ConfirmationService);
   private notificationService = inject(NotificationService);
+
+  breadcrumbItems = [
+    { label: 'Gestión' },
+    { label: 'Clientes' }
+  ];
 
   displayClientModal = signal(false);
   clientToEdit = signal<ClientResponseDto | undefined>(undefined);

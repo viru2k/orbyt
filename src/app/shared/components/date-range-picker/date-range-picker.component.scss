@@ -1,17 +1,32 @@
 .orb-date-range-picker {
   width: 100%;
+  max-width: 20rem; // Ancho máximo para rangos
   
   .p-calendar {
     width: 100%;
     
     .p-inputtext {
-      min-width: 220px !important; // Ancho mínimo para mostrar rangos completos
-      width: 100% !important;
+      min-width: 20rem !important; // Ancho mínimo para mostrar rangos completos
+      width: 20rem !important; // Ancho fijo para rangos
+      text-align: center !important; // Centrar el texto
+    }
+    
+    &.range-datepicker {
+      .p-inputtext {
+        min-width: 20rem !important;
+        width: 20rem !important;
+      }
+      
+      .p-datepicker {
+        min-width: 20rem !important;
+        width: 20rem !important;
+      }
     }
     
     &.with-availability {
       .p-datepicker {
-        min-width: 350px;
+        min-width: 20rem !important;
+        width: 20rem !important;
       }
     }
   }
@@ -148,22 +163,74 @@
     border-bottom: 1px solid #dee2e6;
     border-radius: 4px 4px 0 0;
     
-    .p-button {
-      font-size: 0.75rem !important;
-      padding: 0.2rem 0.4rem !important;
-      height: auto !important;
-      min-width: auto !important;
+    .header-btn {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid;
       
-      &.p-button-text {
-        color: #6c757d !important;
+      &.primary-btn {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+        font-weight: 600;
         
         &:hover {
-          background-color: #e9ecef !important;
-          color: #495057 !important;
+          background: #0056b3;
+          border-color: #0056b3;
         }
+      }
+      
+      &.secondary-btn {
+        background: transparent;
+        color: #6c757d;
+        border-color: #6c757d;
         
-        &:focus {
-          box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25) !important;
+        &:hover {
+          background: #e9ecef;
+          color: #495057;
+        }
+      }
+      
+      &.danger-btn {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+        font-weight: 600;
+        
+        &:hover {
+          background: #c82333;
+          border-color: #c82333;
+        }
+      }
+    }
+    
+    // Sección de confirmación en el header
+    .calendar-confirm-section {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #dee2e6;
+      display: flex;
+      justify-content: center;
+      
+      .header-confirm-btn {
+        background: #28a745;
+        color: white;
+        border: 2px solid #28a745;
+        font-weight: 600;
+        padding: 6px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 13px;
+        
+        &:hover {
+          background: #218838;
+          border-color: #218838;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
         }
       }
     }
@@ -173,20 +240,73 @@
   .calendar-footer-actions {
     display: flex;
     justify-content: center;
-    padding: 8px;
+    align-items: center;
+    padding: 12px;
     background-color: #f8f9fa;
     border-top: 1px solid #dee2e6;
     border-radius: 0 0 4px 4px;
     
-    .p-button {
-      font-size: 14px !important;
-      padding: 0.4rem 1rem !important;
-      height: 32px !important;
-      min-width: 100px !important;
+    .footer-confirm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 24px;
+      height: 36px;
+      min-width: 120px;
+      background-color: #007bff;
+      color: white;
+      border: 2px solid #007bff;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      
+      &:hover:not(:disabled) {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+      }
       
       &:disabled {
-        opacity: 0.5 !important;
-        cursor: not-allowed !important;
+        background-color: #9ca3af;
+        border-color: #9ca3af;
+        color: #f9fafb;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+
+  // Botón de confirmación externo
+  .external-confirm-actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    
+    .external-confirm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 24px;
+      height: 36px;
+      min-width: 120px;
+      background-color: #007bff;
+      color: white;
+      border: 2px solid #007bff;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      
+      &:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
       }
     }
   }
@@ -262,8 +382,68 @@
   }
 }
 
+// Aislamiento específico para evitar conflictos en agenda
+.orb-isolated-calendar {
+  // Resetear cualquier interferencia de CSS externo
+  &.p-calendar {
+    // Aislar el component completamente
+    isolation: isolate;
+    
+    // Evitar que otros estilos interfieran
+    .p-inputtext {
+      isolation: isolate;
+    }
+    
+    .p-datepicker {
+      isolation: isolate;
+      
+      // Forzar z-index específico
+      z-index: 1050 !important;
+    }
+  }
+}
+
 // Override PrimeNG styles
 :host ::ng-deep {
+  // Fix para el ancho del input range
+  .p-calendar.range-datepicker {
+    .p-inputtext {
+      min-width: 20rem !important;
+      width: 20rem !important;
+      text-align: center !important;
+    }
+    
+    .p-datepicker {
+      min-width: 20rem !important;
+      width: 20rem !important;
+    }
+  }
+  
+  // Fix para z-index del calendario
+  .p-calendar {
+    .p-datepicker {
+      z-index: 1000 !important; // Menor que modales pero mayor que elementos normales
+    }
+  }
+  
+  // También aplicar a los overlays globalmente
+  .p-calendar-panel {
+    z-index: 1000 !important;
+  }
+  
+  // Forzar que el range picker NO se cierre automáticamente
+  .p-calendar[selectionmode="range"] {
+    .p-datepicker {
+      // Asegurar que tenga botones de confirmación
+      .p-datepicker-buttonbar {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 0.5rem !important;
+        border-top: 1px solid var(--surface-border) !important;
+      }
+    }
+  }
+  
   .p-datepicker {
     .p-datepicker-calendar {
       .p-datepicker-other-month {
@@ -303,6 +483,118 @@
         
         &:enabled:hover {
           background-color: var(--surface-hover) !important;
+        }
+      }
+    }
+    
+    // Fix para botones del footer
+    .calendar-footer-actions {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      padding: 12px !important;
+      background-color: #f8f9fa !important;
+      border-top: 1px solid #dee2e6 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      
+      .p-button {
+        font-size: 14px !important;
+        padding: 0.5rem 1.5rem !important;
+        height: auto !important;
+        min-height: 36px !important;
+        min-width: 120px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 4px !important;
+        border: 1px solid transparent !important;
+        background: #007bff !important;
+        color: white !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        
+        &:hover:not(:disabled) {
+          background: #0056b3 !important;
+          transform: translateY(-1px) !important;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        &:disabled {
+          opacity: 0.5 !important;
+          cursor: not-allowed !important;
+          background: #6c757d !important;
+          
+          &:hover {
+            transform: none !important;
+            box-shadow: none !important;
+          }
+        }
+      }
+    }
+  }
+  
+  // Asegurar que los templates de PrimeNG funcionen correctamente
+  .p-datepicker {
+    // Footer personalizado
+    .p-datepicker-buttonbar {
+      display: none !important; // Ocultar el footer por defecto de PrimeNG
+    }
+    
+    [pTemplate="footer"] {
+      .calendar-footer-actions {
+        display: flex !important;
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 12px !important;
+        background-color: #f8f9fa !important;
+        border-top: 1px solid #dee2e6 !important;
+        
+        .custom-confirm-btn {
+          // Resetear todos los estilos
+          all: unset !important;
+          
+          // Aplicar estilos propios
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          padding: 8px 24px !important;
+          height: 36px !important;
+          min-width: 120px !important;
+          background-color: #007bff !important;
+          color: white !important;
+          border: 2px solid #007bff !important;
+          border-radius: 6px !important;
+          font-family: system-ui, -apple-system, sans-serif !important;
+          font-size: 14px !important;
+          font-weight: 600 !important;
+          line-height: 1 !important;
+          text-align: center !important;
+          cursor: pointer !important;
+          box-sizing: border-box !important;
+          transition: all 0.15s ease !important;
+          user-select: none !important;
+          
+          &:hover:not([disabled]) {
+            background-color: #0056b3 !important;
+            border-color: #0056b3 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3) !important;
+          }
+          
+          &:active:not([disabled]) {
+            transform: translateY(0) !important;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2) !important;
+          }
+          
+          &[disabled] {
+            background-color: #9ca3af !important;
+            border-color: #9ca3af !important;
+            color: #f9fafb !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+          }
         }
       }
     }

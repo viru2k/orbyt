@@ -505,3 +505,83 @@
     }
   }
 }
+
+/* Enhanced dialog styling */
+::ng-deep orb-dialog {
+  .p-dialog {
+    border-radius: var(--radius-xl, 1rem) !important;
+    box-shadow: var(--shadow-xl) !important;
+    overflow: hidden !important;
+    
+    .p-dialog-header {
+      background: var(--gradient-primary) !important;
+      color: white !important;
+      border: none !important;
+      padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) !important;
+      
+      .p-dialog-title {
+        color: white !important;
+        font-weight: var(--font-semibold, 600) !important;
+        font-size: var(--text-xl, 1.25rem) !important;
+      }
+      
+      .p-dialog-header-close {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: var(--radius-md, 0.5rem) !important;
+        width: 32px !important;
+        height: 32px !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.3) !important;
+        }
+      }
+    }
+    
+    .p-dialog-content {
+      background: var(--background-primary) !important;
+      border: none !important;
+      padding: var(--space-6, 1.5rem) !important;
+    }
+
+    .p-dialog-footer {
+      background: var(--background-primary) !important;
+      border: none !important;
+      padding: var(--space-4, 1rem) var(--space-6, 1.5rem) !important;
+      display: flex !important;
+      justify-content: flex-end !important;
+      gap: var(--space-3, 0.75rem) !important;
+      
+      .p-button {
+        &.p-button-secondary {
+          background: white !important;
+          border: 1px solid var(--surface-border) !important;
+          color: var(--text-color) !important;
+          
+          &:hover {
+            background: var(--surface-hover) !important;
+          }
+        }
+        
+        &.p-button-primary {
+          background: var(--primary-color) !important;
+          border: 1px solid var(--primary-color) !important;
+          
+          &:hover {
+            background: var(--primary-color-dark) !important;
+          }
+        }
+        
+        &.p-button-danger {
+          background: var(--red-500) !important;
+          border: 1px solid var(--red-500) !important;
+          
+          &:hover {
+            background: var(--red-600) !important;
+          }
+        }
+      }
+    }
+  }
+}

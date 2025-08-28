@@ -95,18 +95,30 @@
   }
 }
 
-/* PrimeNG InputGroup Styling */
-::ng-deep .p-inputgroup {
+/* PrimeNG InputGroup Styling - Fixed alignment */
+::ng-deep .login-card .p-inputgroup {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 48px !important; // Altura fija para mejor alineación
+  
   .p-inputgroup-addon {
     background: var(--gray-50) !important;
     border: 2px solid var(--border-color) !important;
     border-right: none !important;
     border-radius: var(--radius-lg, 0.75rem) 0 0 var(--radius-lg, 0.75rem) !important;
-    padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+    padding: 0 !important; // Remover padding para centrar mejor
+    width: 48px !important; // Ancho fijo
+    height: 48px !important; // Altura fija
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     
     i {
       color: var(--text-muted) !important;
       font-size: variables.$text-base !important;
+      line-height: 1 !important;
+      margin: 0 !important;
     }
   }
   
@@ -114,11 +126,14 @@
     border: 2px solid var(--border-color) !important;
     border-left: none !important;
     border-radius: 0 var(--radius-lg, 0.75rem) var(--radius-lg, 0.75rem) 0 !important;
-    padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
+    padding: 0 var(--space-4, 1rem) !important; // Solo padding horizontal
     font-size: variables.$text-base !important;
     font-family: variables.$font-family !important;
     transition: var(--transition-fast) !important;
     background: white !important;
+    height: 48px !important; // Altura fija
+    line-height: normal !important;
+    flex: 1 !important;
     
     &:focus {
       outline: none !important;

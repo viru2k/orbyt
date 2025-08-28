@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent } from '@orb-components';
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent, OrbCardComponent } from '@orb-components';
 
 // Store y DTOs
 import { ClientStore } from '@orb-stores';
@@ -24,7 +24,8 @@ import { NotificationSeverity, FormButtonAction } from '@orb-models';
     OrbFormFooterComponent,
     OrbSelectComponent,
     OrbDatepickerComponent,
-    OrbTextAreaComponent
+    OrbTextAreaComponent,
+    OrbCardComponent
   ],
   templateUrl: './client-form.component.html',
 })
