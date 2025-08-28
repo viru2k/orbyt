@@ -17,7 +17,9 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { componentStateReducer } from './store/component-state.reducer';
 import { providePrimeNG } from 'primeng/config';
 import Lara from '@primeng/themes/lara';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 
@@ -63,7 +65,14 @@ export const appConfig: ApplicationConfig = {
 }
   }),
 
-  provideTranslateService(),
+  provideTranslateService({
+    loader: {
+      provide: TranslateLoader,
+      useFactory: (http: HttpClient) => new TranslateHttpLoader(http, '/assets/i18n/', '.json'),
+      deps: [HttpClient]
+    },
+    defaultLanguage: 'es'
+  }),
   {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,

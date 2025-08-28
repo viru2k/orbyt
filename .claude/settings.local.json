@@ -32,13 +32,19 @@
       "WebSearch",
       "Bash(rg:*)",
       "Bash(true)",
-      "Bash(git stash push:*)"
+      "Bash(git stash push:*)",
+      "Read(/C:\\repositories\\api-backoffice/**)",
+      "Read(/C:\\repositories\\api-backoffice/**)",
+      "Bash(git ls-tree:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "additionalDirectories": [
       "C:\\repositories\\orbyt-repositories\\orbyt",
       "C:\\repositories\\orbyt-repositories",
-      "C:\\c\\repositories\\orbyt-repositories"
+      "C:\\c\\repositories\\orbyt-repositories",
+      "C:\\repositories\\api-backoffice",
+      "C:\\repositories"
     ]
   }
 }
