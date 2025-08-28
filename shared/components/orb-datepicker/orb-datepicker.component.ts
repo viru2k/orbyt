@@ -182,9 +182,31 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   }
 
   get isInvalid(): boolean {
-    return !!(this.ngControl?.invalid && (this.ngControl?.touched || this.ngControl?.dirty));
+    try {
+      const control = this.ngControl;
+      if (!control) return false;
+      
+      const isInvalidState = !!control.invalid;
+      const isTouchedOrDirty = !!(control.touched || control.dirty);
+      
+      return isInvalidState && isTouchedOrDirty;
+    } catch (error) {
+      console.warn('Error checking isInvalid state:', error);
+      return false;
+    }
   }
   
+  public getComponentClasses(): string {
+    try {
+      let classes = this.styleClass || '';
+      // Agregar clase aislada para evitar conflictos en agenda
+      classes += ' orb-isolated-datepicker';
+      return classes.trim();
+    } catch (error) {
+      return 'orb-isolated-datepicker';
+    }
+  }
+
   /**
    * Calcula el ancho apropiado basado en el tipo de calendario
    */

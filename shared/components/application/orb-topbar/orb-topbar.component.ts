@@ -4,11 +4,12 @@ import { AuthStore } from '@orb-stores';
 import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { OrbThemeToggleComponent } from '../orb-theme-toggle/orb-theme-toggle.component';
+import { OrbLanguageSelectorComponent } from '../../orb-language-selector/orb-language-selector.component';
 
 @Component({
   selector: 'orb-topbar',
   standalone: true,
-    imports: [PanelMenuModule, OrbThemeToggleComponent],
+    imports: [PanelMenuModule, OrbThemeToggleComponent, OrbLanguageSelectorComponent],
   templateUrl: './orb-topbar.component.html',
   styleUrls: ['./orb-topbar.component.scss']
 })
@@ -27,18 +28,7 @@ export class OrbTopbarComponent {
     {
       label: 'Agenda',
       icon: 'pi pi-fw pi-calendar',
-      items: [
-        {
-          label: 'Calendario',
-          icon: 'pi pi-fw pi-calendar-plus',
-          command: () => this.router.navigate(['/agenda'])
-        },
-        {
-          label: 'Crear cita',
-          icon: 'pi pi-fw pi-user-plus',
-          command: () => this.router.navigate(['/agenda/create'])
-        }
-      ]
+      command: () => this.router.navigate(['/agenda'])
     },
     // ---------- Stock ----------
     {

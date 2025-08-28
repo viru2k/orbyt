@@ -47,6 +47,49 @@
     border-color: #e2e8f0;
   }
   
+  // Appointment status specific variants
+  &.orb-tag--pending {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+  
+  &.orb-tag--confirmed {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+  }
+  
+  &.orb-tag--in-progress {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+  }
+  
+  &.orb-tag--completed {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+  }
+  
+  &.orb-tag--cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+  
+  &.orb-tag--no-show {
+    background: #fdf2f8;
+    color: #be185d;
+    border-color: #fbcfe8;
+  }
+  
+  &.orb-tag--rescheduled {
+    background: #f3e8ff;
+    color: #7c3aed;
+    border-color: #e9d5ff;
+  }
+  
   // Hover effects
   &:hover {
     transform: scale(1.05);

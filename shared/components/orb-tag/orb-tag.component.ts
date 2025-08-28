@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <span 
       class="orb-tag" 
-      [class]="'orb-tag--' + severity"
+      [class]="getTagClasses()"
       [style.background]="backgroundColor || undefined"
       [style.color]="textColor || undefined">
       <i *ngIf="icon" [class]="icon" class="orb-tag-icon"></i>
@@ -19,8 +19,17 @@ import { CommonModule } from '@angular/common';
 })
 export class OrbTagComponent {
   @Input() value: string = '';
-  @Input() severity: 'success' | 'info' | 'warning' | 'danger' | 'secondary' = 'info';
+  @Input() severity: 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show' | 'rescheduled' = 'info';
   @Input() icon?: string;
   @Input() backgroundColor?: string;
   @Input() textColor?: string;
+  @Input() size: 'small' | 'normal' | 'large' = 'normal';
+
+  getTagClasses(): string {
+    let classes = `orb-tag--${this.severity}`;
+    if (this.size !== 'normal') {
+      classes += ` orb-tag--${this.size}`;
+    }
+    return classes;
+  }
 }

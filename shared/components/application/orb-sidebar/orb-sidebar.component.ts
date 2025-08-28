@@ -90,18 +90,7 @@ export class OrbSidebarComponent implements OnInit {
       menuItems.push({
         label: 'Agenda',
         icon: 'fas fa-calendar-alt',
-        items: [
-          {
-            label: 'Calendario',
-            icon: 'fas fa-calendar-check',
-            routerLink: ['/agenda']
-          },
-          {
-            label: 'Crear cita',
-            icon: 'fas fa-calendar-plus',
-            routerLink: ['/agenda/schedule']
-          },
-        ]
+         routerLink: ['/agenda']      
       });
     }
 
@@ -117,6 +106,52 @@ export class OrbSidebarComponent implements OnInit {
       label: 'Facturación',
       icon: 'fas fa-file-invoice-dollar',
       command: () => this.router.navigate(['/invoices'])
+    });
+
+    // Sistema de Recompensas
+    menuItems.push({
+      label: 'Recompensas',
+      icon: 'fas fa-gift',
+      items: [
+        {
+          label: 'Dashboard',
+          icon: 'fas fa-chart-line',
+          command: () => this.router.navigate(['/rewards/dashboard'])
+        },
+        {
+          label: 'Gestión de Programas',
+          icon: 'fas fa-cog',
+          command: () => this.router.navigate(['/rewards/management'])
+        },
+        {
+          label: 'Vista del Cliente',
+          icon: 'fas fa-user-star',
+          command: () => this.router.navigate(['/rewards/client-view'])
+        }
+      ]
+    });
+
+    // Sistema de Emails
+    menuItems.push({
+      label: 'Emails',
+      icon: 'fas fa-envelope',
+      items: [
+        {
+          label: 'Dashboard',
+          icon: 'fas fa-chart-bar',
+          command: () => this.router.navigate(['/email/dashboard'])
+        },
+        {
+          label: 'Configuración',
+          icon: 'fas fa-cog',
+          command: () => this.router.navigate(['/email/settings'])
+        },
+        {
+          label: 'Probar Email',
+          icon: 'fas fa-paper-plane',
+          command: () => this.router.navigate(['/email/test'])
+        }
+      ]
     });
 
     // Inventario section (always visible for now)

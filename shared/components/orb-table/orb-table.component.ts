@@ -53,7 +53,7 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
 
   // Entradas existentes
   @Input() totalRecords: number = 0;
-  @Input() rows: number = 10;
+  @Input() rows: number = 15;
   @Input() first: number = 0;
   @Input() paginator: boolean = true;
   @Input() sortable: boolean = true;
@@ -61,7 +61,8 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
   @Input() selection?: T | T[];
   @Input() dataKey: string = 'id'; // dataKey sigue siendo string, T ahora lo permite
   @Input() caption?: string;
- @Input() rowsPerPageOptions = [5, 10, 20, 50];
+  @Input() rowsPerPageOptions = [15, 30, 50];
+  @Input() currentPageReportTemplate: string = 'Mostrando {first} a {last} de {totalRecords} registros';
 
   // Salidas de eventos
   @Output() onPageChange = new EventEmitter<TablePageEvent>();

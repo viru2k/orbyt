@@ -8,6 +8,28 @@
   display: block;
 }
 
+// Aislamiento específico para evitar conflictos en agenda
+.orb-isolated-datepicker {
+  // Resetear cualquier interferencia de CSS externo
+  &.p-calendar,
+  &.p-datepicker {
+    // Aislar el component completamente
+    isolation: isolate;
+    
+    // Evitar que otros estilos interfieran
+    .p-inputtext {
+      isolation: isolate;
+    }
+    
+    .p-datepicker {
+      isolation: isolate;
+      
+      // Forzar z-index específico
+      z-index: 1050 !important;
+    }
+  }
+}
+
 // Estilos para los diferentes tamaños de calendario
 ::ng-deep {
   .p-datepicker {
