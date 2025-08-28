@@ -1,0 +1,155 @@
+.public-consultation-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.consultation-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.consultation-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  .brand-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    
+    .brand-logo {
+      height: 60px;
+      margin-bottom: 1rem;
+    }
+    
+    .brand-title {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin: 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.consultation-content {
+  .p-card {
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1rem 1rem 0 0;
+    
+    h2 {
+      font-weight: 600;
+      color: #334155;
+    }
+  }
+}
+
+.consultation-info {
+  padding: 1.5rem;
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      
+      label {
+        font-weight: 600;
+        color: #64748b;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+      }
+      
+      .value {
+        font-size: 1rem;
+        color: #334155;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.consultation-footer {
+  margin-top: 2rem;
+  text-align: center;
+  
+  .footer-content {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    
+    @media (max-width: 640px) {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .security-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .public-consultation-container {
+    padding: 1rem;
+  }
+  
+  .consultation-header .brand-section {
+    padding: 1.5rem;
+    
+    .brand-title {
+      font-size: 2rem;
+    }
+  }
+  
+  .consultation-info {
+    padding: 1rem;
+    
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Utility classes
+.text-gray-500 { color: #6b7280; }
+.text-gray-600 { color: #4b5563; }
+.text-green-600 { color: #16a34a; }
+.text-blue-600 { color: #2563eb; }

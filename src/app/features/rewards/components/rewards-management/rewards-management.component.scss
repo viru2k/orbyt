@@ -1,0 +1,358 @@
+@use '../../../../../styles/variables';
+@use '../../../../../styles/mixins';
+
+.rewards-management-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--space-6, 1.5rem);
+}
+
+.header-subtitle {
+  margin: var(--space-2, 0.5rem) 0 0 0;
+  color: variables.$gray-600;
+  font-size: variables.$text-sm;
+  font-weight: variables.$font-normal;
+}
+
+// Management Header
+.management-header {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--space-3, 0.75rem);
+  margin-bottom: var(--space-6, 1.5rem);
+  padding-bottom: var(--space-4, 1rem);
+  border-bottom: 1px solid variables.$gray-200;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    :global(.orb-button) {
+      width: 100%;
+    }
+  }
+}
+
+// Table Styles
+.program-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+
+  strong {
+    color: variables.$gray-800;
+    font-weight: variables.$font-semibold;
+  }
+
+  small {
+    color: variables.$gray-500;
+    font-size: variables.$text-xs;
+    line-height: 1.4;
+  }
+}
+
+.dates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+
+  small {
+    color: variables.$gray-600;
+    font-size: variables.$text-xs;
+    white-space: nowrap;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-2, 0.5rem);
+  align-items: center;
+}
+
+.text-muted {
+  color: variables.$gray-500 !important;
+}
+
+// Empty state
+:global(.p-table) {
+  .empty-message {
+    text-align: center;
+    padding: var(--space-8, 2rem);
+    color: variables.$gray-500;
+
+    i {
+      display: block;
+      margin-bottom: var(--space-4, 1rem);
+      color: variables.$gray-400;
+    }
+
+    p {
+      margin: var(--space-4, 1rem) 0;
+      font-size: variables.$text-base;
+      color: variables.$gray-600;
+    }
+  }
+}
+
+// Dialog Styles
+:global(.program-dialog) {
+  width: 90vw;
+  max-width: 800px;
+
+  .p-dialog-content {
+    padding: var(--space-6, 1.5rem);
+  }
+
+  .p-dialog-footer {
+    background: var(--background-primary) !important;
+    border: none !important;
+    padding: var(--space-4, 1rem) var(--space-6, 1.5rem) !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: var(--space-3, 0.75rem) !important;
+    
+    .p-button {
+      &.p-button-secondary {
+        background: white !important;
+        border: 1px solid var(--surface-border) !important;
+        color: var(--text-color) !important;
+        
+        &:hover {
+          background: var(--surface-hover) !important;
+        }
+      }
+      
+      &.p-button-primary {
+        background: var(--primary-color) !important;
+        border: 1px solid var(--primary-color) !important;
+        
+        &:hover {
+          background: var(--primary-color-dark) !important;
+        }
+      }
+      
+      &.p-button-danger {
+        background: var(--red-500) !important;
+        border: 1px solid var(--red-500) !important;
+        
+        &:hover {
+          background: var(--red-600) !important;
+        }
+      }
+    }
+  }
+
+  .p-dialog-header {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) !important;
+
+    .p-dialog-title {
+      color: white !important;
+      font-weight: var(--font-semibold, 600) !important;
+      font-size: var(--text-xl, 1.25rem) !important;
+    }
+    
+    .p-dialog-header-close {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border: none !important;
+      color: white !important;
+      border-radius: var(--radius-md, 0.5rem) !important;
+      width: 32px !important;
+      height: 32px !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+      }
+    }
+  }
+}
+
+// Form Styles
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6, 1.5rem);
+}
+
+.form-section {
+  h4 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    color: variables.$gray-800;
+    font-size: variables.$text-base;
+    font-weight: variables.$font-semibold;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    &::before {
+      content: '';
+      width: 3px;
+      height: 20px;
+      background: variables.$primary-blue;
+      border-radius: 2px;
+    }
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4, 1rem);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 0.5rem);
+
+  label {
+    color: variables.$gray-700;
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: var(--space-3, 0.75rem);
+    border: 1px solid variables.$gray-300;
+    border-radius: var(--radius-md, 0.5rem);
+    font-size: variables.$text-sm;
+    font-family: variables.$font-family;
+    transition: border-color variables.$transition-fast, box-shadow variables.$transition-fast;
+    background: white;
+
+    &:focus {
+      outline: none;
+      border-color: variables.$primary-blue;
+      box-shadow: 0 0 0 3px rgba(variables.$primary-blue, 0.1);
+    }
+
+    &::placeholder {
+      color: variables.$gray-400;
+    }
+
+    &:disabled {
+      background: variables.$gray-50;
+      color: variables.$gray-400;
+      cursor: not-allowed;
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  .field-error {
+    color: #ef4444;
+    font-size: variables.$text-xs;
+    font-weight: variables.$font-medium;
+  }
+
+  .field-help {
+    color: variables.$gray-500;
+    font-size: variables.$text-xs;
+    line-height: 1.4;
+  }
+}
+
+// PrimeNG Component Overrides
+:global(.form-field) {
+  .p-dropdown,
+  .p-inputnumber,
+  .p-calendar {
+    width: 100%;
+
+    .p-inputtext {
+      width: 100%;
+    }
+  }
+
+  .p-dropdown {
+    .p-dropdown-label {
+      padding: var(--space-3, 0.75rem);
+    }
+  }
+
+  .p-inputnumber {
+    .p-inputtext {
+      padding: var(--space-3, 0.75rem);
+    }
+  }
+
+  .p-calendar {
+    .p-inputtext {
+      padding: var(--space-3, 0.75rem);
+    }
+  }
+}
+
+// Dialog Actions
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3, 0.75rem);
+  margin-top: var(--space-6, 1.5rem);
+  padding-top: var(--space-4, 1rem);
+  border-top: 1px solid variables.$gray-200;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    :global(.orb-button) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .rewards-management-container {
+    padding: var(--space-4, 1rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .rewards-management-container {
+    padding: var(--space-3, 0.75rem);
+  }
+
+  :global(.p-table) {
+    .p-datatable-wrapper {
+      overflow-x: auto;
+    }
+  }
+}
+
+// Animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:global(.orb-card),
+:global(.program-dialog) {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Dark Mode Support
+@media (prefers-color-scheme: dark) {
+  .form-field .form-control {
+    background: var(--surface-card, white);
+    border-color: var(--surface-border, variables.$gray-300);
+    color: var(--text-color, variables.$gray-900);
+  }
+}

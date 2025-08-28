@@ -1,0 +1,379 @@
+@use '../../../../../styles/variables';
+@use '../../../../../styles/mixins';
+
+.email-settings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-6, 1.5rem);
+  
+  :global(.orb-card) {
+    margin-bottom: var(--space-6, 1.5rem);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.header-subtitle {
+  margin: var(--space-2, 0.5rem) 0 0 0;
+  color: variables.$gray-600;
+  font-size: variables.$text-sm;
+  font-weight: variables.$font-normal;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8, 2rem);
+  text-align: center;
+  
+  p {
+    margin-top: var(--space-4, 1rem);
+    color: variables.$gray-600;
+    font-size: variables.$text-sm;
+  }
+}
+
+// Form Sections
+.form-section {
+  margin-bottom: var(--space-8, 2rem);
+  
+  h3 {
+    margin: 0 0 var(--space-4, 1rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+    
+    i {
+      color: variables.$primary-blue;
+    }
+  }
+}
+
+// Provider Selection Grid
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.provider-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4, 1rem);
+  border: 2px solid variables.$gray-200;
+  border-radius: var(--radius-lg, 0.75rem);
+  background: white;
+  cursor: pointer;
+  transition: all variables.$transition-fast;
+  min-height: 80px;
+  
+  &:hover {
+    border-color: variables.$primary-blue;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(variables.$primary-blue, 0.15);
+  }
+  
+  &.selected {
+    border-color: variables.$primary-blue;
+    background: rgba(variables.$primary-blue, 0.05);
+    
+    i {
+      color: variables.$primary-blue;
+    }
+    
+    span {
+      color: variables.$primary-blue;
+      font-weight: variables.$font-semibold;
+    }
+  }
+  
+  i {
+    font-size: variables.$text-xl;
+    margin-bottom: var(--space-2, 0.5rem);
+    color: variables.$gray-600;
+    transition: color variables.$transition-fast;
+  }
+  
+  span {
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+    color: variables.$gray-700;
+    text-align: center;
+    transition: color variables.$transition-fast;
+  }
+}
+
+// Form Grid and Fields
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6, 1.5rem);
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-4, 1rem);
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  
+  label {
+    display: block;
+    margin-bottom: var(--space-2, 0.5rem);
+    color: variables.$gray-700;
+    font-size: variables.$text-sm;
+    font-weight: variables.$font-medium;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: var(--space-3, 0.75rem);
+    border: 1px solid variables.$gray-300;
+    border-radius: var(--radius-md, 0.5rem);
+    font-size: variables.$text-sm;
+    font-family: variables.$font-family;
+    transition: border-color variables.$transition-fast, box-shadow variables.$transition-fast;
+    background: white;
+    
+    &:focus {
+      outline: none;
+      border-color: variables.$primary-blue;
+      box-shadow: 0 0 0 3px rgba(variables.$primary-blue, 0.1);
+    }
+    
+    &.error {
+      border-color: #ef4444;
+      
+      &:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(#ef4444, 0.1);
+      }
+    }
+    
+    &::placeholder {
+      color: variables.$gray-400;
+    }
+    
+    &:disabled {
+      background: variables.$gray-50;
+      color: variables.$gray-400;
+      cursor: not-allowed;
+    }
+  }
+  
+  .field-error {
+    margin-top: var(--space-1, 0.25rem);
+    color: #ef4444;
+    font-size: variables.$text-xs;
+    font-weight: variables.$font-medium;
+  }
+  
+  .field-help {
+    margin-top: var(--space-1, 0.25rem);
+    color: variables.$gray-500;
+    font-size: variables.$text-xs;
+    line-height: 1.4;
+  }
+  
+  // Password field with toggle
+  &:has(input[type="password"]) {
+    .form-control {
+      padding-right: var(--space-10, 2.5rem);
+    }
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: var(--space-3, 0.75rem);
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: variables.$gray-500;
+    cursor: pointer;
+    padding: var(--space-1, 0.25rem);
+    transition: color variables.$transition-fast;
+    
+    &:hover {
+      color: variables.$gray-700;
+    }
+    
+    &:focus {
+      outline: none;
+      color: variables.$primary-blue;
+    }
+  }
+}
+
+// Checkbox fields
+.checkbox-field {
+  label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: var(--space-1, 0.25rem);
+    
+    .checkbox {
+      margin-right: var(--space-2, 0.5rem);
+      accent-color: variables.$primary-blue;
+    }
+    
+    span {
+      font-size: variables.$text-sm;
+      color: variables.$gray-700;
+    }
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3, 0.75rem);
+  margin-top: var(--space-8, 2rem);
+  padding-top: var(--space-6, 1.5rem);
+  border-top: 1px solid variables.$gray-200;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    :global(.orb-button) {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Test Results
+.test-result {
+  padding: var(--space-4, 1rem);
+  border-radius: var(--radius-md, 0.5rem);
+  border: 1px solid;
+  
+  &.success {
+    background: rgba(#10b981, 0.1);
+    border-color: #10b981;
+    
+    .success-message {
+      color: #059669;
+      margin: 0;
+      line-height: 1.6;
+      
+      strong {
+        color: #047857;
+      }
+    }
+  }
+  
+  &.error {
+    background: rgba(#ef4444, 0.1);
+    border-color: #ef4444;
+    
+    .error-message {
+      color: #dc2626;
+      margin: 0;
+      line-height: 1.6;
+      
+      strong {
+        color: #b91c1c;
+      }
+    }
+  }
+  
+  .timestamp {
+    display: block;
+    margin-top: var(--space-3, 0.75rem);
+    color: variables.$gray-500;
+    font-size: variables.$text-xs;
+    font-style: italic;
+  }
+}
+
+// Utility classes
+.text-success {
+  color: #10b981 !important;
+}
+
+.text-danger {
+  color: #ef4444 !important;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .email-settings-container {
+    padding: var(--space-4, 1rem);
+  }
+  
+  .provider-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3, 0.75rem);
+  }
+  
+  .provider-card {
+    min-height: 70px;
+    padding: var(--space-3, 0.75rem);
+    
+    i {
+      font-size: variables.$text-lg;
+    }
+    
+    span {
+      font-size: variables.$text-xs;
+    }
+  }
+}
+
+// Dark mode support (if implemented)
+@media (prefers-color-scheme: dark) {
+  .provider-card {
+    background: var(--surface-card, white);
+    border-color: var(--surface-border, variables.$gray-200);
+  }
+  
+  .form-control {
+    background: var(--surface-card, white);
+    border-color: var(--surface-border, variables.$gray-300);
+    color: var(--text-color, variables.$gray-900);
+  }
+}
+
+// Animation for smooth transitions
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.test-result {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Print styles
+@media print {
+  .form-actions {
+    display: none;
+  }
+  
+  .email-settings-container {
+    padding: 0;
+  }
+}

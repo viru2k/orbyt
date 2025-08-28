@@ -1,0 +1,73 @@
+<div class="public-consultation-container">
+  <div class="consultation-wrapper">
+    <!-- Header -->
+    <div class="consultation-header">
+      <div class="brand-section">
+        <img src="assets/orbyt-logo.png" alt="Orbyt" class="brand-logo">
+        <h1 class="brand-title">Portal de Consulta</h1>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading$()" class="loading-container">
+      <p-card>
+        <div class="flex flex-column align-items-center gap-3 p-4">
+          <p-progressSpinner></p-progressSpinner>
+          <h3 class="m-0">Validando token de acceso...</h3>
+          <p class="text-gray-600 m-0">Por favor espere mientras verificamos su token</p>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Valid Token - Consultation Data -->
+    <div *ngIf="consultationData$() && accessGranted" class="consultation-content">
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="card-header">
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-user text-blue-600"></i>
+              <h2 class="m-0">Información de Consulta</h2>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="consultation-info">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Cliente:</label>
+              <span class="value">{{ consultationData$().consultation?.clientName }}</span>
+            </div>
+            <div class="info-item">
+              <label>Profesional:</label>
+              <span class="value">{{ consultationData$().consultation?.professionalName }}</span>
+            </div>
+            <div class="info-item">
+              <label>Fecha:</label>
+              <span class="value">{{ formatDate(consultationData$().consultation?.appointmentDate) }}</span>
+            </div>
+            <div class="info-item">
+              <label>Estado:</label>
+              <p-tag 
+                [value]="consultationData$().consultation?.status" 
+                [severity]="getStatusSeverity(consultationData$().consultation?.status)">
+              </p-tag>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Footer -->
+    <div class="consultation-footer">
+      <div class="footer-content">
+        <p class="text-sm text-gray-500 m-0">
+          © 2025 Orbyt. Portal seguro de consultas médicas.
+        </p>
+        <div class="security-info">
+          <i class="pi pi-shield text-green-600"></i>
+          <span class="text-sm text-gray-600">Conexión segura</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

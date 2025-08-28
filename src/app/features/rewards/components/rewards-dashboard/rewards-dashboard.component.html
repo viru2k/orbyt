@@ -1,0 +1,259 @@
+<div class="rewards-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="text-3xl font-bold text-900 m-0">Programas de Recompensas</h1>
+        <p class="text-600 mt-1 mb-0">Gestiona los programas de fidelización y recompensas</p>
+      </div>
+      <div class="flex gap-2">
+        <orb-button 
+          label="Métricas" 
+          icon="pi pi-chart-bar"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="viewMetrics()">
+        </orb-button>
+        <orb-button 
+          label="Exportar" 
+          icon="pi pi-download"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="exportPrograms()">
+        </orb-button>
+        <orb-button 
+          label="Nuevo Programa" 
+          icon="pi pi-plus"
+          (onClick)="createNewProgram()">
+        </orb-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid mb-4">
+    <div class="col-12 md:col-6 lg:col-3">
+      <orb-card>
+        <ng-container slot="body">
+          <div class="flex align-items-center">
+            <div class="flex-1">
+              <span class="block text-500 font-medium mb-1">Total Programas</span>
+              <div class="text-900 font-medium text-xl">{{ totalPrograms$() || 0 }}</div>
+            </div>
+            <div class="flex align-items-center justify-content-center bg-blue-100 border-round-2xl" style="width:2.5rem;height:2.5rem">
+              <i class="pi pi-star-fill text-blue-500 text-xl"></i>
+            </div>
+          </div>
+        </ng-container>
+      </orb-card>
+    </div>
+    
+    <div class="col-12 md:col-6 lg:col-3">
+      <orb-card>
+        <ng-container slot="body">
+          <div class="flex align-items-center">
+            <div class="flex-1">
+              <span class="block text-500 font-medium mb-1">Programas Activos</span>
+              <div class="text-900 font-medium text-xl">{{ totalActivePrograms$() || 0 }}</div>
+            </div>
+            <div class="flex align-items-center justify-content-center bg-green-100 border-round-2xl" style="width:2.5rem;height:2.5rem">
+              <i class="pi pi-check-circle text-green-500 text-xl"></i>
+            </div>
+          </div>
+        </ng-container>
+      </orb-card>
+    </div>
+    
+    <div class="col-12 md:col-6 lg:col-3">
+      <orb-card>
+        <ng-container slot="body">
+          <div class="flex align-items-center">
+            <div class="flex-1">
+              <span class="block text-500 font-medium mb-1">Recompensas Canjeadas</span>
+              <div class="text-900 font-medium text-xl">--</div>
+            </div>
+            <div class="flex align-items-center justify-content-center bg-orange-100 border-round-2xl" style="width:2.5rem;height:2.5rem">
+              <i class="pi pi-gift text-orange-500 text-xl"></i>
+            </div>
+          </div>
+        </ng-container>
+      </orb-card>
+    </div>
+    
+    <div class="col-12 md:col-6 lg:col-3">
+      <orb-card>
+        <ng-container slot="body">
+          <div class="flex align-items-center">
+            <div class="flex-1">
+              <span class="block text-500 font-medium mb-1">Clientes Activos</span>
+              <div class="text-900 font-medium text-xl">--</div>
+            </div>
+            <div class="flex align-items-center justify-content-center bg-purple-100 border-round-2xl" style="width:2.5rem;height:2.5rem">
+              <i class="pi pi-users text-purple-500 text-xl"></i>
+            </div>
+          </div>
+        </ng-container>
+      </orb-card>
+    </div>
+  </div>
+
+  <!-- Programs Table -->
+  <orb-card>
+    <ng-container slot="header">
+      <div class="flex justify-content-between align-items-center">
+        <h3 class="m-0">Lista de Programas</h3>
+        <div class="flex align-items-center gap-2">
+          <p-button 
+            icon="pi pi-refresh" 
+            [text]="true"
+            size="small"
+            pTooltip="Actualizar datos"
+            (onClick)="refreshData()">
+          </p-button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container slot="body">
+      <!-- Loading State -->
+      <div *ngIf="loading$()" class="flex justify-content-center align-items-center p-4">
+        <p-progressSpinner [style]="{ width: '50px', height: '50px' }"></p-progressSpinner>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error$()" class="p-4">
+        <div class="p-message p-message-error">
+          <div class="p-message-wrapper">
+            <span class="p-message-icon pi pi-times-circle"></span>
+            <div class="p-message-text">
+              <div class="p-message-summary">Error</div>
+              <div class="p-message-detail">{{ error$()?.message || 'Error al cargar los programas' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Programs Table -->
+      <div *ngIf="!loading$() && !error$()">
+        <p-table 
+          [value]="getFilteredPrograms()" 
+          [paginator]="true" 
+          [rows]="10"
+          [responsive]="true"
+          styleClass="p-datatable-sm"
+          [globalFilterFields]="['name', 'description', 'rewardType']">
+          
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Programa</th>
+              <th>Tipo de Recompensa</th>
+              <th>Estado</th>
+              <th>Participantes</th>
+              <th>Recompensas Ganadas</th>
+              <th>Creado</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-program>
+            <tr>
+              <td>
+                <div class="flex flex-column">
+                  <span class="font-semibold">{{ program.name }}</span>
+                  <small class="text-gray-600">{{ program.description }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <i [class]="'pi ' + getRewardTypeIcon(program.rewardType)" 
+                     [style.color]="getRewardTypeColor(program.rewardType)"></i>
+                  <span>{{ formatRewardValue(program.rewardType, program.rewardValue) }}</span>
+                </div>
+              </td>
+              <td>
+                <p-tag 
+                  [value]="getStatusText(program.isActive)" 
+                  [severity]="getStatusSeverity(program.isActive)">
+                </p-tag>
+              </td>
+              <td>
+                <div class="flex flex-column">
+                  <span class="font-medium">{{ program.totalParticipants || 0 }}</span>
+                  <small class="text-gray-600">participantes</small>
+                </div>
+              </td>
+              <td>
+                <div class="flex flex-column">
+                  <span class="font-medium">{{ program.totalRewardsEarned || 0 }}</span>
+                  <small class="text-gray-600">ganadas</small>
+                </div>
+              </td>
+              <td>
+                <span *ngIf="program.displayCreatedAt">{{ program.displayCreatedAt.displayValue }}</span>
+                <span *ngIf="!program.displayCreatedAt" class="text-gray-400">-</span>
+              </td>
+              <td class="text-center">
+                <div class="flex justify-content-center gap-1">
+                  <p-button 
+                    icon="pi pi-eye" 
+                    pTooltip="Ver detalles"
+                    severity="info"
+                    [text]="true"
+                    size="small"
+                    (onClick)="viewProgramDetails(program)">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-pencil" 
+                    pTooltip="Editar programa"
+                    severity="secondary"
+                    [text]="true"
+                    size="small"
+                    (onClick)="editProgram(program)">
+                  </p-button>
+                  <p-button 
+                    [icon]="program.isActive ? 'pi pi-pause' : 'pi pi-play'" 
+                    [pTooltip]="program.isActive ? 'Desactivar' : 'Activar'"
+                    [severity]="program.isActive ? 'warning' : 'success'"
+                    [text]="true"
+                    size="small"
+                    (onClick)="toggleProgramStatus(program)">
+                  </p-button>
+                  <p-button 
+                    icon="pi pi-trash" 
+                    pTooltip="Eliminar programa"
+                    severity="danger"
+                    [text]="true"
+                    size="small"
+                    (onClick)="deleteProgram(program)">
+                  </p-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="7" class="text-center p-4">
+                <div class="flex flex-column align-items-center gap-2">
+                  <i class="pi pi-star text-4xl text-gray-400"></i>
+                  <p class="text-gray-600 m-0">No hay programas de recompensas</p>
+                  <small class="text-gray-400">Crea tu primer programa para comenzar</small>
+                  <orb-button 
+                    label="Crear Primer Programa" 
+                    icon="pi pi-plus"
+                    size="small"
+                    class="mt-2"
+                    (onClick)="createNewProgram()">
+                  </orb-button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </ng-container>
+  </orb-card>
+</div>
+
+<!-- Confirm Dialog -->
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,262 @@
+<div class="client-rewards-view">
+  <!-- Header Section -->
+  <div class="rewards-header">
+    <div class="flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="text-3xl font-bold text-900 m-0">Mis Recompensas</h1>
+        <p class="text-600 mt-1 mb-0">Programa de fidelizaci�n y beneficios</p>
+      </div>
+      <div class="flex gap-2">
+        <orb-button 
+          label="Historial" 
+          icon="pi pi-history"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="viewHistory()">
+        </orb-button>
+        <orb-button 
+          label="Canjear Puntos" 
+          icon="pi pi-gift"
+          [disabled]="(totalPoints$() || 0) === 0"
+          (onClick)="openRedemptionModal()">
+        </orb-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Points Overview -->
+  <div class="grid mb-4">
+    <div class="col-12 lg:col-8">
+      <orb-card>
+        <ng-container slot="body">
+          <div class="flex flex-column gap-3">
+            <div class="flex justify-content-between align-items-center">
+              <h3 class="m-0 text-900">Puntos Acumulados</h3>
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-star-fill text-yellow-500 text-2xl"></i>
+                <span class="text-3xl font-bold text-900">{{ totalPoints$() || 0 }}</span>
+                <span class="text-500">puntos</span>
+              </div>
+            </div>
+            
+            <!-- Progress to Next Reward -->
+            <div *ngIf="nextRewardThreshold$()">
+              <div class="flex justify-content-between align-items-center mb-2">
+                <span class="text-600">Pr�xima recompensa</span>
+                <span class="text-sm text-500">{{ totalPoints$() || 0 }} / {{ nextRewardThreshold$()?.pointsRequired }} puntos</span>
+              </div>
+              <div class="progress-container">
+                <div class="progress-bar" 
+                     [style.width.%]="getProgressPercentage()">
+                </div>
+              </div>
+              <p class="text-sm text-600 mt-2 mb-0">
+                Te faltan {{ (nextRewardThreshold$()?.pointsRequired || 0) - (totalPoints$() || 0) }} puntos para obtener: 
+                <strong>{{ nextRewardThreshold$()?.name }}</strong>
+              </p>
+            </div>
+          </div>
+        </ng-container>
+      </orb-card>
+    </div>
+    
+    <div class="col-12 lg:col-4">
+      <orb-card>
+        <ng-container slot="body">
+          <div class="flex flex-column gap-3 text-center">
+            <i class="pi pi-trophy text-4xl text-orange-500"></i>
+            <div>
+              <div class="text-2xl font-bold text-900">{{ totalRewardsEarned$() || 0 }}</div>
+              <span class="text-600">Recompensas Ganadas</span>
+            </div>
+          </div>
+        </ng-container>
+      </orb-card>
+    </div>
+  </div>
+
+  <!-- Available Programs -->
+  <orb-card class="mb-4">
+    <ng-container slot="header">
+      <h3 class="m-0">Programas Disponibles</h3>
+    </ng-container>
+    <ng-container slot="body">
+      <div *ngIf="loading$()" class="flex justify-content-center p-4">
+        <p-progressSpinner [style]="{ width: '40px', height: '40px' }"></p-progressSpinner>
+      </div>
+      
+      <div *ngIf="!loading$() && availablePrograms$().length === 0" class="text-center p-4">
+        <i class="pi pi-star text-4xl text-gray-400"></i>
+        <p class="text-gray-600 mt-3 mb-0">No hay programas disponibles</p>
+      </div>
+
+      <div class="grid" *ngIf="!loading$() && availablePrograms$().length > 0">
+        <div class="col-12 md:col-6 lg:col-4" *ngFor="let program of availablePrograms$()">
+          <div class="program-card" [class.program-participating]="isParticipating(program)">
+            <div class="program-header">
+              <div class="flex align-items-center justify-content-center mb-3"
+                   [style.background]="getRewardTypeBackground(program.rewardType)">
+                <i [class]="'pi ' + getRewardTypeIcon(program.rewardType)" 
+                   [style.color]="getRewardTypeColor(program.rewardType)"
+                   class="text-2xl"></i>
+              </div>
+              <h4 class="program-title">{{ program.name }}</h4>
+              <p class="program-description">{{ program.description }}</p>
+            </div>
+            
+            <div class="program-body">
+              <div class="reward-info">
+                <span class="reward-label">Recompensa:</span>
+                <span class="reward-value">{{ formatRewardValue(program.rewardType, program.rewardValue) }}</span>
+              </div>
+              
+              <div *ngIf="isParticipating(program)" class="participation-status">
+                <div class="flex justify-content-between align-items-center mb-2">
+                  <span class="text-600">Progreso</span>
+                  <span class="text-sm text-500">{{ getClientProgress(program) }} / {{ program.targetVisits || program.targetAmount || 0 }}</span>
+                </div>
+                <div class="progress-container">
+                  <div class="progress-bar" 
+                       [style.width.%]="calculateProgress(getClientProgress(program), program.targetVisits || program.targetAmount || 0)">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="program-actions mt-3">
+                <orb-button 
+                  *ngIf="!isParticipating(program)"
+                  label="Participar" 
+                  icon="pi pi-plus"
+                  size="small"
+                  [fluid]="true"
+                  (onClick)="joinProgram(program)">
+                </orb-button>
+                <orb-button 
+                  *ngIf="isParticipating(program) && canClaimReward(program)"
+                  label="Reclamar Recompensa" 
+                  icon="pi pi-gift"
+                  size="small"
+                  severity="success"
+                  [fluid]="true"
+                  (onClick)="claimReward(program)">
+                </orb-button>
+                <orb-button 
+                  *ngIf="isParticipating(program) && !canClaimReward(program)"
+                  label="En Progreso" 
+                  icon="pi pi-clock"
+                  size="small"
+                  severity="secondary"
+                  [disabled]="true"
+                  [fluid]="true">
+                </orb-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </orb-card>
+
+  <!-- Recent Activity Timeline -->
+  <orb-card>
+    <ng-container slot="header">
+      <div class="flex justify-content-between align-items-center">
+        <h3 class="m-0">Actividad Reciente</h3>
+        <orb-button 
+          label="Ver Todo" 
+          icon="pi pi-external-link"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          (onClick)="viewAllActivity()">
+        </orb-button>
+      </div>
+    </ng-container>
+    <ng-container slot="body">
+      <div *ngIf="recentActivity$().length === 0" class="text-center p-4">
+        <i class="pi pi-clock text-4xl text-gray-400"></i>
+        <p class="text-gray-600 mt-3 mb-0">No hay actividad reciente</p>
+      </div>
+
+      <div class="activity-timeline" *ngIf="recentActivity$().length > 0">
+        <div class="timeline-item" *ngFor="let activity of recentActivity$(); let last = last" [class.timeline-last]="last">
+          <div class="timeline-marker" [class]="getActivityMarkerClass(activity.type)">
+            <i [class]="'pi ' + getActivityIcon(activity.type)"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="flex justify-content-between align-items-start mb-1">
+              <h5 class="activity-title">{{ activity.title }}</h5>
+              <small class="activity-date">{{ activity.displayDate?.displayValue }}</small>
+            </div>
+            <p class="activity-description">{{ activity.description }}</p>
+            <div *ngIf="activity.points" class="activity-points">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              <span>+{{ activity.points }} puntos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </orb-card>
+</div>
+
+<!-- Redemption Modal -->
+<p-dialog 
+  [(visible)]="showRedemptionModal" 
+  header="Canjear Puntos" 
+  [modal]="true" 
+  [style]="{ width: '500px' }"
+  [closable]="true">
+  <div class="redemption-modal-content">
+    <p class="mb-3">Puntos disponibles: <strong>{{ totalPoints$() }} puntos</strong></p>
+    
+    <div class="field">
+      <orb-form-field label="Cantidad a canjear" [required]="true">
+        <p-inputNumber
+          id="redemptionAmount"
+          [(ngModel)]="redemptionAmount"
+          [min]="1"
+          [max]="totalPoints$() || 0"
+          [step]="1"
+          mode="decimal"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          styleClass="w-full"
+        />
+      </orb-form-field>
+    </div>
+    
+    <div class="field">
+      <orb-form-field label="Motivo del canje">
+        <orb-text-area
+          id="redemptionReason"
+          [(ngModel)]="redemptionReason"
+          [rows]="3"
+          [autoResize]="true"
+        />
+      </orb-form-field>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <orb-button 
+        label="Cancelar" 
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="closeRedemptionModal()">
+      </orb-button>
+      <orb-button 
+        label="Confirmar Canje" 
+        icon="pi pi-check"
+        [disabled]="!redemptionAmount || redemptionAmount <= 0"
+        (onClick)="confirmRedemption()">
+      </orb-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm Dialog -->
+<p-confirmDialog></p-confirmDialog>

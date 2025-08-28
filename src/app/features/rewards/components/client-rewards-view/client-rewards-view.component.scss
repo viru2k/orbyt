@@ -1,0 +1,401 @@
+:host {
+  display: block;
+}
+
+.client-rewards-view-container {
+  padding: 1.5rem;
+
+  .page-header {
+    margin-bottom: 2rem;
+    text-align: center;
+
+    h1 {
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+
+      i {
+        color: var(--primary-color);
+        font-size: 1.75rem;
+      }
+    }
+
+    p {
+      color: var(--text-color-secondary);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+  }
+
+  .search-section {
+    margin-bottom: 2rem;
+  }
+
+  .rewards-details {
+    .loading-center {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-color-secondary);
+
+      i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+      }
+
+      p {
+        font-size: 1.1rem;
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+
+      .fa-2x {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .text-muted {
+        color: var(--text-color-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    .progress-info {
+      .progress-text {
+        display: block;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-weight: 500;
+      }
+    }
+
+    .empty-message {
+      text-align: center;
+      color: var(--text-color-secondary);
+      font-style: italic;
+      padding: 2rem;
+    }
+
+    .reward-value {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .text-muted {
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+.progress-container {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.program-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  &.program-participating {
+    border-color: #3b82f6;
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 30px 30px 0;
+      border-color: transparent #3b82f6 transparent transparent;
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: white;
+      font-size: 10px;
+      font-weight: bold;
+    }
+  }
+  
+  .program-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    
+    > div:first-child {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .program-title {
+      color: #1f2937;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 0.75rem 0 0.5rem;
+    }
+    
+    .program-description {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+  
+  .program-body {
+    .reward-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      
+      .reward-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+      
+      .reward-value {
+        color: #1f2937;
+        font-weight: 600;
+      }
+    }
+    
+    .participation-status {
+      margin-bottom: 1rem;
+      
+      .progress-container {
+        height: 6px;
+        margin-bottom: 0.5rem;
+        
+        .progress-bar {
+          background: linear-gradient(90deg, #10b981, #059669);
+        }
+      }
+    }
+  }
+}
+
+.activity-timeline {
+  position: relative;
+  
+  .timeline-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    position: relative;
+    
+    &:not(.timeline-last)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: -24px;
+      width: 2px;
+      background: linear-gradient(to bottom, #e5e7eb, transparent);
+    }
+    
+    .timeline-marker {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      
+      &.marker-reward {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: white;
+      }
+      
+      &.marker-points {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+      }
+      
+      &.marker-redemption {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+      }
+      
+      &.marker-activity {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+      }
+    }
+    
+    .timeline-content {
+      flex: 1;
+      padding-top: 0.25rem;
+      
+      .activity-title {
+        color: #1f2937;
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      
+      .activity-date {
+        color: #9ca3af;
+        font-size: 0.75rem;
+      }
+      
+      .activity-description {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin: 0.25rem 0 0.5rem;
+        line-height: 1.4;
+      }
+      
+      .activity-points {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: #f59e0b;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.redemption-modal-content {
+  .field {
+    margin-bottom: 1rem;
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #374151;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+      
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+    
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+      font-family: inherit;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .rewards-header {
+    .flex {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+  
+  .program-card {
+    margin-bottom: 1rem;
+  }
+  
+  .timeline-item {
+    .timeline-marker {
+      width: 32px;
+      height: 32px;
+      margin-right: 0.75rem;
+    }
+    
+    &:not(.timeline-last)::before {
+      left: 15px;
+    }
+  }
+}
+
+// Utility classes
+.bg-blue-100 { background-color: #dbeafe !important; }
+.bg-green-100 { background-color: #dcfce7 !important; }
+.bg-orange-100 { background-color: #fed7aa !important; }
+.bg-purple-100 { background-color: #e9d5ff !important; }
+.bg-yellow-100 { background-color: #fef3c7 !important; }
+
+.text-blue-500 { color: #3b82f6 !important; }
+.text-green-500 { color: #10b981 !important; }
+.text-orange-500 { color: #f97316 !important; }
+.text-purple-500 { color: #8b5cf6 !important; }
+.text-yellow-500 { color: #eab308 !important; }

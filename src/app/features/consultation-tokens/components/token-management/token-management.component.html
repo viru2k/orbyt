@@ -1,0 +1,200 @@
+<orb-card>
+  <ng-container slot="header">
+    <div class="flex justify-content-between align-items-center">
+      <h3 class="mb-0">Gesti�n de Tokens</h3>
+      <div class="flex gap-2">
+        <orb-button 
+          label="Auto Tokens" 
+          icon="pi pi-plus-circle"
+          size="small"
+          severity="secondary"
+          (onClick)="createAutoTokens()"
+          [disabled]="loading$()"
+          pTooltip="Crear tokens autom�ticamente para todos los escenarios">
+        </orb-button>
+        <orb-button 
+          label="Crear Token" 
+          icon="pi pi-plus"
+          size="small"
+          (onClick)="openCreateTokenDialog()"
+          [disabled]="loading$()">
+        </orb-button>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container slot="body">
+    <!-- Loading State -->
+    <div *ngIf="loading$()" class="flex justify-content-center align-items-center p-4">
+      <p-progressSpinner [style]="{ width: '50px', height: '50px' }"></p-progressSpinner>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error$()" class="p-4">
+      <div class="p-message p-message-error">
+        <div class="p-message-wrapper">
+          <span class="p-message-icon pi pi-times-circle"></span>
+          <div class="p-message-text">
+            <div class="p-message-summary">Error</div>
+            <div class="p-message-detail">{{ error$()?.message || 'Error al cargar los tokens' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tokens Table -->
+    <div *ngIf="!loading$() && !error$()">
+      <p-table 
+        [value]="tokens$()" 
+        [paginator]="true" 
+        [rows]="10"
+        [responsive]="true"
+        styleClass="p-datatable-sm"
+        [globalFilterFields]="['scenarioText', 'statusText']">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Escenario</th>
+            <th>Estado</th>
+            <th>Expira</th>
+            <th>Tiempo Restante</th>
+            <th>Creado</th>
+            <th>Usado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-token>
+          <tr>
+            <td>
+              <p-tag 
+                [value]="token.scenarioText" 
+                [severity]="getScenarioSeverity(token.scenario)">
+              </p-tag>
+            </td>
+            <td>
+              <p-tag 
+                [value]="token.statusText" 
+                [severity]="getStatusSeverity(token.status)">
+              </p-tag>
+            </td>
+            <td>{{ token.displayExpiresAt.displayValue }}</td>
+            <td>
+              <span 
+                [class]="token.status === 'expired' ? 'text-red-500' : 'text-green-600'">
+                {{ formatTimeLeft(token.expiresAt) }}
+              </span>
+            </td>
+            <td>{{ token.displayCreatedAt.displayValue }}</td>
+            <td>
+              <span *ngIf="token.displayUsedAt; else notUsed">
+                {{ token.displayUsedAt.displayValue }}
+              </span>
+              <ng-template #notUsed>
+                <span class="text-gray-400">-</span>
+              </ng-template>
+            </td>
+            <td class="text-center">
+              <div class="flex justify-content-center gap-1">
+                <p-button 
+                  icon="pi pi-copy" 
+                  pTooltip="Copiar URL"
+                  severity="info"
+                  variant="text"
+                  size="small"
+                  (onClick)="copyTokenUrl(token)"
+                  [disabled]="token.status !== 'active'">
+                </p-button>
+                <p-button 
+                  icon="pi pi-times" 
+                  pTooltip="Revocar token"
+                  severity="danger"
+                  variant="text"
+                  size="small"
+                  (onClick)="revokeToken(token.id)"
+                  [disabled]="token.status !== 'active'">
+                </p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center p-4">
+              <div class="flex flex-column align-items-center gap-2">
+                <i class="pi pi-info-circle text-4xl text-gray-400"></i>
+                <p class="text-gray-600 m-0">No hay tokens disponibles</p>
+                <small class="text-gray-400">Crea tu primer token para permitir acceso a la consulta</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </ng-container>
+</orb-card>
+
+<!-- Create Token Dialog -->
+<p-dialog 
+  header="Crear Nuevo Token" 
+  [(visible)]="showCreateTokenDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+  [resizable]="false">
+  
+  <div class="flex flex-column gap-3">
+    <div class="field">
+      <label for="scenario" class="block text-900 font-medium mb-2">Escenario del Token</label>
+      <p-dropdown 
+        id="scenario"
+        [(ngModel)]="selectedScenario"
+        [options]="scenarioOptions"
+        optionLabel="label"
+        optionValue="value"        
+        [style]="{ width: '100%' }"
+        appendTo="body">
+        <ng-template pTemplate="selectedItem" let-option>
+          <div *ngIf="option">
+            <span>{{ option.label }}</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="item" let-option>
+          <div class="flex flex-column">
+            <span class="font-medium">{{ option.label }}</span>
+            <small class="text-gray-600">{{ option.description }}</small>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+
+    <div *ngIf="selectedScenario" class="p-3 bg-blue-50 border-round">
+      <div class="flex align-items-start gap-2">
+        <i class="pi pi-info-circle text-blue-600 mt-1"></i>
+        <div class="flex-1">
+          <p class="m-0 text-sm text-blue-900">
+            {{ getSelectedScenarioDescription() }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end gap-2">
+      <orb-button 
+        label="Cancelar" 
+        severity="secondary"
+        variant="text"
+        (onClick)="closeCreateTokenDialog()">
+      </orb-button>
+      <orb-button 
+        label="Crear Token" 
+        icon="pi pi-plus"
+        (onClick)="createToken()"
+        [disabled]="!selectedScenario">
+      </orb-button>
+    </div>
+  </ng-template>
+</p-dialog>
