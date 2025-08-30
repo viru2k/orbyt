@@ -1,0 +1,108 @@
+<orb-card>
+  <div orbHeader>
+    <h4><i class="pi pi-calendar-plus"></i> {{ title }}</h4>
+  </div>
+  <div orbBody>
+    <form [formGroup]="form" class="date-selector-form">
+      <!-- Modo de Selección -->
+      <div class="field" *ngIf="allowMultiple || allowRange">
+        <orb-select
+          [formControl]="selectionModeControl"
+          [options]="selectionModeOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Modo de Selección">
+        </orb-select>
+        <small class="p-help-text">Elige cómo seleccionar las fechas: una sola, múltiples o un rango</small>
+      </div>
+
+      <!-- Fecha Única -->
+      <div class="field" *ngIf="form.get('selectionMode')?.value === 'single'">
+        <orb-datepicker
+          [formControl]="singleDateControl"
+          [minDate]="minDateForComponent"
+          [maxDate]="maxDateForComponent"
+          dateFormat="dd/mm/yy"
+          placeholder="Fecha">
+        </orb-datepicker>
+        <small class="p-help-text">Selecciona una fecha específica</small>
+      </div>
+
+      <!-- Fechas Múltiples -->
+      <div class="field" *ngIf="form.get('selectionMode')?.value === 'multiple'">
+        <orb-datepicker
+          [formControl]="multipleDatesControl"
+          [minDate]="minDateForComponent"
+          [maxDate]="maxDateForComponent"
+          selectionMode="multiple"
+          dateFormat="dd/mm/yy"
+          placeholder="Fechas">
+        </orb-datepicker>
+        <small class="p-help-text">Mantén presionado Ctrl/Cmd para seleccionar múltiples fechas</small>
+      </div>
+
+      <!-- Rango de Fechas -->
+      <div class="field" *ngIf="form.get('selectionMode')?.value === 'range'">
+        <orb-datepicker
+          [formControl]="dateRangeControl"
+          [minDate]="minDateForComponent"
+          [maxDate]="maxDateForComponent"
+          selectionMode="range"
+          dateFormat="dd/mm/yy"
+          placeholder="Rango de Fechas">
+        </orb-datepicker>
+        <small class="p-help-text">Selecciona la fecha de inicio y luego la fecha de fin</small>
+      </div>
+
+      <!-- Razón o Motivo -->
+      <div class="field" *ngIf="showReason">
+        <orb-text-input
+          [formControl]="reasonControl"
+          placeholder="Razón o Motivo">
+        </orb-text-input>
+        <small class="p-help-text">Describe el motivo del bloqueo (opcional)</small>
+      </div>
+
+      <!-- Lista de Fechas Seleccionadas -->
+      <div class="selected-dates" *ngIf="hasSelectedDates()">
+        <h5>
+          <i class="pi pi-check-circle"></i>
+          Fechas Seleccionadas ({{ getSelectedDatesCount() }})
+        </h5>
+        <div class="dates-list">
+          <p-chip
+            *ngFor="let date of selectedDatesList"
+            [label]="formatDateForDisplay(date)"
+            [removable]="true"
+            (onRemove)="removeDate(date)"
+            class="date-chip">
+            <ng-template pTemplate="content">
+              <span class="chip-content">
+                <strong>{{ getDayName(date) }}</strong>
+                <br>
+                <small>{{ formatDateForDisplay(date) }}</small>
+              </span>
+            </ng-template>
+          </p-chip>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="form-actions" *ngIf="hasSelectedDates()">
+        <orb-button
+          label="Limpiar Selección"
+          icon="pi pi-times"
+          severity="secondary"
+          styleType="text"
+          (onClick)="clearAllDates()">
+        </orb-button>
+      </div>
+    </form>
+  </div>
+</orb-card>
+
+<ng-template #disabledDateTemplate let-date>
+  <span [class]="isDateDisabled(date) ? 'disabled-date' : ''">
+    {{ date.getDate() }}
+  </span>
+</ng-template>

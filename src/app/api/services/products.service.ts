@@ -23,6 +23,10 @@ import { productControllerToggle } from '../fn/products/product-controller-toggl
 import { ProductControllerToggle$Params } from '../fn/products/product-controller-toggle';
 import { productControllerUpdate } from '../fn/products/product-controller-update';
 import { ProductControllerUpdate$Params } from '../fn/products/product-controller-update';
+import { productControllerUploadImage } from '../fn/products/product-controller-upload-image';
+import { ProductControllerUploadImage$Params } from '../fn/products/product-controller-upload-image';
+import { productControllerUploadThumbnail } from '../fn/products/product-controller-upload-thumbnail';
+import { ProductControllerUploadThumbnail$Params } from '../fn/products/product-controller-upload-thumbnail';
 import { ProductResponseDto } from '../models/product-response-dto';
 
 @Injectable({ providedIn: 'root' })
@@ -225,6 +229,72 @@ export class ProductsService extends BaseService {
    */
   productControllerToggle(params: ProductControllerToggle$Params, context?: HttpContext): Observable<ProductResponseDto> {
     return this.productControllerToggle$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `productControllerUploadImage()` */
+  static readonly ProductControllerUploadImagePath = '/products/{id}/upload-image';
+
+  /**
+   * Subir imagen principal del producto.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `productControllerUploadImage()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  productControllerUploadImage$Response(params: ProductControllerUploadImage$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductResponseDto>> {
+    return productControllerUploadImage(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Subir imagen principal del producto.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `productControllerUploadImage$Response()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  productControllerUploadImage(params: ProductControllerUploadImage$Params, context?: HttpContext): Observable<ProductResponseDto> {
+    return this.productControllerUploadImage$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `productControllerUploadThumbnail()` */
+  static readonly ProductControllerUploadThumbnailPath = '/products/{id}/upload-thumbnail';
+
+  /**
+   * Subir thumbnail del producto.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `productControllerUploadThumbnail()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  productControllerUploadThumbnail$Response(params: ProductControllerUploadThumbnail$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductResponseDto>> {
+    return productControllerUploadThumbnail(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Subir thumbnail del producto.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `productControllerUploadThumbnail$Response()` instead.
+   *
+   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
+   */
+  productControllerUploadThumbnail(params: ProductControllerUploadThumbnail$Params, context?: HttpContext): Observable<ProductResponseDto> {
+    return this.productControllerUploadThumbnail$Response(params, context).pipe(
       map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
     );
   }

@@ -1,0 +1,12 @@
+.home-page {
+  // Add any global styles for the home page layout
+  // Each section component handles its own styling
+  
+  // Ensure smooth scroll behavior
+  scroll-behavior: smooth;
+  
+  // Add spacing between sections if needed
+  section + section {
+    // This will be handled by each section's padding
+  }
+}

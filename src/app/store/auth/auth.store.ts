@@ -73,9 +73,13 @@ export class AuthStore extends ComponentStore<AuthState> {
   });
 
   // Permission selectors
-  readonly canManageUsers$ = this.select(this.user$, (user) => user?.canManageUsers ?? false);
+  readonly canManageUsers$ = this.select(this.user$, (user) => {
+    console.log('🔑 AuthStore - canManageUsers$ selector - user:', user, 'canManageUsers:', user?.canManageUsers);
+    return user?.canManageUsers ?? false;
+  });
   readonly canManageClients$ = this.select(this.user$, (user) => user?.canManageClients ?? false);
   readonly canManageProducts$ = this.select(this.user$, (user) => user?.canManageProducts ?? false);
+  readonly canManageServices$ = this.select(this.user$, (user) => true); // Temporal: siempre true hasta que backend esté listo
   readonly canManageAgenda$ = this.select(this.user$, (user) => user?.canManageAgenda ?? false);
 
   // Updaters

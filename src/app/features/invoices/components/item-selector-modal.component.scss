@@ -1,0 +1,249 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+.item-selector-modal {
+  .modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .tab-content {
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    // Filters section
+    .filters-section {
+      display: flex;
+      gap: var(--space-4, 1rem);
+      margin-bottom: var(--space-4, 1rem);
+      align-items: center;
+      flex-wrap: wrap;
+      padding: var(--space-3, 0.75rem);
+      background: var(--surface-ground);
+      border-radius: var(--radius-md, 0.5rem);
+
+      .search-container {
+        flex: 1;
+        min-width: 250px;
+
+        .search-input {
+          width: 100%;
+          padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+          padding-left: var(--space-8, 2rem);
+        }
+      }
+
+      .filter-controls {
+        display: flex;
+        gap: var(--space-3, 0.75rem);
+        align-items: center;
+
+        ::ng-deep p-dropdown {
+          min-width: 120px;
+        }
+      }
+    }
+
+    // Items table
+    .items-table {
+      flex: 1;
+      overflow: hidden;
+
+      .item-info {
+        .item-name {
+          font-weight: var(--font-semibold, 600);
+          color: var(--text-primary);
+          margin-bottom: var(--space-1, 0.25rem);
+        }
+
+        .item-description {
+          color: var(--text-secondary);
+          font-size: var(--text-sm, 0.875rem);
+          line-height: 1.4;
+        }
+      }
+
+      .item-price {
+        font-weight: var(--font-semibold, 600);
+        color: var(--primary-color);
+        font-size: var(--text-lg, 1.125rem);
+      }
+
+      .service-duration {
+        font-weight: var(--font-medium, 500);
+        color: var(--text-secondary);
+        
+        .text-muted {
+          color: var(--text-muted);
+          font-style: italic;
+        }
+      }
+
+      .empty-state {
+        padding: var(--space-8, 2rem);
+        text-align: center;
+        color: var(--text-secondary);
+
+        i {
+          font-size: var(--text-4xl, 2.25rem);
+          color: var(--text-muted);
+          margin-bottom: var(--space-4, 1rem);
+        }
+
+        p {
+          margin: 0;
+          font-size: var(--text-lg, 1.125rem);
+        }
+      }
+    }
+
+    // Coming soon tab
+    .coming-soon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: var(--text-secondary);
+
+      i {
+        font-size: var(--text-6xl, 4rem);
+        color: var(--text-muted);
+        margin-bottom: var(--space-6, 1.5rem);
+      }
+
+      h3 {
+        color: var(--text-primary);
+        margin-bottom: var(--space-4, 1rem);
+        font-size: var(--text-xl, 1.25rem);
+      }
+
+      p {
+        margin: var(--space-2, 0.5rem) 0;
+        max-width: 400px;
+        line-height: 1.6;
+      }
+    }
+
+    // Manual form
+    .manual-form {
+      padding: var(--space-6, 1.5rem);
+
+      h4 {
+        color: var(--text-primary);
+        margin-bottom: var(--space-2, 0.5rem);
+        font-size: var(--text-lg, 1.125rem);
+      }
+
+      p {
+        color: var(--text-secondary);
+        margin-bottom: var(--space-6, 1.5rem);
+        line-height: 1.5;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-4, 1rem);
+        margin-bottom: var(--space-6, 1.5rem);
+      }
+
+      .manual-actions {
+        display: flex;
+        justify-content: center;
+        padding-top: var(--space-4, 1rem);
+        border-top: 1px solid var(--surface-border);
+      }
+    }
+  }
+
+  // PrimeNG overrides
+  ::ng-deep {
+    .p-dialog-content {
+      padding: var(--space-4, 1rem) !important;
+      overflow: hidden;
+    }
+
+    .p-tabview {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .p-tabview-nav {
+        border-bottom: 1px solid var(--surface-border);
+        background: var(--surface-ground);
+        border-radius: var(--radius-md, 0.5rem) var(--radius-md, 0.5rem) 0 0;
+      }
+
+      .p-tabview-panels {
+        flex: 1;
+        overflow: hidden;
+        padding: 0;
+
+        .p-tabview-panel {
+          height: 100%;
+          padding: var(--space-4, 1rem);
+        }
+      }
+    }
+
+    .p-table {
+      .p-datatable-tbody > tr > td {
+        padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+        border-bottom: 1px solid var(--surface-border);
+      }
+
+      .p-datatable-thead > tr > th {
+        padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+        background: var(--surface-ground);
+        color: var(--text-primary);
+        font-weight: var(--font-semibold, 600);
+        border-bottom: 2px solid var(--primary-color);
+      }
+    }
+
+    .p-tag {
+      font-size: var(--text-xs, 0.75rem);
+      font-weight: var(--font-medium, 500);
+      padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+      border-radius: var(--radius-full, 9999px);
+    }
+  }
+}
+
+// Mobile responsiveness
+@include mixins.mobile {
+  .item-selector-modal {
+    .modal-content {
+      .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3, 0.75rem);
+
+        .search-container {
+          min-width: unset;
+        }
+
+        .filter-controls {
+          justify-content: center;
+        }
+      }
+
+      .manual-form {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    ::ng-deep .p-dialog {
+      width: 95vw !important;
+      height: 95vh !important;
+      margin: 0 !important;
+    }
+  }
+}

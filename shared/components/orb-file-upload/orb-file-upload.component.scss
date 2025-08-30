@@ -1,0 +1,141 @@
+.orb-file-upload {
+  .upload-preview {
+    margin-top: 1rem;
+    
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md, 0.5rem);
+      margin-bottom: 0.5rem;
+      
+      .file-preview {
+        .preview-image {
+          width: 60px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: var(--radius-sm, 0.25rem);
+        }
+      }
+      
+      .file-info {
+        flex: 1;
+        
+        .file-name {
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+        
+        .file-size {
+          font-size: 0.875rem;
+          color: var(--text-color-secondary);
+        }
+      }
+    }
+  }
+  
+  .empty-upload-area {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color-secondary);
+    
+    i {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 1rem;
+    }
+  }
+  
+  // Personalizar estilos de PrimeNG FileUpload
+  ::ng-deep .p-fileupload {
+    .p-fileupload-content {
+      border-top: none;
+    }
+    
+    .p-fileupload-buttonbar {
+      background: var(--surface-ground);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md, 0.5rem) var(--radius-md, 0.5rem) 0 0;
+      padding: 1rem;
+      
+      .p-button {
+        margin-right: 0.5rem;
+        
+        &.p-fileupload-choose {
+          background: var(--primary-color);
+          border-color: var(--primary-color);
+          
+          &:hover {
+            background: var(--primary-color-dark);
+            border-color: var(--primary-color-dark);
+          }
+        }
+        
+        &.p-fileupload-upload {
+          background: var(--green-500);
+          border-color: var(--green-500);
+          
+          &:hover {
+            background: var(--green-600);
+            border-color: var(--green-600);
+          }
+        }
+        
+        &.p-fileupload-cancel {
+          background: var(--surface-400);
+          border-color: var(--surface-400);
+          color: var(--text-color);
+          
+          &:hover {
+            background: var(--surface-500);
+            border-color: var(--surface-500);
+          }
+        }
+      }
+    }
+    
+    .p-fileupload-files {
+      border: 1px solid var(--surface-border);
+      border-top: none;
+      border-radius: 0 0 var(--radius-md, 0.5rem) var(--radius-md, 0.5rem);
+      padding: 1rem;
+    }
+  }
+  
+  // Estados de drag and drop
+  ::ng-deep .p-fileupload-highlight {
+    background: var(--primary-50) !important;
+    border-color: var(--primary-color) !important;
+  }
+  
+  // Mobile responsiveness
+  @media (max-width: 768px) {
+    .upload-preview .file-item {
+      flex-direction: column;
+      text-align: center;
+      
+      .file-preview .preview-image {
+        width: 80px;
+        height: 80px;
+      }
+    }
+    
+    .empty-upload-area {
+      padding: 1rem;
+      
+      i {
+        font-size: 2rem !important;
+      }
+      
+      p {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}

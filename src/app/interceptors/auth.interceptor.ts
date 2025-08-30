@@ -23,14 +23,11 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = localStorage.getToken();
     let modifiedReq = req;
     
-    console.log(`Interceptor - ${req.method} ${req.url}`);
-    console.log('Interceptor - Token disponible:', !!token);
     
     if (token) {
       modifiedReq = req.clone({
         setHeaders: { Authorization: `Bearer ${token}` }
       });
-      console.log('Interceptor - Header Authorization agregado');
     }
 
     return next.handle(modifiedReq).pipe(

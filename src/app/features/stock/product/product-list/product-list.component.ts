@@ -4,7 +4,7 @@ import { ProductStore } from '@orb-stores';
 import { ProductResponseDto } from '../../../../api/model/models';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { ProductFormComponent } from '../modal/product-form.component';
 import { NotificationService } from '@orb-services';
 import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } from '@orb-models';
@@ -24,6 +24,7 @@ import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } fr
     OrbToolbarComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
+    OrbEntityAvatarComponent,
     ConfirmDialogModule
   ],
   templateUrl: './product-list.component.html',
@@ -48,12 +49,12 @@ export class ProductListComponent implements OnInit {
   products$ = this.productStore.selectProductsWithMappedData;
   isLoading$ = this.productStore.loading$;
 
-  // Columnas actualizadas para reflejar el DTO
+  // Columnas actualizadas para reflejar el DTO con avatar
   tableColumns: TableColumn[] = [
-    { field: 'name', header: 'Nombre', sortable: true },
-    { field: 'currentPrice', header: 'Precio', sortable: true },
-    { field: 'statusText', header: 'Estado', sortable: true },
-    { field: 'ownerName', header: 'Propietario', sortable: true },
+    { field: 'product', header: 'Producto', sortable: false, width: '300px' },
+    { field: 'currentPrice', header: 'Precio', sortable: true, width: '120px' },
+    { field: 'statusText', header: 'Estado', sortable: true, width: '120px' },
+    { field: 'ownerName', header: 'Propietario', sortable: true, width: '150px' },
     { field: 'actions', header: '', sortable: false, width: '10px' }
   ];
 
@@ -128,4 +129,5 @@ export class ProductListComponent implements OnInit {
     this.displayProductModal.set(false);
     this.productToEdit.set(null);
   }
+
 }

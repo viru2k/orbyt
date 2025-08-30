@@ -1,4 +1,44 @@
 :host {
+  // Espaciado entre cards
+  .grid > .col-12 {
+    margin-bottom: 1rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Avatar section styling
+  .avatar-section {
+    padding: var(--space-4, 1rem);
+    
+    .avatar-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      ::ng-deep orb-entity-avatar {
+        .entity-avatar-container {
+          &.size-xlarge {
+            width: 120px;
+            height: 120px;
+            
+            .p-avatar {
+              width: 120px !important;
+              height: 120px !important;
+              font-size: 2.5rem !important;
+            }
+          }
+        }
+      }
+    }
+    
+    .avatar-upload {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  }
+
   .roles-container {
     max-height: 300px;
     overflow-y: auto;

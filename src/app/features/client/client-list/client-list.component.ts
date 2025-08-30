@@ -6,7 +6,7 @@ import { ClientStore } from '@orb-stores';
 import { ClientResponseDto } from '../../../api/model/models';
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { ClientFormComponent } from '../modal/client-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -28,7 +28,8 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
     ClientFormComponent,
     ConfirmDialogModule,
     OrbToolbarComponent,
-    OrbActionsPopoverComponent
+    OrbActionsPopoverComponent,
+    OrbEntityAvatarComponent
   ],
   templateUrl: './client-list.component.html',
   styleUrls: ['./client-list.component.scss'],
@@ -52,9 +53,8 @@ export class ClientListComponent implements OnInit {
   isLoading = this.clientStore.loading;
 
   tableColumns: TableColumn[] = [
-    { field: 'fullname', header: 'Nombre Completo', sortable: true },
-    { field: 'email', header: 'Email', sortable: true },
-    { field: 'phone', header: 'Teléfono', sortable: false },
+    { field: 'profile', header: 'Cliente', sortable: false, width: '300px' },
+    { field: 'phone', header: 'Teléfono', sortable: false, width: '150px' },
     { field: 'statusText', header: 'Estado', sortable: true, width: '120px' },
     { field: 'createdAt', header: 'Fecha Creación', sortable: true, width: '180px' },
     { field: 'actions', header: '', width: '10px', sortable: false }
@@ -143,4 +143,5 @@ export class ClientListComponent implements OnInit {
   showClientForm(): void {
     this.openClientModal();
   }
+
 }

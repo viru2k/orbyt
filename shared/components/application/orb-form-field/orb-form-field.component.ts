@@ -20,6 +20,11 @@ import { FloatLabelModule } from 'primeng/floatlabel';
           <span *ngIf="showRequiredAsterisk()" class="text-red">*</span>
         </label>
       </p-floatLabel>
+      @if (description && errorMessages().length === 0) {
+      <small class="field-description text-600 block mt-1">
+        {{ description }}
+      </small>
+      }
       @if (errorMessages().length > 0) {
       <small class="p-error  text-red block mt-1">
         {{ errorMessages()[0] }}
@@ -33,6 +38,7 @@ export class OrbFormFieldComponent {
   @Input() required?: boolean; 
   @Input() errorMsg = 'Campo obligatorio';
   @Input() showLabel?: boolean;
+  @Input() description?: string; // Nueva propiedad para la descripción
   inputId = '';
   @ContentChild(FormControlName) ctrlName?: FormControlName;
   private utilsService = inject(UtilsService);

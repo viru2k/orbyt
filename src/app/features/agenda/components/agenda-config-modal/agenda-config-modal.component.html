@@ -4,28 +4,30 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
+  [header]="'⚙️ Configuración de Agenda'"
   size="xl"
   styleClass="agenda-config-modal"
   (onHide)="onHide()"
 >
-  <div slot="header">
-    <h3>⚙️ Configuración de Agenda</h3>
-  </div>
-  
+
+
   <div slot="content">
+    
     <form [formGroup]="configForm" class="config-form">
-      <!-- Main grid layout -->
-      <div class="row">
-        <!-- Left column: Settings cards -->
-        <div class="settings-column">
+      
+      <!-- Main configuration layout: Two main columns -->
+      <div class="main-config-row" style="display: flex; gap: 8px;">
+        
+        <!-- Left column: Time and Schedule Settings -->
+        <div class="left-config-column" style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
           <!-- Card: Horario de trabajo -->
-          <div class="config-card">
-            <div class="card-header">
+          <orb-card>
+            <div orbHeader>
               <h4><i class="pi pi-clock" style="color: #3b82f6;"></i> Horario de Trabajo</h4>
             </div>
-            <div class="card-content">
+            <div orbBody>
               <div class="time-inputs gap-1">
-                <div class="input-group ">
+                <div class="input-group " style="padding-bottom: 8px;" >
                   <p-floatLabel>
                     <input 
                       pInputText 
@@ -51,14 +53,14 @@
                 </div>
               </div>
             </div>
-          </div>
+          </orb-card>
 
           <!-- Card: Configuración de turnos -->
-          <div class="config-card">
-            <div class="card-header">
+          <orb-card>
+            <div orbHeader>
               <h4><i class="pi pi-stopwatch" style="color: #10b981;"></i> Configuración de Turnos</h4>
             </div>
-            <div class="card-content">
+            <div orbBody>
               <div class="input-group">
                 <p-floatLabel>
                   <p-inputNumber 
@@ -74,44 +76,47 @@
                 <small class="help-text">Entre 15 y 120 minutos</small>
               </div>
             </div>
-          </div>
+          </orb-card>
 
           <!-- Card: Configuraciones adicionales -->
-          <div class="config-card">
-            <div class="card-header">
+          <orb-card>
+            <div orbHeader>
               <h4><i class="pi pi-cog" style="color: #f59e0b;"></i> Configuraciones Adicionales</h4>
             </div>
-            <div class="card-content">
+            <div orbBody>
               <div class="checkbox-group">
-                <div class="checkbox-item">
-                  <orb-checkbox
+                <div class="checkbox-item" style="padding-bottom:4px">
+                  <p-checkbox
                     inputId="overbooking"
                     formControlName="overbookingAllowed"
                     label="Permitir sobrebooking"
+                    [binary]="true"
                   />
-                  <small class="help-text">Permitir más citas de las que el horario normalmente permite</small>
+                  <small class="help-text" style="margin-left: 4px;">Permitir más citas de las que el horario normalmente permite</small>
                 </div>
                 
                 <div class="checkbox-item">
-                  <orb-checkbox
+                  <p-checkbox
                     inputId="blockedDays"
                     formControlName="allowBookingOnBlockedDays"
                     label="Permitir reservas en días bloqueados"
+                    [binary]="true"
                   />
-                  <small class="help-text">Los clientes pueden reservar en días marcados como feriados</small>
+                  <small class="help-text" style="margin-left: 4px;">Los clientes pueden reservar en días marcados como feriados</small>
                 </div>
               </div>
             </div>
-          </div>
+          </orb-card>
         </div>
 
         <!-- Right column: Working Days -->
-        <div class="working-days-column">
-          <div class="config-card">
-            <div class="card-header">
+        <div class="right-config-column" style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Card: Working Days -->
+          <orb-card>
+            <div orbHeader>
               <h4><i class="pi pi-calendar" style="color: #8b5cf6;"></i> Días Laborales</h4>
             </div>
-            <div class="card-content">
+            <div orbBody>
               <div class="working-days">
                 <!-- Row 1: Monday and Tuesday -->
                 <div class="working-days-row">
@@ -151,16 +156,18 @@
                 </div>
               </div>
             </div>
-          </div>
+          </orb-card>
+
         </div>
       </div>
 
-      <!-- Bottom section: Holidays card (full width) -->
-      <div class="config-card holidays-card">
-        <div class="card-header">
-          <h4><i class="pi pi-sun" style="color: #ef4444;"></i> Días Festivos y Vacaciones</h4>
-        </div>
-        <div class="card-content">
+      <!-- Full width section: Holidays card -->
+      <div style="margin-top: 8px;">
+        <orb-card>
+          <div orbHeader>
+            <h4><i class="pi pi-sun" style="color: #ef4444;"></i> Días Festivos y Vacaciones</h4>
+          </div>
+          <div orbBody>
           <div class="holidays-management">
             <!-- Add Holiday Button with spacing -->
             <div class="add-holiday-header" style="margin-bottom: 2rem;">
@@ -259,7 +266,6 @@
                         icon="pi pi-trash"
                         severity="danger"
                         size="small"
-                     
                         pTooltip="Eliminar día festivo"
                         (click)="onDeleteHoliday(holiday)"
                       />
@@ -283,7 +289,34 @@
               </p-table>
             </div>
           </div>
-        </div>
+          </div>
+        </orb-card>
+      </div>
+
+      <!-- Nueva sección: Gestión de Fechas Especiales -->
+      <div style="margin-top: 8px;">
+        <orb-card>
+          <div orbHeader>
+            <h4><i class="pi pi-ban" style="color: #e74c3c;"></i> Gestión de Fechas Especiales</h4>
+          </div>
+          <div orbBody>
+            <p-tabView styleClass="special-dates-tabs">
+              <p-tabPanel header="Bloquear Fechas" leftIcon="pi pi-ban">
+                <app-blocking-management
+                  [professionalId]="professionalId"
+                  (operationCompleted)="onBlockingOperationCompleted($event)">
+                </app-blocking-management>
+              </p-tabPanel>
+              
+              <p-tabPanel header="Horarios Especiales" leftIcon="pi pi-clock">
+                <app-special-schedule
+                  [professionalId]="professionalId"
+                  (operationCompleted)="onScheduleOperationCompleted($event)">
+                </app-special-schedule>
+              </p-tabPanel>
+            </p-tabView>
+          </div>
+        </orb-card>
       </div>
 
     </form>

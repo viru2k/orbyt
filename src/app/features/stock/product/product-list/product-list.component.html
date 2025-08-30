@@ -31,6 +31,25 @@
           <td *ngFor="let col of columns">
             <ng-container [ngSwitch]="col.field">
               
+              <!-- Caso para la columna de producto: avatar + información -->
+              <ng-container *ngSwitchCase="'product'">
+                <div class="flex align-items-center gap-3">
+                  <orb-entity-avatar
+                    [entity]="product"
+                    entityType="product"
+                    size="normal"
+                    shape="square"
+                    [showTooltip]="true"
+                    context="table"
+                    [autoLoad]="true">
+                  </orb-entity-avatar>
+                  <div class="product-info">
+                    <div class="product-name font-medium text-900">{{ product.name }}</div>
+                    <div class="product-description text-600 text-sm">{{ product.description || 'Sin descripción' }}</div>
+                  </div>
+                </div>
+              </ng-container>
+              
               <ng-container *ngSwitchCase="'currentPrice'">
                 {{ product.currentPrice | currency:'EUR' }}
               </ng-container>

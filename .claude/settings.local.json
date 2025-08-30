@@ -36,7 +36,10 @@
       "Read(/C:\\repositories\\api-backoffice/**)",
       "Read(/C:\\repositories\\api-backoffice/**)",
       "Bash(git ls-tree:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(taskkill:*)",
+      "Bash(npm run serve:*)",
+      "Bash(npm run:*)"
     ],
     "deny": [],
     "additionalDirectories": [

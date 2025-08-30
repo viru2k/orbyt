@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
 import { OrbFormFooterComponent } from '@orb-shared-components/application/orb-form-footer/orb-form-footer.component';
+import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -13,6 +14,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
 import { TableModule } from 'primeng/table';
+import { DropdownModule } from 'primeng/dropdown';
+import { CheckboxModule } from 'primeng/checkbox';
+import { TabViewModule } from 'primeng/tabview';
 
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
 import { AgendaConfigResponseDto, UpdateAgendaConfigDto, HolidayResponseDto, CreateHolidayDto } from '../../../../api/model/models';
@@ -20,6 +24,10 @@ import { ConfirmationService } from 'primeng/api';
 import { OrbSwitchComponent } from "@orb-components";
 import { OrbCheckboxComponent } from '@orb-shared-components/orb-checkbox/orb-checkbox.component';
 import { FormButtonAction } from '@orb-models';
+
+// Importar los nuevos componentes de gestión de fechas
+import { BlockingManagementComponent } from '../blocking-management/blocking-management.component';
+import { SpecialScheduleComponent } from '../special-schedule/special-schedule.component';
 
 @Component({
   selector: 'app-agenda-config-modal',
@@ -30,6 +38,7 @@ import { FormButtonAction } from '@orb-models';
     OrbDialogComponent,
     OrbButtonComponent,
     OrbFormFooterComponent,
+    OrbCardComponent,
     ConfirmDialogModule,
     TooltipModule,
     FloatLabelModule,
@@ -37,8 +46,12 @@ import { FormButtonAction } from '@orb-models';
     InputNumberModule,
     CalendarModule,
     TableModule,
+    DropdownModule,
+    CheckboxModule,
+    TabViewModule,
     OrbSwitchComponent,
-    OrbCheckboxComponent
+    BlockingManagementComponent,
+    SpecialScheduleComponent
 ],
   templateUrl: './agenda-config-modal.component.html',
   styleUrls: ['./agenda-config-modal.component.scss'],
@@ -47,7 +60,7 @@ import { FormButtonAction } from '@orb-models';
 export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() visible = false;
   @Input() config: AgendaConfigResponseDto | null = null;
-  @Input() professionalId: number | null = null;
+  @Input() professionalId: number | undefined;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() close = new EventEmitter<void>();
 
@@ -329,5 +342,23 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
   onCancelAddHoliday(): void {
     this.showAddHolidayForm = false;
     this.holidayForm.reset();
+  }
+
+  /**
+   * Manejar operaciones completadas de bloqueo/desbloqueo de fechas
+   */
+  onBlockingOperationCompleted(result: any): void {
+    console.log('Operación de bloqueo completada:', result);
+    // Aquí podrías agregar lógica adicional si es necesario
+    // Por ejemplo, refrescar datos o mostrar notificaciones
+  }
+
+  /**
+   * Manejar operaciones completadas de horarios especiales
+   */
+  onScheduleOperationCompleted(result: any): void {
+    console.log('Operación de horario especial completada:', result);
+    // Aquí podrías agregar lógica adicional si es necesario
+    // Por ejemplo, refrescar datos o mostrar notificaciones
   }
 }

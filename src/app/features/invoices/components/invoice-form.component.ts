@@ -25,10 +25,11 @@ import { ProductResponseDto } from '../../../api/models/product-response-dto';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormButtonAction } from '@orb-models';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { ItemSelectorModalComponent, InvoiceItemSelection } from './item-selector-modal.component';
 
 interface InvoiceItem {
-  itemId: number;
-  itemType: 'service' | 'product';
+  itemId: number | null;
+  itemType: 'service' | 'product' | 'manual';
   description: string;
   quantity: number;
   unitPrice: number;
@@ -36,6 +37,8 @@ interface InvoiceItem {
   discountType: 'percentage' | 'fixed';
   total: number;
   notes?: string;
+  category?: string;
+  duration?: number;
 }
 
 @Component({
@@ -55,7 +58,8 @@ interface InvoiceItem {
     OrbDatepickerComponent,
     OrbTextAreaComponent,
     OrbButtonComponent,
-    FloatLabelModule
+    FloatLabelModule,
+    ItemSelectorModalComponent
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -113,19 +117,29 @@ interface InvoiceItem {
         <div class="form-section">
           <h3>
             <i class="fa fa-list"></i> Items de la Factura
-            <orb-button
-              label="Agregar Item"
-              icon="fa fa-plus"
-              (clicked)="addItem()"
-              variant="secondary"
-              size="small">
-            </orb-button>
+            <div class="item-actions">
+              <orb-button
+                label="Seleccionar Item"
+                icon="fa fa-search"
+                (clicked)="showItemSelector()"
+                variant="primary"
+                size="small">
+              </orb-button>
+              <orb-button
+                label="Agregar Manual"
+                icon="fa fa-plus"
+                (clicked)="addManualItem()"
+                variant="secondary"
+                size="small">
+              </orb-button>
+            </div>
           </h3>
 
           <div class="items-table" *ngIf="items.length > 0">
             <p-table [value]="items" [scrollable]="true" scrollHeight="300px">
               <ng-template pTemplate="header">
                 <tr>
+                  <th>Tipo</th>
                   <th>Descripción</th>
                   <th>Cantidad</th>
                   <th>Precio Unit.</th>
@@ -136,6 +150,14 @@ interface InvoiceItem {
               </ng-template>
               <ng-template pTemplate="body" let-item let-i="rowIndex">
                 <tr>
+                  <td>
+                    <span class="item-type-badge" [ngClass]="'type-' + item.itemType">
+                      {{ getItemTypeLabel(item.itemType) }}
+                    </span>
+                    <div class="item-category" *ngIf="item.category">
+                      <small>{{ item.category }}</small>
+                    </div>
+                  </td>
                   <td>
                     <orb-text-input
                       [(ngModel)]="item.description"
@@ -314,6 +336,13 @@ interface InvoiceItem {
 
     <p-toast></p-toast>
     <p-confirmDialog></p-confirmDialog>
+
+    <!-- Item Selector Modal -->
+    <app-item-selector-modal
+      [(visible)]="showItemSelectorModal"
+      (itemSelected)="onItemSelected($event)"
+      (cancel)="onItemSelectorCancel()">
+    </app-item-selector-modal>
   `,
   styleUrls: ['./invoice-form.component.scss']
 })
@@ -338,6 +367,9 @@ export class InvoiceFormComponent implements OnInit {
 
   // Invoice items
   items: InvoiceItem[] = [];
+
+  // Modal control
+  showItemSelectorModal = false;
 
   // Totals
   subtotal = 0;
@@ -378,8 +410,6 @@ export class InvoiceFormComponent implements OnInit {
 
     if (this.isEditMode && this.invoice) {
       this.populateForm();
-    } else {
-      this.addItem(); // Add one default item for new invoices
     }
   }
 
@@ -464,10 +494,36 @@ export class InvoiceFormComponent implements OnInit {
     this.calculateTotals();
   }
 
-  addItem(): void {
+  showItemSelector(): void {
+    this.showItemSelectorModal = true;
+  }
+
+  onItemSelected(selection: InvoiceItemSelection): void {
     this.items.push({
-      itemId: 0,
-      itemType: 'service',
+      itemId: selection.itemId,
+      itemType: selection.itemType,
+      description: selection.description,
+      quantity: 1,
+      unitPrice: selection.basePrice,
+      discount: 0,
+      discountType: 'percentage',
+      total: selection.basePrice,
+      category: selection.category,
+      duration: selection.duration
+    });
+    
+    this.calculateTotals();
+    this.showItemSelectorModal = false;
+  }
+
+  onItemSelectorCancel(): void {
+    this.showItemSelectorModal = false;
+  }
+
+  addManualItem(): void {
+    this.items.push({
+      itemId: null,
+      itemType: 'manual',
       description: '',
       quantity: 1,
       unitPrice: 0,
@@ -475,6 +531,15 @@ export class InvoiceFormComponent implements OnInit {
       discountType: 'percentage',
       total: 0
     });
+  }
+
+  getItemTypeLabel(type: string): string {
+    switch (type) {
+      case 'product': return 'Producto';
+      case 'service': return 'Servicio';
+      case 'manual': return 'Manual';
+      default: return type;
+    }
   }
 
   removeItem(index: number): void {
@@ -538,8 +603,8 @@ export class InvoiceFormComponent implements OnInit {
 
     const formValue = this.invoiceForm.value;
     const invoiceItems: CreateInvoiceItemDto[] = this.items.map(item => ({
-      itemId: item.itemId,
-      itemType: item.itemType,
+      itemId: item.itemId || 0, // Use 0 for manual items
+      itemType: item.itemType === 'manual' ? 'service' : item.itemType, // Convert manual to service for backend
       description: item.description,
       quantity: item.quantity,
       unitPrice: item.unitPrice,

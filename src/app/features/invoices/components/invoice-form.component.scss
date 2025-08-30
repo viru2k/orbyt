@@ -30,6 +30,12 @@
       margin-right: var(--space-2, 0.5rem);
       color: variables.$primary-blue;
     }
+
+    .item-actions {
+      display: flex;
+      gap: var(--space-2, 0.5rem);
+      align-items: center;
+    }
   }
 }
 
@@ -273,5 +279,41 @@
   
   &::placeholder {
     color: variables.$gray-400;
+  }
+}
+
+// Item type badges
+.item-type-badge {
+  display: inline-block;
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border-radius: var(--radius-full, 9999px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--font-medium, 500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  
+  &.type-product {
+    background: rgba(variables.$primary-blue, 0.1);
+    color: variables.$primary-blue;
+  }
+  
+  &.type-service {
+    background: rgba(variables.$primary-purple, 0.1);
+    color: variables.$primary-purple;
+  }
+  
+  &.type-manual {
+    background: rgba(variables.$orbyt-coral, 0.1);
+    color: variables.$orbyt-coral;
+  }
+}
+
+.item-category {
+  margin-top: var(--space-1, 0.25rem);
+  
+  small {
+    color: variables.$gray-500;
+    font-size: var(--text-xs, 0.75rem);
+    font-style: italic;
   }
 }

@@ -33,3 +33,8 @@ export * from './orb-input-number/orb-input-number.component';
 export * from './orb-chart/orb-chart.component';
 export * from './orb-progress-bar/orb-progress-bar.component';
 export * from './orb-tag/orb-tag.component';
+export * from './orb-image-upload/orb-image-upload.component';
+export * from './orb-image-upload-modal/orb-image-upload-modal.component';
+export * from './orb-entity-avatar/orb-entity-avatar.component';
+export * from './orb-file-upload/orb-file-upload.component';
+export * from './orb-simple-upload/orb-simple-upload.component';

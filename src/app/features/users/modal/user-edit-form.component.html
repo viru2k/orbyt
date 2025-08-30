@@ -1,5 +1,33 @@
 <form [formGroup]="form" (ngSubmit)="accept()">
   <div class="grid">
+    <!-- Avatar Section - Solo en modo edición -->
+    <div class="col-12" *ngIf="isEditMode">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-image mr-2"></i>
+          <h3 class="m-0">Avatar</h3>
+        </div>
+        <div orbBody class="flex justify-content-center align-items-center">
+          <div class="avatar-section text-center" *ngIf="currentUserEntity">
+            <div class="avatar-display">
+              <orb-entity-avatar
+                [entity]="currentUserEntity"
+                entityType="user"
+                size="xlarge"
+                shape="circle"
+                [showTooltip]="false"
+                [showUploadButton]="true"
+                context="profile"
+                [avatar]="currentAvatar"
+                [autoLoad]="isEditMode"
+                (avatarUpdated)="onAvatarUploaded($event)">
+              </orb-entity-avatar>
+            </div>
+          </div>
+        </div>
+      </orb-card>
+    </div>
+
     <!-- Información Personal -->
     <div class="col-12 md:col-6">
       <orb-card>

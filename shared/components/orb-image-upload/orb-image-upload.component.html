@@ -1,0 +1,174 @@
+<orb-card styleClass="image-upload-card">
+  <div orbHeader *ngIf="!currentImage">
+    <h4><i class="pi pi-cloud-upload"></i> Subir Imagen</h4>
+  </div>
+
+  <div orbBody>
+    <!-- Preview de imagen actual o nueva -->
+    <div class="preview-section" *ngIf="showPreview && hasImage">
+      <div class="image-preview">
+        <img 
+          [src]="previewUrl" 
+          alt="Preview"
+          class="preview-image"
+          [class.new-image]="hasNewImage">
+        
+        <!-- Overlay de carga -->
+        <div class="upload-overlay" *ngIf="isUploading">
+          <div class="upload-spinner">
+            <i class="pi pi-spinner pi-spin"></i>
+          </div>
+        </div>
+
+        <!-- Badge para imagen nueva -->
+        <div class="new-image-badge" *ngIf="hasNewImage && !isUploading">
+          <i class="pi pi-exclamation-triangle"></i>
+          Pendiente de subir
+        </div>
+      </div>
+
+      <!-- Información de la imagen -->
+      <div class="image-info" *ngIf="currentImage">
+        <small class="text-muted">
+          <i class="pi pi-file"></i>
+          {{ getDisplayFileName(currentImage.originalName) }}
+          ({{ imageUploadService.formatFileSize(currentImage.size) }})
+        </small>
+      </div>
+
+      <!-- Información del archivo seleccionado -->
+      <div class="file-info" *ngIf="selectedFile && !currentImage">
+        <small class="text-muted">
+          <i class="pi pi-file"></i>
+          {{ getDisplayFileName(selectedFile.name) }}
+          ({{ imageUploadService.formatFileSize(selectedFile.size) }})
+        </small>
+      </div>
+    </div>
+
+    <!-- Área de drag & drop -->
+    <div 
+      class="drop-zone"
+      [class.drag-over]="isDragOver"
+      [class.disabled]="disabled"
+      [class.has-image]="hasImage"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (click)="openFileSelector()"
+      *ngIf="!hasImage || allowReplace">
+      
+      <!-- Icono y texto principal -->
+      <div class="drop-zone-content">
+        <i class="pi pi-cloud-upload drop-icon"></i>
+        
+        <div class="drop-text">
+          <p class="primary-text">
+            {{ hasImage ? 'Cambiar imagen' : 'Arrastra tu imagen aquí' }}
+          </p>
+          <p class="secondary-text">
+            o <span class="link-text">selecciona un archivo</span>
+          </p>
+        </div>
+
+        <!-- Información de restricciones -->
+        <div class="restrictions">
+          <small class="text-muted">
+            Tipos: {{ allowedTypesText }} • Máximo: {{ maxSizeText }}
+            <span *ngIf="finalConfig.aspectRatio === 1"> • Formato cuadrado recomendado</span>
+          </small>
+        </div>
+      </div>
+
+      <!-- Input oculto -->
+      <input
+        #fileInput
+        type="file"
+        [accept]="finalConfig.allowedTypes?.join(',')"
+        (change)="onFileSelected($event)"
+        style="display: none;">
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-section" *ngIf="isUploading && showProgress">
+      <p-progressBar 
+        [value]="uploadProgress" 
+        [showValue]="true">
+      </p-progressBar>
+      <small class="upload-text">
+        <i class="pi pi-spinner pi-spin"></i>
+        Subiendo imagen...
+      </small>
+    </div>
+
+    <!-- Errores de validación -->
+    <div class="validation-errors" *ngIf="validationErrors.length > 0">
+      <p-message 
+        *ngFor="let error of validationErrors" 
+        severity="error" 
+        [text]="error"
+        styleClass="validation-error">
+      </p-message>
+    </div>
+
+    <!-- Acciones -->
+    <div class="actions-section" *ngIf="hasNewImage || canDelete">
+      <div class="action-buttons">
+        
+        <!-- Botones para nueva imagen -->
+        <ng-container *ngIf="hasNewImage">
+          <orb-button
+            label="Subir"
+            icon="pi pi-check"
+            severity="success"
+            [disabled]="!canUpload"
+            [loading]="isUploading"
+            (onClick)="uploadImage()">
+          </orb-button>
+          
+          <orb-button
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            styleType="text"
+            [disabled]="isUploading"
+            (onClick)="cancelUpload()">
+          </orb-button>
+        </ng-container>
+
+        <!-- Botón para eliminar imagen existente -->
+        <orb-button
+          *ngIf="canDelete && !hasNewImage"
+          label="Eliminar"
+          icon="pi pi-trash"
+          severity="danger"
+          styleType="text"
+          [disabled]="isUploading"
+          [loading]="isUploading"
+          pTooltip="Eliminar imagen actual"
+          (onClick)="deleteImage()">
+        </orb-button>
+      </div>
+    </div>
+
+    <!-- Estado sin imagen -->
+    <div class="no-image-state" *ngIf="!hasImage && !disabled">
+      <div class="empty-state">
+        <i class="pi pi-image empty-icon"></i>
+        <p class="empty-text">No hay imagen</p>
+        <small class="empty-subtext">
+          Sube una imagen para personalizar este {{ entityType }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Estado deshabilitado -->
+    <div class="disabled-state" *ngIf="disabled">
+      <div class="empty-state">
+        <i class="pi pi-lock empty-icon"></i>
+        <p class="empty-text">Carga de imágenes deshabilitada</p>
+      </div>
+    </div>
+
+  </div>
+</orb-card>

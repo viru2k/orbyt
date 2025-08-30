@@ -1,6 +1,158 @@
 .agenda-config-modal {
   .config-form {
-    max-width: 1400px;
+    // Ensure form doesn't interfere with flex layout
+    display: block;
+    width: 100%;
+  //  max-width: 1400px;
+    
+    // Test Section: Two blocks in a row
+    .test-section {
+      margin-bottom: 2rem;
+      display: block;
+      width: 100%;
+      
+      .section-title {
+        margin-bottom: 1.5rem;
+        
+        h3 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+          color: #374151;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          i {
+            font-size: 16px;
+          }
+        }
+      }
+      
+      .two-blocks-row {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 1.5rem;
+        width: 100%;
+        justify-content: space-between;
+        align-items: flex-start;
+        
+        @media (max-width: 768px) {
+          flex-direction: column !important;
+          gap: 1rem;
+        }
+        
+        .config-block {
+          flex: 1 1 45%;
+          min-width: 300px;
+          max-width: calc(50% - 0.75rem);
+          background: white;
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          transition: box-shadow 0.2s ease;
+          display: block;
+          
+          &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
+          
+          .block-header {
+            background: #ffffff;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            
+            h4 {
+              margin: 0;
+              font-size: 16px;
+              font-weight: 600;
+              color: #374151;
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              
+              i {
+                font-size: 14px;
+              }
+            }
+          }
+          
+          .block-content {
+            padding: 1.5rem;
+            
+            .input-group {
+              margin-bottom: 1.5rem;
+              
+              &:last-child {
+                margin-bottom: 0;
+              }
+              
+              .help-text {
+                display: block;
+                margin-top: 0.5rem;
+                color: #6b7280;
+                font-size: 12px;
+                margin-left: 4px;
+              }
+            }
+            
+            .checkbox-group {
+              .checkbox-item {
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                
+                &:last-child {
+                  margin-bottom: 0;
+                }
+                
+                .help-text {
+                  margin-left: 4px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // New main configuration layout with consistent 8px gaps
+    .main-config-row {
+      @media (max-width: 768px) {
+        flex-direction: column !important;
+        gap: 8px !important;
+      }
+      
+      .left-config-column,
+      .right-config-column {
+        @media (max-width: 768px) {
+          flex: none !important;
+          width: 100% !important;
+          gap: 8px !important;
+        }
+      }
+    }
+    
+    // Global orb-card styling - consistent with design system
+    orb-card {
+      display: block;
+      width: 100%;
+      
+      // Header styling for consistent look
+      h4 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        
+        i {
+          font-size: 14px;
+        }
+      }
+    }
     
     // Main grid layout for the new structure
     .row {
@@ -129,7 +281,6 @@
             .input-group {
               flex: 1;
               min-width: 200px;
-              
             }
             
             .form-actions {
@@ -150,7 +301,7 @@
       
       .time-inputs {
         display: flex;
-        gap: 4px;
+        gap: 1rem;
         
         .input-group {
           flex: 1;
@@ -163,7 +314,7 @@
       
       .input-group {
         margin-bottom: 1rem;
-                  padding-bottom: 4px;
+        
         .help-text {
           display: block;
           margin-top: 0.25rem;
@@ -408,6 +559,58 @@
             background: #3b82f6;
             border-color: #3b82f6;
           }
+        }
+      }
+    }
+  }
+}
+
+// Estilos para la nueva sección de gestión de fechas especiales
+.special-dates-tabs {
+  ::ng-deep {
+    .p-tabview {
+      .p-tabview-nav {
+        background: transparent;
+        border-bottom: 2px solid var(--surface-200, #dee2e6);
+        
+        .p-tabview-nav-link {
+          background: transparent;
+          border: none;
+          border-bottom: 2px solid transparent;
+          color: var(--text-color-secondary, #6c757d);
+          font-weight: 500;
+          padding: 1rem 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: all 0.2s ease-in-out;
+
+          &:hover {
+            background: var(--surface-50, #f8f9fa);
+            color: var(--text-color, #212529);
+          }
+
+          .p-menuitem-icon {
+            margin-right: 0;
+          }
+        }
+
+        .p-tabview-nav-link.p-highlight {
+          background: transparent;
+          border-bottom-color: var(--primary-color, #007bff);
+          color: var(--primary-color, #007bff);
+          font-weight: 600;
+        }
+      }
+
+      .p-tabview-panels {
+        background: transparent;
+        padding: 1.5rem 0 0 0;
+        border: none;
+
+        .p-tabview-panel {
+          background: transparent;
+          padding: 0;
         }
       }
     }

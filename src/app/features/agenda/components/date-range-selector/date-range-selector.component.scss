@@ -1,0 +1,210 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.date-selector-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Asegurar que los calendarios ocupen todo el ancho
+  ::ng-deep {
+    .p-calendar {
+      width: 100% !important;
+      
+      .p-inputtext {
+        width: 100% !important;
+      }
+    }
+
+    .p-dropdown {
+      width: 100% !important;
+    }
+  }
+}
+
+.selected-dates {
+  border-top: 1px solid var(--surface-border, #e9ecef);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+
+  h5 {
+    margin: 0 0 1rem 0;
+    color: var(--primary-color, #007bff);
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      font-size: 1rem;
+    }
+  }
+
+  .dates-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+
+    .date-chip {
+      ::ng-deep {
+        .p-chip {
+          background-color: var(--blue-50, #f0f8ff);
+          color: var(--blue-900, #1e3a8a);
+          border: 1px solid var(--blue-200, #bfdbfe);
+
+          .p-chip-text {
+            font-size: 0.8rem;
+            line-height: 1.2;
+          }
+
+          .p-chip-remove-icon {
+            color: var(--red-500, #ef4444);
+            
+            &:hover {
+              background-color: var(--red-100, #fee2e2);
+            }
+          }
+        }
+      }
+
+      .chip-content {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        
+        strong {
+          font-size: 0.75rem;
+          text-transform: capitalize;
+        }
+        
+        small {
+          font-size: 0.65rem;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+
+  // Scrollbar personalizado
+  .dates-list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .dates-list::-webkit-scrollbar-track {
+    background: var(--surface-100, #f8f9fa);
+    border-radius: 2px;
+  }
+
+  .dates-list::-webkit-scrollbar-thumb {
+    background: var(--surface-400, #ced4da);
+    border-radius: 2px;
+  }
+
+  .dates-list::-webkit-scrollbar-thumb:hover {
+    background: var(--surface-500, #adb5bd);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-border, #e9ecef);
+  margin-top: 1rem;
+}
+
+// Estilos para fechas deshabilitadas
+::ng-deep {
+  .disabled-date {
+    color: var(--text-color-secondary, #6c757d) !important;
+    background-color: var(--surface-200, #e9ecef) !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+  }
+
+  // Personalización del calendario
+  .p-datepicker {
+    .p-datepicker-other-month {
+      opacity: 0.4;
+    }
+
+    .p-highlight {
+      background-color: var(--primary-color, #007bff) !important;
+      color: white !important;
+    }
+
+    .p-datepicker-today {
+      background-color: var(--blue-100, #dbeafe) !important;
+      color: var(--blue-900, #1e3a8a) !important;
+      font-weight: 600;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .selected-dates {
+    .dates-list {
+      .date-chip {
+        ::ng-deep .p-chip {
+          font-size: 0.75rem;
+          padding: 0.3rem 0.6rem;
+        }
+        
+        .chip-content {
+          strong {
+            font-size: 0.7rem;
+          }
+          
+          small {
+            font-size: 0.6rem;
+          }
+        }
+      }
+    }
+  }
+
+  .form-actions {
+    flex-direction: column;
+    
+    ::ng-deep orb-button {
+      width: 100%;
+    }
+  }
+}
+
+// Estados de validación
+.field {
+  .p-invalid {
+    border-color: var(--red-500, #ef4444) !important;
+  }
+}
+
+// Animaciones suaves
+.dates-list {
+  .date-chip {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

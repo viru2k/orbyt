@@ -4,12 +4,14 @@ import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
 import { CheckboxModule } from 'primeng/checkbox';
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbCheckboxComponent } from '@orb-components';
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbCheckboxComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 
 // Store y DTOs
 import { UsersStore } from '@orb-stores';
 import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../../api/model/models';
+import { FileUploadResponseDto } from '../../../api/models/file-upload-response-dto';
+import { AvatarEntity } from '../../../shared/models/entity-avatar.interfaces';
 
 // Interfaces temporales hasta que se actualicen los DTOs generados
 interface ExtendedCreateSubUserDto {
@@ -32,6 +34,7 @@ interface ExtendedAdminUpdateUserDto {
 // Servicios y Modelos
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity, FormButtonAction } from '@orb-models';
+import { ImageUploadService } from '../../../shared/services/image-upload.service';
 
 @Component({
   selector: 'app-user-edit-form',
@@ -45,7 +48,8 @@ import { NotificationSeverity, FormButtonAction } from '@orb-models';
     OrbFormFieldComponent,
     OrbFormFooterComponent,
     OrbCardComponent,
-    OrbCheckboxComponent
+    OrbCheckboxComponent,
+    OrbEntityAvatarComponent
   ],
   templateUrl: './user-edit-form.component.html',
   styleUrls: ['./user-edit-form.component.scss'],
@@ -58,6 +62,7 @@ export class UserEditFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private usersStore = inject(UsersStore);
   private notificationService = inject(NotificationService);
+  private imageUploadService = inject(ImageUploadService);
 
   form!: FormGroup;
   availableRoles$ = this.usersStore.roles$;
@@ -65,6 +70,8 @@ export class UserEditFormComponent implements OnInit {
   isEditMode: boolean = false;
   pizza: string[] = [];
   selectedRoles: number[] = [];
+  currentUserEntity: AvatarEntity | null = null;
+  currentAvatar: FileUploadResponseDto | null = null;
 
   footerButtons: FormButtonAction[] = [
     {
@@ -97,6 +104,19 @@ export class UserEditFormComponent implements OnInit {
         roles: userRoles
       });
       this.selectedRoles = [...userRoles]; // Sincronizar con selectedRoles
+      this.currentUserEntity = { ...this.user };
+    } else {
+      // Para modo creación, crear una entidad temporal
+      this.currentUserEntity = {
+        id: 0, // ID temporal para nuevo usuario
+        fullName: '',
+        email: '',
+        active: true,
+        isAdmin: false,
+        roles: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      } as UserResponseDto;
     }
   }
 
@@ -184,6 +204,36 @@ export class UserEditFormComponent implements OnInit {
     }
 
     this.saved.emit();
+  }
+
+  // Manejar la carga de avatar
+  onAvatarUploaded(result: any): void {
+    console.log('Avatar uploaded:', result);
+    this.currentAvatar = result;
+    
+    // Recargar los usuarios para reflejar el cambio
+    this.usersStore.loadUsers();
+  }
+  
+  // Manejar la eliminación de avatar
+  onAvatarDeleted(): void {
+    this.currentAvatar = null;
+    this.notificationService.show(
+      NotificationSeverity.Success, 
+      'Avatar eliminado correctamente'
+    );
+    
+    // Recargar los usuarios para reflejar el cambio
+    this.usersStore.loadUsers();
+  }
+
+  // Manejar errores de upload
+  onUploadError(error: string): void {
+    console.error('Upload error:', error);
+    this.notificationService.show(
+      NotificationSeverity.Error, 
+      `Error al subir avatar: ${error}`
+    );
   }
 
   // Maneja los clics del componente orb-form-footer

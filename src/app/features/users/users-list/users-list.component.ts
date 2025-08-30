@@ -3,7 +3,7 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbToolbarComponent, OrbButtonComponent } from '@orb-components';
+import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbToolbarComponent, OrbButtonComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { UsersStore } from '@orb-stores/users/users.store';
 import { AuthStore } from '@orb-stores';
 import { UserResponseDto, RoleResponseDto, PermissionResponseDto } from '../../../api/model/models';
@@ -30,6 +30,7 @@ import { AgendaConfigModalComponent } from '../../agenda/components/agenda-confi
     OrbBreadcrumbComponent,
     OrbToolbarComponent,
     OrbButtonComponent,
+    OrbEntityAvatarComponent,
     MessageModule,
     TagModule,
     ChipModule,
@@ -61,8 +62,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
   breadcrumbItems: any[] = [];
 
   public columns: TableColumn[] = [
-    { field: 'fullName', header: 'Nombre Completo', sortable: true },
-    { field: 'email', header: 'Email', sortable: true },
+    { field: 'profile', header: 'Usuario', sortable: false, width: '300px' },
     { field: 'isAdmin', header: 'Admin', sortable: true, width: '100px' },
     { field: 'active', header: 'Estado', sortable: true, width: '120px' },
     { field: 'createdAt', header: 'Fecha Creación', sortable: true, width: '180px' },
@@ -269,4 +269,5 @@ export class UsersListComponent implements OnInit, OnDestroy {
       }
     ];
   }
+
 }

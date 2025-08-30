@@ -1,0 +1,57 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+.service-form {
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-4, 1rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .form-section {
+    background: var(--surface-ground);
+    padding: var(--space-4, 1rem);
+    border-radius: var(--radius-md, 0.5rem);
+    border: 1px solid var(--surface-border);
+  }
+
+  .section-title {
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: var(--font-semibold, 600);
+    color: var(--text-primary);
+    margin-bottom: var(--space-3, 0.75rem);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: var(--primary-color);
+    }
+  }
+
+  ::ng-deep {
+    .p-inputnumber input {
+      text-align: right;
+    }
+
+    .p-dropdown {
+      width: 100%;
+    }
+
+    .p-inputtext,
+    .p-inputtextarea,
+    .p-inputnumber-input {
+      width: 100%;
+    }
+  }
+}
+
+// Mobile responsiveness
+@include mixins.mobile {
+  .service-form {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

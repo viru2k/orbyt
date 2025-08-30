@@ -1,0 +1,258 @@
+<div class="special-schedule">
+  <!-- Sección de Creación de Horarios Especiales -->
+  <orb-card>
+    <div orbHeader>
+      <h4><i class="pi pi-clock"></i> Configurar Horario Especial</h4>
+    </div>
+    <div orbBody>
+      <form [formGroup]="form" class="schedule-form">
+        <!-- Fecha -->
+        <div class="field">
+          <orb-datepicker
+            [formControl]="dateControl"
+            [minDate]="minDateForPicker"
+            dateFormat="dd/mm/yy"
+            placeholder="Fecha *">
+          </orb-datepicker>
+          <small class="p-help-text">Selecciona la fecha para configurar</small>
+        </div>
+
+        <!-- Tipo de Configuración -->
+        <div class="field">
+          <div class="checkbox-field">
+            <p-checkbox
+              id="blocked"
+              formControlName="blocked"
+              [binary]="true">
+            </p-checkbox>
+            <label for="blocked" class="checkbox-label">
+              Bloquear día completo
+            </label>
+          </div>
+          <small class="field-help">
+            Si está marcado, el día será bloqueado completamente. Si no, se configurará un horario personalizado.
+          </small>
+        </div>
+
+        <!-- Configuración de Horarios (solo si no está bloqueado) -->
+        <div class="schedule-config" *ngIf="!form.get('blocked')?.value">
+          <div class="form-row">
+            <!-- Hora Inicio -->
+            <div class="field">
+              <orb-select
+                [formControl]="startTimeControl"
+                [options]="timeSlots"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Hora Inicio">
+              </orb-select>
+              <small class="p-help-text">Hora de inicio del horario especial</small>
+            </div>
+
+            <!-- Hora Fin -->
+            <div class="field">
+              <orb-select
+                [formControl]="endTimeControl"
+                [options]="timeSlots"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Hora Fin">
+              </orb-select>
+              <small class="p-help-text">Hora de fin del horario especial</small>
+            </div>
+
+            <!-- Duración de Turno -->
+            <div class="field">
+              <orb-select
+                [formControl]="slotDurationControl"
+                [options]="slotDurationOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Duración de Turno">
+              </orb-select>
+              <small class="p-help-text">Duración de cada turno en minutos</small>
+            </div>
+          </div>
+
+          <!-- Validación de horarios -->
+          <div class="validation-message" *ngIf="!validateTimeRange() && form.get('startTime')?.value && form.get('endTime')?.value">
+            <i class="pi pi-exclamation-triangle"></i>
+            La hora de fin debe ser mayor que la hora de inicio
+          </div>
+        </div>
+
+        <!-- Nota -->
+        <div class="field">
+          <orb-text-input
+            [formControl]="noteControl"
+            placeholder="Nota (opcional)">
+          </orb-text-input>
+          <small class="p-help-text">Información adicional sobre esta configuración</small>
+        </div>
+
+        <!-- Acciones -->
+        <div class="form-actions">
+          <orb-button
+            label="Crear Configuración"
+            icon="pi pi-plus"
+            severity="primary"
+            [disabled]="!form.valid || !validateTimeRange() || loading"
+            [loading]="loading"
+            (onClick)="createDayOverride()">
+          </orb-button>
+          
+          <orb-button
+            label="Limpiar"
+            icon="pi pi-times"
+            severity="secondary"
+            styleType="text"
+            [disabled]="loading"
+            (onClick)="clearForm()">
+          </orb-button>
+        </div>
+      </form>
+    </div>
+  </orb-card>
+
+  <!-- Sección de Configuraciones Existentes -->
+  <orb-card>
+    <div orbHeader>
+      <div class="header-with-actions">
+        <h4><i class="pi pi-list"></i> Configuraciones Especiales</h4>
+        <div class="header-actions">
+          <orb-button
+            label="Eliminar Seleccionadas"
+            icon="pi pi-trash"
+            severity="danger"
+            styleType="text"
+            [disabled]="!hasSelectedOverrides() || loading"
+            [loading]="loading"
+            (onClick)="deleteSelectedOverrides()">
+          </orb-button>
+          
+          <orb-button
+            label="Actualizar"
+            icon="pi pi-refresh"
+            severity="secondary"
+            styleType="text"
+            [disabled]="loading"
+            [loading]="loading"
+            (onClick)="refreshOverrides()">
+          </orb-button>
+        </div>
+      </div>
+    </div>
+    <div orbBody>
+      <p-table 
+        [value]="dayOverrides"
+        [columns]="cols"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [(selection)]="selectedOverrides"
+        selectionMode="multiple"
+        [metaKeySelection]="false"
+        dataKey="id"
+        [sortField]="'date'"
+        [sortOrder]="1"
+        class="overrides-table">
+        
+        <!-- Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="date">
+              Fecha <p-sortIcon field="date"></p-sortIcon>
+            </th>
+            <th>Horario</th>
+            <th>Estado</th>
+            <th>Nota</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+          <tr [class.past-date]="isPastDate(rowData.date)">
+            <td>
+              <p-tableCheckbox 
+                [value]="rowData" 
+                [disabled]="isPastDate(rowData.date)">
+              </p-tableCheckbox>
+            </td>
+            <td>
+              <div class="date-cell">
+                <strong>{{ formatDateForDisplay(rowData.date) }}</strong>
+                <br>
+                <small class="text-muted">{{ rowData.date }}</small>
+                <p-chip 
+                  *ngIf="isPastDate(rowData.date)"
+                  label="Pasado"
+                  severity="warning"
+                  class="past-indicator">
+                </p-chip>
+              </div>
+            </td>
+            <td>
+              <div class="schedule-cell">
+                <span class="schedule-time">{{ formatScheduleDisplay(rowData) }}</span>
+                <div *ngIf="rowData.slotDuration && !rowData.blocked" class="slot-duration">
+                  <small>
+                    <i class="pi pi-clock"></i>
+                    {{ rowData.slotDuration }} min/turno
+                  </small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <p-tag 
+                [value]="getStatusDisplay(rowData).label"
+                [severity]="getStatusDisplay(rowData).severity">
+              </p-tag>
+            </td>
+            <td>
+              <span [title]="rowData.note">
+                {{ rowData.note || '-' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <orb-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  styleType="text"
+                  size="small"
+                  [disabled]="isPastDate(rowData.date) || loading"
+                  [loading]="loading"
+                  pTooltip="Eliminar configuración"
+                  tooltipPosition="top"
+                  (onClick)="deleteOverride(rowData)">
+                </orb-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">
+              <div class="empty-state">
+                <i class="pi pi-calendar-times" style="font-size: 3rem; color: #ccc;"></i>
+                <p>No hay configuraciones especiales</p>
+                <small class="text-muted">Las configuraciones de horarios especiales aparecerán aquí</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </orb-card>
+</div>
+
+<!-- Diálogos de confirmación y mensajes -->
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

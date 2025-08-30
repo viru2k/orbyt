@@ -1,0 +1,70 @@
+<div [class]="containerClasses">
+  
+  <!-- Skeleton loader mientras carga -->
+  <p-skeleton 
+    *ngIf="loading || (isLoading && autoLoad)"
+    [shape]="isCircle ? 'circle' : 'square'"
+    [size]="size === 'xlarge' ? '96px' : size === 'large' ? '64px' : '48px'">
+  </p-skeleton>
+
+  <!-- Avatar principal -->
+  <p-avatar
+    *ngIf="!loading && !(isLoading && autoLoad)"
+    [image]="hasImage ? (avatarUrl || undefined) : undefined"
+    [label]="!hasImage ? initials : undefined"
+    [size]="size"
+    [shape]="shape"
+    [style]="avatarStyles"
+    [pTooltip]="showTooltip ? tooltipText : undefined"
+    tooltipPosition="top"
+    [class]="contextClass"
+    (click)="onAvatarClick()"
+    (imageError)="onImageError()">
+  </p-avatar>
+
+  <!-- Botón de editar (superpuesto) -->
+  <button
+    *ngIf="showUploadButton && !loading && !(isLoading && autoLoad)"
+    type="button"
+    class="edit-button"
+    pButton
+    icon="pi pi-pencil"
+    [size]="size === 'xlarge' ? 'small' : 'small'"
+    severity="secondary"
+    [rounded]="true"
+    pTooltip="Editar imagen"
+    tooltipPosition="top"
+    (click)="onEditClick($event)">
+  </button>
+
+  <!-- Indicator de imagen nueva o estado -->
+  <div 
+    *ngIf="avatar && !hasImage" 
+    class="status-indicator error"
+    pTooltip="Error al cargar imagen"
+    tooltipPosition="top">
+    <i class="pi pi-exclamation-triangle"></i>
+  </div>
+
+  <!-- Loading indicator pequeño para carga automática -->
+  <div 
+    *ngIf="isLoading && autoLoad && !loading" 
+    class="loading-indicator"
+    pTooltip="Cargando imagen..."
+    tooltipPosition="top">
+    <i class="pi pi-spinner pi-spin"></i>
+  </div>
+
+</div>
+
+<!-- Modal de subida de imagen -->
+<orb-image-upload-modal
+  [(visible)]="showModal"
+  [entityType]="modalEntityType"
+  [entityId]="entity.id"
+  [currentImage]="avatar"
+  [modalTitle]="modalTitle"
+  (imageUploaded)="onModalImageUploaded($event)"
+  (imageDeleted)="onModalImageDeleted()"
+  (uploadError)="onUploadError($event)">
+</orb-image-upload-modal>

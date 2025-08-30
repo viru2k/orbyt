@@ -1,0 +1,283 @@
+.entity-avatar-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  // Tamaños específicos
+  &.size-normal {
+    .edit-button, .upload-button {
+      width: 20px;
+      height: 20px;
+      bottom: -2px;
+      right: -2px;
+      
+      ::ng-deep .p-button-icon {
+        font-size: 0.7rem;
+      }
+    }
+    
+    .status-indicator, .loading-indicator {
+      width: 16px;
+      height: 16px;
+      bottom: -2px;
+      right: -2px;
+      font-size: 0.6rem;
+    }
+  }
+  
+  &.size-large {
+    .edit-button, .upload-button {
+      width: 24px;
+      height: 24px;
+      bottom: -2px;
+      right: -2px;
+      
+      ::ng-deep .p-button-icon {
+        font-size: 0.8rem;
+      }
+    }
+    
+    .status-indicator, .loading-indicator {
+      width: 20px;
+      height: 20px;
+      bottom: -2px;
+      right: -2px;
+      font-size: 0.7rem;
+    }
+  }
+  
+  &.size-xlarge {
+    .edit-button, .upload-button {
+      width: 28px;
+      height: 28px;
+      bottom: -2px;
+      right: -2px;
+      
+      ::ng-deep .p-button-icon {
+        font-size: 0.9rem;
+      }
+    }
+    
+    .status-indicator, .loading-indicator {
+      width: 24px;
+      height: 24px;
+      bottom: -2px;
+      right: -2px;
+      font-size: 0.8rem;
+    }
+  }
+  
+  // Estados interactivos
+  &.clickable {
+    cursor: pointer;
+    
+    p-avatar {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+    }
+  }
+  
+  // Contextos específicos
+  &.entity-avatar-table {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+    
+    p-avatar {
+      border: 2px solid #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+  
+  &.entity-avatar-modal {
+    p-avatar {
+      border: 2px solid #e5e7eb;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  }
+  
+  &.entity-avatar-profile {
+    p-avatar {
+      border: 3px solid #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  }
+  
+  &.entity-avatar-card {
+    p-avatar {
+      border: 1px solid #e5e7eb;
+    }
+  }
+  
+  // Botones de upload y edición
+  .edit-button, .upload-button {
+    position: absolute;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+    z-index: 10;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+      transform: scale(1.1) !important;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35) !important;
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    }
+    
+    ::ng-deep .p-button {
+      padding: 0;
+      min-width: auto;
+      background: transparent !important;
+      border: none !important;
+      width: 100%;
+      height: 100%;
+      
+      .p-button-icon {
+        color: #ffffff !important;
+        font-weight: bold !important;
+      }
+    }
+  }
+  
+  // Indicadores de estado
+  .status-indicator, .loading-indicator {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    z-index: 1;
+    
+    &.error {
+      background-color: #ef4444;
+      color: #ffffff;
+    }
+  }
+  
+  .loading-indicator {
+    background-color: #3b82f6;
+    color: #ffffff;
+  }
+  
+  // Formas específicas
+  &.shape-square {
+    p-avatar {
+      ::ng-deep .p-avatar {
+        border-radius: 8px;
+      }
+    }
+  }
+  
+  &.shape-circle {
+    p-avatar {
+      ::ng-deep .p-avatar {
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+// Estilos globales para el avatar de PrimeNG
+::ng-deep {
+  .p-avatar {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    
+    // Mejorar renderizado de texto
+    &.p-avatar-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    // Mejorar renderizado de imágenes
+    &.p-avatar-image img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+// Efectos de hover y focus
+.entity-avatar-container {
+  &.clickable:focus-within {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: inherit;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .entity-avatar-container {
+    &.size-xlarge {
+      .upload-button {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    &.size-large {
+      .upload-button {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+// Animaciones
+@keyframes avatarPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.entity-avatar-container.loading {
+  p-avatar {
+    animation: avatarPulse 2s infinite;
+  }
+}
+
+// Estado de error mejorado
+.status-indicator.error {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+// Mejoras de accesibilidad
+.entity-avatar-container {
+  &.clickable {
+    p-avatar {
+      cursor: pointer;
+      
+      &:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+    }
+  }
+  
+  .upload-button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}

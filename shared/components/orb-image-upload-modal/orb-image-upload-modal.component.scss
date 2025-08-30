@@ -1,0 +1,41 @@
+:host {
+  .modal-content {
+    padding: 1rem 0;
+    
+    ::ng-deep orb-image-upload {
+      .image-upload-card {
+        box-shadow: none;
+        border: none;
+        
+        .p-card-body {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+}
+
+// Estilos globales para el modal
+::ng-deep .image-upload-modal {
+  .p-dialog-header {
+    background: var(--surface-card);
+    border-bottom: 1px solid var(--surface-border);
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .p-dialog-footer {
+    padding: 1rem 1.5rem;
+    background: var(--surface-card);
+    border-top: 1px solid var(--surface-border);
+  }
+}

@@ -3,15 +3,18 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent, OrbCardComponent } from '@orb-components';
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent, OrbCardComponent, OrbEntityAvatarComponent } from '@orb-components';
 
 // Store y DTOs
 import { ClientStore } from '@orb-stores';
 import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '../../../api/model/models';
+import { FileUploadResponseDto } from '../../../api/models/file-upload-response-dto';
+import { AvatarEntity } from '../../../shared/models/entity-avatar.interfaces';
 
 // Servicios y Modelos
 import { NotificationService, UtilsService } from '@orb-services';
 import { NotificationSeverity, FormButtonAction } from '@orb-models';
+import { ImageUploadService } from '../../../shared/services/image-upload.service';
 
 @Component({
   selector: 'app-client-form',
@@ -25,9 +28,11 @@ import { NotificationSeverity, FormButtonAction } from '@orb-models';
     OrbSelectComponent,
     OrbDatepickerComponent,
     OrbTextAreaComponent,
-    OrbCardComponent
+    OrbCardComponent,
+    OrbEntityAvatarComponent
   ],
   templateUrl: './client-form.component.html',
+  styleUrls: ['./client-form.component.scss'],
 })
 export class ClientFormComponent implements OnInit {
   @Input() client?: ClientResponseDto;
@@ -38,9 +43,12 @@ export class ClientFormComponent implements OnInit {
   private clientStore = inject(ClientStore);
   private notificationService = inject(NotificationService);
   public utilsService = inject(UtilsService); // Se hace público para el template
+  private imageUploadService = inject(ImageUploadService);
 
   form!: FormGroup;
   isEditMode = false;
+  currentClientEntity: AvatarEntity | null = null;
+  currentAvatar: FileUploadResponseDto | null = null;
 
   // Opciones para los menús desplegables
   genderOptions = [
@@ -66,6 +74,24 @@ export class ClientFormComponent implements OnInit {
 
     if (this.isEditMode && this.client) {
       this.form.patchValue(this.client);
+      this.currentClientEntity = { ...this.client };
+    } else {
+      // Para modo creación, crear una entidad temporal
+      this.currentClientEntity = {
+        id: 0, // ID temporal para nuevo cliente
+        name: '',
+        lastName: '',
+        fullname: '',
+        email: '',
+        phone: '',
+        address: '',
+        birthDate: '',
+        gender: undefined,
+        status: 'ACTIVE',
+        notes: '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      } as ClientResponseDto;
     }
   }
 
@@ -116,6 +142,24 @@ export class ClientFormComponent implements OnInit {
     }
 
     this.saved.emit();
+  }
+
+  // Manejar la carga de avatar
+  onAvatarUploaded(result: any): void {
+    console.log('Avatar uploaded:', result);
+    this.currentAvatar = result;
+    
+    // Recargar los clientes para reflejar el cambio
+    this.clientStore.load();
+  }
+  
+  // Manejar errores de upload
+  onUploadError(error: string): void {
+    console.error('Upload error:', error);
+    this.notificationService.showError(
+      NotificationSeverity.Error, 
+      `Error al subir avatar: ${error}`
+    );
   }
 
   // Maneja los clics del componente orb-form-footer

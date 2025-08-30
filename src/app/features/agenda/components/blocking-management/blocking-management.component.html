@@ -1,0 +1,212 @@
+<div class="blocking-management">
+  <!-- Sección de Bloqueo de Fechas -->
+  <orb-card>
+    <div orbHeader>
+      <h4><i class="pi pi-ban"></i> Bloquear Fechas</h4>
+    </div>
+    <div orbBody>
+      <!-- Selector de fechas -->
+      <app-date-range-selector
+        title="Seleccionar Fechas a Bloquear"
+        [allowMultiple]="true"
+        [allowRange]="true"
+        [minDate]="minDateForPicker"
+        [showReason]="true"
+        (dateSelectionChange)="onDateSelectionChange($event)"
+        (clearSelection)="onClearDateSelection()">
+      </app-date-range-selector>
+
+      <!-- Configuración de Bloqueo -->
+      <form [formGroup]="form" class="blocking-form">
+        <div class="form-row">
+          <!-- Tipo de Bloqueo -->
+          <div class="field">
+            <orb-select
+              [formControl]="blockingTypeControl"
+              [options]="blockingTypes"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Tipo de Bloqueo">
+            </orb-select>
+            <small class="p-help-text">Elige el tipo de restricción que quieres aplicar</small>
+          </div>
+
+          <!-- Razón del Bloqueo -->
+          <div class="field">
+            <orb-text-input
+              [formControl]="reasonControl"
+              placeholder="Motivo del Bloqueo">
+            </orb-text-input>
+            <small class="p-help-text">Ej: Vacaciones, día libre, capacitación, etc.</small>
+          </div>
+        </div>
+
+        <!-- Nota Adicional -->
+        <div class="field">
+          <orb-text-input
+            [formControl]="noteControl"
+            placeholder="Nota Adicional">
+          </orb-text-input>
+          <small class="p-help-text">Información adicional sobre el bloqueo (opcional)</small>
+        </div>
+
+        <!-- Acciones de Bloqueo -->
+        <div class="form-actions">
+          <orb-button
+            label="Bloquear Fechas"
+            icon="pi pi-ban"
+            severity="danger"
+            [disabled]="!hasSelectedDatesToBlock() || loading"
+            [loading]="loading"
+            (onClick)="blockSelectedDates()">
+          </orb-button>
+          
+          <orb-button
+            label="Limpiar"
+            icon="pi pi-times"
+            severity="secondary"
+            styleType="text"
+            [disabled]="loading"
+            (onClick)="onClearDateSelection()">
+          </orb-button>
+        </div>
+      </form>
+    </div>
+  </orb-card>
+
+  <!-- Sección de Fechas Bloqueadas -->
+  <orb-card>
+    <div orbHeader>
+      <div class="header-with-actions">
+        <h4><i class="pi pi-list"></i> Fechas Bloqueadas</h4>
+        <div class="header-actions">
+          <orb-button
+            label="Desbloquear Seleccionadas"
+            icon="pi pi-check"
+            severity="success"
+            styleType="text"
+            [disabled]="!hasSelectedDatesToUnblock() || loading"
+            [loading]="loading"
+            (onClick)="unblockSelectedDates()">
+          </orb-button>
+          
+          <orb-button
+            label="Actualizar"
+            icon="pi pi-refresh"
+            severity="secondary"
+            styleType="text"
+            [disabled]="loading"
+            [loading]="loading"
+            (onClick)="refreshBlockedDates()">
+          </orb-button>
+        </div>
+      </div>
+    </div>
+    <div orbBody>
+      <p-table 
+        [value]="blockedDates"
+        [columns]="cols"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [(selection)]="selectedDates"
+        selectionMode="multiple"
+        [metaKeySelection]="false"
+        dataKey="id"
+        [sortField]="'date'"
+        [sortOrder]="1"
+        class="blocked-dates-table">
+        
+        <!-- Columna de selección -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th pSortableColumn="date">
+              Fecha <p-sortIcon field="date"></p-sortIcon>
+            </th>
+            <th pSortableColumn="type">
+              Tipo <p-sortIcon field="type"></p-sortIcon>
+            </th>
+            <th>Motivo</th>
+            <th>Nota</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+          <tr [class.past-date]="isPastDate(rowData.date)">
+            <td>
+              <p-tableCheckbox 
+                [value]="rowData" 
+                [disabled]="isPastDate(rowData.date)">
+              </p-tableCheckbox>
+            </td>
+            <td>
+              <div class="date-cell">
+                <strong>{{ formatDateForDisplay(rowData.date) }}</strong>
+                <br>
+                <small class="text-muted">{{ rowData.date }}</small>
+                <p-chip 
+                  *ngIf="isPastDate(rowData.date)"
+                  label="Pasado"
+                  severity="warning"
+                  class="past-indicator">
+                </p-chip>
+              </div>
+            </td>
+            <td>
+              <p-tag 
+                [value]="getTypeLabel(rowData.type)"
+                [severity]="getTypeSeverity(rowData.type)">
+              </p-tag>
+            </td>
+            <td>
+              <span [title]="rowData.reason">
+                {{ rowData.reason || '-' }}
+              </span>
+            </td>
+            <td>
+              <span [title]="rowData.note">
+                {{ rowData.note || '-' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <orb-button
+                  icon="pi pi-times"
+                  severity="danger"
+                  styleType="text"
+                  size="small"
+                  [disabled]="isPastDate(rowData.date) || loading"
+                  [loading]="loading"
+                  pTooltip="Desbloquear fecha"
+                  tooltipPosition="top"
+                  (onClick)="unblockDate(rowData)">
+                </orb-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">
+              <div class="empty-state">
+                <i class="pi pi-calendar-times" style="font-size: 3rem; color: #ccc;"></i>
+                <p>No hay fechas bloqueadas</p>
+                <small class="text-muted">Las fechas que bloquees aparecerán aquí</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </orb-card>
+</div>
+
+<!-- Diálogos de confirmación y mensajes -->
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

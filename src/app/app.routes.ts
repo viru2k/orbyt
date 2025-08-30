@@ -42,6 +42,13 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'management/services',
+        loadComponent: () =>
+          import('./features/services/services-list/services-list.component').then(
+            (m) => m.ServicesListComponent
+          ),
+      },
+      {
         path: 'inventory/movements',
         loadComponent: () =>
           import('./features/inventory/movements/movement-list/movement-list.component').then(

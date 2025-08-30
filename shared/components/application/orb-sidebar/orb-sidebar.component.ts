@@ -40,9 +40,10 @@ export class OrbSidebarComponent implements OnInit {
       this.authStore.canManageUsers$,
       this.authStore.canManageClients$,
       this.authStore.canManageProducts$,
+      this.authStore.canManageServices$,
       this.authStore.canManageAgenda$
     ]).pipe(
-      map(([canManageUsers, canManageClients, canManageProducts, canManageAgenda]) => {
+      map(([canManageUsers, canManageClients, canManageProducts, canManageServices, canManageAgenda]) => {
         const managementItems: MenuItem[] = [];
         
         if (canManageProducts) {
@@ -50,6 +51,14 @@ export class OrbSidebarComponent implements OnInit {
             label: 'Productos',
             icon: 'fas fa-box-open',
             command: () => this.router.navigate(['/management/product'])
+          });
+        }
+
+        if (canManageServices) {
+          managementItems.push({
+            label: 'Servicios',
+            icon: 'fas fa-cog',
+            command: () => this.router.navigate(['/management/services'])
           });
         }
         

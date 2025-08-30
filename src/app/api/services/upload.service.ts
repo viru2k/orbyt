@@ -16,6 +16,8 @@ import { uploadControllerDeleteFile } from '../fn/upload/upload-controller-delet
 import { UploadControllerDeleteFile$Params } from '../fn/upload/upload-controller-delete-file';
 import { uploadControllerDownloadFile } from '../fn/upload/upload-controller-download-file';
 import { UploadControllerDownloadFile$Params } from '../fn/upload/upload-controller-download-file';
+import { uploadControllerDownloadFileWithFilename } from '../fn/upload/upload-controller-download-file-with-filename';
+import { UploadControllerDownloadFileWithFilename$Params } from '../fn/upload/upload-controller-download-file-with-filename';
 import { uploadControllerGetFilesByEntity } from '../fn/upload/upload-controller-get-files-by-entity';
 import { UploadControllerGetFilesByEntity$Params } from '../fn/upload/upload-controller-get-files-by-entity';
 import { uploadControllerGetMyFiles } from '../fn/upload/upload-controller-get-my-files';
@@ -134,7 +136,7 @@ export class UploadService extends BaseService {
   static readonly UploadControllerDownloadFilePath = '/upload/{id}';
 
   /**
-   * Descargar archivo por ID.
+   * Descargar archivo por ID (requiere autenticación).
    *
    *
    *
@@ -148,7 +150,7 @@ export class UploadService extends BaseService {
   }
 
   /**
-   * Descargar archivo por ID.
+   * Descargar archivo por ID (requiere autenticación).
    *
    *
    *
@@ -192,6 +194,39 @@ export class UploadService extends BaseService {
    */
   uploadControllerDeleteFile(params: UploadControllerDeleteFile$Params, context?: HttpContext): Observable<void> {
     return this.uploadControllerDeleteFile$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `uploadControllerDownloadFileWithFilename()` */
+  static readonly UploadControllerDownloadFileWithFilenamePath = '/upload/{id}/{filename}';
+
+  /**
+   * Servir archivo público por ID con filename SEO-friendly.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `uploadControllerDownloadFileWithFilename()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  uploadControllerDownloadFileWithFilename$Response(params: UploadControllerDownloadFileWithFilename$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return uploadControllerDownloadFileWithFilename(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Servir archivo público por ID con filename SEO-friendly.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `uploadControllerDownloadFileWithFilename$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  uploadControllerDownloadFileWithFilename(params: UploadControllerDownloadFileWithFilename$Params, context?: HttpContext): Observable<void> {
+    return this.uploadControllerDownloadFileWithFilename$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

@@ -1,6 +1,34 @@
 <p-toast />
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="grid">
+    
+    <!-- Avatar Section - Solo en modo edición -->
+    <div class="col-12" *ngIf="isEditMode && currentProductEntity">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-image mr-2"></i>
+          <h3 class="m-0">Imagen del Producto</h3>
+        </div>
+        <div orbBody class="flex justify-content-center align-items-center">
+          <div class="avatar-section text-center">
+            <div class="avatar-display">
+              <orb-entity-avatar
+                [entity]="currentProductEntity"
+                entityType="product"
+                size="xlarge"
+                shape="square"
+                [showTooltip]="false"
+                [showUploadButton]="true"
+                context="profile"
+                [avatar]="currentAvatar"
+                [autoLoad]="isEditMode"
+                (avatarUpdated)="onAvatarUploaded($event)">
+              </orb-entity-avatar>
+            </div>
+          </div>
+        </div>
+      </orb-card>
+    </div>
 
     <!-- Nombre -->
     <div class="col-12">

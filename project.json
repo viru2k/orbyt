@@ -62,7 +62,8 @@
           "buildTarget": "orbyt:build:production"
         },
         "development": {
-          "buildTarget": "orbyt:build:development"
+          "buildTarget": "orbyt:build:development",
+          "proxyConfig": "proxy.conf.json"
         }
       },
       "defaultConfiguration": "development"

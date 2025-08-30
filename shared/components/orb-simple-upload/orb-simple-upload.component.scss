@@ -1,0 +1,153 @@
+.orb-simple-upload {
+  width: 100%;
+  
+  .upload-area {
+    border: 2px dashed var(--surface-border);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--surface-ground);
+    
+    &:hover {
+      border-color: var(--primary-color);
+      background: var(--surface-hover);
+    }
+  }
+  
+  &.drag-over .upload-area {
+    border-color: var(--primary-color);
+    background: var(--primary-50);
+  }
+  
+  .upload-content {
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--surface-500);
+      margin-bottom: 1rem;
+    }
+    
+    .upload-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-color);
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .upload-hint {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+      margin: 0 0 1.5rem 0;
+    }
+  }
+  
+  .file-preview {
+    border: 1px solid var(--surface-border);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    background: var(--surface-card);
+    
+    .preview-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .preview-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--surface-border);
+    }
+    
+    .preview-file-icon {
+      font-size: 3rem;
+      color: var(--surface-500);
+      width: 80px;
+      text-align: center;
+    }
+    
+    .file-info {
+      flex: 1;
+      
+      .file-name {
+        font-weight: 500;
+        margin: 0 0 0.25rem 0;
+        color: var(--text-color);
+        word-break: break-all;
+      }
+      
+      .file-size {
+        color: var(--text-color-secondary);
+        font-size: 0.9rem;
+        margin: 0;
+      }
+    }
+    
+    .file-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      
+      ::ng-deep .p-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    ::ng-deep .p-progressbar {
+      height: 0.5rem;
+      background: var(--surface-200);
+      
+      .p-progressbar-value {
+        background: var(--primary-color);
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .orb-simple-upload {
+    .upload-area {
+      padding: 1.5rem 1rem;
+    }
+    
+    .file-preview {
+      .preview-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .file-actions {
+        justify-content: center;
+        
+        ::ng-deep .p-button {
+          flex: 1;
+          min-width: 120px;
+        }
+      }
+    }
+  }
+}
+
+// Dark theme adjustments
+:host-context(.dark-theme) {
+  .orb-simple-upload {
+    .upload-area {
+      border-color: var(--surface-600);
+      
+      &:hover {
+        border-color: var(--primary-400);
+      }
+    }
+    
+    &.drag-over .upload-area {
+      border-color: var(--primary-400);
+      background: var(--primary-900);
+    }
+  }
+}
