@@ -39,7 +39,17 @@
       "Bash(grep:*)",
       "Bash(taskkill:*)",
       "Bash(npm run serve:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npx nx generate:*)",
+      "Bash(for comp in features-grid how-it-works testimonials pricing-preview faq-section cta-section)",
+      "Bash(do touch orbyt-landing/src/app/components/sections/$comp.component.ts)",
+      "Bash(done)",
+      "Bash(nx build:*)",
+      "Bash(npx nx serve:*)",
+      "Bash(npx nx show:*)",
+      "Bash(nx generate:*)",
+      "Bash(npx -p @ionic/cli ionic start:*)",
+      "Read(//c/c/repositories/**)"
     ],
     "deny": [],
     "additionalDirectories": [

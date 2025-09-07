@@ -4,8 +4,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nx serve",
+    "start": "nx serve orbyt",
+    "start:landing": "nx serve orbyt-landing",
+    "start:orbyt": "nx serve orbyt --port=4200",
     "build": "nx build",
+    
+    "build:orbyt": "nx build orbyt",
+    "build:landing": "nx build orbyt-landing",
     "lint": "nx lint",
     "test": "nx test",
     "openapi:generate": "npx ng-openapi-gen"
@@ -35,6 +40,7 @@
     "@ngx-translate/core": "^16.0.4",
     "@ngx-translate/http-loader": "^16.0.1",
     "@primeng/themes": "^19.1.2",
+    "@stripe/stripe-js": "^7.9.0",
     "angular-calendar": "^0.31.1",
     "bootstrap": "^5.3.5",
     "chart.js": "^4.5.0",
