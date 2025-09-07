@@ -312,6 +312,471 @@ Este archivo contiene todas las tareas necesarias para implementar el sistema co
 
 ---
 
+## 📦 SISTEMA DE GESTIÓN DE INVENTARIO AVANZADO
+
+### Fase 1: Dashboard de Inventario Backend ❌ PENDIENTE
+
+#### API Endpoints Requeridos para Dashboard
+- [ ] **GET `/inventory/dashboard/metrics`** - Métricas generales de inventario
+  - Respuesta: `InventoryDashboardMetricsDto`
+  - Total de productos activos
+  - Valor total del inventario
+  - Productos con stock bajo
+  - Productos agotados
+  - Valor promedio por producto
+  - Movimientos del último mes
+
+- [ ] **GET `/inventory/dashboard/low-stock`** - Productos con stock bajo
+  - Respuesta: `LowStockProductDto[]`
+  - Productos bajo punto de reorden
+  - Tiempo estimado hasta agotamiento
+  - Sugerencias de recompra
+
+- [ ] **GET `/inventory/dashboard/top-movers`** - Productos con más movimientos
+  - Respuesta: `TopMoversDto[]`
+  - Top 10 productos más movidos (entrada/salida)
+  - Tendencias de movimiento
+  - Análisis de rotación de inventario
+
+- [ ] **GET `/inventory/dashboard/stock-value-history`** - Histórico de valor de inventario
+  - Respuesta: `StockValueHistoryDto[]`
+  - Evolución del valor del inventario por meses
+  - Comparativa año anterior
+  - Gráficos de tendencias
+
+- [ ] **GET `/inventory/dashboard/movement-analysis`** - Análisis de movimientos
+  - Respuesta: `MovementAnalysisDto`
+  - Movimientos por tipo (entrada/salida/ajuste/uso)
+  - Usuarios que más movimientos realizan
+  - Análisis temporal de actividad
+
+#### Entidades y DTOs Backend Requeridos
+- [ ] **InventoryDashboardMetricsDto**
+  ```typescript
+  interface InventoryDashboardMetricsDto {
+    totalProducts: number;
+    totalInventoryValue: number;
+    totalActiveProducts: number;
+    lowStockCount: number;
+    outOfStockCount: number;
+    averageProductValue: number;
+    lastMonthMovements: number;
+    inventoryTurnoverRate: number;
+    totalMovementValue: number;
+    criticalItemsCount: number;
+  }
+  ```
+
+- [ ] **LowStockProductDto**
+  ```typescript
+  interface LowStockProductDto {
+    productId: number;
+    productName: string;
+    currentStock: number;
+    minStockLevel: number;
+    reorderPoint: number;
+    daysUntilStockout: number;
+    suggestedReorderQuantity: number;
+    lastMovementDate: Date;
+    averageConsumptionRate: number;
+  }
+  ```
+
+- [ ] **TopMoversDto**
+  ```typescript
+  interface TopMoversDto {
+    productId: number;
+    productName: string;
+    totalMovements: number;
+    inMovements: number;
+    outMovements: number;
+    adjustmentMovements: number;
+    usageMovements: number;
+    movementValue: number;
+    turnoverRate: number;
+    trend: 'up' | 'down' | 'stable';
+  }
+  ```
+
+### Fase 2: Modelo de Producto Extendido ❌ PENDIENTE
+
+#### Nuevos Campos en ProductResponseDto
+- [ ] **Dimensiones físicas**
+  ```typescript
+  interface ProductDimensionsDto {
+    weight: number; // Peso en gramos
+    weightUnit: 'g' | 'kg' | 'lb' | 'oz';
+    length: number; // Longitud en cm
+    width: number; // Ancho en cm
+    height: number; // Alto en cm
+    dimensionUnit: 'cm' | 'in' | 'm';
+    volume: number; // Volumen calculado o manual
+    volumeUnit: 'ml' | 'l' | 'cm3' | 'm3';
+  }
+  ```
+
+- [ ] **Unidades de medida y empaquetado**
+  ```typescript
+  interface ProductPackagingDto {
+    baseUnit: string; // unidad, caja, ampolla, frasco, etc.
+    unitsPerPackage: number; // ej: 6 ampollas por caja
+    packageType: string; // caja, blister, frasco, botella
+    minOrderQuantity: number;
+    storageRequirements: string; // refrigerado, ambiente, etc.
+    expirationMonths?: number; // meses de caducidad
+  }
+  ```
+
+- [ ] **Información de inventario**
+  ```typescript
+  interface ProductInventoryDto {
+    currentStock: number;
+    reservedStock: number;
+    availableStock: number;
+    reorderPoint: number;
+    maxStockLevel: number;
+    averageCost: number;
+    lastCost: number;
+    supplierId?: number;
+    supplierSku?: string;
+    barcode?: string;
+    internalSku: string;
+  }
+  ```
+
+#### API Endpoints para Producto Extendido
+- [ ] **PUT `/products/{id}/dimensions`** - Actualizar dimensiones del producto
+- [ ] **PUT `/products/{id}/packaging`** - Actualizar información de empaquetado
+- [ ] **PUT `/products/{id}/inventory-config`** - Configurar parámetros de inventario
+- [ ] **GET `/products/search`** - Búsqueda avanzada de productos con filtros
+
+### Fase 3: Modal de Búsqueda de Productos Frontend ❌ PENDIENTE
+
+#### Componente ProductSearchModal
+- [ ] **Crear `product-search-modal.component.ts`**
+  - Búsqueda en tiempo real con debounce
+  - Filtros por: categoría, stock disponible, estado, proveedor
+  - Vista de grid con thumbnails
+  - Vista de lista detallada
+  - Información completa del producto en preview
+
+- [ ] **Campos de búsqueda y filtros**
+  ```typescript
+  interface ProductSearchFilters {
+    query: string; // búsqueda por nombre/descripción/SKU
+    category?: string;
+    minStock?: number;
+    maxStock?: number;
+    status?: ProductStatus[];
+    hasImage?: boolean;
+    priceRange?: { min: number; max: number };
+    weightRange?: { min: number; max: number };
+    dimensions?: DimensionFilters;
+    updatedSince?: Date;
+  }
+  ```
+
+- [ ] **Vista de resultados enriquecida**
+  - Thumbnail del producto
+  - Información básica (nombre, precio, stock)
+  - Indicadores visuales (stock bajo, sin imagen, etc.)
+  - Quick actions (editar, ver movimientos, añadir stock)
+  - Información adicional en tooltip/popover
+
+#### Integración con Movimientos
+- [ ] **Reemplazar dropdown simple por modal de búsqueda**
+  - En movement-form.component.html
+  - En movement-list.component.html (filtro de productos)
+  - En cualquier selector de productos del sistema
+
+### Fase 4: Dashboard de Inventario Frontend ❌ PENDIENTE
+
+#### Componente InventoryDashboard
+- [ ] **Crear `inventory-dashboard.component.ts`**
+  - Métricas principales en cards KPI
+  - Gráficos de tendencias de stock
+  - Lista de productos críticos
+  - Análisis de movimientos recientes
+
+- [ ] **Widgets del Dashboard**
+  ```typescript
+  interface DashboardWidgets {
+    inventoryValueCard: KPICard;
+    lowStockAlerts: AlertWidget;
+    topMoversChart: ChartWidget;
+    stockValueTrend: LineChartWidget;
+    movementsByType: PieChartWidget;
+    criticalItemsList: TableWidget;
+    recentMovementsTimeline: TimelineWidget;
+    inventoryTurnover: GaugeWidget;
+  }
+  ```
+
+- [ ] **Indicadores clave (KPIs)**
+  - Valor total del inventario con tendencia
+  - Número de productos activos
+  - Items con stock bajo (con alerta visual)
+  - Items agotados
+  - Tasa de rotación de inventario
+  - Valor promedio por producto
+  - Movimientos del mes vs mes anterior
+
+#### Alertas y Notificaciones
+- [ ] **Sistema de alertas de inventario**
+  - Stock bajo automático
+  - Productos próximos a vencer
+  - Movimientos inusuales (grandes salidas)
+  - Productos sin movimiento por X días
+
+### Fase 5: Mejoras en Gestión de Movimientos ❌ PENDIENTE
+
+#### Funcionalidades Avanzadas
+- [ ] **Movimientos por lotes**
+  - Seleccionar múltiples productos
+  - Aplicar mismo tipo de movimiento
+  - Importar desde CSV/Excel
+
+- [ ] **Trazabilidad completa**
+  - Historial detallado por producto
+  - Gráficos de stock en el tiempo
+  - Predicción de agotamiento
+
+- [ ] **Reportes avanzados**
+  - Reporte de inventario valorizado
+  - Análisis ABC de productos
+  - Reporte de movimientos por período
+  - Análisis de proveedores
+
+#### Validaciones y Business Logic
+- [ ] **Validaciones inteligentes**
+  - Verificar stock disponible en salidas
+  - Alertar sobre movimientos grandes
+  - Validar coherencia de fechas
+  - Sugerir movimientos de ajuste
+
+---
+
+## 🏢 SISTEMA DE GESTIÓN DE SALAS Y TURNOS
+
+### Fase 1: Backend - Gestión de Salas ❌ PENDIENTE
+
+#### API Endpoints Requeridos para Salas
+- [ ] **POST `/rooms`** - Crear nueva sala
+  - Campos: `name`, `description`, `capacity`, `location`, `isActive`
+  - Validaciones: nombre único, capacidad > 0
+  - Respuesta: `RoomResponseDto`
+
+- [ ] **GET `/rooms`** - Listar todas las salas
+  - Query params: `?active=true/false` para filtrar por estado
+  - Paginación opcional
+  - Respuesta: `RoomResponseDto[]`
+
+- [ ] **GET `/rooms/{id}`** - Obtener sala específica
+  - Incluir información de uso/asignaciones actuales
+  - Respuesta: `RoomDetailResponseDto`
+
+- [ ] **PUT `/rooms/{id}`** - Actualizar sala existente
+  - Campos editables: `name`, `description`, `capacity`, `location`, `isActive`
+  - Validación de integridad con citas existentes
+  - Respuesta: `RoomResponseDto`
+
+- [ ] **PATCH `/rooms/{id}/toggle-status`** - Habilitar/Deshabilitar sala
+  - Validar que no tenga citas activas antes de deshabilitar
+  - Notificar si hay conflictos
+  - Respuesta: `RoomStatusResponseDto`
+
+#### Entidades de Base de Datos
+- [ ] **Entidad Room**
+  ```typescript
+  interface Room {
+    id: number;
+    name: string;
+    description?: string;
+    capacity?: number;
+    location?: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    // Relaciones futuras
+    appointments?: Appointment[];
+    equipment?: RoomEquipment[];
+  }
+  ```
+
+- [ ] **DTOs de Validación**
+  ```typescript
+  interface CreateRoomDto {
+    name: string; // @IsNotEmpty, @MinLength(2)
+    description?: string;
+    capacity?: number; // @Min(1), @Max(100)
+    location?: string;
+    isActive?: boolean; // default true
+  }
+
+  interface UpdateRoomDto extends PartialType(CreateRoomDto) {}
+
+  interface RoomResponseDto {
+    id: number;
+    name: string;
+    description?: string;
+    capacity?: number;
+    location?: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    activeAppointmentsCount?: number;
+    lastUsed?: Date;
+  }
+  ```
+
+#### Validaciones de Business Logic
+- [ ] **Validar uso de sala antes de deshabilitar**
+  - Verificar citas futuras programadas en la sala
+  - Mostrar advertencia con fechas conflictivas
+  - Permitir forzar deshabilitación con confirmación
+
+- [ ] **Validar unicidad de nombre**
+  - Nombres de sala únicos por sistema
+  - Ignorar case sensitivity
+  - Trim espacios en blanco
+
+### Fase 2: Backend - Sistema de Turnos y Asignaciones ❌ PENDIENTE
+
+#### Endpoint de Atributos de Usuario para Gestión de Turnos
+- [ ] **GET `/users/{id}/schedule-attributes`** - Obtener configuración de horarios
+  ```typescript
+  interface UserScheduleAttributesDto {
+    userId: number;
+    workingDays: WeekDay[]; // ['monday', 'tuesday', 'wednesday', ...]
+    workingHours: {
+      start: string; // "08:00"
+      end: string;   // "18:00"
+    };
+    appointmentDuration: number; // minutos por defecto
+    maxAppointmentsPerDay: number;
+    availableRooms: number[]; // IDs de salas asignadas
+    specialties: string[]; // especialidades que puede atender
+    breaks: BreakPeriod[]; // pausas en el día
+    exceptions: ScheduleException[]; // fechas especiales (vacaciones, etc.)
+  }
+
+  interface WeekDay {
+    day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    enabled: boolean;
+    startTime?: string;
+    endTime?: string;
+    maxAppointments?: number;
+  }
+
+  interface BreakPeriod {
+    startTime: string;
+    endTime: string;
+    description?: string; // "Almuerzo", "Pausa café"
+  }
+
+  interface ScheduleException {
+    date: Date;
+    type: 'unavailable' | 'special_hours' | 'holiday';
+    startTime?: string;
+    endTime?: string;
+    reason?: string;
+  }
+  ```
+
+- [ ] **PUT `/users/{id}/schedule-attributes`** - Actualizar configuración de horarios
+  - Validar coherencia de horarios (start < end)
+  - Verificar conflictos con citas existentes
+  - Notificar cambios que afecten citas programadas
+
+#### API para Asignación de Salas a Usuarios
+- [ ] **GET `/users/{id}/rooms`** - Obtener salas asignadas a usuario
+- [ ] **POST `/users/{id}/rooms/{roomId}`** - Asignar sala a usuario
+- [ ] **DELETE `/users/{id}/rooms/{roomId}`** - Desasignar sala de usuario
+- [ ] **GET `/rooms/assignments`** - Ver todas las asignaciones sala-usuario
+
+#### Entidad UserScheduleConfig
+- [ ] **Crear entidad para configuración de horarios**
+  ```typescript
+  interface UserScheduleConfig {
+    id: number;
+    userId: number;
+    workingDays: string; // JSON serializado
+    workingHours: string; // JSON serializado
+    appointmentDuration: number;
+    maxAppointmentsPerDay: number;
+    breaks: string; // JSON serializado
+    exceptions: string; // JSON serializado
+    createdAt: Date;
+    updatedAt: Date;
+  }
+  ```
+
+#### Relación Many-to-Many User-Room
+- [ ] **Tabla de relación user_rooms**
+  ```sql
+  CREATE TABLE user_rooms (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    room_id INTEGER REFERENCES rooms(id),
+    assigned_at TIMESTAMP DEFAULT NOW(),
+    assigned_by INTEGER REFERENCES users(id),
+    is_primary BOOLEAN DEFAULT false,
+    UNIQUE(user_id, room_id)
+  );
+  ```
+
+### Fase 3: Frontend - Integración con Agenda ❌ PENDIENTE
+
+#### Selector de Sala en Formulario de Citas
+- [ ] **Modificar agenda-form.component.ts**
+  - Agregar campo `roomId` al formulario
+  - Cargar salas disponibles para el profesional seleccionado
+  - Filtrar salas por horario/disponibilidad
+  - Validar disponibilidad de sala en fecha/hora seleccionada
+
+- [ ] **Endpoint de disponibilidad de salas**
+  - `GET /rooms/availability?date={date}&time={time}&duration={minutes}&userId={userId}`
+  - Respuesta: salas disponibles con información de capacidad y equipamiento
+  - Considerar citas existentes y mantenimientos programados
+
+#### Vista de Calendario con Salas
+- [ ] **Mejorar vista de agenda para mostrar salas**
+  - Columnas/secciones por sala
+  - Código de colores por sala
+  - Filtro de vista por sala específica
+  - Drag & drop para cambiar sala de cita existente
+
+#### Modal de Conflictos de Sala
+- [ ] **Componente de resolución de conflictos**
+  - Mostrar cuando se detecta conflicto de sala
+  - Sugerir salas alternativas disponibles
+  - Permitir cambio de horario para resolver conflicto
+  - Notificar al cliente si hay cambios significativos
+
+### Fase 4: Frontend - Dashboard de Ocupación de Salas ❌ PENDIENTE
+
+#### Componente RoomOccupancyDashboard
+- [ ] **Vista de ocupación en tiempo real**
+  - Mapa visual de salas con estado actual
+  - Métricas de ocupación por sala/día/semana
+  - Alertas de sobrecarga o subutilización
+  - Reportes de eficiencia por sala
+
+- [ ] **Análisis de uso de salas**
+  - Tasa de ocupación promedio
+  - Salas más/menos utilizadas
+  - Patrones de uso por día/hora
+  - Sugerencias de optimización
+
+#### Integración con Sistema de Notificaciones
+- [ ] **Notificaciones de cambios de sala**
+  - Email/SMS al cliente cuando cambie la sala
+  - Notificación al profesional de nueva asignación
+  - Recordatorios con ubicación específica de la sala
+  - Integración con sistema de navegación/mapas
+
+---
+
 ## 🔧 TAREAS DE INTEGRACIÓN Y TESTING
 
 ### Configuración del Entorno
