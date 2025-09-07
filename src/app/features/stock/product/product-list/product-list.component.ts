@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, AsyncPipe, CurrencyPipe } from '@angular/common';
 import { ProductStore } from '@orb-stores';
-import { ProductResponseDto } from '../../../../api/model/models';
+import { ProductResponseDto } from '../../../../api/models/product-response-dto';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbEntityAvatarComponent } from '@orb-components';

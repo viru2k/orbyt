@@ -74,7 +74,7 @@ orb-card {
 }
 
 /* Status styling consistent with users and clients */
-::ng-deep .status-active {
+::ng-deep .status-activo {
   background: rgba(34, 197, 94, 0.1) !important;
   color: rgb(34, 197, 94) !important;
   padding: 0.25rem 0.75rem !important;
@@ -84,9 +84,39 @@ orb-card {
   text-transform: capitalize !important;
 }
 
-::ng-deep .status-inactive {
+::ng-deep .status-inactivo {
   background: rgba(239, 68, 68, 0.1) !important;
   color: rgb(239, 68, 68) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+::ng-deep .status-descatalogado {
+  background: rgba(107, 114, 128, 0.1) !important;
+  color: rgb(107, 114, 128) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+::ng-deep .status-agotado {
+  background: rgba(251, 191, 36, 0.1) !important;
+  color: rgb(217, 119, 6) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+::ng-deep .status-suspendido {
+  background: rgba(245, 101, 101, 0.1) !important;
+  color: rgb(153, 27, 27) !important;
   padding: 0.25rem 0.75rem !important;
   border-radius: 0.5rem !important;
   font-size: 0.75rem !important;
