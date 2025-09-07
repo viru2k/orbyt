@@ -22,6 +22,7 @@
       [rowActions]="actions"
       dataKey="id"
       paginatorPosition="both"
+      [rowsPerPageOptions]="[15, 30, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
     >
       <ng-template pTemplate="body" let-user let-columns="columns">

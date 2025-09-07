@@ -8,7 +8,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 // Orb Components
-import { OrbToolbarComponent, OrbBreadcrumbComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { OrbToolbarComponent, OrbBreadcrumbComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent } from '@orb-components';
 
 // Services and Models
 import { BusinessTypesService } from '../../../api/services/business-types.service';
@@ -33,6 +33,7 @@ import { OrbActionItem } from '@orb-models';
     OrbTableComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
+    OrbEntityAvatarComponent,
     ServiceFormComponent
   ],
   providers: [MessageService, ConfirmationService],
@@ -74,16 +75,19 @@ import { OrbActionItem } from '@orb-models';
                   <!-- Service info column -->
                   <ng-container *ngSwitchCase="'service'">
                     <div class="flex align-items-center gap-3">
-                      <div class="service-avatar">
-                        <i class="pi pi-cog" style="font-size: 1.5rem; color: var(--primary-color);"></i>
-                      </div>
+                      <orb-entity-avatar
+                        [entity]="service"
+                        entityType="product"
+                        size="normal"
+                        shape="circle"
+                        [showTooltip]="true"
+                        context="table"
+                        [autoLoad]="true">
+                      </orb-entity-avatar>
                       <div class="service-info">
                         <div class="service-name font-medium text-900">{{ service.name }}</div>
                         <div class="service-description text-600 text-sm">
                           {{ service.description || 'Sin descripción' }}
-                        </div>
-                        <div class="service-duration text-600 text-xs" *ngIf="service.defaultDuration">
-                          <i class="pi pi-clock"></i> {{ service.defaultDuration }} min
                         </div>
                       </div>
                     </div>

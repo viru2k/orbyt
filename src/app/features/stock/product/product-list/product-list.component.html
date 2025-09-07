@@ -54,6 +54,13 @@
                 {{ product.currentPrice | currency:'EUR' }}
               </ng-container>
 
+              <!-- Caso para la columna de estado: mostramos badge -->
+              <ng-container *ngSwitchCase="'statusText'">
+                <span [ngClass]="product.statusText === 'Activo' ? 'status-active' : 'status-inactive'">
+                  {{ product.statusText }}
+                </span>
+              </ng-container>
+
               <ng-container *ngSwitchCase="'actions'">
                 <orb-actions-popover
                   [actions]="productRowActions"

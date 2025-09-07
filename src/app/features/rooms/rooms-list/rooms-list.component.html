@@ -32,6 +32,8 @@
         [globalFilterFields]="['name', 'description', 'location']"
         [rowActions]="roomRowActions"
         dataKey="id"
+        paginatorPosition="both"
+        [rowsPerPageOptions]="[15, 30, 50]"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} salas">
         
         <ng-template pTemplate="body" let-room let-columns="columns">
@@ -39,12 +41,18 @@
             <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.field">
                 
-                <!-- Caso para la columna de sala: icono + información -->
+                <!-- Caso para la columna de sala: avatar + información -->
                 <ng-container *ngSwitchCase="'room'">
                   <div class="flex align-items-center gap-3">
-                    <div class="room-icon">
-                      <i class="fas fa-door-open text-primary" style="font-size: 1.5rem;"></i>
-                    </div>
+                    <orb-entity-avatar
+                      [entity]="room"
+                      entityType="product"
+                      size="normal"
+                      shape="square"
+                      [showTooltip]="true"
+                      context="table"
+                      [autoLoad]="true">
+                    </orb-entity-avatar>
                     <div class="room-info">
                       <div class="room-name font-medium text-900">{{ room.name }}</div>
                       <div class="room-description text-600 text-sm">{{ room.description || 'Sin descripción' }}</div>
@@ -54,25 +62,19 @@
                 
                 <!-- Caso para la columna de ubicación -->
                 <ng-container *ngSwitchCase="'location'">
-                  <div class="room-location">
-                    <i class="fas fa-map-marker-alt mr-1 text-muted"></i>
-                    {{ room.location || '-' }}
-                  </div>
+                  {{ room.location || '-' }}
                 </ng-container>
                 
                 <!-- Caso para la columna de capacidad -->
                 <ng-container *ngSwitchCase="'capacity'">
-                  <div class="capacity-badge text-center" *ngIf="room.capacity">
-                    <i class="fas fa-users mr-1"></i>
-                    {{ room.capacity }}
-                  </div>
+                  <span *ngIf="room.capacity">{{ room.capacity }}</span>
                   <span *ngIf="!room.capacity" class="text-muted">-</span>
                 </ng-container>
                 
                 <!-- Caso para la columna de estado -->
                 <ng-container *ngSwitchCase="'statusText'">
-                  <span [ngClass]="room.statusClass">
-                    {{ room.statusText }}
+                  <span [ngClass]="room.isActive ? 'status-active' : 'status-inactive'">
+                    {{ room.isActive ? 'Activa' : 'Inactiva' }}
                   </span>
                 </ng-container>
                 

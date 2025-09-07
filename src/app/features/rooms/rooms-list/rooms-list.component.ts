@@ -21,7 +21,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 
 // Orb Components
-import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTableComponent, OrbCardComponent, OrbToolbarComponent, OrbBreadcrumbComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTableComponent, OrbCardComponent, OrbToolbarComponent, OrbBreadcrumbComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { TableColumn, OrbTableFeatures, OrbActionItem } from '@orb-models';
 
 export interface Room {
@@ -65,7 +65,8 @@ export interface Room {
     OrbToolbarComponent,
     OrbBreadcrumbComponent,
     OrbDialogComponent,
-    OrbActionsPopoverComponent
+    OrbActionsPopoverComponent,
+    OrbEntityAvatarComponent
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './rooms-list.component.html',

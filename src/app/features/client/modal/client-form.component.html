@@ -53,7 +53,7 @@
           </div>
           <div class="field col-12">
             <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))">
-              <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value" appendTo="body" [styleClass]="'display-block'"></orb-select>
+              <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value" [showClear]="false" appendTo="body" [styleClass]="'display-block'"></orb-select>
             </orb-form-field>
           </div>
         </div>
