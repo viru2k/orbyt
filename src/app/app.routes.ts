@@ -49,11 +49,35 @@ export const appRoutes: Route[] = [
           ),
       },
       {
-        path: 'inventory/movements',
-        loadComponent: () =>
-          import('./features/inventory/movements/movement-list/movement-list.component').then(
-            (m) => m.MovementListComponent
-          ),
+        path: 'inventory',
+        children: [
+          {
+            path: '',
+            redirectTo: 'dashboard',
+            pathMatch: 'full'
+          },
+          {
+            path: 'dashboard',
+            loadComponent: () =>
+              import('./features/inventory/dashboard/inventory-dashboard/inventory-dashboard.component').then(
+                (m) => m.InventoryDashboardComponent
+              ),
+          },
+          {
+            path: 'movements',
+            loadComponent: () =>
+              import('./features/inventory/movements/movement-list/movement-list.component').then(
+                (m) => m.MovementListComponent
+              ),
+          },
+          {
+            path: 'products',
+            loadComponent: () =>
+              import('./features/stock/product/product-list/product-list.component').then(
+                (m) => m.ProductListComponent
+              ),
+          },
+        ]
       },
       {
         path: 'management/users', // Nueva ruta para usuarios
@@ -61,6 +85,14 @@ export const appRoutes: Route[] = [
         loadComponent: () =>
           import('./features/users/users-list/users-list.component').then(
             (m) => m.UsersListComponent
+          ),
+      },
+      {
+        path: 'management/rooms', // Nueva ruta para gestión de salas
+        canActivate: [AdminGuard],
+        loadComponent: () =>
+          import('./features/rooms/rooms-list/rooms-list.component').then(
+            (m) => m.RoomsListComponent
           ),
       },
       {

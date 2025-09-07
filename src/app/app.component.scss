@@ -10,4 +10,57 @@
     justify-content: center;
     align-items: center;
   }
+
+// Estilos para las notificaciones WebSocket (bottom-right)
+::ng-deep .websocket-notification-toast {
+  .p-toast-message {
+    min-width: 350px;
+    max-width: 400px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #007ad9; // Borde azul para notificaciones WebSocket
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    &.p-toast-message-info {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+      border-left-color: #2196f3;
+      
+      .p-toast-icon {
+        color: #2196f3;
+      }
+    }
+    
+    &.p-toast-message-success {
+      background: linear-gradient(135deg, #e8f5e8 0%, #f8f9fa 100%);
+      border-left-color: #4caf50;
+      
+      .p-toast-icon {
+        color: #4caf50;
+      }
+    }
+    
+    .p-toast-detail {
+      color: #495057;
+      font-size: 0.875rem;
+    }
+    
+    .p-toast-summary {
+      font-weight: 600;
+      color: #212529;
+    }
+    
+    // Animación especial para notificaciones WebSocket
+    animation: slideInFromRight 0.3s ease-out;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
   

@@ -8,6 +8,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
+import { WebSocketNotificationService } from './services/core/notification/websocket-notification.service';
 
 @Component({
   imports: [ CommonModule, RouterModule, RouterOutlet,ProgressSpinnerModule, ToastModule, ConfirmDialogModule ],
@@ -21,14 +22,18 @@ export class AppComponent implements OnInit {
   title = 'orbyt';
   spinner = inject(SpinnerService);
   private config = inject(PrimeNG);
-   private translateService = inject( TranslateService);
-   private themeService= inject(ThemeService);
+  private translateService = inject(TranslateService);
+  private themeService = inject(ThemeService);
+  private webSocketNotificationService = inject(WebSocketNotificationService);
    
-   ngOnInit() {
+  ngOnInit() {
     this.translateService.setDefaultLang('es');
     this.themeService.initTheme();
     this.translate('es');
-}
+    
+    // Inicializar el servicio de notificaciones WebSocket
+    this.webSocketNotificationService.ngOnInit();
+  }
 
 translate(lang: string) {
   this.translateService.use(lang);

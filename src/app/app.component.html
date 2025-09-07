@@ -2,7 +2,10 @@
 <div class="spinner-overlay" *ngIf="spinner.loading()">
   <p-progressSpinner></p-progressSpinner>
 </div>
+<!-- Toast genérico para notificaciones de aplicación (top-right por defecto) -->
 <p-toast></p-toast>
+<!-- Toast específico para notificaciones WebSocket (bottom-right) -->
+<p-toast position="bottom-right" key="websocket" styleClass="websocket-notification-toast"></p-toast>
 <p-confirmDialog></p-confirmDialog>
 <router-outlet></router-outlet>
 

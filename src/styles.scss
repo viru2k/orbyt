@@ -440,3 +440,99 @@ label {
 .p-multiselect-panel {
   z-index: 999 !important;
 }
+
+/* ========================================
+   CORRECCIONES PARA FLOAT LABELS
+   ======================================== */
+
+/* Solución para evitar conflictos entre placeholder y float labels */
+p-floatLabel {
+  display: block;
+  position: relative;
+  
+  input,
+  textarea,
+  .p-inputnumber-input,
+  .p-calendar .p-inputtext,
+  .p-dropdown .p-dropdown-label {
+    &:placeholder-shown + label {
+      transform: translateY(0);
+      font-size: 1rem;
+      color: #6c757d;
+      top: 50%;
+    }
+    
+    &:not(:placeholder-shown) + label,
+    &:focus + label {
+      transform: translateY(-1.5rem);
+      font-size: 0.75rem;
+      color: #667eea;
+      top: 0;
+    }
+  }
+  
+  label {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    padding: 0 0.25rem;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    color: #6c757d;
+    font-size: 1rem;
+    z-index: 10;
+  }
+}
+
+/* Corrección específica para dropdowns con float label */
+p-floatLabel .p-dropdown {
+  .p-dropdown-label {
+    &:not(.p-placeholder) ~ label {
+      transform: translateY(-1.5rem);
+      font-size: 0.75rem;
+      color: #667eea;
+      top: 0;
+    }
+  }
+}
+
+/* Corrección específica para calendars con float label */
+p-floatLabel .p-calendar {
+  input.p-inputtext {
+    &:not(:placeholder-shown) + label,
+    &:focus + label,
+    &.ng-dirty + label {
+      transform: translateY(-1.5rem);
+      font-size: 0.75rem;
+      color: #667eea;
+      top: 0;
+    }
+  }
+}
+
+/* Corrección para input number con float label */
+p-floatLabel .p-inputnumber {
+  .p-inputnumber-input {
+    &:not(:placeholder-shown) ~ label,
+    &:focus ~ label,
+    &.ng-dirty ~ label {
+      transform: translateY(-1.5rem);
+      font-size: 0.75rem;
+      color: #667eea;
+      top: 0;
+    }
+  }
+  
+  label {
+    left: 0.75rem;
+  }
+}
+
+/* Asegurar que el background del label se mantenga */
+.p-float-label label,
+p-floatLabel label {
+  background: white;
+  padding: 0 0.25rem;
+}
