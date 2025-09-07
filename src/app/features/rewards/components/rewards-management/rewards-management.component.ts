@@ -100,11 +100,11 @@ import {
 
           <!-- Programs Table -->
           <orb-table
-            [data]="rewardPrograms()"
+            [value]="rewardPrograms()"
             [columns]="tableColumns"
-            [features]="tableFeaturesConfig"
+            [tableFeatures]="tableFeaturesConfig"
             [loading]="loading()"
-            [paginatorRowsOptions]="[15, 30, 50]"
+            [rowsPerPageOptions]="[15, 30, 50]"
             [rows]="15">
             
             <ng-template #cellTemplate let-column="column" let-data="data">
@@ -141,8 +141,8 @@ import {
                 }
                 @case ('actions') {
                   <orb-actions-popover 
-                    [items]="rewardRowActions"
-                    [data]="data">
+                    [actions]="rewardRowActions"
+                    [itemData]="data">
                   </orb-actions-popover>
                 }
               }
