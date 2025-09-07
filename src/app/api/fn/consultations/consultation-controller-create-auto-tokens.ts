@@ -30,4 +30,4 @@ export function consultationControllerCreateAutoTokens(http: HttpClient, rootUrl
   );
 }
 
-consultationControllerCreateAutoTokens.PATH = '/consultations/{id}/tokens/auto';
+consultationControllerCreateAutoTokens.PATH = '/api/consultations/{id}/tokens/auto';

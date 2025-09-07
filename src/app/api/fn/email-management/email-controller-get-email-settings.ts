@@ -28,4 +28,4 @@ export function emailControllerGetEmailSettings(http: HttpClient, rootUrl: strin
   );
 }
 
-emailControllerGetEmailSettings.PATH = '/email/settings';
+emailControllerGetEmailSettings.PATH = '/api/email/settings';

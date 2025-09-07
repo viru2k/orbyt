@@ -30,4 +30,4 @@ export function consultationControllerFindOne(http: HttpClient, rootUrl: string,
   );
 }
 
-consultationControllerFindOne.PATH = '/consultations/{id}';
+consultationControllerFindOne.PATH = '/api/consultations/{id}';

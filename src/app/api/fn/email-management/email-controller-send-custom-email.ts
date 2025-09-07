@@ -31,4 +31,4 @@ export function emailControllerSendCustomEmail(http: HttpClient, rootUrl: string
   );
 }
 
-emailControllerSendCustomEmail.PATH = '/email/send';
+emailControllerSendCustomEmail.PATH = '/api/email/send';

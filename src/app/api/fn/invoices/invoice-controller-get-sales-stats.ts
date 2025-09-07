@@ -39,4 +39,4 @@ export function invoiceControllerGetSalesStats(http: HttpClient, rootUrl: string
   );
 }
 
-invoiceControllerGetSalesStats.PATH = '/invoices/stats/sales';
+invoiceControllerGetSalesStats.PATH = '/api/invoices/stats/sales';

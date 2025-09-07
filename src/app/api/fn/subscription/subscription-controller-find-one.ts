@@ -30,4 +30,4 @@ export function subscriptionControllerFindOne(http: HttpClient, rootUrl: string,
   );
 }
 
-subscriptionControllerFindOne.PATH = '/subscription/{id}';
+subscriptionControllerFindOne.PATH = '/api/subscription/{id}';

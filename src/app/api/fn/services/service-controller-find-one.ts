@@ -30,4 +30,4 @@ export function serviceControllerFindOne(http: HttpClient, rootUrl: string, para
   );
 }
 
-serviceControllerFindOne.PATH = '/services/{id}';
+serviceControllerFindOne.PATH = '/api/services/{id}';

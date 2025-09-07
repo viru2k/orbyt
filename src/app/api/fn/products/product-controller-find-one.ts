@@ -36,4 +36,4 @@ export function productControllerFindOne(http: HttpClient, rootUrl: string, para
   );
 }
 
-productControllerFindOne.PATH = '/products/{id}';
+productControllerFindOne.PATH = '/api/products/{id}';

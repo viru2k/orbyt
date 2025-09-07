@@ -27,4 +27,4 @@ export function consultationControllerGetStats(http: HttpClient, rootUrl: string
   );
 }
 
-consultationControllerGetStats.PATH = '/consultations/stats';
+consultationControllerGetStats.PATH = '/api/consultations/stats';

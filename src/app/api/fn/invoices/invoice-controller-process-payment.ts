@@ -33,4 +33,4 @@ export function invoiceControllerProcessPayment(http: HttpClient, rootUrl: strin
   );
 }
 
-invoiceControllerProcessPayment.PATH = '/invoices/{id}/pay';
+invoiceControllerProcessPayment.PATH = '/api/invoices/{id}/pay';

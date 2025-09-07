@@ -33,4 +33,4 @@ export function serviceControllerUpdate(http: HttpClient, rootUrl: string, param
   );
 }
 
-serviceControllerUpdate.PATH = '/services/{id}';
+serviceControllerUpdate.PATH = '/api/services/{id}';

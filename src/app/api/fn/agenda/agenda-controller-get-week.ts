@@ -34,4 +34,4 @@ export function agendaControllerGetWeek(http: HttpClient, rootUrl: string, param
   );
 }
 
-agendaControllerGetWeek.PATH = '/agenda/week';
+agendaControllerGetWeek.PATH = '/api/agenda/week';

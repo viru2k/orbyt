@@ -32,4 +32,4 @@ export function uploadControllerGetFilesByEntity(http: HttpClient, rootUrl: stri
   );
 }
 
-uploadControllerGetFilesByEntity.PATH = '/upload/entity/{entityType}/{entityId}';
+uploadControllerGetFilesByEntity.PATH = '/api/upload/entity/{entityType}/{entityId}';

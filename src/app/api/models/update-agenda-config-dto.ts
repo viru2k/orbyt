@@ -4,7 +4,10 @@
 
 export interface UpdateAgendaConfigDto {
   allowBookingOnBlockedDays: boolean;
+  allowFreeTimeSlots?: boolean;
   endTime: string;
+  maxAdvanceBookingDays?: number;
+  minAdvanceBookingHours?: number;
   overbookingAllowed: boolean;
   slotDuration: number;
   startTime: string;

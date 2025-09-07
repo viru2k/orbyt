@@ -27,4 +27,4 @@ export function dashboardControllerGetBusinessTypePerformance(http: HttpClient, 
   );
 }
 
-dashboardControllerGetBusinessTypePerformance.PATH = '/dashboard/business-types/performance';
+dashboardControllerGetBusinessTypePerformance.PATH = '/api/dashboard/business-types/performance';

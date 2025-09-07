@@ -29,4 +29,4 @@ export function uploadControllerDeleteFile(http: HttpClient, rootUrl: string, pa
   );
 }
 
-uploadControllerDeleteFile.PATH = '/upload/{id}';
+uploadControllerDeleteFile.PATH = '/api/upload/{id}';

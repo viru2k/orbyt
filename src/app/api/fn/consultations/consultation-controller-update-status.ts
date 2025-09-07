@@ -30,4 +30,4 @@ export function consultationControllerUpdateStatus(http: HttpClient, rootUrl: st
   );
 }
 
-consultationControllerUpdateStatus.PATH = '/consultations/{id}/status';
+consultationControllerUpdateStatus.PATH = '/api/consultations/{id}/status';

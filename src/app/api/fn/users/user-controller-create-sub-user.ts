@@ -31,4 +31,4 @@ export function userControllerCreateSubUser(http: HttpClient, rootUrl: string, p
   );
 }
 
-userControllerCreateSubUser.PATH = '/users/sub-user';
+userControllerCreateSubUser.PATH = '/api/users/sub-user';

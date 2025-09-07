@@ -31,4 +31,4 @@ export function emailControllerSendBulkEmails(http: HttpClient, rootUrl: string,
   );
 }
 
-emailControllerSendBulkEmails.PATH = '/email/send/bulk';
+emailControllerSendBulkEmails.PATH = '/api/email/send/bulk';

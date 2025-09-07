@@ -28,4 +28,4 @@ export function emailControllerTestSmtpConnection(http: HttpClient, rootUrl: str
   );
 }
 
-emailControllerTestSmtpConnection.PATH = '/email/settings/test';
+emailControllerTestSmtpConnection.PATH = '/api/email/settings/test';

@@ -52,4 +52,4 @@ export function invoiceControllerFindAll(http: HttpClient, rootUrl: string, para
   );
 }
 
-invoiceControllerFindAll.PATH = '/invoices';
+invoiceControllerFindAll.PATH = '/api/invoices';

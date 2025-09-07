@@ -28,4 +28,4 @@ export function emailControllerPauseQueue(http: HttpClient, rootUrl: string, par
   );
 }
 
-emailControllerPauseQueue.PATH = '/email/queue/pause';
+emailControllerPauseQueue.PATH = '/api/email/queue/pause';

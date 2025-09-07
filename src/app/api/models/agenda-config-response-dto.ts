@@ -4,8 +4,11 @@
 
 export interface AgendaConfigResponseDto {
   allowBookingOnBlockedDays: boolean;
+  allowFreeTimeSlots: boolean;
   allowOverbooking: boolean;
   id: number;
+  maxAdvanceBookingDays: number;
+  minAdvanceBookingHours: number;
   slotDurationMinutes: number;
   userId: number;
   workEnd: string;

@@ -11,14 +11,14 @@ import { AuthService } from './services/auth.service';
 import { UsersService } from './services/users.service';
 import { RolesService } from './services/roles.service';
 import { UploadService } from './services/upload.service';
+import { EmailManagementService } from './services/email-management.service';
+import { NotificationsService } from './services/notifications.service';
 import { SubscriptionService } from './services/subscription.service';
 import { ServicesService } from './services/services.service';
 import { ServiceItemsService } from './services/service-items.service';
 import { ProductsService } from './services/products.service';
 import { AgendaService } from './services/agenda.service';
-import { NotificationsService } from './services/notifications.service';
 import { RewardsService } from './services/rewards.service';
-import { EmailManagementService } from './services/email-management.service';
 import { StockService } from './services/stock.service';
 import { ClientsService } from './services/clients.service';
 import { SubscriptionPlanService } from './services/subscription-plan.service';
@@ -29,6 +29,9 @@ import { InvoicesService } from './services/invoices.service';
 import { DashboardService } from './services/dashboard.service';
 import { BusinessTypesService } from './services/business-types.service';
 import { BusinessTypesPublicService } from './services/business-types-public.service';
+import { InventoryDashboardService } from './services/inventory-dashboard.service';
+import { ClientPortalService } from './services/client-portal.service';
+import { ClientAuthenticationService } from './services/client-authentication.service';
 
 /**
  * Module that provides all services and configuration.
@@ -43,14 +46,14 @@ import { BusinessTypesPublicService } from './services/business-types-public.ser
     UsersService,
     RolesService,
     UploadService,
+    EmailManagementService,
+    NotificationsService,
     SubscriptionService,
     ServicesService,
     ServiceItemsService,
     ProductsService,
     AgendaService,
-    NotificationsService,
     RewardsService,
-    EmailManagementService,
     StockService,
     ClientsService,
     SubscriptionPlanService,
@@ -61,6 +64,9 @@ import { BusinessTypesPublicService } from './services/business-types-public.ser
     DashboardService,
     BusinessTypesService,
     BusinessTypesPublicService,
+    InventoryDashboardService,
+    ClientPortalService,
+    ClientAuthenticationService,
     ApiConfiguration
   ],
 })

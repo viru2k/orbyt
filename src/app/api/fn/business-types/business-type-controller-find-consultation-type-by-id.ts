@@ -34,4 +34,4 @@ export function businessTypeControllerFindConsultationTypeById(http: HttpClient,
   );
 }
 
-businessTypeControllerFindConsultationTypeById.PATH = '/business-types/consultation-types/{id}';
+businessTypeControllerFindConsultationTypeById.PATH = '/api/business-types/consultation-types/{id}';

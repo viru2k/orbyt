@@ -28,4 +28,4 @@ export function notificationControllerGetWebSocketStats(http: HttpClient, rootUr
   );
 }
 
-notificationControllerGetWebSocketStats.PATH = '/notifications/websocket-stats';
+notificationControllerGetWebSocketStats.PATH = '/api/notifications/websocket-stats';

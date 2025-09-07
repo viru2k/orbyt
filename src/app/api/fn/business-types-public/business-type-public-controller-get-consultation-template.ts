@@ -33,4 +33,4 @@ export function businessTypePublicControllerGetConsultationTemplate(http: HttpCl
   );
 }
 
-businessTypePublicControllerGetConsultationTemplate.PATH = '/public/business-types/code/{code}/consultation-template';
+businessTypePublicControllerGetConsultationTemplate.PATH = '/api/public/business-types/code/{code}/consultation-template';

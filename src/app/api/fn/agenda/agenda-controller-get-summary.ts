@@ -46,4 +46,4 @@ export function agendaControllerGetSummary(http: HttpClient, rootUrl: string, pa
   );
 }
 
-agendaControllerGetSummary.PATH = '/agenda/summary';
+agendaControllerGetSummary.PATH = '/api/agenda/summary';

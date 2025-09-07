@@ -39,4 +39,4 @@ export function agendaControllerUnblockDates(http: HttpClient, rootUrl: string, 
   );
 }
 
-agendaControllerUnblockDates.PATH = '/agenda/block-dates';
+agendaControllerUnblockDates.PATH = '/api/agenda/block-dates';

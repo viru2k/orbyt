@@ -40,4 +40,4 @@ export function emailControllerGetEmailLogs(http: HttpClient, rootUrl: string, p
   );
 }
 
-emailControllerGetEmailLogs.PATH = '/email/logs';
+emailControllerGetEmailLogs.PATH = '/api/email/logs';

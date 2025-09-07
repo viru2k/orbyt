@@ -32,7 +32,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerGetMyProfile()` */
-  static readonly UserControllerGetMyProfilePath = '/users/me';
+  static readonly UserControllerGetMyProfilePath = '/api/users/me';
 
   /**
    * Obtener el perfil del usuario autenticado.
@@ -65,7 +65,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerCreateSubUser()` */
-  static readonly UserControllerCreateSubUserPath = '/users/sub-user';
+  static readonly UserControllerCreateSubUserPath = '/api/users/sub-user';
 
   /**
    * Admin: Crear un nuevo sub-usuario en el grupo.
@@ -98,7 +98,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerGetGroupUsers()` */
-  static readonly UserControllerGetGroupUsersPath = '/users/group';
+  static readonly UserControllerGetGroupUsersPath = '/api/users/group';
 
   /**
    * Admin: Listar todos los usuarios del grupo incluyendo admin.
@@ -131,7 +131,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerGetSubUsers()` */
-  static readonly UserControllerGetSubUsersPath = '/users/sub-users';
+  static readonly UserControllerGetSubUsersPath = '/api/users/sub-users';
 
   /**
    * Admin: Listar solo los sub-usuarios del grupo.
@@ -164,7 +164,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerUpdateSubUser()` */
-  static readonly UserControllerUpdateSubUserPath = '/users/sub-user/{id}';
+  static readonly UserControllerUpdateSubUserPath = '/api/users/sub-user/{id}';
 
   /**
    * Admin: Actualizar un sub-usuario (perfil, permisos, estado).
@@ -197,7 +197,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerUploadAvatar()` */
-  static readonly UserControllerUploadAvatarPath = '/users/upload-avatar';
+  static readonly UserControllerUploadAvatarPath = '/api/users/upload-avatar';
 
   /**
    * Subir avatar del usuario.

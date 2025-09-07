@@ -30,4 +30,4 @@ export function emailControllerRetryFailedEmail(http: HttpClient, rootUrl: strin
   );
 }
 
-emailControllerRetryFailedEmail.PATH = '/email/logs/retry/{logId}';
+emailControllerRetryFailedEmail.PATH = '/api/email/logs/retry/{logId}';

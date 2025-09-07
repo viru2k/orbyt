@@ -30,4 +30,4 @@ export function agendaControllerGetProductsUsed(http: HttpClient, rootUrl: strin
   );
 }
 
-agendaControllerGetProductsUsed.PATH = '/agenda/{id}/products';
+agendaControllerGetProductsUsed.PATH = '/api/agenda/{id}/products';

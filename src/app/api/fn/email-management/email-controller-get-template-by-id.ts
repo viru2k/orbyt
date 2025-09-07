@@ -30,4 +30,4 @@ export function emailControllerGetTemplateById(http: HttpClient, rootUrl: string
   );
 }
 
-emailControllerGetTemplateById.PATH = '/email/templates/{id}';
+emailControllerGetTemplateById.PATH = '/api/email/templates/{id}';

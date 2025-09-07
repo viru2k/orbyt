@@ -30,7 +30,7 @@ export class RolesService extends BaseService {
   }
 
   /** Path part for operation `rolesControllerFindAll()` */
-  static readonly RolesControllerFindAllPath = '/roles';
+  static readonly RolesControllerFindAllPath = '/api/roles';
 
   /**
    * Retrieve all roles.
@@ -63,7 +63,7 @@ export class RolesService extends BaseService {
   }
 
   /** Path part for operation `rolesControllerCreate()` */
-  static readonly RolesControllerCreatePath = '/roles';
+  static readonly RolesControllerCreatePath = '/api/roles';
 
   /**
    * Create a new role.
@@ -96,7 +96,7 @@ export class RolesService extends BaseService {
   }
 
   /** Path part for operation `rolesControllerFindOne()` */
-  static readonly RolesControllerFindOnePath = '/roles/{id}';
+  static readonly RolesControllerFindOnePath = '/api/roles/{id}';
 
   /**
    * Retrieve a role by ID.
@@ -129,7 +129,7 @@ export class RolesService extends BaseService {
   }
 
   /** Path part for operation `rolesControllerRemove()` */
-  static readonly RolesControllerRemovePath = '/roles/{id}';
+  static readonly RolesControllerRemovePath = '/api/roles/{id}';
 
   /**
    * Delete a role by ID.
@@ -162,7 +162,7 @@ export class RolesService extends BaseService {
   }
 
   /** Path part for operation `rolesControllerUpdate()` */
-  static readonly RolesControllerUpdatePath = '/roles/{id}';
+  static readonly RolesControllerUpdatePath = '/api/roles/{id}';
 
   /**
    * Update an existing role.

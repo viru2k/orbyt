@@ -36,4 +36,4 @@ export function uploadControllerUploadFile(http: HttpClient, rootUrl: string, pa
   );
 }
 
-uploadControllerUploadFile.PATH = '/upload';
+uploadControllerUploadFile.PATH = '/api/upload';

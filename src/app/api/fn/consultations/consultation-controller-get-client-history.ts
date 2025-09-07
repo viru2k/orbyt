@@ -30,4 +30,4 @@ export function consultationControllerGetClientHistory(http: HttpClient, rootUrl
   );
 }
 
-consultationControllerGetClientHistory.PATH = '/consultations/client/{clientId}';
+consultationControllerGetClientHistory.PATH = '/api/consultations/client/{clientId}';

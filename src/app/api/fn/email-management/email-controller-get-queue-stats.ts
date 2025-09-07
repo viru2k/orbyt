@@ -27,4 +27,4 @@ export function emailControllerGetQueueStats(http: HttpClient, rootUrl: string, 
   );
 }
 
-emailControllerGetQueueStats.PATH = '/email/queue/stats';
+emailControllerGetQueueStats.PATH = '/api/email/queue/stats';

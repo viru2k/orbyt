@@ -28,4 +28,4 @@ export function dashboardControllerGetMetrics(http: HttpClient, rootUrl: string,
   );
 }
 
-dashboardControllerGetMetrics.PATH = '/dashboard/metrics';
+dashboardControllerGetMetrics.PATH = '/api/dashboard/metrics';

@@ -33,4 +33,4 @@ export function businessTypeControllerDeleteBusinessType(http: HttpClient, rootU
   );
 }
 
-businessTypeControllerDeleteBusinessType.PATH = '/business-types/{id}';
+businessTypeControllerDeleteBusinessType.PATH = '/api/business-types/{id}';

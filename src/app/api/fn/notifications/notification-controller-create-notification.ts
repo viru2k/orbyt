@@ -31,4 +31,4 @@ export function notificationControllerCreateNotification(http: HttpClient, rootU
   );
 }
 
-notificationControllerCreateNotification.PATH = '/notifications';
+notificationControllerCreateNotification.PATH = '/api/notifications';

@@ -28,4 +28,4 @@ export function rolesControllerFindAll(http: HttpClient, rootUrl: string, params
   );
 }
 
-rolesControllerFindAll.PATH = '/roles';
+rolesControllerFindAll.PATH = '/api/roles';

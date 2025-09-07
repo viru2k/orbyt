@@ -33,4 +33,4 @@ export function userControllerUpdateSubUser(http: HttpClient, rootUrl: string, p
   );
 }
 
-userControllerUpdateSubUser.PATH = '/users/sub-user/{id}';
+userControllerUpdateSubUser.PATH = '/api/users/sub-user/{id}';

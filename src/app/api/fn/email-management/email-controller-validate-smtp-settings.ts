@@ -31,4 +31,4 @@ export function emailControllerValidateSmtpSettings(http: HttpClient, rootUrl: s
   );
 }
 
-emailControllerValidateSmtpSettings.PATH = '/email/settings/validate';
+emailControllerValidateSmtpSettings.PATH = '/api/email/settings/validate';

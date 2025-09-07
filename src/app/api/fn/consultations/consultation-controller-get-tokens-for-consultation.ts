@@ -30,4 +30,4 @@ export function consultationControllerGetTokensForConsultation(http: HttpClient,
   );
 }
 
-consultationControllerGetTokensForConsultation.PATH = '/consultations/{id}/tokens';
+consultationControllerGetTokensForConsultation.PATH = '/api/consultations/{id}/tokens';

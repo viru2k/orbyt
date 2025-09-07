@@ -27,4 +27,4 @@ export function dashboardControllerGetClientsSummary(http: HttpClient, rootUrl: 
   );
 }
 
-dashboardControllerGetClientsSummary.PATH = '/dashboard/clients/summary';
+dashboardControllerGetClientsSummary.PATH = '/api/dashboard/clients/summary';

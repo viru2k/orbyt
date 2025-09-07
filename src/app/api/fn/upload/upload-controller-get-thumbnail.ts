@@ -29,4 +29,4 @@ export function uploadControllerGetThumbnail(http: HttpClient, rootUrl: string, 
   );
 }
 
-uploadControllerGetThumbnail.PATH = '/upload/{id}/thumbnail';
+uploadControllerGetThumbnail.PATH = '/api/upload/{id}/thumbnail';

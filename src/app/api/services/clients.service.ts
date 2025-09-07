@@ -13,6 +13,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { clientControllerCreate } from '../fn/clients/client-controller-create';
 import { ClientControllerCreate$Params } from '../fn/clients/client-controller-create';
+import { clientControllerEnablePortalAccess } from '../fn/clients/client-controller-enable-portal-access';
+import { ClientControllerEnablePortalAccess$Params } from '../fn/clients/client-controller-enable-portal-access';
 import { clientControllerFindAll } from '../fn/clients/client-controller-find-all';
 import { ClientControllerFindAll$Params } from '../fn/clients/client-controller-find-all';
 import { clientControllerFindGroupClients } from '../fn/clients/client-controller-find-group-clients';
@@ -32,7 +34,7 @@ export class ClientsService extends BaseService {
   }
 
   /** Path part for operation `clientControllerFindAll()` */
-  static readonly ClientControllerFindAllPath = '/clients';
+  static readonly ClientControllerFindAllPath = '/api/clients';
 
   /**
    * Listar clientes (admin puede ver los de un sub-usuario).
@@ -65,7 +67,7 @@ export class ClientsService extends BaseService {
   }
 
   /** Path part for operation `clientControllerCreate()` */
-  static readonly ClientControllerCreatePath = '/clients';
+  static readonly ClientControllerCreatePath = '/api/clients';
 
   /**
    * Crear un nuevo cliente.
@@ -98,7 +100,7 @@ export class ClientsService extends BaseService {
   }
 
   /** Path part for operation `clientControllerFindGroupClients()` */
-  static readonly ClientControllerFindGroupClientsPath = '/clients/group';
+  static readonly ClientControllerFindGroupClientsPath = '/api/clients/group';
 
   /**
    * Listar todos los clientes del grupo (admin y sub-usuarios).
@@ -131,7 +133,7 @@ export class ClientsService extends BaseService {
   }
 
   /** Path part for operation `clientControllerFindOne()` */
-  static readonly ClientControllerFindOnePath = '/clients/{id}';
+  static readonly ClientControllerFindOnePath = '/api/clients/{id}';
 
   /**
    * Obtener detalles de un cliente (admin puede ver los de un sub-usuario).
@@ -164,7 +166,7 @@ export class ClientsService extends BaseService {
   }
 
   /** Path part for operation `clientControllerRemove()` */
-  static readonly ClientControllerRemovePath = '/clients/{id}';
+  static readonly ClientControllerRemovePath = '/api/clients/{id}';
 
   /**
    * Eliminar un cliente.
@@ -197,7 +199,7 @@ export class ClientsService extends BaseService {
   }
 
   /** Path part for operation `clientControllerUpdate()` */
-  static readonly ClientControllerUpdatePath = '/clients/{id}';
+  static readonly ClientControllerUpdatePath = '/api/clients/{id}';
 
   /**
    * Actualizar un cliente.
@@ -226,6 +228,51 @@ export class ClientsService extends BaseService {
   clientControllerUpdate(params: ClientControllerUpdate$Params, context?: HttpContext): Observable<ClientResponseDto> {
     return this.clientControllerUpdate$Response(params, context).pipe(
       map((r: StrictHttpResponse<ClientResponseDto>): ClientResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `clientControllerEnablePortalAccess()` */
+  static readonly ClientControllerEnablePortalAccessPath = '/api/clients/{id}/enable-portal';
+
+  /**
+   * Habilitar acceso al portal del cliente.
+   *
+   * Permite que un cliente existente acceda al portal web con una contraseña inicial
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `clientControllerEnablePortalAccess()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerEnablePortalAccess$Response(params: ClientControllerEnablePortalAccess$Params, context?: HttpContext): Observable<StrictHttpResponse<{
+'message'?: string;
+'initialPassword'?: string;
+}>> {
+    return clientControllerEnablePortalAccess(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Habilitar acceso al portal del cliente.
+   *
+   * Permite que un cliente existente acceda al portal web con una contraseña inicial
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `clientControllerEnablePortalAccess$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerEnablePortalAccess(params: ClientControllerEnablePortalAccess$Params, context?: HttpContext): Observable<{
+'message'?: string;
+'initialPassword'?: string;
+}> {
+    return this.clientControllerEnablePortalAccess$Response(params, context).pipe(
+      map((r: StrictHttpResponse<{
+'message'?: string;
+'initialPassword'?: string;
+}>): {
+'message'?: string;
+'initialPassword'?: string;
+} => r.body)
     );
   }
 

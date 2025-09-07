@@ -30,4 +30,4 @@ export function notificationControllerMarkAsRead(http: HttpClient, rootUrl: stri
   );
 }
 
-notificationControllerMarkAsRead.PATH = '/notifications/{id}/read';
+notificationControllerMarkAsRead.PATH = '/api/notifications/{id}/read';

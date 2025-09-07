@@ -58,4 +58,4 @@ export function agendaControllerGetAppointments(http: HttpClient, rootUrl: strin
   );
 }
 
-agendaControllerGetAppointments.PATH = '/agenda';
+agendaControllerGetAppointments.PATH = '/api/agenda';

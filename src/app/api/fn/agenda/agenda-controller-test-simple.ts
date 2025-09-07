@@ -27,4 +27,4 @@ export function agendaControllerTestSimple(http: HttpClient, rootUrl: string, pa
   );
 }
 
-agendaControllerTestSimple.PATH = '/agenda/test-simple';
+agendaControllerTestSimple.PATH = '/api/agenda/test-simple';

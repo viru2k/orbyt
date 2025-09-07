@@ -24,7 +24,7 @@ export class SubscriptionService extends BaseService {
   }
 
   /** Path part for operation `subscriptionControllerFindAll()` */
-  static readonly SubscriptionControllerFindAllPath = '/subscription';
+  static readonly SubscriptionControllerFindAllPath = '/api/subscription';
 
   /**
    * Listar tipos de suscripción disponibles.
@@ -57,7 +57,7 @@ export class SubscriptionService extends BaseService {
   }
 
   /** Path part for operation `subscriptionControllerFindOne()` */
-  static readonly SubscriptionControllerFindOnePath = '/subscription/{id}';
+  static readonly SubscriptionControllerFindOnePath = '/api/subscription/{id}';
 
   /**
    * Obtener detalles de una suscripción.

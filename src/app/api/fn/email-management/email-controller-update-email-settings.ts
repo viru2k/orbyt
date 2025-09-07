@@ -32,4 +32,4 @@ export function emailControllerUpdateEmailSettings(http: HttpClient, rootUrl: st
   );
 }
 
-emailControllerUpdateEmailSettings.PATH = '/email/settings/{id}';
+emailControllerUpdateEmailSettings.PATH = '/api/email/settings/{id}';

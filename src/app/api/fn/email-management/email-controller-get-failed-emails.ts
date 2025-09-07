@@ -28,4 +28,4 @@ export function emailControllerGetFailedEmails(http: HttpClient, rootUrl: string
   );
 }
 
-emailControllerGetFailedEmails.PATH = '/email/logs/failed';
+emailControllerGetFailedEmails.PATH = '/api/email/logs/failed';

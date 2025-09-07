@@ -46,4 +46,4 @@ export function serviceItemsControllerGetItems(http: HttpClient, rootUrl: string
   );
 }
 
-serviceItemsControllerGetItems.PATH = '/service-items';
+serviceItemsControllerGetItems.PATH = '/api/service-items';

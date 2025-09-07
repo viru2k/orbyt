@@ -34,4 +34,4 @@ export function productControllerUploadThumbnail(http: HttpClient, rootUrl: stri
   );
 }
 
-productControllerUploadThumbnail.PATH = '/products/{id}/upload-thumbnail';
+productControllerUploadThumbnail.PATH = '/api/products/{id}/upload-thumbnail';

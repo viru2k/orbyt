@@ -28,4 +28,4 @@ export function emailControllerGetMetricsSummary(http: HttpClient, rootUrl: stri
   );
 }
 
-emailControllerGetMetricsSummary.PATH = '/email/metrics/summary';
+emailControllerGetMetricsSummary.PATH = '/api/email/metrics/summary';

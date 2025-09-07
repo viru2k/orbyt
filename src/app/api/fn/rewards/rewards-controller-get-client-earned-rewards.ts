@@ -30,4 +30,4 @@ export function rewardsControllerGetClientEarnedRewards(http: HttpClient, rootUr
   );
 }
 
-rewardsControllerGetClientEarnedRewards.PATH = '/rewards/customer/{clientId}/earned';
+rewardsControllerGetClientEarnedRewards.PATH = '/api/rewards/customer/{clientId}/earned';

@@ -27,4 +27,4 @@ export function rewardsControllerCleanupExpiredRewards(http: HttpClient, rootUrl
   );
 }
 
-rewardsControllerCleanupExpiredRewards.PATH = '/rewards/cleanup/expired';
+rewardsControllerCleanupExpiredRewards.PATH = '/api/rewards/cleanup/expired';

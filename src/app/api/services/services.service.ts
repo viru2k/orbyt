@@ -31,7 +31,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerFindAll()` */
-  static readonly ServiceControllerFindAllPath = '/services';
+  static readonly ServiceControllerFindAllPath = '/api/services';
 
   /**
    * Get all services with pagination.
@@ -64,7 +64,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerCreate()` */
-  static readonly ServiceControllerCreatePath = '/services';
+  static readonly ServiceControllerCreatePath = '/api/services';
 
   /**
    * Create a new service.
@@ -97,7 +97,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerFindOne()` */
-  static readonly ServiceControllerFindOnePath = '/services/{id}';
+  static readonly ServiceControllerFindOnePath = '/api/services/{id}';
 
   /**
    * Get service by ID.
@@ -130,7 +130,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerUpdate()` */
-  static readonly ServiceControllerUpdatePath = '/services/{id}';
+  static readonly ServiceControllerUpdatePath = '/api/services/{id}';
 
   /**
    * Update a service.
@@ -163,7 +163,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerRemove()` */
-  static readonly ServiceControllerRemovePath = '/services/{id}';
+  static readonly ServiceControllerRemovePath = '/api/services/{id}';
 
   /**
    * Delete a service.

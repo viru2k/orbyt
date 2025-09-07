@@ -28,4 +28,4 @@ export function uploadControllerGetMyFiles(http: HttpClient, rootUrl: string, pa
   );
 }
 
-uploadControllerGetMyFiles.PATH = '/upload/my-files';
+uploadControllerGetMyFiles.PATH = '/api/upload/my-files';

@@ -36,4 +36,4 @@ export function clientControllerFindOne(http: HttpClient, rootUrl: string, param
   );
 }
 
-clientControllerFindOne.PATH = '/clients/{id}';
+clientControllerFindOne.PATH = '/api/clients/{id}';

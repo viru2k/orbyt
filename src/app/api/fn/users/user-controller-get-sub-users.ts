@@ -28,4 +28,4 @@ export function userControllerGetSubUsers(http: HttpClient, rootUrl: string, par
   );
 }
 
-userControllerGetSubUsers.PATH = '/users/sub-users';
+userControllerGetSubUsers.PATH = '/api/users/sub-users';

@@ -28,4 +28,4 @@ export function rewardsControllerGetActiveRewardPrograms(http: HttpClient, rootU
   );
 }
 
-rewardsControllerGetActiveRewardPrograms.PATH = '/rewards/programs/active';
+rewardsControllerGetActiveRewardPrograms.PATH = '/api/rewards/programs/active';

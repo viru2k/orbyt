@@ -28,4 +28,4 @@ export function rewardsControllerGetRewardsMetrics(http: HttpClient, rootUrl: st
   );
 }
 
-rewardsControllerGetRewardsMetrics.PATH = '/rewards/metrics';
+rewardsControllerGetRewardsMetrics.PATH = '/api/rewards/metrics';

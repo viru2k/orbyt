@@ -4,5 +4,5 @@
 
 export interface CreateHolidayDto {
   date: string;
-  reason?: string;
+  description?: string;
 }

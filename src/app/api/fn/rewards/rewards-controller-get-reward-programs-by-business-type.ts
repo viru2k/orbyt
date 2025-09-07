@@ -29,4 +29,4 @@ export function rewardsControllerGetRewardProgramsByBusinessType(http: HttpClien
   );
 }
 
-rewardsControllerGetRewardProgramsByBusinessType.PATH = '/rewards/programs/business-type/{businessTypeId}';
+rewardsControllerGetRewardProgramsByBusinessType.PATH = '/api/rewards/programs/business-type/{businessTypeId}';

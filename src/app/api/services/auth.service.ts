@@ -26,7 +26,7 @@ export class AuthService extends BaseService {
   }
 
   /** Path part for operation `authControllerRegister()` */
-  static readonly AuthControllerRegisterPath = '/auth/register';
+  static readonly AuthControllerRegisterPath = '/api/auth/register';
 
   /**
    * Registro de usuario principal con suscripción.
@@ -59,7 +59,7 @@ export class AuthService extends BaseService {
   }
 
   /** Path part for operation `authControllerLogin()` */
-  static readonly AuthControllerLoginPath = '/auth/login';
+  static readonly AuthControllerLoginPath = '/api/auth/login';
 
   /**
    * Login de usuario, devuelve JWT.
@@ -92,7 +92,7 @@ export class AuthService extends BaseService {
   }
 
   /** Path part for operation `authControllerGetProfile()` */
-  static readonly AuthControllerGetProfilePath = '/auth/profile';
+  static readonly AuthControllerGetProfilePath = '/api/auth/profile';
 
   /**
    * Obtener datos del usuario autenticado.

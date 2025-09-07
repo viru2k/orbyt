@@ -27,7 +27,7 @@ export class StockService extends BaseService {
   }
 
   /** Path part for operation `stockControllerCreate()` */
-  static readonly StockControllerCreatePath = '/stock';
+  static readonly StockControllerCreatePath = '/api/stock';
 
   /**
    * Registrar movimiento de stock.
@@ -60,7 +60,7 @@ export class StockService extends BaseService {
   }
 
   /** Path part for operation `stockControllerGetMovements()` */
-  static readonly StockControllerGetMovementsPath = '/stock/{productId}';
+  static readonly StockControllerGetMovementsPath = '/api/stock/{productId}';
 
   /**
    * Listar movimientos de un producto.
@@ -93,7 +93,7 @@ export class StockService extends BaseService {
   }
 
   /** Path part for operation `stockControllerGetSummary()` */
-  static readonly StockControllerGetSummaryPath = '/stock/{productId}/summary';
+  static readonly StockControllerGetSummaryPath = '/api/stock/{productId}/summary';
 
   /**
    * Resumen de stock actual del producto.

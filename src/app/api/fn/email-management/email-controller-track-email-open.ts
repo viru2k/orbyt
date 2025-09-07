@@ -29,4 +29,4 @@ export function emailControllerTrackEmailOpen(http: HttpClient, rootUrl: string,
   );
 }
 
-emailControllerTrackEmailOpen.PATH = '/email/track/open/{emailId}';
+emailControllerTrackEmailOpen.PATH = '/api/email/track/open/{emailId}';

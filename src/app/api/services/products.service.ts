@@ -36,7 +36,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerFindAll()` */
-  static readonly ProductControllerFindAllPath = '/products';
+  static readonly ProductControllerFindAllPath = '/api/products';
 
   /**
    * Listar productos (admin puede ver los de un sub-usuario).
@@ -69,7 +69,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerCreate()` */
-  static readonly ProductControllerCreatePath = '/products';
+  static readonly ProductControllerCreatePath = '/api/products';
 
   /**
    * Crear un nuevo producto.
@@ -102,7 +102,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerFindOne()` */
-  static readonly ProductControllerFindOnePath = '/products/{id}';
+  static readonly ProductControllerFindOnePath = '/api/products/{id}';
 
   /**
    * Obtener detalles de un producto (admin puede ver los de un sub-usuario).
@@ -135,7 +135,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerRemove()` */
-  static readonly ProductControllerRemovePath = '/products/{id}';
+  static readonly ProductControllerRemovePath = '/api/products/{id}';
 
   /**
    * Eliminar un producto.
@@ -168,7 +168,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerUpdate()` */
-  static readonly ProductControllerUpdatePath = '/products/{id}';
+  static readonly ProductControllerUpdatePath = '/api/products/{id}';
 
   /**
    * Actualizar un producto.
@@ -201,7 +201,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerToggle()` */
-  static readonly ProductControllerTogglePath = '/products/{id}/toggle';
+  static readonly ProductControllerTogglePath = '/api/products/{id}/toggle';
 
   /**
    * Alternar estado activo/inactivo de un producto.
@@ -234,7 +234,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerUploadImage()` */
-  static readonly ProductControllerUploadImagePath = '/products/{id}/upload-image';
+  static readonly ProductControllerUploadImagePath = '/api/products/{id}/upload-image';
 
   /**
    * Subir imagen principal del producto.
@@ -267,7 +267,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerUploadThumbnail()` */
-  static readonly ProductControllerUploadThumbnailPath = '/products/{id}/upload-thumbnail';
+  static readonly ProductControllerUploadThumbnailPath = '/api/products/{id}/upload-thumbnail';
 
   /**
    * Subir thumbnail del producto.

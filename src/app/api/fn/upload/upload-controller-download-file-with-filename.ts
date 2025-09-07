@@ -31,4 +31,4 @@ export function uploadControllerDownloadFileWithFilename(http: HttpClient, rootU
   );
 }
 
-uploadControllerDownloadFileWithFilename.PATH = '/upload/{id}/{filename}';
+uploadControllerDownloadFileWithFilename.PATH = '/api/upload/{id}/{filename}';

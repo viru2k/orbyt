@@ -34,4 +34,4 @@ export function productControllerUploadImage(http: HttpClient, rootUrl: string, 
   );
 }
 
-productControllerUploadImage.PATH = '/products/{id}/upload-image';
+productControllerUploadImage.PATH = '/api/products/{id}/upload-image';

@@ -34,4 +34,4 @@ export function agendaControllerGetToday(http: HttpClient, rootUrl: string, para
   );
 }
 
-agendaControllerGetToday.PATH = '/agenda/today';
+agendaControllerGetToday.PATH = '/api/agenda/today';

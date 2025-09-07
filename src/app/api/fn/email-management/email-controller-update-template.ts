@@ -33,4 +33,4 @@ export function emailControllerUpdateTemplate(http: HttpClient, rootUrl: string,
   );
 }
 
-emailControllerUpdateTemplate.PATH = '/email/templates/{id}';
+emailControllerUpdateTemplate.PATH = '/api/email/templates/{id}';

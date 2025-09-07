@@ -30,4 +30,4 @@ export function rolesControllerFindOne(http: HttpClient, rootUrl: string, params
   );
 }
 
-rolesControllerFindOne.PATH = '/roles/{id}';
+rolesControllerFindOne.PATH = '/api/roles/{id}';

@@ -29,4 +29,4 @@ export function rewardsControllerTriggerServiceCompleted(http: HttpClient, rootU
   );
 }
 
-rewardsControllerTriggerServiceCompleted.PATH = '/rewards/trigger/service-completed/{clientId}';
+rewardsControllerTriggerServiceCompleted.PATH = '/api/rewards/trigger/service-completed/{clientId}';

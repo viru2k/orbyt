@@ -29,4 +29,4 @@ export function rewardsControllerGetRewardProgramById(http: HttpClient, rootUrl:
   );
 }
 
-rewardsControllerGetRewardProgramById.PATH = '/rewards/programs/{id}';
+rewardsControllerGetRewardProgramById.PATH = '/api/rewards/programs/{id}';

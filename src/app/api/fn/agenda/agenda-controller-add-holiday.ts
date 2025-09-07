@@ -37,4 +37,4 @@ export function agendaControllerAddHoliday(http: HttpClient, rootUrl: string, pa
   );
 }
 
-agendaControllerAddHoliday.PATH = '/agenda/holiday';
+agendaControllerAddHoliday.PATH = '/api/agenda/holiday';

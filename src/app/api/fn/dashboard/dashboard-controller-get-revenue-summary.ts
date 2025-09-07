@@ -27,4 +27,4 @@ export function dashboardControllerGetRevenueSummary(http: HttpClient, rootUrl: 
   );
 }
 
-dashboardControllerGetRevenueSummary.PATH = '/dashboard/revenue/summary';
+dashboardControllerGetRevenueSummary.PATH = '/api/dashboard/revenue/summary';

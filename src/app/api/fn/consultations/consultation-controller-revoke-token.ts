@@ -30,4 +30,4 @@ export function consultationControllerRevokeToken(http: HttpClient, rootUrl: str
   );
 }
 
-consultationControllerRevokeToken.PATH = '/consultations/tokens/{tokenId}';
+consultationControllerRevokeToken.PATH = '/api/consultations/tokens/{tokenId}';

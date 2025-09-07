@@ -30,4 +30,4 @@ export function invoiceControllerFindOne(http: HttpClient, rootUrl: string, para
   );
 }
 
-invoiceControllerFindOne.PATH = '/invoices/{id}';
+invoiceControllerFindOne.PATH = '/api/invoices/{id}';

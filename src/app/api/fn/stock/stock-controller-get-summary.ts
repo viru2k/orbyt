@@ -30,4 +30,4 @@ export function stockControllerGetSummary(http: HttpClient, rootUrl: string, par
   );
 }
 
-stockControllerGetSummary.PATH = '/stock/{productId}/summary';
+stockControllerGetSummary.PATH = '/api/stock/{productId}/summary';

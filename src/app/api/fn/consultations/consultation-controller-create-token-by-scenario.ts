@@ -32,4 +32,4 @@ export function consultationControllerCreateTokenByScenario(http: HttpClient, ro
   );
 }
 
-consultationControllerCreateTokenByScenario.PATH = '/consultations/{id}/tokens/scenario/{scenario}';
+consultationControllerCreateTokenByScenario.PATH = '/api/consultations/{id}/tokens/scenario/{scenario}';

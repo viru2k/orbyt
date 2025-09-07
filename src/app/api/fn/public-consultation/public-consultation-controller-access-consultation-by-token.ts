@@ -29,4 +29,4 @@ export function publicConsultationControllerAccessConsultationByToken(http: Http
   );
 }
 
-publicConsultationControllerAccessConsultationByToken.PATH = '/public/consultations/access/{token}';
+publicConsultationControllerAccessConsultationByToken.PATH = '/api/public/consultations/access/{token}';

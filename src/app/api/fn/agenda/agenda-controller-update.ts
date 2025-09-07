@@ -33,4 +33,4 @@ export function agendaControllerUpdate(http: HttpClient, rootUrl: string, params
   );
 }
 
-agendaControllerUpdate.PATH = '/agenda/{id}';
+agendaControllerUpdate.PATH = '/api/agenda/{id}';

@@ -30,4 +30,4 @@ export function emailControllerSaveEmailSettings(http: HttpClient, rootUrl: stri
   );
 }
 
-emailControllerSaveEmailSettings.PATH = '/email/settings/save';
+emailControllerSaveEmailSettings.PATH = '/api/email/settings/save';

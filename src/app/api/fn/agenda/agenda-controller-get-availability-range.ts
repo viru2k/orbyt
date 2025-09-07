@@ -45,4 +45,4 @@ export function agendaControllerGetAvailabilityRange(http: HttpClient, rootUrl: 
   );
 }
 
-agendaControllerGetAvailabilityRange.PATH = '/agenda/availability-range';
+agendaControllerGetAvailabilityRange.PATH = '/api/agenda/availability-range';

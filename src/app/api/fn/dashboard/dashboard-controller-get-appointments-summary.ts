@@ -27,4 +27,4 @@ export function dashboardControllerGetAppointmentsSummary(http: HttpClient, root
   );
 }
 
-dashboardControllerGetAppointmentsSummary.PATH = '/dashboard/appointments/summary';
+dashboardControllerGetAppointmentsSummary.PATH = '/api/dashboard/appointments/summary';

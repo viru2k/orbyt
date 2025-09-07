@@ -28,4 +28,4 @@ export function emailControllerGetAllTemplates(http: HttpClient, rootUrl: string
   );
 }
 
-emailControllerGetAllTemplates.PATH = '/email/templates';
+emailControllerGetAllTemplates.PATH = '/api/email/templates';

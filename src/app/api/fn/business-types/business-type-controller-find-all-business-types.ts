@@ -28,4 +28,4 @@ export function businessTypeControllerFindAllBusinessTypes(http: HttpClient, roo
   );
 }
 
-businessTypeControllerFindAllBusinessTypes.PATH = '/business-types';
+businessTypeControllerFindAllBusinessTypes.PATH = '/api/business-types';

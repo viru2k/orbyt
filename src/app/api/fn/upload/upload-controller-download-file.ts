@@ -29,4 +29,4 @@ export function uploadControllerDownloadFile(http: HttpClient, rootUrl: string, 
   );
 }
 
-uploadControllerDownloadFile.PATH = '/upload/{id}';
+uploadControllerDownloadFile.PATH = '/api/upload/{id}';

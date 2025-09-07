@@ -31,4 +31,4 @@ export function notificationControllerTestBroadcast(http: HttpClient, rootUrl: s
   );
 }
 
-notificationControllerTestBroadcast.PATH = '/notifications/test-broadcast';
+notificationControllerTestBroadcast.PATH = '/api/notifications/test-broadcast';

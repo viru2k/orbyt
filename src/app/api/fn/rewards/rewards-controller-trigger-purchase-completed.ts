@@ -29,4 +29,4 @@ export function rewardsControllerTriggerPurchaseCompleted(http: HttpClient, root
   );
 }
 
-rewardsControllerTriggerPurchaseCompleted.PATH = '/rewards/trigger/purchase-completed/{clientId}';
+rewardsControllerTriggerPurchaseCompleted.PATH = '/api/rewards/trigger/purchase-completed/{clientId}';

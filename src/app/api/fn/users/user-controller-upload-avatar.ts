@@ -32,4 +32,4 @@ export function userControllerUploadAvatar(http: HttpClient, rootUrl: string, pa
   );
 }
 
-userControllerUploadAvatar.PATH = '/users/upload-avatar';
+userControllerUploadAvatar.PATH = '/api/users/upload-avatar';

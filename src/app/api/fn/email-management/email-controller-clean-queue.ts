@@ -28,4 +28,4 @@ export function emailControllerCleanQueue(http: HttpClient, rootUrl: string, par
   );
 }
 
-emailControllerCleanQueue.PATH = '/email/queue/clean';
+emailControllerCleanQueue.PATH = '/api/email/queue/clean';

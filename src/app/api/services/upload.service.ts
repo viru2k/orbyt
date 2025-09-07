@@ -34,7 +34,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerUploadFile()` */
-  static readonly UploadControllerUploadFilePath = '/upload';
+  static readonly UploadControllerUploadFilePath = '/api/upload';
 
   /**
    * Subir archivo.
@@ -67,7 +67,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerGetFilesByEntity()` */
-  static readonly UploadControllerGetFilesByEntityPath = '/upload/entity/{entityType}/{entityId}';
+  static readonly UploadControllerGetFilesByEntityPath = '/api/upload/entity/{entityType}/{entityId}';
 
   /**
    * Obtener archivos por entidad.
@@ -100,7 +100,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerGetMyFiles()` */
-  static readonly UploadControllerGetMyFilesPath = '/upload/my-files';
+  static readonly UploadControllerGetMyFilesPath = '/api/upload/my-files';
 
   /**
    * Obtener mis archivos subidos.
@@ -133,7 +133,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerDownloadFile()` */
-  static readonly UploadControllerDownloadFilePath = '/upload/{id}';
+  static readonly UploadControllerDownloadFilePath = '/api/upload/{id}';
 
   /**
    * Descargar archivo por ID (requiere autenticación).
@@ -166,7 +166,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerDeleteFile()` */
-  static readonly UploadControllerDeleteFilePath = '/upload/{id}';
+  static readonly UploadControllerDeleteFilePath = '/api/upload/{id}';
 
   /**
    * Eliminar archivo.
@@ -199,7 +199,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerDownloadFileWithFilename()` */
-  static readonly UploadControllerDownloadFileWithFilenamePath = '/upload/{id}/{filename}';
+  static readonly UploadControllerDownloadFileWithFilenamePath = '/api/upload/{id}/{filename}';
 
   /**
    * Servir archivo público por ID con filename SEO-friendly.
@@ -232,7 +232,7 @@ export class UploadService extends BaseService {
   }
 
   /** Path part for operation `uploadControllerGetThumbnail()` */
-  static readonly UploadControllerGetThumbnailPath = '/upload/{id}/thumbnail';
+  static readonly UploadControllerGetThumbnailPath = '/api/upload/{id}/thumbnail';
 
   /**
    * Obtener thumbnail de imagen.

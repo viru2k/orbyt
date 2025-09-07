@@ -34,4 +34,4 @@ export function agendaControllerGetConfig(http: HttpClient, rootUrl: string, par
   );
 }
 
-agendaControllerGetConfig.PATH = '/agenda/config';
+agendaControllerGetConfig.PATH = '/api/agenda/config';

@@ -30,4 +30,4 @@ export function stockControllerGetMovements(http: HttpClient, rootUrl: string, p
   );
 }
 
-stockControllerGetMovements.PATH = '/stock/{productId}';
+stockControllerGetMovements.PATH = '/api/stock/{productId}';

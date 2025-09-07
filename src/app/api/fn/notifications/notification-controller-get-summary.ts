@@ -28,4 +28,4 @@ export function notificationControllerGetSummary(http: HttpClient, rootUrl: stri
   );
 }
 
-notificationControllerGetSummary.PATH = '/notifications/summary';
+notificationControllerGetSummary.PATH = '/api/notifications/summary';

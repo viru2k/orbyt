@@ -28,4 +28,4 @@ export function notificationControllerGetUnread(http: HttpClient, rootUrl: strin
   );
 }
 
-notificationControllerGetUnread.PATH = '/notifications/unread';
+notificationControllerGetUnread.PATH = '/api/notifications/unread';

@@ -21,7 +21,7 @@ export class BusinessTypesPublicService extends BaseService {
   }
 
   /** Path part for operation `businessTypePublicControllerGetConsultationTemplate()` */
-  static readonly BusinessTypePublicControllerGetConsultationTemplatePath = '/public/business-types/code/{code}/consultation-template';
+  static readonly BusinessTypePublicControllerGetConsultationTemplatePath = '/api/public/business-types/code/{code}/consultation-template';
 
   /**
    * Obtener template de consulta por tipo de negocio (público).

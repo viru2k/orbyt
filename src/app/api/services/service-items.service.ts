@@ -22,7 +22,7 @@ export class ServiceItemsService extends BaseService {
   }
 
   /** Path part for operation `serviceItemsControllerGetItems()` */
-  static readonly ServiceItemsControllerGetItemsPath = '/service-items';
+  static readonly ServiceItemsControllerGetItemsPath = '/api/service-items';
 
   /**
    * Get combined products and services for invoice selector.

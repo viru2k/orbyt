@@ -94,4 +94,4 @@ export function consultationControllerFindAll(http: HttpClient, rootUrl: string,
   );
 }
 
-consultationControllerFindAll.PATH = '/consultations';
+consultationControllerFindAll.PATH = '/api/consultations';

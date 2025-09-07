@@ -28,4 +28,4 @@ export function permissionsControllerFindAll(http: HttpClient, rootUrl: string, 
   );
 }
 
-permissionsControllerFindAll.PATH = '/permissions';
+permissionsControllerFindAll.PATH = '/api/permissions';
