@@ -45,18 +45,15 @@ export class WebSocketService implements OnDestroy {
       transports: ['websocket']
     });
 
-    this.socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
+    this.socket.on('connect', () => {      
       this.connected$.next(true);
     });
 
-    this.socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
+    this.socket.on('disconnect', () => {      
       this.connected$.next(false);
     });
 
-    this.socket.on('notification', (data: NotificationMessage) => {
-      console.log('Received notification:', data);
+    this.socket.on('notification', (data: NotificationMessage) => {      
       const notification = {
         ...data,
         timestamp: new Date(data.timestamp),

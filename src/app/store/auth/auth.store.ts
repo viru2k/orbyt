@@ -73,8 +73,7 @@ export class AuthStore extends ComponentStore<AuthState> {
   });
 
   // Permission selectors
-  readonly canManageUsers$ = this.select(this.user$, (user) => {
-    console.log('🔑 AuthStore - canManageUsers$ selector - user:', user, 'canManageUsers:', user?.canManageUsers);
+  readonly canManageUsers$ = this.select(this.user$, (user) => {    
     return user?.canManageUsers ?? false;
   });
   readonly canManageClients$ = this.select(this.user$, (user) => user?.canManageClients ?? false);
@@ -102,10 +101,7 @@ export class AuthStore extends ComponentStore<AuthState> {
       exhaustMap((credentials) =>
         this.authService.authControllerLogin$Response({ body: credentials }).pipe(
           tapResponse(
-            (response: any) => {
-              console.log('Full HTTP response:', response);
-              console.log('Response body:', response.body);
-              console.log('Response body type:', typeof response.body);
+            (response: any) => {                                          
               
               // Extraer token usando TokenService
               const token = this.tokenService.extractTokenFromResponse(response);
@@ -115,15 +111,13 @@ export class AuthStore extends ComponentStore<AuthState> {
                 this.setError('No se pudo obtener el token de acceso.');
                 return;
               }
-              
-              console.log('Token extraído:', token);
+                            
               
               // Decodificar JWT para obtener expiración
               const tokenExpiration = this.tokenService.getTokenExpiration(token);
                 
               // Guardar token
-              this.storage.setToken(token);
-              console.log('Token guardado:', this.storage.getToken());
+              this.storage.setToken(token);              
               
               this.notificationService.show(NotificationSeverity.Success, 'Inicio de sesión exitoso');
               this.setLoading(false);
@@ -146,18 +140,15 @@ export class AuthStore extends ComponentStore<AuthState> {
 
   readonly loadUserProfile = this.effect<string>((token$) =>
     token$.pipe(
-      exhaustMap((token) => {
-        console.log('loadUserProfile - Iniciando carga del perfil con token:', !!token);
+      exhaustMap((token) => {        
         return this.authService.authControllerGetProfile().pipe(
           tapResponse(
-            (user) => {
-              console.log('loadUserProfile - Perfil cargado exitosamente:', user);
+            (user) => {              
               const tokenExpiration = this.tokenService.getTokenExpiration(token);
               this.setAuthSuccess({ user, token, tokenExpiration });
               this.startSessionTimers();
             },
-            (error: any) => {
-              console.log('loadUserProfile - Error cargando perfil:', error);
+            (error: any) => {              
               const errorMessage = error?.error?.message || 'No se pudo cargar el perfil';
               this.setError(errorMessage);
               this.notificationService.show(NotificationSeverity.Error, errorMessage);

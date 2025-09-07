@@ -64,6 +64,7 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   
   private destroy$ = new Subject<void>();
   private entityWithAvatar: EntityWithAvatar | null = null;
+  private avatarLoadAttempted = false;
 
   constructor(private avatarUtils: AvatarUtilsService) {}
 
@@ -73,6 +74,10 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['entity'] || changes['avatar'] || changes['entityType']) {
+      // Resetear flag de carga si cambió la entidad o el tipo
+      if (changes['entity'] || changes['entityType']) {
+        this.avatarLoadAttempted = false;
+      }
       this.updateAvatarDisplay();
     }
   }
@@ -103,8 +108,8 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
     this.entityWithAvatar = this.avatarUtils.getEntityWithAvatar(this.entity, this.avatar || undefined);
 
     // Cargar avatar automáticamente si está configurado
-    // PERO solo si no hay ya una URL de avatar en la entidad
-    if (this.autoLoad && !this.avatar && this.entityType && !this.avatarUrl) {
+    // PERO solo si no hay ya una URL de avatar en la entidad y no se ha intentado cargar antes
+    if (this.autoLoad && !this.avatar && this.entityType && !this.avatarUrl && !this.avatarLoadAttempted) {
       this.loadAvatarFromServer();
     }
   }
@@ -112,33 +117,26 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * Cargar avatar desde el servidor
    */
-  private loadAvatarFromServer() {
-    console.log('🔄🔄 loadAvatarFromServer() iniciado');
+  private loadAvatarFromServer() {    
     
-    if (!this.entityType || this.isLoading) {
-      console.log('🔄🔄 loadAvatarFromServer() cancelado:', { entityType: this.entityType, isLoading: this.isLoading });
+    if (!this.entityType || this.isLoading || this.avatarLoadAttempted) {   
       return;
     }
 
     this.isLoading = true;
-    console.log('🔄🔄 Llamando avatarUtils.loadEntityAvatar() para entityType:', this.entityType, 'id:', this.entity.id);
+    this.avatarLoadAttempted = true;    
 
     this.avatarUtils.loadEntityAvatar(this.entityType, this.entity.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (avatar) => {
-          console.log('🔄🔄 loadEntityAvatar response:', avatar);
+        next: (avatar) => {          
           
-          if (avatar) {
-            console.log('🔄🔄 Avatar recibido, actualizando avatarUrl...');
+          if (avatar) {            
             this.avatar = avatar;
             
-            const newAvatarUrl = this.avatarUtils.getAvatarUrl(this.entity, avatar);
-            console.log('🔄🔄 Nueva avatarUrl calculada:', newAvatarUrl);
-            console.log('🔄🔄 AvatarUrl ANTES del cambio:', this.avatarUrl);
+            const newAvatarUrl = this.avatarUtils.getAvatarUrl(this.entity, avatar);                        
             
-            this.avatarUrl = newAvatarUrl;
-            console.log('🔄🔄 AvatarUrl DESPUÉS del cambio:', this.avatarUrl);
+            this.avatarUrl = newAvatarUrl;            
             
             this.tooltipText = this.avatarUtils.getAvatarTooltip(this.entity, avatar);
             
@@ -175,14 +173,10 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   /**
    * Manejar click en botón de editar
    */
-  onEditClick(event: Event) {
-    console.log('🖊️ EDIT BUTTON CLICKED!');
+  onEditClick(event: Event) {    
     event.stopPropagation(); // Evitar que se dispare avatarClick
     event.preventDefault();
-    this.showModal = true;
-    console.log('🖊️ showModal set to:', this.showModal);
-    console.log('🖊️ modalEntityType:', this.modalEntityType);
-    console.log('🖊️ entity.id:', this.entity?.id);
+    this.showModal = true;            
   }
 
   /**

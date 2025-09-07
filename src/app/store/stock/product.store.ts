@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { exhaustMap, tap } from 'rxjs';
-import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '../../api/model/models';
+import { ProductResponseDto } from '../../api/models/product-response-dto';
+import { CreateProductDto, UpdateProductDto } from '../../api/model/models';
 import { ProductsService } from '../../api/services/products.service';
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
@@ -73,8 +74,15 @@ export class ProductStore extends ComponentStore<ProductState> {
       exhaustMap(() =>
         this.productsService.productControllerFindAll().pipe(
           tapResponse(
-            (products: Array<ProductResponseDto>) => this.setProducts(products),
-            (error: any) => this.setError(error)
+            (products: Array<ProductResponseDto>) => {                        
+              if (products?.length > 0) {              
+              }
+              this.setProducts(products);
+            },
+            (error: any) => {
+              console.error('🛒 ERROR LOADING PRODUCTS:', error);
+              this.setError(error);
+            }
           )
         )
       )

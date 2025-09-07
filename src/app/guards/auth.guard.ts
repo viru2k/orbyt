@@ -7,11 +7,11 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
   const router = inject(Router);
   const localStorage = inject(LocalStorageService);
   const authStore = inject(AuthStore);
-
-  const token = localStorage.getToken();
-  console.log('AuthGuard - Token encontrado:', !!token);
   
-  if (!token) {
+  
+  const token = localStorage.getToken();  
+  
+  if (!token) {    
     authStore.setReturnUrl(state.url);
     router.navigate(['/login']);
     return false;
@@ -26,13 +26,12 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
     shouldLoadProfile = !user;
   }).unsubscribe();
   
-  if (token && shouldLoadProfile) {
-    console.log('AuthGuard - Cargando perfil de usuario...');
+  if (token && shouldLoadProfile) {    
     authStore.loadUserProfile(token);
   }
 
   // Registrar actividad del usuario
   authStore.recordActivity();
-  
+    
   return true;
 };

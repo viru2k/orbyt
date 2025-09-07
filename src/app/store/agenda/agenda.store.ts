@@ -219,15 +219,13 @@ export class AgendaStore extends ComponentStore<AgendaState> {
   
   readonly loadAgendaHolidays = this.effect<number | undefined>((professionalId$) =>
     professionalId$.pipe(
-      tap((professionalId) => {
-        console.log('AgendaStore - loadAgendaHolidays called with professionalId:', professionalId);
+      tap((professionalId) => {        
         this.setHolidaysLoading(true);
       }),
       exhaustMap((professionalId) =>
         this.agendaService.agendaControllerGetHolidays({ professionalId }).pipe(
           tapResponse(
-            (holydays: Array<HolidayResponseDto>) => {
-              console.log('AgendaStore - loadAgendaHolidays success:', holydays);
+            (holydays: Array<HolidayResponseDto>) => {              
               this.setAgendaHolidays(holydays);
             },
             (error: any) => {

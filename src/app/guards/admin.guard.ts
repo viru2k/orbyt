@@ -28,18 +28,15 @@ export const AdminGuard: CanActivateFn = (route, state) => {
     requiredPermission$ = authStore.canManageAgenda$;
     permissionName = 'canManageAgenda';
   }
-
-  console.log('🔒 AdminGuard - Checking permission for path:', path, 'permission:', permissionName);
+  
 
   return requiredPermission$.pipe(
     take(1),
-    map(hasPermission => {
-      console.log('🔒 AdminGuard - Permission result:', permissionName, '=', hasPermission);
+    map(hasPermission => {      
       
       if (hasPermission) {
         return true;
-      } else {
-        console.log('🔒 AdminGuard - Access denied, redirecting to dashboard');
+      } else {        
         notificationService.show(
           NotificationSeverity.Warn, 
           'No tienes permisos para acceder a esta sección'

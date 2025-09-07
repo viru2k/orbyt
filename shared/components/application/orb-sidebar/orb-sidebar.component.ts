@@ -76,6 +76,13 @@ export class OrbSidebarComponent implements OnInit {
             icon: 'fas fa-users-cog',
             command: () => this.router.navigate(['/management/users'])
           });
+          
+          // Salas - disponible para usuarios con permisos de gestión de usuarios
+          managementItems.push({
+            label: 'Salas',
+            icon: 'fas fa-door-open',
+            command: () => this.router.navigate(['/management/rooms'])
+          });
         }
 
         return this.buildMenuItems(managementItems, canManageAgenda);
@@ -169,9 +176,19 @@ export class OrbSidebarComponent implements OnInit {
       icon: 'fas fa-warehouse',
       items: [
         {
+          label: 'Dashboard',
+          icon: 'fas fa-chart-pie',
+          command: () => this.router.navigate(['/inventory/dashboard'])
+        },
+        {
           label: 'Movimientos',
           icon: 'fas fa-exchange-alt',
           command: () => this.router.navigate(['/inventory/movements'])
+        },
+        {
+          label: 'Productos',
+          icon: 'fas fa-box',
+          command: () => this.router.navigate(['/inventory/products'])
         }
       ]
     });

@@ -88,6 +88,36 @@
     "ERROR": "Error",
     "SUCCESS": "Éxito",
     "WARNING": "Advertencia",
-    "INFO": "Información"
+    "INFO": "Información",
+    "CONTINUE": "Continuar"
+  },
+  "WORKING_DAYS": {
+    "NOT_WORKING_TITLE": "Día no laboral",
+    "NOT_WORKING_MESSAGE": "El profesional no atiende los {day}s. ¿Desea continuar de todas formas?",
+    "RESTRICTED_HOURS_TITLE": "Horario no disponible",
+    "RESTRICTED_HOURS_MESSAGE": "Este horario está fuera del horario de atención habitual. ¿Desea continuar?",
+    "MONDAY": "lunes",
+    "TUESDAY": "martes", 
+    "WEDNESDAY": "miércoles",
+    "THURSDAY": "jueves",
+    "FRIDAY": "viernes",
+    "SATURDAY": "sábado",
+    "SUNDAY": "domingo"
+  },
+  "CONSULTATION": {
+    "TITLE": "Consulta",
+    "CREATE_CONSULTATION": "Crear Consulta",
+    "EDIT_CONSULTATION": "Editar Consulta",
+    "ADD_CONSULTATION_INFO": "Añadir información de consulta",
+    "CONSULTATION_QUESTION": "¿Desea añadir información de la consulta para este turno?",
+    "PATIENT_DATA": "Datos del Paciente",
+    "CONSULTATION_NOTES": "Notas de la Consulta",
+    "DIAGNOSIS": "Diagnóstico",
+    "TREATMENT": "Tratamiento",
+    "NEXT_APPOINTMENT": "Próxima Cita"
+  },
+  "INVOICE": {
+    "CREATE_INVOICE_QUESTION": "¿Desea crear una factura para este cliente?",
+    "CREATE_INVOICE": "Crear Factura"
   }
 }

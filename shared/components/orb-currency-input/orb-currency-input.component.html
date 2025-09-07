@@ -1,12 +1,16 @@
 <p-floatLabel>
   <div class="currency-input-wrapper">
-<p-inputnumber   [disabled]="_disabled"
+<input 
+      type="text"
+      pInputText
+      [id]="inputId"
+      [disabled]="_disabled"
+      [value]="_displayValue"
       (input)="onInputChange($event)"
       (blur)="onInputBlur($event)"
       (focus)="onInputFocus($event)" 
       [ngClass]="{'ng-invalid ng-dirty': isInvalid}"
-      mode="currency"  
-      currency="EUR" locale="en-US" />
+      placeholder=" " />
   </div>
   <label [attr.for]="inputId">{{ placeholder }}</label>
 </p-floatLabel>

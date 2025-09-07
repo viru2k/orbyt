@@ -17,6 +17,7 @@
   (selectionChange)="selectionChange.emit($event)"
   (onRowSelect)="onRowSelect.emit($event)"
   (onRowUnselect)="onRowUnselect.emit($event)"
+  [globalFilterFields]="globalFilterFields"
 
   responsiveLayout="scroll"
 >
