@@ -25,8 +25,13 @@ import {
   OrbDialogComponent,
   OrbFormFieldComponent,
   OrbTextInputComponent,
-  OrbTextAreaComponent
+  OrbTextAreaComponent,
+  OrbTableComponent,
+  OrbActionsPopoverComponent,
+  OrbBreadcrumbComponent
 } from '@orb-components';
+import { TableColumn, OrbTableFeatures, OrbActionItem } from '@orb-models';
+import { MenuItem } from 'primeng/api';
 
 // Services and Models
 import { RewardsManagementService } from '../../services/rewards-management.service';
@@ -60,7 +65,10 @@ import {
     OrbDialogComponent,
     OrbFormFieldComponent,
     OrbTextInputComponent,
-    OrbTextAreaComponent
+    OrbTextAreaComponent,
+    OrbTableComponent,
+    OrbActionsPopoverComponent,
+    OrbBreadcrumbComponent
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -72,6 +80,8 @@ import {
         </div>
 
         <div orbBody>
+          <orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+          
           <div class="management-header">
             <orb-button
               label="Nuevo Programa"
@@ -89,94 +99,67 @@ import {
           </div>
 
           <!-- Programs Table -->
-          <p-table 
-            [value]="rewardPrograms()" 
+          <orb-table
+            [data]="rewardPrograms()"
+            [columns]="tableColumns"
+            [features]="tableFeaturesConfig"
             [loading]="loading()"
-            styleClass="p-datatable-striped"
-            [paginator]="true" 
-            [rows]="10">
+            [paginatorRowsOptions]="[15, 30, 50]"
+            [rows]="15">
             
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Programa</th>
-                <th>Tipo de Recompensa</th>
-                <th>Puntos Requeridos</th>
-                <th>Valor</th>
-                <th>Estado</th>
-                <th>Vigencia</th>
-                <th>Acciones</th>
-              </tr>
-            </ng-template>
-            
-            <ng-template pTemplate="body" let-program>
-              <tr>
-                <td>
+            <ng-template #cellTemplate let-column="column" let-data="data">
+              @switch (column.field) {
+                @case ('name') {
                   <div class="program-info">
-                    <strong>{{ program.name }}</strong>
-                    <small class="text-muted">{{ program.description }}</small>
+                    <strong>{{ data.name }}</strong>
+                    <small class="text-muted">{{ data.description }}</small>
                   </div>
-                </td>
-                <td>
+                }
+                @case ('rewardType') {
                   <p-tag 
-                    [value]="getRewardTypeLabel(program.rewardType)"
-                    [severity]="getRewardTypeSeverity(program.rewardType)">
+                    [value]="getRewardTypeLabel(data.rewardType)"
+                    [severity]="getRewardTypeSeverity(data.rewardType)">
                   </p-tag>
-                </td>
-                <td>{{ program.pointsRequired | number }}</td>
-                <td>{{ formatRewardValue(program) }}</td>
-                <td>
+                }
+                @case ('pointsRequired') {
+                  {{ data.pointsRequired | number }}
+                }
+                @case ('rewardValue') {
+                  {{ formatRewardValue(data) }}
+                }
+                @case ('statusText') {
                   <p-tag 
-                    [value]="program.isActive ? 'Activo' : 'Inactivo'"
-                    [severity]="program.isActive ? 'success' : 'secondary'">
+                    [value]="data.isActive ? 'Activo' : 'Inactivo'"
+                    [severity]="data.isActive ? 'success' : 'secondary'">
                   </p-tag>
-                </td>
-                <td>
+                }
+                @case ('startDate') {
                   <div class="dates">
-                    <small>Inicio: {{ formatDate(program.startDate) }}</small>
-                    <small *ngIf="program.endDate">Fin: {{ formatDate(program.endDate) }}</small>
+                    <small>Inicio: {{ formatDate(data.startDate) }}</small>
+                    <small *ngIf="data.endDate">Fin: {{ formatDate(data.endDate) }}</small>
                   </div>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <orb-button
-                      icon="fa fa-edit"
-                      variant="secondary"
-                      size="small"
-                      (clicked)="editProgram(program)">
-                    </orb-button>
-                    
-                    <orb-button
-                      icon="fa fa-toggle-on"
-                      [variant]="program.isActive ? 'warning' : 'success'"
-                      size="small"
-                      (clicked)="toggleProgramStatus(program)">
-                    </orb-button>
-                    
-                    <orb-button
-                      icon="fa fa-trash"
-                      variant="danger"
-                      size="small"
-                      (clicked)="deleteProgram(program)">
-                    </orb-button>
-                  </div>
-                </td>
-              </tr>
+                }
+                @case ('actions') {
+                  <orb-actions-popover 
+                    [items]="rewardRowActions"
+                    [data]="data">
+                  </orb-actions-popover>
+                }
+              }
             </ng-template>
             
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="7" class="empty-message">
-                  <i class="fa fa-gift fa-3x text-muted"></i>
-                  <p>No hay programas de recompensas configurados</p>
-                  <orb-button
-                    label="Crear Primer Programa"
-                    variant="primary"
-                    (clicked)="openCreateDialog()">
-                  </orb-button>
-                </td>
-              </tr>
+            <ng-template #emptyTemplate>
+              <div class="empty-message">
+                <i class="fa fa-gift fa-3x text-muted"></i>
+                <p>No hay programas de recompensas configurados</p>
+                <orb-button
+                  label="Crear Primer Programa"
+                  variant="primary"
+                  (clicked)="openCreateDialog()">
+                </orb-button>
+              </div>
             </ng-template>
-          </p-table>
+          </orb-table>
         </div>
       </orb-card>
 
@@ -327,6 +310,58 @@ export class RewardsManagementComponent implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
+  // Table configuration
+  tableColumns: TableColumn[] = [
+    { field: 'name', header: 'Programa', sortable: true },
+    { field: 'rewardType', header: 'Tipo de Recompensa', sortable: true },
+    { field: 'pointsRequired', header: 'Puntos Requeridos', sortable: true },
+    { field: 'rewardValue', header: 'Valor', sortable: true },
+    { field: 'statusText', header: 'Estado', sortable: true },
+    { field: 'startDate', header: 'Vigencia', sortable: true },
+    { field: 'actions', header: 'Acciones', sortable: false }
+  ];
+
+  tableFeaturesConfig: OrbTableFeatures = {
+    showGlobalSearch: true,
+    globalSearchPlaceholder: 'Buscar programas...'
+  };
+
+  rewardRowActions: OrbActionItem<RewardProgram>[] = [
+    {
+      label: 'Editar',
+      icon: 'fa fa-edit',
+      action: (program?: RewardProgram) => {
+        if (program) {
+          this.editProgram(program);
+        }
+      }
+    },
+    {
+      label: 'Cambiar estado',
+      icon: 'fa fa-toggle-on',
+      action: (program?: RewardProgram) => {
+        if (program) {
+          this.toggleProgramStatus(program);
+        }
+      }
+    },
+    {
+      label: 'Eliminar',
+      icon: 'fa fa-trash',
+      action: (program?: RewardProgram) => {
+        if (program) {
+          this.deleteProgram(program);
+        }
+      }
+    }
+  ];
+
+  breadcrumbItems: MenuItem[] = [
+    { label: 'Inicio', icon: 'fa fa-home', routerLink: '/dashboard' },
+    { label: 'Gestión', icon: 'fa fa-cogs' },
+    { label: 'Recompensas', icon: 'fa fa-gift' }
+  ];
+
   // State signals
   rewardPrograms = signal<RewardProgram[]>([]);
   loading = signal(false);
@@ -345,6 +380,9 @@ export class RewardsManagementComponent implements OnInit {
     { label: 'Tarjeta de Regalo', value: RewardType.GIFT_CARD },
     { label: 'Cashback', value: RewardType.CASHBACK }
   ];
+
+  // Computed properties  
+  filteredPrograms = signal<RewardProgram[]>([]);
 
   ngOnInit(): void {
     this.initializeForm();
