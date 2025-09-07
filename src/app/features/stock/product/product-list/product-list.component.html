@@ -75,6 +75,7 @@
 
 <orb-dialog
   [visible]="displayProductModal()"
+  (visibleChange)="displayProductModal.set($event)"
   [header]="isEditMode() ? 'Editar Producto' : 'Nuevo Producto'"
   size="sm"
   (onHide)="onCancelForm()"

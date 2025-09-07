@@ -5,6 +5,7 @@ import { DashboardMetricsDto, AppointmentMetricsDto, ConsultationMetricsDto, Cli
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { take, filter, catchError, of } from 'rxjs';
+import { NotificationService, WebSocketNotificationService, WebSocketService } from '@orb-services';
 
 import { 
   OrbCardComponent, 
@@ -107,6 +108,9 @@ export class DashboardComponent implements OnInit {
 
   private readonly dashboardService = inject(DashboardService);
   private readonly authStore = inject(AuthStore);
+  private readonly notificationService = inject(NotificationService);
+  private readonly webSocketNotificationService = inject(WebSocketNotificationService);
+  private readonly webSocketService = inject(WebSocketService);
 
   constructor() {}
 
@@ -458,4 +462,5 @@ export class DashboardComponent implements OnInit {
   refreshData(): void {
     this.loadDashboardData();
   }
+
 }

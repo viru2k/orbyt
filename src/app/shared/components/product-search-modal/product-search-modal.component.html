@@ -1,0 +1,294 @@
+<p-dialog 
+  [header]="title"
+  [visible]="visible" 
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true" 
+  [draggable]="false"
+  [resizable]="true"
+  [closable]="true"
+  styleClass="product-search-modal"
+  [style]="{width: '90vw', maxWidth: '1200px', height: '80vh'}">
+
+  <!-- Header con búsqueda -->
+  <div class="search-header">
+    <div class="search-bar">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Buscar productos por nombre, descripción o código..." 
+          (input)="onSearch($event)"
+          [value]="filtersForm.get('query')?.value"
+          class="search-input">
+      </span>
+      
+      <!-- Toggle vista -->
+      <div class="view-controls">
+        <p-button
+          [icon]="viewMode() === 'grid' ? 'pi pi-th-large' : 'pi pi-list'"
+          [text]="true"
+          (onClick)="toggleViewMode()"
+          pTooltip="Cambiar vista"
+          tooltipPosition="bottom">
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Filtros avanzados -->
+    <div class="filters-section" [formGroup]="filtersForm">
+      <div class="filters-row">
+        <div class="filter-group">
+          <label>Estado</label>
+          <p-dropdown 
+            formControlName="status"
+            [options]="statusOptions" 
+            optionLabel="label" 
+            optionValue="value"
+            placeholder="Filtrar por estado"
+            styleClass="filter-dropdown">
+          </p-dropdown>
+        </div>
+
+        <div class="filter-group stock-filters" *ngIf="showStockFilter">
+          <div class="stock-range">
+            <div class="stock-input">
+              <label>Stock Mínimo</label>
+              <p-inputNumber 
+                formControlName="minStock"
+                [min]="0"
+                placeholder="0"
+                styleClass="filter-input">
+              </p-inputNumber>
+            </div>
+            <span class="range-separator">-</span>
+            <div class="stock-input">
+              <label>Stock Máximo</label>
+              <p-inputNumber 
+                formControlName="maxStock"
+                [min]="0"
+                placeholder="999"
+                styleClass="filter-input">
+              </p-inputNumber>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group price-filters" *ngIf="showPriceFilter">
+          <div class="price-range">
+            <div class="price-input">
+              <label>Precio Mín</label>
+              <p-inputNumber 
+                formControlName="priceMin"
+                [min]="0"
+                mode="currency" 
+                currency="EUR"
+                placeholder="€0.00"
+                styleClass="filter-input">
+              </p-inputNumber>
+            </div>
+            <span class="range-separator">-</span>
+            <div class="price-input">
+              <label>Precio Máx</label>
+              <p-inputNumber 
+                formControlName="priceMax"
+                [min]="0"
+                mode="currency" 
+                currency="EUR"
+                placeholder="€999.00"
+                styleClass="filter-input">
+              </p-inputNumber>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="filter-actions">
+          <orb-button 
+            label="Buscar" 
+            icon="pi pi-search"
+            variant="primary"
+            (clicked)="performSearch()"
+            class="search-button">
+          </orb-button>
+          
+          <orb-button 
+            label="Limpiar" 
+            icon="pi pi-times"
+            variant="secondary"
+            (clicked)="onClear()"
+            *ngIf="hasFilters()"
+            class="clear-button">
+          </orb-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="search-results">
+    <!-- Estado de carga -->
+    <div class="loading-state" *ngIf="isLoading()">
+      <div class="skeleton-grid" *ngIf="viewMode() === 'grid'">
+        <p-skeleton 
+          *ngFor="let item of [1,2,3,4,5,6]" 
+          width="100%" 
+          height="200px" 
+          styleClass="skeleton-card">
+        </p-skeleton>
+      </div>
+      <div class="skeleton-list" *ngIf="viewMode() === 'list'">
+        <p-skeleton 
+          *ngFor="let item of [1,2,3,4]" 
+          width="100%" 
+          height="80px" 
+          styleClass="skeleton-row">
+        </p-skeleton>
+      </div>
+    </div>
+
+    <!-- Sin resultados -->
+    <div class="no-results" *ngIf="!isLoading() && !hasResults()">
+      <i class="pi pi-search" style="font-size: 3rem; color: #6c757d;"></i>
+      <h3>No se encontraron productos</h3>
+      <p>Intenta con otros términos de búsqueda o ajusta los filtros</p>
+    </div>
+
+    <!-- Vista Grid -->
+    <div class="products-grid" *ngIf="!isLoading() && hasResults() && viewMode() === 'grid'">
+      <div 
+        class="product-card" 
+        *ngFor="let product of searchResults()"
+        [class.selected]="isProductSelected(product)"
+        (click)="onProductSelect(product)">
+        
+        <div class="product-image">
+          <img 
+            [src]="getProductImageUrl(product)" 
+            [alt]="product.name"
+            loading="lazy"
+            (error)="onImageError($event)">
+          
+          <!-- Indicador de imagen faltante -->
+          <div class="no-image-placeholder" *ngIf="!hasValidImage(product)">
+            <i class="pi pi-image"></i>
+            <span>Sin imagen</span>
+          </div>
+          
+          <!-- Badges -->
+          <div class="product-badges">
+            <p-tag 
+              *ngIf="product.isRecommended" 
+              value="Recomendado" 
+              severity="success"
+              icon="pi pi-star">
+            </p-tag>
+            
+            <p-tag 
+              [value]="getStockLevelText(product.stockLevel)"
+              [severity]="getStockLevelSeverity(product.stockLevel)">
+            </p-tag>
+          </div>
+
+          <!-- Indicador de selección -->
+          <div class="selection-indicator" *ngIf="isProductSelected(product)">
+            <i class="pi pi-check-circle"></i>
+          </div>
+        </div>
+
+        <div class="product-info">
+          <h4 class="product-name" [pTooltip]="product.name">{{ product.name }}</h4>
+          <p class="product-description">{{ product.description }}</p>
+          
+          <div class="product-meta">
+            <span class="product-price">{{ product.currentPrice | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="product-stock" *ngIf="product.stockCount">
+              Stock: {{ product.stockCount }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Overlay para multi-select -->
+        <div class="selection-overlay" *ngIf="allowMultiSelect && isProductSelected(product)">
+          <i class="pi pi-check"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista Lista -->
+    <div class="products-list" *ngIf="!isLoading() && hasResults() && viewMode() === 'list'">
+      <div 
+        class="product-row" 
+        *ngFor="let product of searchResults()"
+        [class.selected]="isProductSelected(product)"
+        (click)="onProductSelect(product)">
+        
+        <div class="row-checkbox" *ngIf="allowMultiSelect">
+          <p-checkbox 
+            [value]="isProductSelected(product)"
+            [binary]="true"
+            (onChange)="onProductSelect(product)">
+          </p-checkbox>
+        </div>
+
+        <div class="row-image">
+          <img 
+            [src]="getProductImageUrl(product)" 
+            [alt]="product.name"
+            (error)="onImageError($event)">
+          
+          <!-- Indicador de imagen faltante -->
+          <div class="no-image-placeholder" *ngIf="!hasValidImage(product)">
+            <i class="pi pi-image"></i>
+          </div>
+        </div>
+
+        <div class="row-info">
+          <div class="row-main">
+            <h5 class="product-name">{{ product.name }}</h5>
+            <p class="product-description">{{ product.description }}</p>
+          </div>
+          
+          <div class="row-meta">
+            <span class="product-price">{{ product.currentPrice | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <p-tag 
+              [value]="getStockLevelText(product.stockLevel)"
+              [severity]="getStockLevelSeverity(product.stockLevel)"
+              styleClass="stock-tag">
+            </p-tag>
+          </div>
+        </div>
+
+        <div class="row-actions">
+          <span class="stock-count" *ngIf="product.stockCount">{{ product.stockCount }} unidades</span>
+          <i class="pi pi-angle-right selection-arrow"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <div class="selection-summary" *ngIf="selectedProducts().length > 0">
+      <span class="selection-count">
+        {{ selectedProducts().length }} producto{{ selectedProducts().length > 1 ? 's' : '' }} seleccionado{{ selectedProducts().length > 1 ? 's' : '' }}
+      </span>
+    </div>
+
+    <div class="footer-actions">
+      <orb-button 
+        label="Cancelar" 
+        variant="secondary"
+        (clicked)="onCancel()">
+      </orb-button>
+      
+      <orb-button 
+        *ngIf="allowMultiSelect"
+        label="Confirmar Selección" 
+        variant="primary"
+        [disabled]="selectedProducts().length === 0"
+        (clicked)="onConfirmSelection()">
+      </orb-button>
+    </div>
+  </div>
+</p-dialog>

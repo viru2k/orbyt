@@ -184,16 +184,17 @@
             <div *ngIf="showAddHolidayForm" class="add-holiday-form" style="margin-bottom: 2rem;">
               <form [formGroup]="holidayForm" class="holiday-form-inline">
                 <div class="input-group">
-                  <div class="p-float-label">
+                  <p-floatLabel>
                     <p-calendar 
                       id="holidayDate"
                       formControlName="date"
                       dateFormat="dd/mm/yy"
                       styleClass="w-full"
                       inputId="holidayDate"
+                      placeholder=" "
                     />
                     <label for="holidayDate">Fecha</label>
-                  </div>
+                  </p-floatLabel>
                 </div>
                 
                 <div class="input-group">
@@ -203,6 +204,7 @@
                       id="holidayReason"
                       formControlName="reason"
                       class="w-full"
+                      placeholder=" "
                     />
                     <label for="holidayReason">Descripción (opcional)</label>
                   </p-floatLabel>

@@ -90,11 +90,9 @@ export class UsersListComponent implements OnInit, OnDestroy {
     return this.canManageAgendaValue;
   }
 
-  private openAgendaConfig(user: UserResponseDto): void {
-    console.log('UsersList - openAgendaConfig called for user:', user.id);
+  private openAgendaConfig(user: UserResponseDto): void {    
     this.selectedProfessionalId.set(user.id);
-    this.displayAgendaConfigModal.set(true);
-    console.log('UsersList - displayAgendaConfigModal set to true');
+    this.displayAgendaConfigModal.set(true);    
   }
 
   ngOnInit(): void {
@@ -135,15 +133,13 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.userToEdit.set(undefined);
   }
 
-  onAgendaConfigModalClose(): void {
-    console.log('UsersList - onAgendaConfigModalClose called');
+  onAgendaConfigModalClose(): void {    
     this.displayAgendaConfigModal.set(false);
-    this.selectedProfessionalId.set(null);
-    console.log('UsersList - displayAgendaConfigModal set to false');
+    this.selectedProfessionalId.set(null);    
   }
 
   // onDeleteUser(user: UserResponseDto): void {
-  //   console.log('Eliminar usuario:', user);
+//   
   //   // TODO: Implementar lógica de eliminación
   // }
 

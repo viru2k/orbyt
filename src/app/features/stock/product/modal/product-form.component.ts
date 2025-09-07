@@ -68,27 +68,21 @@ export class ProductFormComponent implements OnInit {
   }
 
   private loadProductData(): void {
-    if (this.isEditMode && this.product) {
-      console.log('🛠️ PRODUCT EDIT MODE:', this.product);
-      console.log('🛠️ Product name:', this.product.name);
-      console.log('🛠️ Product description:', this.product.description);
-      console.log('🛠️ Product currentPrice:', this.product.currentPrice);
+    if (this.isEditMode && this.product) {     
       
       // Usar setTimeout para asegurar que el formulario esté completamente inicializado
       setTimeout(() => {
         const priceValue = typeof this.product!.currentPrice === 'string' 
           ? parseFloat(this.product!.currentPrice) 
           : this.product!.currentPrice || 0.01;
-          
-        console.log('🛠️ Price conversion:', this.product!.currentPrice, '→', priceValue);
+                  
         
         this.form.patchValue({
           name: this.product!.name || '',
           description: this.product!.description || '',
           price: priceValue
         });
-        
-        console.log('🛠️ Form values after patch:', this.form.getRawValue());
+                
       }, 0);
       
       this.currentProductEntity = { ...this.product };
@@ -134,18 +128,18 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
-    const formValue = this.form.getRawValue();
-    console.log('🚀 SUBMIT - Form values:', formValue);
+    const formValue = this.form.getRawValue();    
+    
+    // Ensure price is properly converted to number
+    const price = typeof formValue.price === 'string' ? parseFloat(formValue.price) : formValue.price;    
 
     if (this.isEditMode && this.product?.id) {
       // --- MODO EDICIÓN ---
       const updateDto: UpdateProductDto = {
         name: formValue.name,
         description: formValue.description,
-        price: formValue.price,
-      };
-      console.log('🚀 SUBMIT - Update DTO:', updateDto);
-      console.log('🚀 SUBMIT - Product ID:', this.product.id);
+        price: price,
+      };            
       
       this.productStore.update({ id: this.product.id, dto: updateDto });
     } else {
@@ -153,19 +147,20 @@ export class ProductFormComponent implements OnInit {
       const createDto: CreateProductDto = {
         name: formValue.name,
         description: formValue.description,
-        price: formValue.price,
-      };
-      console.log('🚀 SUBMIT - Create DTO:', createDto);
+        price: price,
+      };      
       
       this.productStore.create(createDto);
     }
 
-    this.saved.emit();
+    // Esperar un poco antes de cerrar para que la operación se procese
+    setTimeout(() => {
+      this.saved.emit();
+    }, 500);
   }
 
   // Manejar la carga de avatar
-  onAvatarUploaded(result: any): void {
-    console.log('Image uploaded:', result);
+  onAvatarUploaded(result: any): void {    
     this.currentAvatar = result;
     
     // Recargar los productos para reflejar el cambio

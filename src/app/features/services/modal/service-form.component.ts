@@ -182,8 +182,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
   }
 
   private loadServiceData(): void {
-    if (this.isEditMode && this.service) {
-      console.log('Loading service data for edit:', this.service);
+    if (this.isEditMode && this.service) {      
       
       // Ensure the form is initialized before patching
       if (!this.form) {
@@ -203,8 +202,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         status: this.service.status || 'ACTIVE',
         notes: this.service.notes || ''
       };
-      
-      console.log('Patching form with data:', formData);
+            
       this.form.patchValue(formData);
     } else {
       // Reset form for new service
@@ -235,8 +233,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
 
   onSave(): void {
     if (this.form.valid) {
-      const formData = this.form.value;
-      console.log('Form data before save:', formData);
+      const formData = this.form.value;      
       
       // Ensure basePrice is a number
       const basePrice = typeof formData.basePrice === 'string' 
@@ -252,8 +249,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
           duration: formData.duration,
           status: formData.status,
           notes: formData.notes
-        };
-        console.log('Update data being sent:', updateData);
+        };        
         this.updateService(updateData);
       } else {
         const createData: CreateServiceDto = {
@@ -264,16 +260,13 @@ export class ServiceFormComponent implements OnInit, OnChanges {
           duration: formData.duration,
           status: formData.status || 'ACTIVE',
           notes: formData.notes
-        };
-        console.log('Create data being sent:', createData);
+        };        
         this.createService(createData);
       }
-    } else {
-      console.log('Form validation errors:', this.form.errors);
+    } else {      
       Object.keys(this.form.controls).forEach(key => {
         const control = this.form.get(key);
-        if (control && control.errors) {
-          console.log(`${key} errors:`, control.errors);
+        if (control && control.errors) {          
         }
       });
       

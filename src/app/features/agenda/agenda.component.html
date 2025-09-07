@@ -5,23 +5,7 @@
 <orb-card class="compact-card">
   <div orbHeader>
     <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 class="compact-title">{{ 'AGENDA.FILTERS' | translate }}</h3>
-      <div style="display: flex; gap: 0.5rem;">
-        <orb-button
-          icon="pi pi-calendar"
-          [title]="'AGENDA.VIEW_CALENDAR' | translate"
-          [severity]="currentView === 'calendar' ? 'primary' : 'secondary'"
-          (click)="toggleView('calendar')"
-          size="small"
-        ></orb-button>
-        <orb-button
-          icon="pi pi-table"
-          [title]="'AGENDA.VIEW_TABLE' | translate"
-          [severity]="currentView === 'table' ? 'primary' : 'secondary'"
-          (click)="toggleView('table')"
-          size="small"
-        ></orb-button>
-      </div>
+      <h3 class="compact-title">Filtros</h3>
     </div>
   </div>
   
@@ -31,7 +15,7 @@
       <div class="filters-row">
         <!-- Filtro de Profesionales -->
         <div class="filter-item">
-          <label class="compact-label">{{ 'AGENDA.PROFESSIONALS' | translate }}</label>
+          <label class="compact-label">Profesionales</label>
           <orb-multiselect            
             [options]="(usersStore.users$ | async) || []"
             optionLabel="fullName"
@@ -40,15 +24,15 @@
             styleClass="compact-multiselect"
             display="chip"
             [maxSelectedLabels]="1"
-            [selectedItemsLabel]="'{0} ' + ('AGENDA.SELECTED' | translate)"
+            [selectedItemsLabel]="'{0} sel.'"
           ></orb-multiselect>
         </div>
 
         <!-- Filtro de Estados -->
         <div class="filter-item">
-          <label class="compact-label">{{ 'AGENDA.STATES' | translate }}</label>
+          <label class="compact-label">Estados</label>
           <orb-multiselect
-            [placeholder]="'AGENDA.ALL' | translate"
+            placeholder="Todos"
             [options]="statusOptions"
             optionLabel="label"
             optionValue="value"
@@ -57,13 +41,13 @@
             styleClass="compact-multiselect"
             display="chip"
             [maxSelectedLabels]="1"
-            [selectedItemsLabel]="'{0} ' + ('AGENDA.SELECTED' | translate)"
+            [selectedItemsLabel]="'{0} sel.'"
           ></orb-multiselect>
         </div>
 
         <!-- DateRangePicker -->
         <div class="filter-item filter-date">
-          <label class="compact-label">{{ 'AGENDA.DATE_RANGE' | translate }}</label>
+          <label class="compact-label">Rango de fechas</label>
           <orb-date-range-picker
             [config]="dateRangePickerConfig"
             [ngModel]="selectedDateRange"
@@ -73,7 +57,7 @@
 
         <!-- Filtro individual de fecha y hora (para crear cita) -->
         <div class="filter-item">
-          <label class="compact-label">{{ 'AGENDA.SPECIFIC_DATE' | translate }}</label>
+          <label class="compact-label">Fecha específica</label>
           <orb-datepicker
             mode="datetime"            
             [ngModel]="selectedDateFrom"
@@ -86,38 +70,19 @@
         <div class="filter-actions">
           <orb-button
             icon="pi pi-search"
-            [title]="'AGENDA.SEARCH' | translate"
+            label="Buscar"
             (click)="performSearch()"
             size="small"
             styleClass="compact-btn"
           ></orb-button>
           <orb-button
-            icon="pi pi-calendar"
-            [title]="'AGENDA.TODAY' | translate"
-            severity="secondary"
-            (click)="resetToToday()"
-            size="small"
-            styleClass="compact-btn"
-          ></orb-button>
-          <orb-button
             icon="pi pi-plus"
-            [title]="'AGENDA.NEW_APPOINTMENT' | translate"
+            label="Crear Turno"
             severity="success"
             (click)="openNewAppointmentDialog()"
             size="small"
             styleClass="compact-btn"
           ></orb-button>
-          <orb-button
-            icon="pi pi-info-circle"
-            [title]="'AGENDA.INFORMATION' | translate"
-            severity="info"
-            (click)="op.toggle($event)"
-            size="small"
-            styleClass="compact-btn"
-          ></orb-button>
-          <p-overlayPanel #op>
-            <app-status-legend [statusColors]="statusColors"></app-status-legend>
-          </p-overlayPanel>
         </div>
       </div>
     </div>
@@ -126,19 +91,46 @@
 
 <!-- Card del calendario/tabla con estados -->
 <orb-card style="margin-top: 1rem;">
+  <div orbHeader>
+    <h3>Agenda</h3>
+  </div>
+  
   <div orbBody>
-    <!-- Estados del resumen en la parte superior -->
-    <div class="calendar-summary" *ngIf="(agendaStore.summary$ | async) as summary">
-      <div class="summary-tags">
-        <div *ngFor="let item of summary | keyvalue">
-          <ng-container *ngIf="item.key !== 'total' && item.key !== 'byDate'">
-            <orb-tag 
-              [value]="getTranslatedStatus(getKeyAsString(item.key)) + ': ' + item.value"
-              [severity]="getStatusSeverity(SUMMARY_KEY_MAP[getKeyAsString(item.key)])"
-            ></orb-tag>
-          </ng-container>
-        </div>
+    <!-- Fila con estados y botones de vista -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <!-- Estados del resumen -->
+      <div class="summary-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <ng-container *ngIf="(agendaStore.summary$ | async) as summary">
+          <div *ngFor="let item of summary | keyvalue">
+            <ng-container *ngIf="item.key !== 'total' && item.key !== 'byDate'">
+              <orb-tag 
+                [value]="getTranslatedStatus(getKeyAsString(item.key)) + ': ' + item.value"
+                [severity]="getStatusSeverity(SUMMARY_KEY_MAP[getKeyAsString(item.key)])"
+              ></orb-tag>
+            </ng-container>
+          </div>
+        </ng-container>
       </div>
+      
+      <!-- ButtonGroup para vista -->
+      <p-buttonGroup>
+        <p-button 
+          icon="pi pi-calendar"
+          [severity]="currentView === 'calendar' ? 'primary' : 'secondary'"
+          (onClick)="toggleView('calendar')"
+          size="small"
+          [outlined]="currentView !== 'calendar'"
+          pTooltip="Vista Calendario"
+        ></p-button>
+        <p-button 
+          icon="pi pi-table"
+          [severity]="currentView === 'table' ? 'primary' : 'secondary'"
+          (onClick)="toggleView('table')"
+          size="small"
+          [outlined]="currentView !== 'table'"
+          pTooltip="Vista Tabla"
+        ></p-button>
+      </p-buttonGroup>
     </div>
     
     <!-- Vista Calendario -->
@@ -168,10 +160,10 @@
             <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.field">
                 <span *ngSwitchCase="'startDateTime'">
-                  {{ appointment.startDateTime | date:'dd/MM/yyyy HH:mm' }}
+                  {{ appointment.start | date:'dd/MM/yyyy HH:mm' }}
                 </span>
-                <span *ngSwitchCase="'clientName'">{{ appointment.clientName }}</span>
-                <span *ngSwitchCase="'professionalName'">{{ appointment.professionalName }}</span>
+                <span *ngSwitchCase="'clientName'">{{ appointment.client?.name || '-' }}</span>
+                <span *ngSwitchCase="'professionalName'">{{ appointment.professional?.name || '-' }}</span>
                 <span *ngSwitchCase="'status'">
                   <orb-tag 
                     [value]="getTranslatedStatus(appointment.status)"
@@ -179,11 +171,12 @@
                     size="small"
                   ></orb-tag>
                 </span>
-                <span *ngSwitchCase="'duration'">{{ appointment.durationMinutes }} min</span>
+                <span *ngSwitchCase="'duration'">{{ getDuration(appointment) }} min</span>
+                <span *ngSwitchCase="'title'">{{ appointment.title }}</span>
                 <div *ngSwitchCase="'actions'" style="display: flex; gap: 0.5rem;">
                   <orb-button
                     icon="pi pi-pencil"
-                    [title]="'AGENDA.EDIT' | translate"
+                    title="Editar"
                     size="small"
                     severity="info"
                     (click)="editAppointment(appointment)"
@@ -199,7 +192,7 @@
   </div>
 </orb-card>
 
-<orb-dialog [(visible)]="displayAgendaForm" (onHide)="onFormClose()" [header]="selectedAppointment ? ('AGENDA.EDIT_APPOINTMENT' | translate) : ('AGENDA.NEW_APPOINTMENT' | translate)">
+<orb-dialog [(visible)]="displayAgendaForm" (onHide)="onFormClose()" [header]="selectedAppointment ? 'Editar Turno' : 'Nuevo Turno'">
   <app-agenda-form
     *ngIf="displayAgendaForm"
     [appointment]="selectedAppointment"
@@ -208,4 +201,8 @@
     (delete)="handleDelete($event)"
   ></app-agenda-form>
 </orb-dialog>
+
+<!-- PrimeNG Components -->
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>
 

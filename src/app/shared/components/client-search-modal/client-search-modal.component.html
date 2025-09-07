@@ -1,0 +1,248 @@
+<p-dialog 
+  [header]="title"
+  [visible]="visible" 
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true" 
+  [draggable]="false"
+  [resizable]="true"
+  [closable]="true"
+  styleClass="client-search-modal"
+  [style]="{width: '95vw', maxWidth: '1200px', height: '85vh'}"
+  (onHide)="onCancel()">
+
+  <!-- Header con búsqueda -->
+  <div class="search-header">
+    <div class="search-bar">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input 
+          type="text" 
+          pInputText 
+          placeholder="Buscar por nombre, apellido, teléfono o email..." 
+          (input)="onSearch($event)"
+          [value]="filtersForm.get('query')?.value"
+          class="search-input">
+      </span>
+      
+      <!-- Toggle vista -->
+      <div class="view-controls">
+        <p-button
+          [icon]="viewMode() === 'grid' ? 'pi pi-th-large' : 'pi pi-list'"
+          [text]="true"
+          (onClick)="toggleViewMode()"
+          pTooltip="Cambiar vista"
+          tooltipPosition="bottom">
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Filtros avanzados -->
+    <div class="filters-section" [formGroup]="filtersForm">
+      <div class="filters-row">
+        <div class="filter-group">
+          <label>Estado</label>
+          <p-dropdown 
+            formControlName="status"
+            [options]="statusOptions" 
+            optionLabel="label" 
+            optionValue="value"
+            placeholder="Filtrar por estado"
+            styleClass="filter-dropdown">
+          </p-dropdown>
+        </div>
+
+        <div class="filter-group checkbox-group">
+          <div class="checkbox-item">
+            <p-checkbox 
+              formControlName="hasEmail"
+              binary="true"
+              inputId="hasEmail">
+            </p-checkbox>
+            <label for="hasEmail">Solo con email</label>
+          </div>
+          
+          <div class="checkbox-item">
+            <p-checkbox 
+              formControlName="hasPhone"
+              binary="true"
+              inputId="hasPhone">
+            </p-checkbox>
+            <label for="hasPhone">Solo con teléfono</label>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="filter-actions">
+          <orb-button 
+            label="Buscar" 
+            icon="pi pi-search"
+            variant="primary"
+            (clicked)="performSearch()"
+            class="search-button">
+          </orb-button>
+          
+          <orb-button 
+            label="Limpiar" 
+            icon="pi pi-times"
+            variant="secondary"
+            (clicked)="onClear()"
+            *ngIf="hasFilters()"
+            class="clear-button">
+          </orb-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="search-results">
+    <!-- Estado de carga -->
+    <div class="loading-state" *ngIf="isLoading()">
+      <div class="skeleton-grid" *ngIf="viewMode() === 'grid'">
+        <p-skeleton 
+          *ngFor="let item of [1,2,3,4,5,6]" 
+          width="100%" 
+          height="200px" 
+          styleClass="skeleton-card">
+        </p-skeleton>
+      </div>
+      <div class="skeleton-list" *ngIf="viewMode() === 'list'">
+        <p-skeleton 
+          *ngFor="let item of [1,2,3,4]" 
+          width="100%" 
+          height="80px" 
+          styleClass="skeleton-row">
+        </p-skeleton>
+      </div>
+    </div>
+
+    <!-- Sin resultados -->
+    <div class="no-results" *ngIf="!isLoading() && !hasResults()">
+      <i class="pi pi-users" style="font-size: 3rem; color: #6c757d;"></i>
+      <h3>{{ filtersForm.get('query')?.value ? 'No se encontraron clientes' : 'No hay clientes' }}</h3>
+      <p>{{ filtersForm.get('query')?.value ? 
+          'Intenta con otros términos de búsqueda o ajusta los filtros' : 
+          'No hay clientes registrados para este profesional' }}</p>
+    </div>
+
+    <!-- Vista Grid -->
+    <div class="clients-grid" *ngIf="!isLoading() && hasResults() && viewMode() === 'grid'">
+      <div 
+        class="client-card" 
+        *ngFor="let client of searchResults()"
+        (click)="onClientSelect(client)">
+        
+        <div class="client-avatar">
+          <orb-entity-avatar
+            [entity]="client"
+            entityType="client"
+            size="large">
+          </orb-entity-avatar>
+          
+          <!-- Badges -->
+          <div class="client-badges">
+            <p-badge 
+              *ngIf="client.isRecentlyActive" 
+              value="Nuevo" 
+              severity="success"
+              icon="pi pi-star">
+            </p-badge>
+          </div>
+        </div>
+
+        <div class="client-info">
+          <h4 class="client-name" [pTooltip]="client.displayName">{{ client.displayName }}</h4>
+          
+          <div class="client-meta">
+            <div *ngIf="client.email" class="detail-item">
+              <i class="pi pi-envelope"></i>
+              <span>{{ client.email }}</span>
+            </div>
+            <div *ngIf="client.phone" class="detail-item">
+              <i class="pi pi-phone"></i>
+              <span>{{ client.phone }}</span>
+            </div>
+          </div>
+
+          <div *ngIf="client.searchMatches.length > 0" class="search-matches">
+            <p-tag 
+              [value]="getMatchesBadgeText(client.searchMatches)"
+              severity="info"
+              icon="pi pi-search">
+            </p-tag>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista Lista -->
+    <div class="clients-list" *ngIf="!isLoading() && hasResults() && viewMode() === 'list'">
+      <div 
+        class="client-row" 
+        *ngFor="let client of searchResults()"
+        (click)="onClientSelect(client)">
+        
+        <div class="row-avatar">
+          <orb-entity-avatar
+            [entity]="client"
+            entityType="client"
+            size="normal">
+          </orb-entity-avatar>
+        </div>
+
+        <div class="row-info">
+          <div class="row-main">
+            <h5 class="client-name">{{ client.displayName }}</h5>
+            <div class="client-details">
+              <span *ngIf="client.email" class="detail-item">
+                <i class="pi pi-envelope"></i>
+                {{ client.email }}
+              </span>
+              <span *ngIf="client.phone" class="detail-item">
+                <i class="pi pi-phone"></i>
+                {{ client.phone }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="row-meta">
+            <p-badge 
+              *ngIf="client.isRecentlyActive" 
+              value="Nuevo"
+              severity="success"
+              styleClass="recent-tag">
+            </p-badge>
+            <div *ngIf="client.searchMatches.length > 0" class="search-matches">
+              <p-tag 
+                [value]="getMatchesBadgeText(client.searchMatches)"
+                severity="info"
+                icon="pi pi-search">
+              </p-tag>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-actions">
+          <i class="pi pi-angle-right selection-arrow"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <div class="selection-summary" *ngIf="searchResults().length > 0">
+      <span class="selection-count">
+        {{ searchResults().length }} cliente{{ searchResults().length > 1 ? 's' : '' }} encontrado{{ searchResults().length > 1 ? 's' : '' }}
+      </span>
+    </div>
+
+    <div class="footer-actions">
+      <orb-button 
+        label="Cancelar" 
+        variant="secondary"
+        (clicked)="onCancel()">
+      </orb-button>
+    </div>
+  </div>
+</p-dialog>

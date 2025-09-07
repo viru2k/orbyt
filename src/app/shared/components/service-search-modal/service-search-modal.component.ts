@@ -1,0 +1,448 @@
+import { Component, EventEmitter, Input, Output, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter, switchMap, map, catchError, startWith } from 'rxjs/operators';
+import { Subject, of, combineLatest } from 'rxjs';
+
+// PrimeNG Components
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { ButtonModule } from 'primeng/button';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+import { BadgeModule } from 'primeng/badge';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
+import { CardModule } from 'primeng/card';
+import { CheckboxModule } from 'primeng/checkbox';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TabViewModule } from 'primeng/tabview';
+import { DividerModule } from 'primeng/divider';
+
+// Orb Components
+import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent } from '@orb-components';
+
+// Models and Services
+import { ServiceResponseDto, CreateServiceDto, ServiceListResponseDto } from '../../../api/models';
+import { ServicesService } from '../../../api/services/services.service';
+
+export interface ServiceSearchFilters {
+  query: string;
+  priceRange?: { min?: number; max?: number };
+  category?: string;
+}
+
+export interface ServiceSearchResult extends ServiceResponseDto {
+  // Campos calculados para el display
+  isRecentlyUsed?: boolean;
+  usageCount?: number;
+  isCustom?: boolean;
+  price?: number; // Alias para basePrice
+}
+
+export interface RecentService {
+  id: string;
+  name: string;
+  basePrice?: number;
+  price?: number; // Para compatibilidad
+  lastUsed: Date;
+  usageCount: number;
+}
+
+@Component({
+  selector: 'orb-service-search-modal',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    DialogModule,
+    InputTextModule,
+    DropdownModule,
+    ButtonModule,
+    DataViewModule,
+    TagModule,
+    BadgeModule,
+    SkeletonModule,
+    TooltipModule,
+    CardModule,
+    CheckboxModule,
+    InputNumberModule,
+    TabViewModule,
+    DividerModule,
+    OrbButtonComponent,
+    OrbFormFieldComponent,
+    OrbTextInputComponent,
+    OrbCurrencyInputComponent
+  ],
+  templateUrl: './service-search-modal.component.html',
+  styleUrls: ['./service-search-modal.component.scss']
+})
+export class ServiceSearchModalComponent {
+  @Input() visible = false;
+  @Input() title = 'Seleccionar Servicio';
+  @Input() preSelectedService?: ServiceResponseDto;
+  @Input() clientId?: number; // Para obtener servicios utilizados por el cliente
+  
+  @Output() visibleChange = new EventEmitter<boolean>();
+  @Output() serviceSelected = new EventEmitter<ServiceResponseDto | CreateServiceDto>();
+  @Output() cancel = new EventEmitter<void>();
+
+  private fb = inject(FormBuilder);
+  private servicesService = inject(ServicesService);
+
+  // Signals para estado reactivo
+  private searchSubject = new Subject<string>();
+  isLoading = signal(false);
+  searchResults = signal<ServiceSearchResult[]>([]);
+  recentServices = signal<RecentService[]>([]);
+  activeTab = signal(0); // 0: Buscar, 1: Crear Nuevo
+  viewMode = signal<'grid' | 'list'>('list');
+  
+  // Formularios
+  filtersForm!: FormGroup;
+  newServiceForm!: FormGroup;
+
+  // Opciones para filtros
+  categoryOptions = [
+    { label: 'Todas las categorías', value: null },
+    { label: 'Consulta General', value: 'consulta' },
+    { label: 'Tratamiento', value: 'tratamiento' },
+    { label: 'Procedimiento', value: 'procedimiento' },
+    { label: 'Seguimiento', value: 'seguimiento' },
+    { label: 'Evaluación', value: 'evaluacion' },
+    { label: 'Otro', value: 'otro' }
+  ];
+
+  // Computed properties
+  hasResults = computed(() => this.searchResults().length > 0);
+  hasRecentServices = computed(() => this.recentServices().length > 0);
+  hasFilters = computed(() => {
+    const form = this.filtersForm?.value;
+    return form?.category || 
+           form?.priceMin || 
+           form?.priceMax;
+  });
+  canCreateService = computed(() => this.newServiceForm?.valid);
+
+  ngOnInit() {
+    this.initializeForms();
+    this.setupSearch();
+    this.loadInitialData();
+  }
+
+  private initializeForms(): void {
+    // Formulario de filtros/búsqueda
+    this.filtersForm = this.fb.group({
+      query: [''],
+      category: [null],
+      priceMin: [null],
+      priceMax: [null]
+    });
+
+    // Formulario para crear nuevo servicio
+    this.newServiceForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: [''],
+      basePrice: [null],
+      duration: [30], // Duración en minutos
+      category: ['otro']
+    });
+
+    // Escuchar cambios en la búsqueda
+    this.filtersForm.get('query')?.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.performSearch();
+    });
+
+    // Escuchar cambios en filtros
+    this.filtersForm.get('category')?.valueChanges.subscribe(() => {
+      this.performSearch();
+    });
+  }
+
+  private setupSearch(): void {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => this.searchServices(query))
+    ).subscribe(results => {
+      this.searchResults.set(results);
+      this.isLoading.set(false);
+    });
+  }
+
+  private loadInitialData(): void {
+    this.isLoading.set(true);
+    
+    // Cargar servicios recientes simulados (esto debería venir del backend)
+    this.loadRecentServices();
+    
+    // Cargar servicios iniciales
+    this.searchServices('').subscribe(results => {
+      this.searchResults.set(results);
+      this.isLoading.set(false);
+    });
+  }
+
+  private loadRecentServices(): void {
+    // Simulación de servicios recientes - esto debería venir del backend
+    // basado en el historial de citas del cliente o del profesional
+    const mockRecentServices: RecentService[] = [
+      {
+        id: 'recent-1',
+        name: 'Consulta General',
+        basePrice: 50000,
+        price: 50000,
+        lastUsed: new Date(Date.now() - 86400000), // Ayer
+        usageCount: 15
+      },
+      {
+        id: 'recent-2',
+        name: 'Control de Rutina',
+        basePrice: 35000,
+        price: 35000,
+        lastUsed: new Date(Date.now() - 172800000), // Hace 2 días
+        usageCount: 8
+      },
+      {
+        id: 'recent-3',
+        name: 'Seguimiento Tratamiento',
+        basePrice: 45000,
+        price: 45000,
+        lastUsed: new Date(Date.now() - 259200000), // Hace 3 días
+        usageCount: 12
+      }
+    ];
+    
+    this.recentServices.set(mockRecentServices);
+  }
+
+  private searchServices(query: string) {
+    const filters = this.buildFilters(query);
+        
+    
+    return this.servicesService.serviceControllerFindAll().pipe(
+      map((response: ServiceListResponseDto) => {        
+        
+        const services = response.services || [];
+        
+        // Filtrar servicios por query
+        let filtered = services;
+        
+        if (query && query.trim().length > 0) {
+          const searchTerm = query.toLowerCase().trim();
+          filtered = services.filter((service: ServiceResponseDto) => 
+            this.serviceMatchesSearch(service, searchTerm)
+          );
+        }
+        
+        // Aplicar filtros adicionales
+        if (filters.category && filters.category !== 'all') {
+          // TODO: Implementar filtro por categoría cuando el backend lo soporte
+        }
+        
+        if (filters.priceRange?.min !== undefined && filters.priceRange?.min !== null) {
+          filtered = filtered.filter((s: ServiceResponseDto) => s.basePrice && s.basePrice >= filters.priceRange!.min!);
+        }
+        
+        if (filters.priceRange?.max !== undefined && filters.priceRange?.max !== null) {
+          filtered = filtered.filter((s: ServiceResponseDto) => s.basePrice && s.basePrice <= filters.priceRange!.max!);
+        }
+                
+        
+        // Convertir a ServiceSearchResult y ordenar
+        return this.processSearchResults(filtered, query);
+      }),
+      catchError(error => {
+        console.error('🔍 SERVICE SEARCH - Error:', error);
+        this.isLoading.set(false);
+        return of([]);
+      })
+    );
+  }
+
+  private serviceMatchesSearch(service: ServiceResponseDto, searchTerm: string): boolean {
+    const fieldsToSearch = [
+      service.name,
+      service.description
+    ];
+
+    return fieldsToSearch.some(field => 
+      field && field.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  private processSearchResults(services: ServiceResponseDto[], query: string): ServiceSearchResult[] {
+    return services.map(service => ({
+      ...service,
+      price: service.basePrice, // Alias para compatibilidad
+      isRecentlyUsed: this.isServiceRecentlyUsed(service),
+      usageCount: this.getServiceUsageCount(service),
+      isCustom: false
+    })).sort((a, b) => {
+      // Ordenar por relevancia: primero los recientemente usados, luego por nombre
+      if (a.isRecentlyUsed && !b.isRecentlyUsed) return -1;
+      if (!a.isRecentlyUsed && b.isRecentlyUsed) return 1;
+      
+      // Si ambos son recientes o ninguno, ordenar por nombre
+      return (a.name || '').localeCompare(b.name || '');
+    });
+  }
+
+  private isServiceRecentlyUsed(service: ServiceResponseDto): boolean {
+    return this.recentServices().some(recent => recent.name === service.name);
+  }
+
+  private getServiceUsageCount(service: ServiceResponseDto): number {
+    const recent = this.recentServices().find(recent => recent.name === service.name);
+    return recent?.usageCount || 0;
+  }
+
+  private buildFilters(query: string): ServiceSearchFilters {
+    const formValue = this.filtersForm.value;
+    return {
+      query,
+      category: formValue.category,
+      priceRange: {
+        min: formValue.priceMin,
+        max: formValue.priceMax
+      }
+    };
+  }
+
+  // Event handlers para búsqueda
+  onSearch(event: Event): void {
+    const query = (event.target as HTMLInputElement).value;
+    this.isLoading.set(true);
+    this.searchSubject.next(query);
+  }
+
+  onServiceSelect(service: ServiceResponseDto | RecentService): void {
+    if ('lastUsed' in service) {
+      // Es un servicio reciente, crear un DTO compatible
+      const serviceDto: CreateServiceDto = {
+        name: service.name,
+        basePrice: service.basePrice || 0,
+        description: `Servicio utilizado recientemente (${service.usageCount} veces)`
+      };
+      this.serviceSelected.emit(serviceDto);
+    } else {
+      // Es un servicio del backend
+      this.serviceSelected.emit(service);
+    }
+    this.close();
+  }
+
+  onClear(): void {
+    this.filtersForm.patchValue({
+      query: '',
+      category: null,
+      priceMin: null,
+      priceMax: null
+    });
+    this.loadInitialData();
+  }
+
+  performSearch(): void {
+    const query = this.filtersForm.get('query')?.value || '';
+    this.isLoading.set(true);
+    this.searchSubject.next(query);
+  }
+
+  // Event handlers para crear servicio
+  onCreateService(): void {
+    if (this.newServiceForm.valid) {
+      const formValue = this.newServiceForm.value;
+      const newService: CreateServiceDto = {
+        name: formValue.name,
+        basePrice: formValue.basePrice || 0,
+        description: formValue.description || ''
+        // TODO: Agregar otros campos cuando el backend los soporte
+      };
+
+      this.serviceSelected.emit(newService);
+      this.close();
+    }
+  }
+
+  onResetNewService(): void {
+    this.newServiceForm.reset({
+      duration: 30,
+      category: 'otro',
+      basePrice: null
+    });
+  }
+
+  // Event handlers generales
+  onTabChange(event: any): void {
+    this.activeTab.set(event.index);
+    
+    if (event.index === 0) {
+      // Pestaña de búsqueda - cargar servicios si no hay resultados
+      if (!this.hasResults() && !this.isLoading()) {
+        this.loadInitialData();
+      }
+    }
+  }
+
+  toggleViewMode(): void {
+    this.viewMode.set(this.viewMode() === 'grid' ? 'list' : 'grid');
+  }
+
+  close(): void {
+    this.visible = false;
+    this.visibleChange.emit(false);
+  }
+
+  onCancel(): void {
+    this.cancel.emit();
+    this.close();
+  }
+
+  // Métodos utilitarios
+  formatPrice(price?: number): string {
+    if (!price) return 'Sin precio';
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(price);
+  }
+
+  getServicePrice(service: ServiceResponseDto | RecentService): number | undefined {
+    if ('basePrice' in service) {
+      return service.basePrice;
+    }
+    if ('price' in service) {
+      return service.price;
+    }
+    return undefined;
+  }
+
+  formatLastUsed(date: Date): string {
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return 'Ayer';
+    if (diffDays <= 7) return `Hace ${diffDays} días`;
+    if (diffDays <= 30) return `Hace ${Math.floor(diffDays / 7)} semanas`;
+    return `Hace ${Math.floor(diffDays / 30)} meses`;
+  }
+
+  getCategoryLabel(category?: string): string {
+    if (!category) return 'Sin categoría';
+    const option = this.categoryOptions.find(opt => opt.value === category);
+    return option?.label || category;
+  }
+
+  getUsageBadgeSeverity(count: number): 'success' | 'info' | 'warn' {
+    if (count >= 10) return 'success';
+    if (count >= 5) return 'info';
+    return 'warn';
+  }
+}

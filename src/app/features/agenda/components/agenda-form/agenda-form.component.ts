@@ -3,15 +3,23 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppointmentResponseDto, CreateAppointmentDto, UpdateAppointmentDto } from '../../../../api/model/models';
+import { AppointmentResponseDto, CreateAppointmentDto, UpdateAppointmentDto } from '../../../../api/models';
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
-import { ClientResponseDto, UserResponseDto } from '../../../../api/model/models';
+import { ClientResponseDto, UserResponseDto, ServiceResponseDto } from '../../../../api/models';
 import { ClientsService } from '../../../../api/services/clients.service';
 import { UsersService } from '../../../../api/services/users.service';
-import { Observable, of, debounceTime, distinctUntilChanged } from 'rxjs';
-import { OrbButtonComponent, OrbDatepickerComponent, OrbFormFieldComponent, OrbSelectComponent, OrbTextAreaComponent, OrbTextInputComponent } from '@orb-components';
+import { Observable, of, debounceTime, distinctUntilChanged, map, take } from 'rxjs';
+import { OrbButtonComponent, OrbDatepickerComponent, OrbFormFieldComponent, OrbSelectComponent, OrbTextAreaComponent, OrbTextInputComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { ClientSearchModalComponent } from '../../../../shared/components/client-search-modal/client-search-modal.component';
+import { ServiceSearchModalComponent } from '../../../../shared/components/service-search-modal/service-search-modal.component';
+import { CreateServiceDto } from '../../../../api/models';
 import { MessageModule } from 'primeng/message';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AppointmentStatus } from '../../../../api/model/appointment-status.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-agenda-form',
@@ -19,13 +27,23 @@ import { AppointmentStatus } from '../../../../api/model/appointment-status.enum
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    TranslateModule,
     OrbFormFieldComponent,
     OrbTextInputComponent,
     OrbDatepickerComponent,
     OrbSelectComponent,
     OrbTextAreaComponent,
     OrbButtonComponent,
+    OrbEntityAvatarComponent,
     MessageModule,
+    ConfirmDialogModule,
+    ToastModule,
+    ClientSearchModalComponent,
+    ServiceSearchModalComponent,
+  ],
+  providers: [
+    ConfirmationService,
+    MessageService
   ],
   templateUrl: './agenda-form.component.html',
   styleUrls: ['./agenda-form.component.scss'],
@@ -43,6 +61,12 @@ export class AgendaFormComponent implements OnChanges {
   rooms$: Observable<any[]> = of([]);
   selectedProfessionalId: number | null = null;
 
+  // Estado para los modales y selecciones
+  showClientSearchModal = false;
+  showServiceSearchModal = false;
+  selectedClient: ClientResponseDto | null = null;
+  selectedService: ServiceResponseDto | CreateServiceDto | null = null;
+
   statusOptions = Object.keys(AppointmentStatus).map(key => ({
     label: key.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
     value: (AppointmentStatus as any)[key]
@@ -56,14 +80,18 @@ export class AgendaFormComponent implements OnChanges {
     private fb: FormBuilder,
     public agendaStore: AgendaStore,
     private clientsService: ClientsService,
-    private userService: UsersService
+    private userService: UsersService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+    private translate: TranslateService,
+    private router: Router
   ) {
     this.agendaForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
       startDateTime: [null, Validators.required],
       endDateTime: [null, Validators.required],
-      clientId: [{value: null, disabled: true}, Validators.required],
+      clientId: [null, Validators.required],
       professionalId: [null, Validators.required],
       serviceId: [null],
       roomId: [null],
@@ -98,12 +126,30 @@ export class AgendaFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.appointment) {
-      // Si estamos editando, cargar los clientes del profesional y habilitar el campo cliente
+      // Si estamos editando, cargar los datos existentes
       if (this.appointment.professional?.id) {
         this.selectedProfessionalId = this.appointment.professional.id;
-        this.clients$ = this.clientsService.clientControllerFindAll({ userId: this.appointment.professional.id });
-        this.agendaForm.get('clientId')?.enable();
       }
+      
+      if (this.appointment.client) {
+        // Convertir AppointmentClientResponseDto a ClientResponseDto compatible
+        this.selectedClient = {
+          id: this.appointment.client.id,
+          fullname: this.appointment.client.fullname,
+          name: this.appointment.client.name || '',
+          lastName: this.appointment.client.lastName || '',
+          email: '', // No disponible en AppointmentClientResponseDto
+          phone: '', // No disponible en AppointmentClientResponseDto
+          status: 'ACTIVE' as const, // Valor por defecto
+          createdAt: '', // No disponible
+          updatedAt: '' // No disponible
+        };
+      }
+      
+      // TODO: Cargar servicio si existe
+      // if (this.appointment.service) {
+      //   this.selectedService = this.appointment.service;
+      // }
       
       this.agendaForm.patchValue({
         title: this.appointment.title,
@@ -117,20 +163,51 @@ export class AgendaFormComponent implements OnChanges {
         status: this.appointment.status,
       }, { emitEvent: false });
     } else {
-      // Resetear el formulario y deshabilitar cliente
+      // Resetear el formulario y estados
       this.agendaForm.reset();
-      this.agendaForm.get('clientId')?.disable();
-      this.clients$ = of([]);
       this.selectedProfessionalId = null;
+      this.selectedClient = null;
+      this.selectedService = null;
+      
+      // Establecer fecha/hora actual como defecto
+      const now = new Date();
+      let defaultStartTime: Date;
       
       if (this.initialDate) {
-        const initialDateTime = new Date(this.initialDate);
-        this.agendaForm.patchValue({ 
-          startDateTime: initialDateTime,
-          endDateTime: new Date(initialDateTime.getTime() + 60 * 60 * 1000) // +1 hora por defecto
-        });
+        defaultStartTime = new Date(this.initialDate);
+      } else {
+        // Usar fecha/hora actual, redondeada al siguiente cuarto de hora
+        defaultStartTime = new Date(now);
+        const minutes = defaultStartTime.getMinutes();
+        const roundedMinutes = Math.ceil(minutes / 15) * 15;
+        defaultStartTime.setMinutes(roundedMinutes, 0, 0);
+        
+        // Si el tiempo redondeado está en el pasado o es muy cercano al presente, 
+        // añadir tiempo suficiente para que sea válido (al menos 2 minutos en el futuro)
+        const minFutureTime = new Date(now.getTime() + 2 * 60 * 1000); // +2 minutos del tiempo actual
+        if (defaultStartTime <= minFutureTime) {
+          defaultStartTime = new Date(minFutureTime);
+          // Redondear al siguiente cuarto de hora para mantener consistencia
+          const minutes = defaultStartTime.getMinutes();
+          const roundedMinutes = Math.ceil(minutes / 15) * 15;
+          defaultStartTime.setMinutes(roundedMinutes, 0, 0);
+        }
       }
+      
+      const defaultEndTime = new Date(defaultStartTime.getTime() + 60 * 60 * 1000); // +1 hora por defecto
+      
+      this.agendaForm.patchValue({ 
+        startDateTime: defaultStartTime,
+        endDateTime: defaultEndTime,
+        status: AppointmentStatus.CONFIRMED // Estado por defecto
+      });
+      
+      // Preseleccionar el usuario actual como profesional por defecto
+      this.setCurrentUserAsProfessional();
     }
+
+    // Actualizar el título automáticamente cuando se seleccionan cliente y servicio
+    this.updateAppointmentTitle();
   }
 
   onSubmit(): void {
@@ -146,7 +223,7 @@ export class AgendaFormComponent implements OnChanges {
       endDateTime: formValue.endDateTime.toISOString(),
       notes: formValue.description,
       allDay: false,
-      clientId: formValue.clientId,
+      clientId: this.selectedClient?.id || formValue.clientId,
       professionalId: formValue.professionalId,
       status: formValue.status,
       serviceId: formValue.serviceId,
@@ -161,7 +238,9 @@ export class AgendaFormComponent implements OnChanges {
     } else {
       this.agendaStore.createAppointment(appointmentPayload as CreateAppointmentDto);
     }
-    this.close.emit();
+    
+    // Preguntar si desea crear factura después de guardar el turno
+    this.showInvoiceCreationDialog(this.selectedClient?.id || formValue.clientId);
   }
 
   onDelete(): void {
@@ -174,24 +253,26 @@ export class AgendaFormComponent implements OnChanges {
     this.close.emit();
   }
 
+  onCreateInvoice(): void {
+    if (this.appointment && this.appointment.client?.id) {
+      this.navigateToInvoiceCreation(this.appointment.client.id);
+    }
+  }
+
   onProfessionalChange(professionalId: number): void {
     this.selectedProfessionalId = professionalId;
     
     if (professionalId) {
-      // Habilitar el campo cliente y cargar clientes del profesional
-      this.agendaForm.get('clientId')?.enable();
-      this.clients$ = this.clientsService.clientControllerFindAll({ userId: professionalId });
-      
-      // Limpiar la selección actual de cliente
-      this.agendaForm.get('clientId')?.setValue(null);
+      // Limpiar la selección actual de cliente si cambia el profesional
+      if (this.selectedClient) {
+        this.clearClient();
+      }
       
       // Trigger availability check
       this.onDateTimeChange();
     } else {
-      // Deshabilitar el campo cliente si no hay profesional seleccionado
-      this.agendaForm.get('clientId')?.disable();
-      this.agendaForm.get('clientId')?.setValue(null);
-      this.clients$ = of([]);
+      this.selectedProfessionalId = null;
+      this.clearClient();
       this.clearAvailabilityMessage();
     }
   }
@@ -225,8 +306,17 @@ export class AgendaFormComponent implements OnChanges {
     }
 
     const now = new Date();
-    if (startDateTime <= now) {
-      this.showAvailabilityMessage('warn', 'La fecha de inicio debe ser futura');
+    const minValidTime = new Date(now.getTime() + 60 * 1000); // +1 minuto del tiempo actual
+    
+    if (startDateTime <= minValidTime) {
+      this.showAvailabilityMessage('warn', 'La fecha de inicio debe ser al menos 1 minuto en el futuro');
+      return;
+    }
+
+    // Verificar que hay al menos 1 minuto de duración
+    const durationMinutes = Math.round((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60));
+    if (durationMinutes < 1) {
+      this.showAvailabilityMessage('error', 'El turno debe tener una duración mínima de 1 minuto');
       return;
     }
 
@@ -310,6 +400,160 @@ export class AgendaFormComponent implements OnChanges {
 
   clearAvailabilityMessage(): void {
     this.availabilityMessage = null;
+  }
+
+  private setCurrentUserAsProfessional(): void {
+    // Por ahora, preseleccionar el primer profesional de la lista
+    this.professionals$.pipe(take(1)).subscribe(professionals => {
+      if (professionals && professionals.length > 0) {
+        const firstProfessional = professionals[0];
+        this.agendaForm.patchValue({
+          professionalId: firstProfessional.id
+        });
+        // Trigger el cambio de profesional para cargar clientes
+        this.onProfessionalChange(firstProfessional.id);
+      }
+    });
+  }
+
+  private showInvoiceCreationDialog(clientId: number): void {
+    // Cerrar el modal inmediatamente después de guardar
+    this.close.emit();
+    
+    if (!clientId) {
+      return;
+    }
+
+    // Mostrar el diálogo de creación de factura después de cerrar
+    setTimeout(() => {
+      this.confirmationService.confirm({
+        header: 'Crear Factura',
+        message: '¿Deseas crear una factura para este cliente?',
+        icon: 'pi pi-question-circle',
+        acceptButtonStyleClass: 'p-button-primary',
+        rejectButtonStyleClass: 'p-button-secondary',
+        acceptLabel: 'Sí',
+        rejectLabel: 'No',
+        accept: () => {
+          this.navigateToInvoiceCreation(clientId);
+        },
+        reject: () => {
+          // No hacer nada, se queda en la agenda
+        }
+      });
+    }, 100);
+  }
+
+  private navigateToInvoiceCreation(clientId: number): void {
+    // Navegar a la página de facturas (la ruta correcta es /invoices)
+    this.router.navigate(['/invoices'], {
+      queryParams: {
+        clientId: clientId,
+        fromAppointment: true
+      }
+    });
+  }
+
+  // Métodos para manejo de modales y selecciones
+  openClientSearchModal(): void {
+    if (!this.selectedProfessionalId) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atención',
+        detail: 'Primero selecciona un profesional'
+      });
+      return;
+    }
+    this.showClientSearchModal = true;
+  }
+
+  onClientSelected(client: ClientResponseDto): void {
+    this.selectedClient = client;
+    this.agendaForm.patchValue({ clientId: client.id });
+    this.showClientSearchModal = false;
+    this.updateAppointmentTitle();
+  }
+
+  onClientSearchCancel(): void {
+    this.showClientSearchModal = false;
+  }
+
+  clearClient(): void {
+    this.selectedClient = null;
+    this.agendaForm.patchValue({ clientId: null });
+    this.clearService(); // También limpiar el servicio
+    this.updateAppointmentTitle();
+  }
+
+  openServiceSearchModal(): void {
+    this.showServiceSearchModal = true;
+  }
+
+  onServiceSelected(service: ServiceResponseDto | CreateServiceDto): void {
+    this.selectedService = service;
+    // Si el servicio tiene ID, es uno existente del backend
+    if ('id' in service && service.id) {
+      this.agendaForm.patchValue({ serviceId: service.id });
+    } else {
+      // Es un servicio nuevo/personalizado - podríamos guardarlo primero o manejarlo diferente
+      this.agendaForm.patchValue({ serviceId: null });
+    }
+    this.showServiceSearchModal = false;
+    this.updateAppointmentTitle();
+  }
+
+  onServiceSearchCancel(): void {
+    this.showServiceSearchModal = false;
+  }
+
+  clearService(): void {
+    this.selectedService = null;
+    this.agendaForm.patchValue({ serviceId: null });
+    this.updateAppointmentTitle();
+  }
+
+  private updateAppointmentTitle(): void {
+    if (this.selectedClient && this.selectedService) {
+      const clientName = this.getClientDisplayName(this.selectedClient);
+      const serviceName = this.selectedService.name;
+      const title = `${clientName} - ${serviceName}`;
+      this.agendaForm.patchValue({ title }, { emitEvent: false });
+    } else if (this.selectedClient) {
+      const clientName = this.getClientDisplayName(this.selectedClient);
+      this.agendaForm.patchValue({ title: clientName }, { emitEvent: false });
+    } else {
+      // Si no hay selecciones, limpiar el título para que el usuario lo ingrese manualmente
+      if (!this.appointment) { // Solo limpiar si no estamos editando
+        this.agendaForm.patchValue({ title: '' }, { emitEvent: false });
+      }
+    }
+  }
+
+  getClientDisplayName(client: ClientResponseDto): string {
+    if (client.fullname) return client.fullname;
+    if (client.name && client.lastName) {
+      return `${client.name} ${client.lastName}`;
+    }
+    if (client.name) return client.name;
+    if (client.lastName) return client.lastName;
+    if (client.email) return client.email;
+    return 'Cliente sin nombre';
+  }
+
+  formatPrice(price?: number): string {
+    if (!price) return 'Sin precio';
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(price);
+  }
+
+  getServicePrice(service: ServiceResponseDto | CreateServiceDto): number | undefined {
+    if ('basePrice' in service && service.basePrice !== undefined) {
+      return service.basePrice;
+    }
+    return undefined;
   }
 }
 

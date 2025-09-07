@@ -143,8 +143,7 @@ export class UserEditFormComponent implements OnInit {
 
   onRolesChange(selectedRoles: number[]): void {
     // Sincronizar con el FormControl
-    this.form.get('roles')?.setValue(selectedRoles);
-    console.log('Roles seleccionados:', selectedRoles);
+    this.form.get('roles')?.setValue(selectedRoles);    
   }
   
   // Se llama con (ngSubmit) o desde el footer
@@ -207,8 +206,7 @@ export class UserEditFormComponent implements OnInit {
   }
 
   // Manejar la carga de avatar
-  onAvatarUploaded(result: any): void {
-    console.log('Avatar uploaded:', result);
+  onAvatarUploaded(result: any): void {    
     this.currentAvatar = result;
     
     // Recargar los usuarios para reflejar el cambio

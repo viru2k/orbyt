@@ -384,13 +384,12 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
   ];
 
   ngOnInit(): void {
-    console.log('ItemSelectorModal ngOnInit - visible:', this.visible);
     // Don't load data here, wait for visibility change
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible'] && changes['visible'].currentValue) {
-      console.log('Modal became visible, loading data...');
+
       this.loadProducts();
       this.loadServices();
     }
@@ -398,10 +397,9 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
 
   private loadProducts(): void {
     this.loading.set(true);
-    console.log('Loading products...');
     this.productsService.productControllerFindAll().subscribe({
       next: (products) => {
-        console.log('Products loaded:', products);
+  
         this.products.set(products);
         this.filterProducts();
         this.loading.set(false);
@@ -422,7 +420,7 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
     // Intentar cargar servicios reales primero
     this.servicesService.serviceControllerFindAll({ status: 'ACTIVE' }).subscribe({
       next: (response) => {
-        console.log('Real services loaded:', response);
+  
         this.services.set(response.services || []);
         this.filterServices();
       },
@@ -443,7 +441,7 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
             .businessTypeControllerFindConsultationTypesByBusinessType({ businessTypeId: firstBusinessType.id })
             .subscribe({
               next: (consultationTypes) => {
-                console.log('Consultation types loaded as fallback:', consultationTypes);
+          
                 this.services.set(consultationTypes);
                 this.filterServices();
               },
@@ -457,7 +455,7 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
               }
             });
         } else {
-          console.log('No business types found');
+    
           this.services.set([]);
           this.filterServices();
         }
@@ -495,7 +493,6 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
 
   filterServices(): void {
     let filtered = this.services();
-    console.log('Filtering services, total:', filtered.length);
 
     // Filter by search
     if (this.serviceSearch) {
@@ -516,7 +513,6 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
     }
 
     this.filteredServices.set(filtered);
-    console.log('Filtered services result:', filtered.length);
   }
 
   selectProduct(product: ProductResponseDto): void {

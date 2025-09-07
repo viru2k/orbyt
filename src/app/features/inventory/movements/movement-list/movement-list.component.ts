@@ -9,7 +9,7 @@ import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComp
 import { MovementFormComponent } from '../movement-form/movement-form.component';
 import { NotificationService } from '@orb-services';
 import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } from '@orb-models';
-import { DropdownModule } from 'primeng/dropdown';
+import { ProductSearchModalComponent } from '../../../../shared/components/product-search-modal/product-search-modal.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -27,7 +27,7 @@ import { FormsModule } from '@angular/forms';
     OrbToolbarComponent,
     OrbDialogComponent,
     ConfirmDialogModule,
-    DropdownModule
+    ProductSearchModalComponent
   ],
   templateUrl: './movement-list.component.html',
   styleUrls: ['./movement-list.component.scss'],
@@ -44,6 +44,7 @@ export class MovementListComponent implements OnInit {
   ];
 
   displayMovementModal = signal(false);
+  displayProductModal = signal(false);
   
   // Usamos los nuevos selectores con datos mapeados
   movements$ = this.movementStore.selectMovementsWithMetadata;
@@ -96,7 +97,7 @@ export class MovementListComponent implements OnInit {
     this.displayMovementModal.set(true);
   }
 
-  onProductChange(product: ProductResponseDto) {
+  onProductChange(product: ProductResponseDto | null) {
     this.selectedProduct.set(product);
     if (product?.id) {
       // Cargar movimientos del producto seleccionado
@@ -119,5 +120,18 @@ export class MovementListComponent implements OnInit {
 
   onCancelForm() {
     this.displayMovementModal.set(false);
+  }
+
+  openProductModal() {
+    this.displayProductModal.set(true);
+  }
+
+  onProductSelected(product: ProductResponseDto) {
+    this.onProductChange(product);
+    this.displayProductModal.set(false);
+  }
+
+  onProductModalCancel() {
+    this.displayProductModal.set(false);
   }
 }

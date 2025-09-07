@@ -24,11 +24,16 @@ import { CalendarEventTimesChangedEvent } from 'angular-calendar';
 import { AuthStore } from '../../store/auth/auth.store';
 import { STATUS_COLORS } from './constants/status-colors.map';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { StatusLegendComponent } from './components/status-legend/status-legend.component';
 import { TagModule } from 'primeng/tag';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ButtonModule } from 'primeng/button';
+import { ButtonGroupModule } from 'primeng/buttongroup';
+import { TooltipModule } from 'primeng/tooltip';
 import { STATUS_TRANSLATION } from './constants/status-translation.map';
 import { SUMMARY_KEY_MAP } from './constants/summary-key.map';
 import { STATUS_SEVERITY } from './constants/status-severity.map';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-agenda',
@@ -49,8 +54,16 @@ import { STATUS_SEVERITY } from './constants/status-severity.map';
     OrbTableComponent,
     OrbModernCalendarComponent,
     OverlayPanelModule,
-    StatusLegendComponent,
     TagModule,
+    ConfirmDialogModule,
+    ToastModule,
+    ButtonModule,
+    ButtonGroupModule,
+    TooltipModule,
+  ],
+  providers: [
+    ConfirmationService,
+    MessageService
   ],
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss'],
@@ -102,7 +115,9 @@ export class AgendaComponent implements OnInit {
     public usersStore: UsersStore,
     private authStore: AuthStore,
     private router: Router,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {
     // Configurar fechas por defecto (hoy)
     this.setTodayDates();
@@ -111,32 +126,41 @@ export class AgendaComponent implements OnInit {
   // No transformation needed for Modern Calendar - uses same event format
 
   ngOnInit(): void {
-    // Esperar a que las traducciones se carguen
-    this.translate.get('AGENDA.FILTERS').subscribe(() => {
-      this.initializeTranslations();
-    });
-    
-    // También escuchar cambios de idioma
-    this.translate.onLangChange.subscribe(() => {
-      this.initializeTranslations();
-    });
+    // Inicializar configuraciones
+    this.initializeTranslations();
     
     // Cargar usuarios para el filtro
     this.usersStore.loadUsers();
+    
+    // Subscribirse a cambios del usuario actual
     this.authStore.user$.subscribe(user => {
-      if (user && user.id) {
+      if (user && user.id) {       
+        
+        // Cargar configuración de agenda del usuario actual
         this.agendaStore.loadAgendaConfig(user.id);
-        this.usersStore.users$.subscribe(users => {
-          const currentUser = users.find(u => u.id === user.id);
-          if (currentUser) {
-            this.selectedUsers = [currentUser];
-          }
-        });
+        
+        // Usar el usuario actual directamente, sin necesidad de buscarlo en la lista de usuarios
+        // Crear un objeto compatible con selectedUsers que use el ProfileResponseDto
+        const currentUserForAgenda = {
+          id: user.id,
+          name: user.name,
+          lastName: user.lastName,
+          email: user.email,
+          isActive: user.isActive
+        };
+               
+        this.selectedUsers = [currentUserForAgenda];
+        
+        // Cargar resumen automáticamente
+        this.loadSummaryForCurrentUser();
+        
+        // Realizar búsqueda automática con el usuario actual seleccionado
+        this.performSearch();
+        
+        // También cargar la lista de usuarios para el filtro (sin bloquear la funcionalidad principal)
+        this.usersStore.loadUsers();
       }
     });
-    
-    // Realizar búsqueda automática con la fecha de hoy al inicializar
-    this.performSearch();
   }
 
   private setTodayDates(): void {
@@ -199,7 +223,8 @@ export class AgendaComponent implements OnInit {
     if (this.selectedStatuses.length > 0) {
       filters.status = this.selectedStatuses;
     }
-    
+       
+
     
     this.agendaStore.loadAppointments(filters);
     this.agendaStore.loadSummary({ 
@@ -268,16 +293,111 @@ export class AgendaComponent implements OnInit {
     const originalAppointment = extendedProps['originalAppointment'] || extendedProps.originalAppointment;
     
     if (originalAppointment) {
-      this.selectedAppointment = originalAppointment;
-      this.dialogInitialDate = null;
-      this.displayAgendaForm = true;
+      // Verificar si el usuario tiene permisos de edición de agenda
+      const canEditAgenda = this.canUserEditAgenda();
+      
+      if (canEditAgenda) {
+        // Si tiene permisos, mostrar el formulario de agenda
+        this.selectedAppointment = originalAppointment;
+        this.dialogInitialDate = null;
+        this.displayAgendaForm = true;
+      } else {
+        // Si no tiene permisos de edición, preguntar si quiere crear consulta
+        this.showConsultationDialog(originalAppointment);
+      }
     }
   }
 
+  private canUserEditAgenda(): boolean {
+    // TODO: Implementar lógica de permisos real
+    // Por ahora, asumir que todos pueden editar
+    return true;
+  }
+
+  private showConsultationDialog(appointment: AppointmentResponseDto): void {
+    this.confirmationService.confirm({
+      header: this.translate.instant('CONSULTATION.TITLE'),
+      message: this.translate.instant('CONSULTATION.CONSULTATION_QUESTION'),
+      icon: 'pi pi-question-circle',
+      acceptButtonStyleClass: 'p-button-primary',
+      rejectButtonStyleClass: 'p-button-secondary',
+      acceptLabel: this.translate.instant('COMMON.YES'),
+      rejectLabel: this.translate.instant('COMMON.NO'),
+      accept: () => {
+        this.openConsultationModal(appointment);
+      }
+    });
+  }
+
+  private openConsultationModal(appointment: AppointmentResponseDto): void {
+    // Implementar la navegación a la modal de consulta
+    this.router.navigate(['/consultation/new'], {
+      queryParams: {
+        appointmentId: appointment.id,
+        clientId: appointment.client?.id,
+        professionalId: appointment.professional?.id,
+        appointmentDate: appointment.start
+      }
+    });
+  }
+
   handleDateSelect(dateSelectInfo: DateSelectInfo): void {
+    const selectedDate = new Date(dateSelectInfo.startStr);
+    const dayOfWeek = selectedDate.getDay(); // 0 = domingo, 1 = lunes, etc.
+    
+    // Verificar días laborales desde la configuración de agenda
+    this.agendaStore.agendaConfig$.subscribe(config => {
+      if (config && config.workingDays && config.workingDays.length > 0) {
+        const isWorkingDay = config.workingDays.includes(dayOfWeek);
+        
+        if (!isWorkingDay && !config.allowBookingOnBlockedDays) {
+          // Mostrar modal de confirmación para días no laborales
+          this.showNonWorkingDayDialog(dayOfWeek, () => {
+            this.openAppointmentForm(dateSelectInfo);
+          });
+        } else {
+          // Día laboral normal o permitido booking en días bloqueados
+          this.openAppointmentForm(dateSelectInfo);
+        }
+      } else {
+        // Si no hay configuración, permitir cualquier día
+        this.openAppointmentForm(dateSelectInfo);
+      }
+    }).unsubscribe(); // Unsubscribe inmediatamente ya que solo necesitamos el valor actual
+  }
+
+  private openAppointmentForm(dateSelectInfo: DateSelectInfo): void {
     this.selectedAppointment = null;
     this.dialogInitialDate = dateSelectInfo.startStr;
     this.displayAgendaForm = true;
+  }
+
+  private showNonWorkingDayDialog(dayOfWeek: number, onConfirm: () => void): void {
+    const dayNames = [
+      'WORKING_DAYS.SUNDAY',
+      'WORKING_DAYS.MONDAY', 
+      'WORKING_DAYS.TUESDAY',
+      'WORKING_DAYS.WEDNESDAY',
+      'WORKING_DAYS.THURSDAY',
+      'WORKING_DAYS.FRIDAY',
+      'WORKING_DAYS.SATURDAY'
+    ];
+    
+    const dayName = this.translate.instant(dayNames[dayOfWeek]);
+    const message = this.translate.instant('WORKING_DAYS.NOT_WORKING_MESSAGE', { day: dayName });
+    
+    this.confirmationService.confirm({
+      header: this.translate.instant('WORKING_DAYS.NOT_WORKING_TITLE'),
+      message: message,
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-warning',
+      rejectButtonStyleClass: 'p-button-secondary',
+      acceptLabel: this.translate.instant('COMMON.CONTINUE'),
+      rejectLabel: this.translate.instant('COMMON.CANCEL'),
+      accept: () => {
+        onConfirm();
+      }
+    });
   }
 
   handleEventDrop(eventDropInfo: CalendarEventTimesChangedEvent): void {
@@ -313,7 +433,10 @@ export class AgendaComponent implements OnInit {
 
   getTranslatedStatus(statusKey: string): string {
     const status = SUMMARY_KEY_MAP[statusKey];
-    return STATUS_TRANSLATION[status as keyof typeof STATUS_TRANSLATION];
+    const translationKey = STATUS_TRANSLATION[status as keyof typeof STATUS_TRANSLATION];
+    const translation = this.translate.instant(translationKey);
+    // Si la traducción no se encontró, devolver la clave sin el prefijo
+    return translation === translationKey ? status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : translation;
   }
 
   toggleView(view: 'calendar' | 'table'): void {
@@ -342,28 +465,51 @@ export class AgendaComponent implements OnInit {
 
   private initializeTranslations(): void {
     this.breadcrumbItems = [
-      { label: this.translate.instant('BREADCRUMB.AGENDA') }
+      { label: 'Agenda' }
     ];
 
     this.statusOptions = [
-      { label: this.translate.instant('STATUS.PENDING'), value: 'pending' },
-      { label: this.translate.instant('STATUS.CONFIRMED'), value: 'confirmed' },
-      { label: this.translate.instant('STATUS.CHECKED_IN'), value: 'checked_in' },
-      { label: this.translate.instant('STATUS.IN_PROGRESS'), value: 'in_progress' },
-      { label: this.translate.instant('STATUS.COMPLETED'), value: 'completed' },
-      { label: this.translate.instant('STATUS.CANCELLED'), value: 'cancelled' },
-      { label: this.translate.instant('STATUS.NO_SHOW'), value: 'no_show' },
-      { label: this.translate.instant('STATUS.RESCHEDULED'), value: 'rescheduled' }
+      { label: 'Pendiente', value: 'pending' },
+      { label: 'Confirmada', value: 'confirmed' },
+      { label: 'Check-in', value: 'checked_in' },
+      { label: 'En Proceso', value: 'in_progress' },
+      { label: 'Completada', value: 'completed' },
+      { label: 'Cancelada', value: 'cancelled' },
+      { label: 'No Show', value: 'no_show' },
+      { label: 'Reprogramada', value: 'rescheduled' }
     ];
 
     this.tableColumns = [
-      { field: 'startDateTime', header: this.translate.instant('AGENDA.DATETIME'), sortable: true },
-      { field: 'clientName', header: this.translate.instant('AGENDA.CLIENT'), sortable: true },
-      { field: 'professionalName', header: this.translate.instant('AGENDA.PROFESSIONAL'), sortable: true },
-      { field: 'status', header: this.translate.instant('AGENDA.STATE'), sortable: true },
-      { field: 'duration', header: this.translate.instant('AGENDA.DURATION'), sortable: false },
-      { field: 'actions', header: this.translate.instant('AGENDA.ACTIONS'), sortable: false, width: '120px' }
+      { field: 'startDateTime', header: 'Fecha/Hora', sortable: true },
+      { field: 'title', header: 'Título', sortable: true },
+      { field: 'clientName', header: 'Cliente', sortable: true },
+      { field: 'professionalName', header: 'Profesional', sortable: true },
+      { field: 'status', header: 'Estado', sortable: true },
+      { field: 'duration', header: 'Duración', sortable: false },
+      { field: 'actions', header: 'Acciones', sortable: false, width: '120px' }
     ];
+  }
+
+  // Método para calcular la duración en minutos
+  getDuration(appointment: AppointmentResponseDto): number {
+    if (appointment.start && appointment.end) {
+      const startDate = new Date(appointment.start);
+      const endDate = new Date(appointment.end);
+      const durationMs = endDate.getTime() - startDate.getTime();
+      return Math.round(durationMs / (1000 * 60)); // convertir a minutos
+    }
+    return 0;
+  }
+
+  private loadSummaryForCurrentUser(): void {
+    const summaryParams = {
+      from: this.selectedDateFrom.toISOString(),
+      to: this.selectedDateTo.toISOString(),
+      professionalId: this.selectedUsers.map(user => user.id),
+      status: this.selectedStatuses.length > 0 ? this.selectedStatuses : undefined
+    };
+    
+    this.agendaStore.loadSummary(summaryParams);
   }
 
   // DevExtreme handlers removed - using Angular Calendar handlers instead

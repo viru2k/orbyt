@@ -106,7 +106,7 @@ export class HolidaysModalComponent implements OnInit, OnDestroy {
       
       const newHoliday: CreateHolidayDto = {
         date: this.formatDate(formValue.date),
-        reason: formValue.reason || undefined
+        description: formValue.reason || undefined
       };
 
       this.agendaStore.addHolidayEffect({ holiday: newHoliday });

@@ -4,30 +4,28 @@
 <orb-toolbar>
   <div body>
     <div class="flex align-items-center gap-3">
-      <label for="product-selector" class="font-semibold">Seleccionar Producto:</label>
-      <p-dropdown
-        id="product-selector"
-        [options]="(products$ | async) || []"
-        [ngModel]="selectedProduct()"
-        (ngModelChange)="onProductChange($event)"
-        optionLabel="name"
-        placeholder="Selecciona un producto"
-        [showClear]="true"
-        styleClass="w-20rem"
-      >
-        <ng-template pTemplate="selectedItem" let-product>
-          <div class="flex align-items-center gap-2" *ngIf="product">
-            <span>{{ product.name }}</span>
-            <span class="text-sm text-gray-500">({{ product.id }})</span>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="item" let-product>
-          <div class="flex align-items-center gap-2">
-            <span>{{ product.name }}</span>
-            <span class="text-sm text-gray-500">({{ product.id }})</span>
-          </div>
-        </ng-template>
-      </p-dropdown>
+      <span class="font-semibold">Producto seleccionado:</span>
+      @if (selectedProduct()) {
+        <div class="flex align-items-center gap-2 p-2 bg-blue-50 border border-blue-200 border-radius">
+          <i class="pi pi-box text-blue-600"></i>
+          <span class="font-medium text-blue-800">{{ selectedProduct()!.name }}</span>
+          <span class="text-sm text-gray-500">(ID: {{ selectedProduct()!.id }})</span>
+          <orb-button
+            icon="pi pi-times"
+            severity="secondary"
+            size="small"
+            (click)="onProductChange(null)"
+            pTooltip="Limpiar selección"
+          />
+        </div>
+      } @else {
+        <orb-button
+          label="Seleccionar Producto"
+          icon="pi pi-search"
+          severity="secondary"
+          (click)="openProductModal()"
+        />
+      }
     </div>
   </div>
   <div footer>
@@ -128,5 +126,13 @@
     />
   }
 </orb-dialog>
+
+<orb-product-search-modal
+  [visible]="displayProductModal()"
+  (visibleChange)="displayProductModal.set($event)"
+  [allowMultiSelect]="false"
+  (productSelected)="onProductSelected($event)"
+  (cancel)="onProductModalCancel()"
+/>
 
 <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

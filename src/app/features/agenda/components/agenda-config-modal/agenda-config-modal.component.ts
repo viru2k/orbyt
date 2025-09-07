@@ -103,8 +103,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     this.initHolidayForm();
   }
 
-  ngOnInit(): void {
-    console.log('AgendaConfigModal - ngOnInit called');
+  ngOnInit(): void {    
     
     // Subscribe to config changes
     this.agendaStore.agendaConfig$
@@ -118,26 +117,21 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     // Subscribe to holidays to debug
     this.agendaStore.agendaHolydays$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(holidays => {
-        console.log('AgendaConfigModal - Holidays received:', holidays);
+      .subscribe(holidays => {        
       });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('AgendaConfigModal - ngOnChanges called with:', changes);
+  ngOnChanges(changes: SimpleChanges): void {    
     
     // When visible changes to true, load data
-    if (changes['visible']) {
-      console.log('AgendaConfigModal - Visible changed from', changes['visible'].previousValue, 'to', changes['visible'].currentValue);
+    if (changes['visible']) {      
       
-      if (changes['visible'].currentValue === true) {
-        console.log('AgendaConfigModal - Modal opened - professionalId:', this.professionalId);
+      if (changes['visible'].currentValue === true) {        
         // Add a small delay to ensure the modal is fully rendered before loading data
         setTimeout(() => {
           this.loadModalData();
         }, 100);
-      } else if (changes['visible'].currentValue === false) {
-        console.log('AgendaConfigModal - Modal closed');
+      } else if (changes['visible'].currentValue === false) {        
         // Clear the store data to avoid stale data issues
         // But don't reset the form immediately as it might cause issues
         this.showAddHolidayForm = false;
@@ -146,14 +140,12 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     }
     
     // When professionalId changes, reload data if modal is visible
-    if (changes['professionalId'] && this.visible) {
-      console.log('AgendaConfigModal - ProfessionalId changed to:', this.professionalId);
+    if (changes['professionalId'] && this.visible) {      
       this.loadModalData();
     }
   }
 
-  private loadModalData(): void {
-    console.log('AgendaConfigModal - loadModalData - professionalId:', this.professionalId);
+  private loadModalData(): void {    
     
     // Load current config if not provided
     if (!this.config) {
@@ -161,8 +153,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     }
 
     // Load holidays for the professional - only if professionalId exists
-    if (this.professionalId) {
-      console.log('AgendaConfigModal - Loading holidays for professionalId:', this.professionalId);
+    if (this.professionalId) {      
       this.agendaStore.loadAgendaHolidays(this.professionalId);
     } else {
       console.warn('AgendaConfigModal - No professionalId provided, skipping holidays load');
@@ -196,8 +187,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     });
   }
 
-  private populateForm(config: any): void {
-    console.log('AgendaConfigModal - populateForm called with config:', config);
+  private populateForm(config: any): void {    
     
     // Adapt the backend response to the form structure
     this.configForm.patchValue({
@@ -216,20 +206,17 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
       const isWorkingDay = config.workingDays?.includes(day.value) || // Check UPPERCASE ("TUESDAY")
                           config.workingDays?.includes(backendDayCapitalized) || // Check Capitalized ("Tuesday") 
                           config.workingDays?.includes(day.number); // Check by number
-      
-      console.log(`Day ${day.label} (${day.value}): ${isWorkingDay ? 'ENABLED' : 'DISABLED'}`);
+            
       workingDaysArray.at(index).setValue(isWorkingDay);
     });
-    
-    console.log('AgendaConfigModal - Form populated with values:', this.configForm.value);
+        
   }
 
   get workingDaysControls() {
     return (this.configForm.get('workingDays') as FormArray).controls as FormControl[];
   }
 
-  onHide(): void {
-    console.log('AgendaConfigModal - onHide called');
+  onHide(): void {    
     // Reset form state when manually closing
     this.configForm.reset();
     this.initForm();
@@ -256,9 +243,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
         allowBookingOnBlockedDays: formValue.allowBookingOnBlockedDays,
         workingDays: selectedWorkingDays
       };
-
-      console.log('AgendaConfigModal - Saving config with payload:', updateDto);
-      console.log('AgendaConfigModal - professionalId:', this.professionalId);
+            
 
       this.agendaStore.updateAgendaConfig({ 
         professionalId: this.professionalId || undefined,
@@ -274,8 +259,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     this.onHide();
   }
 
-  handleFooterAction(action: string): void {
-    console.log('AgendaConfigModal - handleFooterAction called with:', action);
+  handleFooterAction(action: string): void {    
     if (action === 'save') {
       this.onSave();
     } else if (action === 'cancel') {
@@ -347,8 +331,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
   /**
    * Manejar operaciones completadas de bloqueo/desbloqueo de fechas
    */
-  onBlockingOperationCompleted(result: any): void {
-    console.log('Operación de bloqueo completada:', result);
+  onBlockingOperationCompleted(result: any): void {    
     // Aquí podrías agregar lógica adicional si es necesario
     // Por ejemplo, refrescar datos o mostrar notificaciones
   }
@@ -356,8 +339,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
   /**
    * Manejar operaciones completadas de horarios especiales
    */
-  onScheduleOperationCompleted(result: any): void {
-    console.log('Operación de horario especial completada:', result);
+  onScheduleOperationCompleted(result: any): void {    
     // Aquí podrías agregar lógica adicional si es necesario
     // Por ejemplo, refrescar datos o mostrar notificaciones
   }

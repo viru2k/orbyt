@@ -1,0 +1,288 @@
+<!-- Breadcrumb superior -->
+<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+
+<div class="dashboard">
+  <!-- Header con acciones rápidas -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <i class="fa fa-warehouse"></i>
+        Dashboard de Inventario
+      </h1>
+      <p class="dashboard-subtitle">Gestión y control integral de productos y movimientos de stock</p>
+    </div>
+    <div class="header-actions">
+      <orb-button 
+        label="Nuevo Movimiento" 
+        icon="fa fa-plus" 
+        variant="success"
+        (clicked)="navigateToMovements()">
+      </orb-button>
+      <orb-button 
+        label="Ver Productos" 
+        icon="fa fa-box" 
+        variant="primary"
+        (clicked)="navigateToProducts()">
+      </orb-button>
+    </div>
+  </div>
+
+  <!-- KPI Cards Grid -->
+  <div class="kpi-grid">
+    <orb-card class="kpi-card products">
+      <div orbHeader>
+        <div class="kpi-icon products">
+          <i class="fa fa-box"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ totalProducts() }}</h3>
+          <p class="kpi-label">Total Productos</p>
+          <div class="kpi-trend positive" *ngIf="getTrendData('products').trend > 0">
+            <i class="fa fa-arrow-up"></i>
+            <span>+{{ getTrendData('products').trend }}% {{ getTrendData('products').label }}</span>
+          </div>
+          <div class="kpi-trend negative" *ngIf="getTrendData('products').trend < 0">
+            <i class="fa fa-arrow-down"></i>
+            <span>{{ getTrendData('products').trend }}% {{ getTrendData('products').label }}</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+
+    <orb-card class="kpi-card low-stock">
+      <div orbHeader>
+        <div class="kpi-icon low-stock">
+          <i class="fa fa-exclamation-triangle"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ lowStockProducts() }}</h3>
+          <p class="kpi-label">Stock Bajo</p>
+          <div class="kpi-trend negative" *ngIf="getTrendData('lowStock').trend < 0">
+            <i class="fa fa-arrow-down"></i>
+            <span>{{ getTrendData('lowStock').trend }}% {{ getTrendData('lowStock').label }}</span>
+          </div>
+          <div class="kpi-trend positive" *ngIf="getTrendData('lowStock').trend > 0">
+            <i class="fa fa-arrow-up"></i>
+            <span>+{{ getTrendData('lowStock').trend }}% {{ getTrendData('lowStock').label }}</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+
+    <orb-card class="kpi-card inventory-value">
+      <div orbHeader>
+        <div class="kpi-icon inventory-value">
+          <i class="fa fa-euro-sign"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ totalValue() | currency:'EUR':'symbol':'1.0-0' }}</h3>
+          <p class="kpi-label">Valor Total Inventario</p>
+          <div class="kpi-trend positive" *ngIf="getTrendData('value').trend > 0">
+            <i class="fa fa-arrow-up"></i>
+            <span>+{{ getTrendData('value').trend }}% {{ getTrendData('value').label }}</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+
+    <orb-card class="kpi-card movements">
+      <div orbHeader>
+        <div class="kpi-icon movements">
+          <i class="fa fa-exchange-alt"></i>
+        </div>
+        <div class="kpi-content">
+          <h3 class="kpi-value">{{ movementsToday() }}</h3>
+          <p class="kpi-label">Movimientos Hoy</p>
+          <div class="kpi-trend positive" *ngIf="getTrendData('movements').trend > 0">
+            <i class="fa fa-arrow-up"></i>
+            <span>+{{ getTrendData('movements').trend }}% {{ getTrendData('movements').label }}</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-grid">
+    <!-- Stock Distribution Chart -->
+    <orb-card class="chart-card">
+      <div orbHeader>
+        <h3><i class="fa fa-chart-pie"></i> Distribución del Stock</h3>
+      </div>
+      <div orbBody>
+        <div class="chart-container">
+          <p-chart 
+            type="doughnut" 
+            [data]="stockDistributionChartData()" 
+            [options]="chartOptions"
+            height="300">
+          </p-chart>
+        </div>
+        
+        <!-- Legend -->
+        <div class="chart-legend" *ngIf="stockDistribution() as distribution">
+          <div class="legend-item">
+            <div class="legend-color bg-green-500"></div>
+            <span>Stock Normal ({{ distribution.normal }})</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color bg-yellow-500"></div>
+            <span>Stock Bajo ({{ distribution.low }})</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color bg-red-500"></div>
+            <span>Sin Stock ({{ distribution.empty }})</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color bg-purple-500"></div>
+            <span>Sobrestock ({{ distribution.over }})</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+
+    <!-- Movements Weekly Chart -->
+    <orb-card class="chart-card">
+      <div orbHeader>
+        <h3><i class="fa fa-chart-line"></i> Movimientos Semanales</h3>
+        <div class="chart-period">
+          <orb-button 
+            label="7D" 
+            variant="text" 
+            size="small"
+            class="active">
+          </orb-button>
+          <orb-button 
+            label="30D" 
+            variant="text" 
+            size="small">
+          </orb-button>
+        </div>
+      </div>
+      <div orbBody>
+        <div class="chart-container">
+          <p-chart 
+            type="line" 
+            [data]="movementsChartDataComputed()" 
+            [options]="lineChartOptions"
+            height="300">
+          </p-chart>
+        </div>
+      </div>
+    </orb-card>
+  </div>
+
+  <!-- Activity Section -->
+  <div class="activity-grid">
+    <!-- Low Stock Products -->
+    <orb-card class="activity-card">
+      <div orbHeader>
+        <h3><i class="fa fa-exclamation-triangle text-orange-500"></i> Productos con Stock Bajo</h3>
+        <orb-button 
+          label="Ver Todos" 
+          size="small" 
+          variant="text"
+          (clicked)="navigateToProducts()">
+        </orb-button>
+      </div>
+      <div orbBody>
+        <div class="low-stock-list">
+          <div class="stock-item" *ngFor="let item of lowStockProducts$ | async">
+            <div class="item-info">
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-description">{{ item.description || 'Sin descripción' }}</div>
+            </div>
+            <div class="item-stock">
+              <p-tag 
+                [value]="item.currentStock + ' unidades'" 
+                [severity]="item.status">
+              </p-tag>
+              <div class="stock-min">Min: {{ item.minStock }}</div>
+            </div>
+          </div>
+          
+          <!-- Mensaje cuando no hay productos con stock bajo -->
+          <div class="no-movements" *ngIf="(lowStockProducts$ | async)?.length === 0">
+            <i class="fa fa-check-circle"></i>
+            <span>No hay productos con stock bajo</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+
+    <!-- Recent Movements -->
+    <orb-card class="activity-card">
+      <div orbHeader>
+        <h3><i class="fa fa-history"></i> Movimientos Recientes</h3>
+        <orb-button 
+          label="Ver Todos" 
+          size="small" 
+          variant="text"
+          (clicked)="navigateToMovements()">
+        </orb-button>
+      </div>
+      <div orbBody>
+        <div class="movements-list">
+          <div class="movement-item" *ngFor="let movement of recentMovements$ | async | slice:0:5">
+            <div class="movement-icon" [class]="movement.typeClass">
+              <i [class]="movement.typeIcon"></i>
+            </div>
+            <div class="movement-info">
+              <div class="movement-product">{{ movement.productNameAtTime }}</div>
+              <div class="movement-type">{{ movement.typeText }}</div>
+              <div class="movement-date">{{ movement.formattedDate }}</div>
+            </div>
+            <div class="movement-quantity" [class]="getMovementQuantityClass(movement.quantity)">
+              {{ movement.quantity > 0 ? '+' : '' }}{{ movement.quantity }}
+            </div>
+          </div>
+          
+          <!-- Mensaje cuando no hay movimientos -->
+          <div class="no-movements" *ngIf="(recentMovements$ | async)?.length === 0">
+            <i class="fa fa-info-circle"></i>
+            <span>No hay movimientos recientes</span>
+          </div>
+        </div>
+      </div>
+    </orb-card>
+  </div>
+
+  <!-- Quick Actions Panel -->
+  <orb-card class="quick-actions-panel">
+    <div orbHeader>
+      <h3><i class="fa fa-bolt"></i> Acciones Rápidas</h3>
+    </div>
+    <div orbBody>
+      <div class="quick-actions-grid">
+        <orb-button 
+          label="Registrar Entrada" 
+          icon="fa fa-plus-circle" 
+          size="large"
+          variant="success"
+          (clicked)="navigateToMovements()">
+        </orb-button>
+        <orb-button 
+          label="Registrar Salida" 
+          icon="fa fa-minus-circle" 
+          size="large"
+          variant="danger"
+          (clicked)="navigateToMovements()">
+        </orb-button>
+        <orb-button 
+          label="Ajuste de Stock" 
+          icon="fa fa-sliders-h" 
+          size="large"
+          variant="info"
+          (clicked)="navigateToMovements()">
+        </orb-button>
+        <orb-button 
+          label="Generar Reporte" 
+          icon="fa fa-file-pdf" 
+          size="large"
+          variant="outline"
+          (clicked)="navigateToReports()">
+        </orb-button>
+      </div>
+    </div>
+  </orb-card>
+</div>

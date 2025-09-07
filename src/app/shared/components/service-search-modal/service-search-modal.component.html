@@ -1,0 +1,447 @@
+<p-dialog 
+  [header]="title"
+  [visible]="visible" 
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true" 
+  [draggable]="false"
+  [resizable]="true"
+  [closable]="true"
+  styleClass="service-search-modal"
+  [style]="{width: '95vw', maxWidth: '1100px', height: '85vh'}"
+  (onHide)="onCancel()">
+
+  <!-- Pestañas principales -->
+  <p-tabView [(activeIndex)]="activeTab" (onChange)="onTabChange($event)">
+    
+    <!-- Pestaña 1: Buscar servicios -->
+    <p-tabPanel header="Buscar Servicios" leftIcon="pi pi-search">
+      
+      <!-- Header con búsqueda -->
+      <div class="search-header">
+        <div class="search-bar">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input 
+              type="text" 
+              pInputText 
+              placeholder="Buscar servicios por nombre o descripción..." 
+              (input)="onSearch($event)"
+              [value]="filtersForm.get('query')?.value"
+              class="search-input">
+          </span>
+          
+          <!-- Toggle vista -->
+          <div class="view-controls">
+            <p-button
+              [icon]="viewMode() === 'grid' ? 'pi pi-th-large' : 'pi pi-list'"
+              [text]="true"
+              (onClick)="toggleViewMode()"
+              pTooltip="Cambiar vista"
+              tooltipPosition="bottom">
+            </p-button>
+          </div>
+        </div>
+
+        <!-- Filtros avanzados -->
+        <div class="filters-section" [formGroup]="filtersForm">
+          <div class="filters-row">
+            <div class="filter-group">
+              <label>Categoría</label>
+              <p-dropdown 
+                formControlName="category"
+                [options]="categoryOptions" 
+                optionLabel="label" 
+                optionValue="value"
+                placeholder="Filtrar por categoría"
+                styleClass="filter-dropdown">
+              </p-dropdown>
+            </div>
+
+            <div class="filter-group price-filters">
+              <div class="price-range">
+                <div class="price-input">
+                  <label>Precio Mín</label>
+                  <p-inputNumber 
+                    formControlName="priceMin"
+                    [min]="0"
+                    mode="currency" 
+                    currency="COP"
+                    locale="es-CO"
+                    placeholder="$0"
+                    styleClass="filter-input">
+                  </p-inputNumber>
+                </div>
+                <span class="range-separator">-</span>
+                <div class="price-input">
+                  <label>Precio Máx</label>
+                  <p-inputNumber 
+                    formControlName="priceMax"
+                    [min]="0"
+                    mode="currency" 
+                    currency="COP"
+                    locale="es-CO"
+                    placeholder="$999,999"
+                    styleClass="filter-input">
+                  </p-inputNumber>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="filter-actions">
+              <orb-button 
+                label="Buscar" 
+                icon="pi pi-search"
+                variant="primary"
+                (clicked)="performSearch()"
+                class="search-button">
+              </orb-button>
+              
+              <orb-button 
+                label="Limpiar" 
+                icon="pi pi-times"
+                variant="secondary"
+                (clicked)="onClear()"
+                *ngIf="hasFilters()"
+                class="clear-button">
+              </orb-button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Resultados principales de búsqueda -->
+      <div class="search-results">
+        
+        <!-- Servicios recientes -->
+        <div *ngIf="hasRecentServices() && !filtersForm.get('query')?.value" class="recent-services-section">
+          <h3 class="section-title">
+            <i class="pi pi-history"></i>
+            Servicios utilizados recientemente
+          </h3>
+          <div class="recent-services-grid">
+            <div *ngFor="let service of recentServices()" 
+                 class="recent-service-card" 
+                 (click)="onServiceSelect(service)">
+              <div class="recent-service-info">
+                <h4>{{ service.name }}</h4>
+                <div class="recent-service-details">
+                  <span class="price">{{ formatPrice(getServicePrice(service)) }}</span>
+                  <span class="usage">{{ service.usageCount }} veces</span>
+                  <span class="last-used">{{ formatLastUsed(service.lastUsed) }}</span>
+                </div>
+                <p-badge 
+                  [value]="service.usageCount.toString()"
+                  [severity]="getUsageBadgeSeverity(service.usageCount)"
+                  class="usage-badge">
+                </p-badge>
+              </div>
+              <div class="recent-service-actions">
+                <i class="pi pi-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+          <p-divider></p-divider>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="isLoading()" class="loading-container">
+          <div class="skeleton-items">
+            <div *ngFor="let item of [1,2,3,4,5]" class="skeleton-item">
+              <p-skeleton height="80px" borderRadius="8px"></p-skeleton>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado de carga -->
+        <div class="loading-state" *ngIf="isLoading()">
+          <div class="skeleton-grid" *ngIf="viewMode() === 'grid'">
+            <p-skeleton 
+              *ngFor="let item of [1,2,3,4,5,6]" 
+              width="100%" 
+              height="200px" 
+              styleClass="skeleton-card">
+            </p-skeleton>
+          </div>
+          <div class="skeleton-list" *ngIf="viewMode() === 'list'">
+            <p-skeleton 
+              *ngFor="let item of [1,2,3,4]" 
+              width="100%" 
+              height="80px" 
+              styleClass="skeleton-row">
+            </p-skeleton>
+          </div>
+        </div>
+
+        <!-- Sin resultados -->
+        <div class="no-results" *ngIf="!isLoading() && !hasResults()">
+          <i class="pi pi-cog" style="font-size: 3rem; color: #6c757d;"></i>
+          <h3>{{ filtersForm.get('query')?.value ? 'No se encontraron servicios' : 'No hay servicios' }}</h3>
+          <p>{{ filtersForm.get('query')?.value ? 
+              'Intenta con otros términos de búsqueda o ajusta los filtros' : 
+              'No hay servicios registrados' }}</p>
+        </div>
+
+        <!-- Vista Grid -->
+        <div class="services-grid" *ngIf="!isLoading() && hasResults() && viewMode() === 'grid'">
+          <div 
+            class="service-card" 
+            *ngFor="let service of searchResults()"
+            [class.recently-used]="service.isRecentlyUsed"
+            (click)="onServiceSelect(service)">
+            
+            <div class="service-badges">
+              <p-badge 
+                *ngIf="service.isRecentlyUsed" 
+                value="Reciente" 
+                severity="info"
+                icon="pi pi-star">
+              </p-badge>
+              <p-badge 
+                *ngIf="service.usageCount && service.usageCount > 0" 
+                [value]="service.usageCount + ' usos'"
+                [severity]="getUsageBadgeSeverity(service.usageCount)">
+              </p-badge>
+            </div>
+
+            <div class="service-info">
+              <h4 class="service-name" [pTooltip]="service.name">{{ service.name }}</h4>
+              <p class="service-description" *ngIf="service.description">{{ service.description }}</p>
+              
+              <div class="service-meta">
+                <span class="service-price" *ngIf="getServicePrice(service)">
+                  {{ formatPrice(getServicePrice(service)) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vista Lista -->
+        <div class="services-list" *ngIf="!isLoading() && hasResults() && viewMode() === 'list'">
+          <div 
+            class="service-row" 
+            *ngFor="let service of searchResults()"
+            [class.recently-used]="service.isRecentlyUsed"
+            (click)="onServiceSelect(service)">
+            
+            <div class="row-info">
+              <div class="row-main">
+                <h5 class="service-name">{{ service.name }}</h5>
+                <p class="service-description" *ngIf="service.description">{{ service.description }}</p>
+              </div>
+              
+              <div class="row-meta">
+                <span class="service-price" *ngIf="getServicePrice(service)">
+                  {{ formatPrice(getServicePrice(service)) }}
+                </span>
+                <p-badge 
+                  *ngIf="service.isRecentlyUsed" 
+                  value="Reciente"
+                  severity="info"
+                  styleClass="recent-tag">
+                </p-badge>
+                <p-badge 
+                  *ngIf="service.usageCount && service.usageCount > 0" 
+                  [value]="service.usageCount + ' usos'"
+                  [severity]="getUsageBadgeSeverity(service.usageCount)"
+                  styleClass="usage-tag">
+                </p-badge>
+              </div>
+            </div>
+
+            <div class="row-actions">
+              <i class="pi pi-angle-right selection-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado vacío -->
+        <div *ngIf="!isLoading() && !hasResults() && !hasRecentServices()" class="empty-state">
+          <div class="empty-state-content">
+            <i class="pi pi-cog empty-state-icon"></i>
+            <h3>{{ filtersForm.get('query')?.value ? 'No se encontraron servicios' : 'No hay servicios registrados' }}</h3>
+            <p>
+              {{ filtersForm.get('query')?.value ? 
+                  'Intenta con otros términos de búsqueda, ajusta los filtros o crea un servicio personalizado.' : 
+                  'No hay servicios disponibles. Puedes crear uno personalizado en la pestaña "Crear Nuevo".' }}
+            </p>
+            <div class="empty-state-actions">
+              <orb-button
+                *ngIf="hasFilters()"
+                label="Limpiar filtros"
+                icon="pi pi-filter-slash"
+                severity="secondary"
+                (clicked)="onClear()">
+              </orb-button>
+              <orb-button
+                label="Crear servicio personalizado"
+                icon="pi pi-plus"
+                severity="primary"
+                (clicked)="activeTab.set(1)">
+              </orb-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado vacío con servicios recientes -->
+        <div *ngIf="!isLoading() && !hasResults() && hasRecentServices() && filtersForm.get('query')?.value" class="empty-state">
+          <div class="empty-state-content">
+            <i class="pi pi-search empty-state-icon"></i>
+            <h3>No se encontraron servicios</h3>
+            <p>No hay servicios que coincidan con tu búsqueda. Puedes crear uno personalizado.</p>
+            <div class="empty-state-actions">
+              <orb-button
+                *ngIf="hasFilters()"
+                label="Limpiar filtros"
+                icon="pi pi-filter-slash"
+                severity="secondary"
+                (clicked)="onClear()">
+              </orb-button>
+              <orb-button
+                label="Crear servicio personalizado"
+                icon="pi pi-plus"
+                severity="primary"
+                (clicked)="activeTab.set(1)">
+              </orb-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <!-- Pestaña 2: Crear nuevo servicio -->
+    <p-tabPanel header="Crear Nuevo" leftIcon="pi pi-plus">
+      <div class="create-service-content">
+        <div class="create-service-header">
+          <h3>Crear Servicio Personalizado</h3>
+          <p>Crea un servicio personalizado para esta cita. Este servicio se guardará para uso futuro.</p>
+        </div>
+
+        <form [formGroup]="newServiceForm" class="create-service-form">
+          <div class="p-fluid grid">
+            <div class="col-12">
+              <orb-form-field label="Nombre del servicio" [required]="true">
+                <orb-text-input 
+                  formControlName="name"
+                  placeholder="Ej: Consulta especializada, Tratamiento personalizado...">
+                </orb-text-input>
+              </orb-form-field>
+            </div>
+
+            <div class="col-12">
+              <orb-form-field label="Descripción">
+                <textarea 
+                  pInputTextarea 
+                  formControlName="description"
+                  [rows]="3"
+                  placeholder="Descripción opcional del servicio..."
+                  class="w-full">
+                </textarea>
+              </orb-form-field>
+            </div>
+
+            <div class="col-12 md:col-6">
+              <orb-form-field label="Precio base">
+                <orb-currency-input
+                  formControlName="basePrice"
+                  placeholder="0">
+                </orb-currency-input>
+              </orb-form-field>
+            </div>
+
+            <div class="col-12 md:col-6">
+              <orb-form-field label="Categoría">
+                <p-dropdown
+                  formControlName="category"
+                  [options]="categoryOptions.slice(1)" 
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Seleccionar categoría">
+                </p-dropdown>
+              </orb-form-field>
+            </div>
+
+            <div class="col-12 md:col-6">
+              <orb-form-field label="Duración estimada (minutos)">
+                <p-inputNumber
+                  formControlName="duration"
+                  [min]="5"
+                  [max]="480"
+                  suffix=" min"
+                  [step]="15">
+                </p-inputNumber>
+              </orb-form-field>
+            </div>
+          </div>
+
+          <div class="create-service-actions">
+            <orb-button
+              label="Limpiar"
+              severity="secondary"
+              icon="pi pi-refresh"
+              (clicked)="onResetNewService()">
+            </orb-button>
+            <orb-button
+              label="Crear y Seleccionar"
+              severity="primary"
+              icon="pi pi-check"
+              [disabled]="!canCreateService()"
+              (clicked)="onCreateService()">
+            </orb-button>
+          </div>
+        </form>
+
+        <!-- Preview del servicio -->
+        <div *ngIf="newServiceForm.get('name')?.value" class="service-preview">
+          <h4>Vista previa:</h4>
+          <div class="service-preview-card">
+            <div class="service-info">
+              <div class="service-name">
+                <h4>{{ newServiceForm.get('name')?.value }}</h4>
+                <p-badge value="Personalizado" severity="warn"></p-badge>
+              </div>
+              <div class="service-details">
+                <span *ngIf="newServiceForm.get('description')?.value" class="description">
+                  {{ newServiceForm.get('description')?.value }}
+                </span>
+                <div class="service-meta">
+                  <span *ngIf="newServiceForm.get('basePrice')?.value" class="price">
+                    <i class="pi pi-dollar"></i>
+                    {{ formatPrice(newServiceForm.get('basePrice')?.value) }}
+                  </span>
+                  <span *ngIf="newServiceForm.get('duration')?.value" class="duration">
+                    <i class="pi pi-clock"></i>
+                    {{ newServiceForm.get('duration')?.value }} min
+                  </span>
+                  <span class="category">
+                    <i class="pi pi-tag"></i>
+                    {{ getCategoryLabel(newServiceForm.get('category')?.value) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <div class="selection-summary" *ngIf="searchResults().length > 0">
+      <span class="selection-count">
+        {{ searchResults().length }} servicio{{ searchResults().length > 1 ? 's' : '' }} encontrado{{ searchResults().length > 1 ? 's' : '' }}
+      </span>
+    </div>
+
+    <div class="footer-actions">
+      <orb-button 
+        label="Cancelar" 
+        variant="secondary"
+        (clicked)="onCancel()">
+      </orb-button>
+    </div>
+  </div>
+</p-dialog>
