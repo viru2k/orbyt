@@ -1,0 +1,297 @@
+// Status styles to match client-list
+.status-active {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.status-inactive {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .toggle-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+}
+
+.rooms-container {
+  padding: 1rem;
+
+  .card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--surface-border);
+    
+    .header-content {
+      .title-section {
+        .page-title {
+          margin: 0 0 0.5rem 0;
+          color: var(--text-color);
+          font-size: 1.75rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          
+          i {
+            color: var(--primary-color);
+          }
+        }
+        
+        .page-subtitle {
+          margin: 0;
+          color: var(--text-color-secondary);
+          font-size: 0.95rem;
+        }
+      }
+    }
+  }
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .toolbar-right {
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      
+      .toggle-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+      }
+    }
+  }
+
+  // Tabla
+  ::ng-deep {
+    .p-datatable {
+      .p-datatable-header {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-border);
+        padding: 1rem;
+      }
+
+      .p-datatable-thead > tr > th {
+        background: var(--surface-section);
+        color: var(--text-color);
+        font-weight: 600;
+        border: 1px solid var(--surface-border);
+        padding: 0.75rem 1rem;
+      }
+
+      .p-datatable-tbody > tr > td {
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--surface-border);
+      }
+
+      .p-datatable-tbody > tr:hover {
+        background: var(--surface-hover);
+      }
+    }
+  }
+
+  .room-name {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+  }
+
+  .room-description {
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+    max-width: 200px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .room-location {
+    display: flex;
+    align-items: center;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+  }
+
+  .capacity-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--surface-100);
+    color: var(--text-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
+    
+    i {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    
+    h4 {
+      margin: 0 0 0.5rem 0;
+    }
+    
+    p {
+      margin: 0 0 1.5rem 0;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+}
+
+// Modal específico
+::ng-deep {
+  .room-modal {
+    .p-dialog-header {
+      background: var(--primary-color);
+      color: white;
+      
+      .p-dialog-title {
+        font-weight: 600;
+      }
+      
+      .p-dialog-header-icon {
+        color: white;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+
+    .p-dialog-content {
+      padding: 0;
+    }
+
+    .form-content {
+      padding: 1.5rem;
+      
+      .field {
+        margin-bottom: 1.5rem;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        
+        .field {
+          margin-bottom: 1.5rem;
+        }
+      }
+
+      .status-field {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        
+        .status-label {
+          color: var(--text-color);
+          font-weight: 500;
+          cursor: pointer;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      background: var(--surface-ground);
+      border-top: 1px solid var(--surface-border);
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .rooms-container {
+    padding: 0.5rem;
+    
+    .toolbar-right {
+      .filter-toggle {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        
+        .toggle-label {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+
+  ::ng-deep {
+    .room-modal {
+      .form-content {
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+      }
+
+      .modal-footer {
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+      }
+    }
+
+    .p-datatable {
+      .room-description {
+        max-width: 150px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  ::ng-deep {
+    .p-datatable {
+      font-size: 0.85rem;
+      
+      .p-datatable-thead > tr > th,
+      .p-datatable-tbody > tr > td {
+        padding: 0.5rem;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+    }
+  }
+}
