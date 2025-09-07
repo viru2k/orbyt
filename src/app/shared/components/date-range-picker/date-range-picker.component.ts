@@ -298,8 +298,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
           console.error('Error en input blur:', error);
         }
       });
-
-      console.log('Input listeners configurados para date range picker');
+      
     } catch (error) {
       console.error('Error configurando input listeners:', error);
     }
@@ -307,8 +306,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
 
 
   // Event handlers
-  onDateSelect(dates: Date | Date[] | null) {
-    console.log('onDateSelect called with:', dates); // Debug log
+  onDateSelect(dates: Date | Date[] | null) {    
     
     // Solo guardar temporalmente, no emitir cambios hasta confirmar
     if (!dates) {
@@ -319,8 +317,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
     // Convert single date to array for consistency
     const dateArray = Array.isArray(dates) ? dates : [dates];
     this.tempSelectedRange = dateArray;
-    
-    console.log('Temp selection:', this.tempSelectedRange); // Debug log
+        
     
     // Forzar que el calendario permanezca abierto después de seleccionar la segunda fecha
     setTimeout(() => {
@@ -358,8 +355,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
     const target = event.target as HTMLInputElement;
     if (!target) return;
     
-    const inputValue = target.value;
-    console.log('Manual input:', inputValue);
+    const inputValue = target.value;    
     
     // Validar formato de entrada manual
     this.validateManualInput(inputValue);
@@ -369,8 +365,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
     const target = event.target as HTMLInputElement;
     if (!target) return;
     
-    const inputValue = target.value;
-    console.log('Input blur:', inputValue);
+    const inputValue = target.value;    
     
     // Intentar parsear y aplicar la entrada manual
     this.parseAndApplyManualInput(inputValue);
@@ -478,8 +473,7 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
     try {
       const dates = this.parseInputValue(inputValue);
       if (dates) {
-        this.tempSelectedRange = dates;
-        console.log('Parsed dates:', dates);
+        this.tempSelectedRange = dates;        
       } else {
         this.tempSelectedRange = null;
       }
@@ -608,19 +602,13 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
   public confirmSelection() {
     if (this.tempSelectedRange && this.tempSelectedRange.length > 0) {
       this.selectedRange = [...this.tempSelectedRange];
-      
-      console.log('Fechas seleccionadas originales:', this.selectedRange);
-      console.log('Fecha 0 original:', this.selectedRange[0]);
-      console.log('Fecha 1 original:', this.selectedRange[1] || this.selectedRange[0]);
+                        
       
       const range: DateRange = {
         start: this.normalizeStartDate(this.selectedRange[0]) || null,
         end: this.normalizeEndDate(this.selectedRange[1] || this.selectedRange[0]) || null
       };
-      
-      console.log('Rango normalizado final:', range);
-      console.log('Start ISO:', range.start?.toISOString());
-      console.log('End ISO:', range.end?.toISOString());
+                        
       
       this.onChange(range);
       this.dateRangeChange.emit(range);
@@ -636,21 +624,17 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
    */
   private normalizeStartDate(date: Date | null): Date | null {
     if (!date) return null;
-    
-    console.log('Normalizando fecha de inicio:', date);
+        
     
     // Crear nueva fecha a partir de los componentes año, mes, día para evitar problemas de zona horaria
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
-    
-    console.log('Componentes de fecha inicio:', { year, month, day });
+        
     
     // Crear fecha local y luego convertir a UTC
     const normalized = new Date(year, month, day, 0, 0, 0, 0);
-    
-    console.log('Fecha normalizada inicio:', normalized);
-    console.log('ISO inicio:', normalized.toISOString());
+            
     
     return normalized;
   }
@@ -660,21 +644,17 @@ export class DateRangePickerComponent implements OnInit, AfterViewInit, OnDestro
    */
   private normalizeEndDate(date: Date | null): Date | null {
     if (!date) return null;
-    
-    console.log('Normalizando fecha de fin:', date);
+        
     
     // Crear nueva fecha a partir de los componentes año, mes, día para evitar problemas de zona horaria
     const year = date.getFullYear();
     const month = date.getMonth();
     const day = date.getDate();
-    
-    console.log('Componentes de fecha fin:', { year, month, day });
+        
     
     // Crear fecha local y luego convertir a UTC
     const normalized = new Date(year, month, day, 23, 59, 59, 999);
-    
-    console.log('Fecha normalizada fin:', normalized);
-    console.log('ISO fin:', normalized.toISOString());
+            
     
     return normalized;
   }

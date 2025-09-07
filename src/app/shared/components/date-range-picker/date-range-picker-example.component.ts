@@ -281,26 +281,21 @@ export class DateRangePickerExampleComponent {
   });
 
   // Event handlers
-  onBasicRangeChange(range: DateRange) {
-    console.log('Basic range changed:', range);
+  onBasicRangeChange(range: DateRange) {    
   }
 
-  onAvailabilityRangeChange(range: DateRange) {
-    console.log('Availability range changed:', range);
+  onAvailabilityRangeChange(range: DateRange) {    
   }
 
-  onTimeRangeChange(range: DateRange) {
-    console.log('Time range changed:', range);
+  onTimeRangeChange(range: DateRange) {    
   }
 
   onAvailabilityLoaded(availability: CalendarAvailability) {
-    this.lastAvailability.set(availability);
-    console.log('Availability loaded:', availability);
+    this.lastAvailability.set(availability);    
   }
 
   generateReport() {
-    const formValue = this.reactiveForm.value;
-    console.log('Generating report for range:', formValue.dateRange);
+    const formValue = this.reactiveForm.value;    
     
     // Aquí iría la lógica para generar el reporte
     alert(`Generando reporte para el rango: ${formValue.dateRange?.start} - ${formValue.dateRange?.end}`);
