@@ -45,4 +45,4 @@ export function agendaControllerGetDayOverrides(http: HttpClient, rootUrl: strin
   );
 }
 
-agendaControllerGetDayOverrides.PATH = '/api/agenda/day-overrides';
+agendaControllerGetDayOverrides.PATH = '/agenda/day-overrides';

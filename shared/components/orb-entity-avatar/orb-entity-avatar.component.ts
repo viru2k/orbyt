@@ -48,7 +48,10 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() context: 'table' | 'modal' | 'profile' | 'card' = 'table';
   @Input() showTooltip = true;
   @Input() autoLoad = true; // Cargar avatar automáticamente desde el servidor
-  
+  @Input() tooltipText: string = '';
+  @Input() customTooltipText: boolean = false;
+  @Input() displayNamePath?: string; // Ruta para obtener el nombre a mostrar (ej: "owner.fullName")
+  @Input() customDisplayName?: string; // Nombre personalizado directo
   @Output() avatarClick = new EventEmitter<EntityWithAvatar>();
   @Output() uploadClick = new EventEmitter<AvatarEntity>();
   @Output() avatarUpdated = new EventEmitter<FileUploadResponseDto>();
@@ -58,7 +61,6 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   initials = '';
   displayName = '';
   backgroundColor = '';
-  tooltipText = '';
   isLoading = false;
   showModal = false;
   
@@ -73,7 +75,8 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['entity'] || changes['avatar'] || changes['entityType']) {
+    if (changes['entity'] || changes['avatar'] || changes['entityType'] ||
+        changes['displayNamePath'] || changes['customDisplayName'] || changes['customTooltipText']) {
       // Resetear flag de carga si cambió la entidad o el tipo
       if (changes['entity'] || changes['entityType']) {
         this.avatarLoadAttempted = false;
@@ -93,16 +96,18 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
   private updateAvatarDisplay() {
     if (!this.entity) return;
 
-    // Datos básicos de la entidad
-    this.displayName = this.avatarUtils.getEntityDisplayName(this.entity);
-    this.initials = this.avatarUtils.getEntityInitials(this.entity);
+    // Datos básicos de la entidad - usar personalizado si está disponible
+    this.displayName = this.getDisplayName();
+    this.initials = this.avatarUtils.generateInitials(this.displayName);
     this.backgroundColor = this.avatarUtils.getInitialsBackgroundColor(this.entity);
-    
+
     // URL del avatar
     this.avatarUrl = this.avatarUtils.getAvatarUrl(this.entity, this.avatar || undefined);
-    
-    // Tooltip
-    this.tooltipText = this.avatarUtils.getAvatarTooltip(this.entity, this.avatar || undefined);
+
+    // Tooltip - usar personalizado si no está establecido customTooltipText
+    if (!this.customTooltipText) {
+      this.tooltipText = this.displayName;
+    }
 
     // Crear objeto EntityWithAvatar
     this.entityWithAvatar = this.avatarUtils.getEntityWithAvatar(this.entity, this.avatar || undefined);
@@ -209,6 +214,52 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
    */
   onImageError() {
     this.avatarUrl = null;
+  }
+
+  /**
+   * Obtener el nombre a mostrar considerando configuraciones personalizadas
+   */
+  private getDisplayName(): string {
+    // Si hay un nombre personalizado directo, usarlo
+    if (this.customDisplayName?.trim()) {
+      return this.customDisplayName.trim();
+    }
+
+    // Si hay una ruta específica, extraer el valor
+    if (this.displayNamePath?.trim()) {
+      const extractedValue = this.extractValueFromPath(this.entity, this.displayNamePath);
+      if (extractedValue?.trim()) {
+        return extractedValue.trim();
+      }
+    }
+
+    // Fallback al comportamiento estándar
+    return this.avatarUtils.getEntityDisplayName(this.entity);
+  }
+
+  /**
+   * Extraer valor de una ruta de propiedades anidadas (ej: "owner.fullName")
+   */
+  private extractValueFromPath(obj: any, path: string): string | null {
+    if (!obj || !path) return null;
+
+    try {
+      const keys = path.split('.');
+      let current = obj;
+
+      for (const key of keys) {
+        if (current && typeof current === 'object' && key in current) {
+          current = current[key];
+        } else {
+          return null;
+        }
+      }
+
+      return typeof current === 'string' ? current : String(current || '');
+    } catch (error) {
+      console.warn(`Error extracting value from path "${path}":`, error);
+      return null;
+    }
   }
 
   // Getters para el template

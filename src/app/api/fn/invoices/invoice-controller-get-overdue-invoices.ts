@@ -28,4 +28,4 @@ export function invoiceControllerGetOverdueInvoices(http: HttpClient, rootUrl: s
   );
 }
 
-invoiceControllerGetOverdueInvoices.PATH = '/api/invoices/overdue';
+invoiceControllerGetOverdueInvoices.PATH = '/invoices/overdue';

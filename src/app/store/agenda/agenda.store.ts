@@ -3,6 +3,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { exhaustMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { tapResponse } from '@ngrx/operators';
+import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 // API Services and DTOs
@@ -102,7 +103,11 @@ function mapAppointmentToCalendarEvent(appointment: AppointmentResponseDto): Cal
     end: endDate,
     allDay: appointment.allDay || false,
     color: eventColor,
-    editable: true,
+    draggable: true,
+    resizable: {
+      beforeStart: true,
+      afterEnd: true
+    },
     cssClass: cssClasses,
     meta: {
       resourceId: appointment.extendedProps?.resourceId || appointment.roomId,
@@ -135,6 +140,10 @@ export class AgendaStore extends ComponentStore<AgendaState> {
   private readonly agendaService = inject(AgendaService);
   private readonly notificationService = inject(NotificationService);
   private readonly spinner = inject(SpinnerService);
+
+  // Subject to notify appointment updates (for drag and drop notifications)
+  private appointmentUpdatedSubject = new Subject<{appointment: AppointmentResponseDto, wasDragDrop?: boolean}>();
+  public appointmentUpdated$ = this.appointmentUpdatedSubject.asObservable();
 
   constructor(private readonly globalStore: Store) {
     super(initialAgendaState);
@@ -340,19 +349,23 @@ export class AgendaStore extends ComponentStore<AgendaState> {
     )
   );
 
-  readonly updateAppointment = this.effect<{ id: string; dto: UpdateAppointmentDto }>((params$) =>
+  readonly updateAppointment = this.effect<{ id: string; dto: UpdateAppointmentDto; wasDragDrop?: boolean }>((params$) =>
     params$.pipe(
       tap(() => {
         this.setLoading(true);
         this.spinner.show();
       }),
-      exhaustMap(({ id, dto }) =>
+      exhaustMap(({ id, dto, wasDragDrop }) =>
         this.agendaService.agendaControllerUpdate({ id: Number(id), body: dto }).pipe(
           tapResponse(
             (updatedAppointment: AppointmentResponseDto) => {
               this.updateAppointmentState(updatedAppointment);
               this.notificationService.showSuccess(NotificationSeverity.Success, 'Turno actualizado con éxito.');
               this.spinner.hide();
+
+              // Emit the appointment updated event
+              this.appointmentUpdatedSubject.next({ appointment: updatedAppointment, wasDragDrop });
+
                // Optionally reload all appointments for the current range
                const filters = this.get().currentFilters;
                if (filters) {

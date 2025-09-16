@@ -36,4 +36,4 @@ export function agendaControllerCreateDayOverride(http: HttpClient, rootUrl: str
   );
 }
 
-agendaControllerCreateDayOverride.PATH = '/api/agenda/day-override';
+agendaControllerCreateDayOverride.PATH = '/agenda/day-override';

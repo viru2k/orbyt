@@ -28,4 +28,4 @@ export function inventoryControllerGetStockDistribution(http: HttpClient, rootUr
   );
 }
 
-inventoryControllerGetStockDistribution.PATH = '/api/inventory/dashboard/stock-distribution';
+inventoryControllerGetStockDistribution.PATH = '/inventory/dashboard/stock-distribution';

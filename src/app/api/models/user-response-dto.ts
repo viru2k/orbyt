@@ -5,7 +5,6 @@
 import { RoleResponseDto } from '../models/role-response-dto';
 export interface UserResponseDto {
   active: boolean;
-  avatarUrl?: string;
   createdAt: string;
   email: string;
   fullName: string;

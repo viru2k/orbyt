@@ -31,4 +31,4 @@ export function invoiceControllerCreate(http: HttpClient, rootUrl: string, param
   );
 }
 
-invoiceControllerCreate.PATH = '/api/invoices';
+invoiceControllerCreate.PATH = '/invoices';

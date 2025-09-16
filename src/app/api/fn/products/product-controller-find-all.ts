@@ -34,4 +34,4 @@ export function productControllerFindAll(http: HttpClient, rootUrl: string, para
   );
 }
 
-productControllerFindAll.PATH = '/api/products';
+productControllerFindAll.PATH = '/products';

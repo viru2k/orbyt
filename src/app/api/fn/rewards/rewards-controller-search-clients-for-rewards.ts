@@ -30,4 +30,4 @@ export function rewardsControllerSearchClientsForRewards(http: HttpClient, rootU
   );
 }
 
-rewardsControllerSearchClientsForRewards.PATH = '/api/rewards/client-search';
+rewardsControllerSearchClientsForRewards.PATH = '/rewards/client-search';

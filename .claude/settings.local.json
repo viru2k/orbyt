@@ -49,7 +49,9 @@
       "Bash(npx nx show:*)",
       "Bash(nx generate:*)",
       "Bash(npx -p @ionic/cli ionic start:*)",
-      "Read(//c/c/repositories/**)"
+      "Read(//c/c/repositories/**)",
+      "Bash(xargs kill:*)",
+      "Bash(netstat:*)"
     ],
     "deny": [],
     "additionalDirectories": [

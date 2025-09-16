@@ -29,4 +29,4 @@ export function productControllerRemove(http: HttpClient, rootUrl: string, param
   );
 }
 
-productControllerRemove.PATH = '/api/products/{id}';
+productControllerRemove.PATH = '/products/{id}';

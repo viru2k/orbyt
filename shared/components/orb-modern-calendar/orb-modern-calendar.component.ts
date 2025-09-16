@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CalendarModule, DateAdapter, CalendarUtils, CalendarA11y } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarEvent, CalendarView, CalendarDateFormatter, CalendarEventTitleFormatter, CalendarEventAction, CalendarEventTimesChangedEvent } from 'angular-calendar';
+import { DragAndDropModule } from 'angular-draggable-droppable';
+import { ResizableModule } from 'angular-resizable-element';
 import { Subject } from 'rxjs';
 import { startOfDay, endOfDay, subDays, addDays, endOfMonth, startOfMonth, startOfWeek, endOfWeek, isSameDay, isSameMonth, addHours } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -42,7 +44,7 @@ export interface AdaptedDatesSetArg {
 @Component({
   selector: 'orb-modern-calendar',
   standalone: true,
-  imports: [CommonModule, CalendarModule],
+  imports: [CommonModule, CalendarModule, DragAndDropModule, ResizableModule],
   providers: [
     {
       provide: DateAdapter,

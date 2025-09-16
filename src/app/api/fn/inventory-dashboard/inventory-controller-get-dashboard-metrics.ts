@@ -28,4 +28,4 @@ export function inventoryControllerGetDashboardMetrics(http: HttpClient, rootUrl
   );
 }
 
-inventoryControllerGetDashboardMetrics.PATH = '/api/inventory/dashboard/metrics';
+inventoryControllerGetDashboardMetrics.PATH = '/inventory/dashboard/metrics';

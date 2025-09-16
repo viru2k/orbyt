@@ -31,4 +31,4 @@ export function serviceControllerCreate(http: HttpClient, rootUrl: string, param
   );
 }
 
-serviceControllerCreate.PATH = '/api/services';
+serviceControllerCreate.PATH = '/service';

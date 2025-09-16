@@ -130,19 +130,26 @@
     align-items: center !important;
     gap: 0.75rem !important;
     width: 100% !important;
-    
+
     orb-entity-avatar {
       flex-shrink: 0 !important;
       display: inline-flex !important;
       align-items: center !important;
-      
+      width: 48px !important; // Fixed width to match normal avatar size
+      height: 48px !important; // Fixed height to match normal avatar size
+
       .entity-avatar-container {
         display: inline-flex !important;
         align-items: center !important;
-        margin-right: 0.5rem !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important; // Remove any margin that could add extra 8px
+        padding: 0 !important; // Remove any padding that could add extra 8px
+        box-sizing: border-box !important;
       }
     }
-    
+
     .user-info {
       flex: 1 !important;
       min-width: 0 !important;

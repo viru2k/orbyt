@@ -28,4 +28,4 @@ export function subscriptionControllerFindAll(http: HttpClient, rootUrl: string,
   );
 }
 
-subscriptionControllerFindAll.PATH = '/api/subscription';
+subscriptionControllerFindAll.PATH = '/subscription';

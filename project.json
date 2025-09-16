@@ -45,7 +45,24 @@
               "maximumError": "16kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "./src/environments/environment.ts",
+              "with": "./src/environments/environment.prod.ts"
+            }
+          ]
+        },
+        "docker": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "./src/environments/environment.ts",
+              "with": "./src/environments/environment.docker.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,
@@ -63,6 +80,10 @@
       "configurations": {
         "production": {
           "buildTarget": "orbyt:build:production"
+        },
+        "docker": {
+          "buildTarget": "orbyt:build:docker",
+          "proxyConfig": "proxy.docker.conf.json"
         },
         "development": {
           "buildTarget": "orbyt:build:development",

@@ -30,4 +30,4 @@ export function productControllerToggle(http: HttpClient, rootUrl: string, param
   );
 }
 
-productControllerToggle.PATH = '/api/products/{id}/toggle';
+productControllerToggle.PATH = '/products/{id}/toggle';

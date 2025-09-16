@@ -23,10 +23,6 @@ import { productControllerToggle } from '../fn/products/product-controller-toggl
 import { ProductControllerToggle$Params } from '../fn/products/product-controller-toggle';
 import { productControllerUpdate } from '../fn/products/product-controller-update';
 import { ProductControllerUpdate$Params } from '../fn/products/product-controller-update';
-import { productControllerUploadImage } from '../fn/products/product-controller-upload-image';
-import { ProductControllerUploadImage$Params } from '../fn/products/product-controller-upload-image';
-import { productControllerUploadThumbnail } from '../fn/products/product-controller-upload-thumbnail';
-import { ProductControllerUploadThumbnail$Params } from '../fn/products/product-controller-upload-thumbnail';
 import { ProductResponseDto } from '../models/product-response-dto';
 
 @Injectable({ providedIn: 'root' })
@@ -36,7 +32,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerFindAll()` */
-  static readonly ProductControllerFindAllPath = '/api/products';
+  static readonly ProductControllerFindAllPath = '/products';
 
   /**
    * Listar productos (admin puede ver los de un sub-usuario).
@@ -69,7 +65,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerCreate()` */
-  static readonly ProductControllerCreatePath = '/api/products';
+  static readonly ProductControllerCreatePath = '/products';
 
   /**
    * Crear un nuevo producto.
@@ -102,7 +98,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerFindOne()` */
-  static readonly ProductControllerFindOnePath = '/api/products/{id}';
+  static readonly ProductControllerFindOnePath = '/products/{id}';
 
   /**
    * Obtener detalles de un producto (admin puede ver los de un sub-usuario).
@@ -135,7 +131,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerRemove()` */
-  static readonly ProductControllerRemovePath = '/api/products/{id}';
+  static readonly ProductControllerRemovePath = '/products/{id}';
 
   /**
    * Eliminar un producto.
@@ -168,7 +164,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerUpdate()` */
-  static readonly ProductControllerUpdatePath = '/api/products/{id}';
+  static readonly ProductControllerUpdatePath = '/products/{id}';
 
   /**
    * Actualizar un producto.
@@ -201,7 +197,7 @@ export class ProductsService extends BaseService {
   }
 
   /** Path part for operation `productControllerToggle()` */
-  static readonly ProductControllerTogglePath = '/api/products/{id}/toggle';
+  static readonly ProductControllerTogglePath = '/products/{id}/toggle';
 
   /**
    * Alternar estado activo/inactivo de un producto.
@@ -229,72 +225,6 @@ export class ProductsService extends BaseService {
    */
   productControllerToggle(params: ProductControllerToggle$Params, context?: HttpContext): Observable<ProductResponseDto> {
     return this.productControllerToggle$Response(params, context).pipe(
-      map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
-    );
-  }
-
-  /** Path part for operation `productControllerUploadImage()` */
-  static readonly ProductControllerUploadImagePath = '/api/products/{id}/upload-image';
-
-  /**
-   * Subir imagen principal del producto.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `productControllerUploadImage()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  productControllerUploadImage$Response(params: ProductControllerUploadImage$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductResponseDto>> {
-    return productControllerUploadImage(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Subir imagen principal del producto.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `productControllerUploadImage$Response()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  productControllerUploadImage(params: ProductControllerUploadImage$Params, context?: HttpContext): Observable<ProductResponseDto> {
-    return this.productControllerUploadImage$Response(params, context).pipe(
-      map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
-    );
-  }
-
-  /** Path part for operation `productControllerUploadThumbnail()` */
-  static readonly ProductControllerUploadThumbnailPath = '/api/products/{id}/upload-thumbnail';
-
-  /**
-   * Subir thumbnail del producto.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `productControllerUploadThumbnail()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  productControllerUploadThumbnail$Response(params: ProductControllerUploadThumbnail$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductResponseDto>> {
-    return productControllerUploadThumbnail(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Subir thumbnail del producto.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `productControllerUploadThumbnail$Response()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  productControllerUploadThumbnail(params: ProductControllerUploadThumbnail$Params, context?: HttpContext): Observable<ProductResponseDto> {
-    return this.productControllerUploadThumbnail$Response(params, context).pipe(
       map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
     );
   }

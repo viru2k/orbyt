@@ -29,4 +29,4 @@ export function agendaControllerUpdateConfigTest(http: HttpClient, rootUrl: stri
   );
 }
 
-agendaControllerUpdateConfigTest.PATH = '/api/agenda/config-test';
+agendaControllerUpdateConfigTest.PATH = '/agenda/config-test';

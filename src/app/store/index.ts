@@ -4,6 +4,8 @@ export * from './stock/product.store';
 export * from './client/client.store';
 export * from './agenda/agenda.store';
 export * from './users/users.store';
+export { RoomsStore } from './rooms/rooms.store';
+export { ServicesStore } from './services/services.store';
 export { MovementStore } from '../features/inventory/shared/stores/movement.store';
 export { ConsultationTokenStore } from './consultation-tokens/consultation-tokens.store';
 export { RewardsStore } from './rewards/rewards.store';

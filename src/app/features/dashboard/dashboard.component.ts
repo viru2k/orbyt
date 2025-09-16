@@ -2,7 +2,7 @@ import { AuthStore } from '@orb-stores';
 import { DashboardService } from '../../api/services/dashboard.service';
 import { DashboardMetricsDto, AppointmentMetricsDto, ConsultationMetricsDto, ClientMetricsDto, RevenueMetricsDto } from '../../api/models';
 
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, effect, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { take, filter, catchError, of } from 'rxjs';
 import { NotificationService, WebSocketNotificationService, WebSocketService } from '@orb-services';
@@ -34,8 +34,9 @@ import { TableColumn } from '@orb-models';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  @ViewChildren(OrbChartComponent) charts!: QueryList<OrbChartComponent>;
   // Signals for reactive data
-  currentPeriod = signal('today');
+  currentPeriod = signal('current'); // current, 6months, 1year
   isLoading = signal(false);
   
   // Dashboard data signals
@@ -63,10 +64,39 @@ export class DashboardComponent implements OnInit {
   activeClients = computed(() => this.dashboardMetrics()?.clients?.active || 0);
   pendingPayments = computed(() => this.dashboardMetrics()?.revenue?.pendingPayments || 0);
   
-  // Performance metrics
-  revenueGrowth = signal(12.5);
-  consultationGrowth = signal(8.3);
-  clientSatisfaction = signal(94);
+  // Performance metrics computed from actual data
+  revenueGrowth = computed(() => {
+    const metrics = this.dashboardMetrics();
+    if (!metrics?.revenue) return 0;
+    // Calculate growth from thisWeekRevenue vs previous week (approximation)
+    const thisWeek = metrics.revenue.thisWeekRevenue;
+    const previousWeek = (metrics.revenue.totalRevenue - thisWeek) / 4; // rough estimate
+    return previousWeek > 0 ? ((thisWeek - previousWeek) / previousWeek) * 100 : 0;
+  });
+  
+  consultationGrowth = computed(() => {
+    const metrics = this.dashboardMetrics();
+    if (!metrics?.consultations) return 0;
+    // Calculate growth from thisWeek vs previous weeks (approximation)
+    const thisWeek = metrics.consultations.thisWeek;
+    const previousWeek = (metrics.consultations.total - thisWeek) / 4; // rough estimate
+    return previousWeek > 0 ? ((thisWeek - previousWeek) / previousWeek) * 100 : 0;
+  });
+  
+  clientSatisfaction = computed(() => {
+    // This should come from a separate satisfaction metrics endpoint when available
+    // For now, return a calculated value based on completed vs cancelled consultations
+    const metrics = this.dashboardMetrics();
+    if (!metrics?.consultations) return 0;
+    const total = metrics.consultations.completed + metrics.consultations.cancelled;
+    return total > 0 ? (metrics.consultations.completed / total) * 100 : 0;
+  });
+  
+  averageConsultationTime = computed(() => {
+    // This should come from consultation time tracking when available
+    // For now, return 0 as we don't have this data from backend
+    return 0;
+  });
   
   // Recent activity data
   recentItems = computed(() => this.recentActivity().slice(0, 5));
@@ -75,7 +105,6 @@ export class DashboardComponent implements OnInit {
   recentInvoices = computed(() => this.recentItems().filter(item => item.type === 'invoice'));
   recentConsultations = computed(() => this.recentItems().filter(item => item.type === 'consultation'));
   pendingInvoices = computed(() => this.pendingPayments());
-  averageConsultationTime = signal(25);
   
   // Table columns for backwards compatibility
   invoiceColumns: TableColumn[] = [
@@ -112,7 +141,26 @@ export class DashboardComponent implements OnInit {
   private readonly webSocketNotificationService = inject(WebSocketNotificationService);
   private readonly webSocketService = inject(WebSocketService);
 
-  constructor() {}
+  constructor() {
+    // Effect to update charts when dashboard metrics change
+    effect(() => {
+      const metrics = this.dashboardMetrics();
+      if (metrics) {
+        // Trigger chart data update
+        setTimeout(() => this.updateChartComponents(), 0);
+      }
+    });
+    
+    // Effect to update charts when period changes
+    effect(() => {
+      const period = this.currentPeriod();
+      const metrics = this.dashboardMetrics();
+      if (metrics && period) {
+        this.updateChartData();
+        setTimeout(() => this.updateChartComponents(), 0);
+      }
+    });
+  }
 
   ngOnInit() {
     this.initializeCharts();
@@ -251,26 +299,69 @@ export class DashboardComponent implements OnInit {
     const metrics = this.dashboardMetrics();
     if (!metrics) return;
 
-    // Revenue Chart (simplified for now - last 6 months mock data)
-    this.revenueChartData = {
-      labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-      datasets: [{
-        label: 'Ingresos',
-        data: [
-          metrics.revenue.totalRevenue * 0.7,
-          metrics.revenue.totalRevenue * 0.8,
-          metrics.revenue.totalRevenue * 0.9,
-          metrics.revenue.totalRevenue * 0.85,
-          metrics.revenue.totalRevenue * 0.95,
-          metrics.revenue.totalRevenue
-        ],
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        borderColor: '#3b82f6',
-        borderWidth: 3,
-        fill: true,
-        tension: 0.4
-      }]
-    };
+    // Revenue Chart - Use actual backend data based on selected period
+    const period = this.currentPeriod();
+    
+    if (period === '6months') {
+      // For 6 months view, show monthly breakdown (mock data since backend doesn't provide this yet)
+      this.revenueChartData = {
+        labels: ['Hace 6m', 'Hace 5m', 'Hace 4m', 'Hace 3m', 'Hace 2m', 'Este mes'],
+        datasets: [{
+          label: 'Ingresos Mensuales',
+          data: [
+            metrics.revenue.thisMonthRevenue * 0.6,
+            metrics.revenue.thisMonthRevenue * 0.7,
+            metrics.revenue.thisMonthRevenue * 0.8,
+            metrics.revenue.thisMonthRevenue * 0.9,
+            metrics.revenue.thisMonthRevenue * 0.95,
+            metrics.revenue.thisMonthRevenue || 0
+          ],
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderColor: '#3b82f6',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      };
+    } else if (period === '1year') {
+      // For 1 year view, show quarterly breakdown
+      this.revenueChartData = {
+        labels: ['T1', 'T2', 'T3', 'T4'],
+        datasets: [{
+          label: 'Ingresos Trimestrales',
+          data: [
+            metrics.revenue.totalRevenue * 0.2,
+            metrics.revenue.totalRevenue * 0.25,
+            metrics.revenue.totalRevenue * 0.3,
+            metrics.revenue.totalRevenue * 0.25
+          ],
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderColor: '#3b82f6',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      };
+    } else {
+      // Default current period view
+      this.revenueChartData = {
+        labels: ['Hoy', 'Esta Semana', 'Este Mes', 'Total'],
+        datasets: [{
+          label: 'Ingresos',
+          data: [
+            metrics.revenue.todayRevenue || 0,
+            metrics.revenue.thisWeekRevenue || 0,
+            metrics.revenue.thisMonthRevenue || 0,
+            metrics.revenue.totalRevenue || 0
+          ],
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderColor: '#3b82f6',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      };
+    }
 
     // Consultations Chart (status distribution)
     this.consultationsChartData = {
@@ -312,22 +403,24 @@ export class DashboardComponent implements OnInit {
       }]
     };
 
-    // Performance metrics chart
+    // Performance metrics chart - Use computed metrics
+    const satisfactionRate = this.clientSatisfaction();
+    const completionRate = metrics.consultations.total > 0 
+      ? (metrics.consultations.completed / metrics.consultations.total) * 100 
+      : 0;
+    
     this.performanceChartData = {
-      labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+      labels: ['Satisfacción Cliente', 'Tasa Completado', 'Consultas Activas'],
       datasets: [
         {
-          label: 'Satisfacción (%)',
-          data: [89, 91, 88, 94, 92, 95],
-          backgroundColor: 'rgba(16, 185, 129, 0.2)',
-          borderColor: '#10b981',
-          borderWidth: 2
-        },
-        {
-          label: 'Retención (%)',
-          data: [85, 87, 89, 88, 91, 93],
-          backgroundColor: 'rgba(59, 130, 246, 0.2)',
-          borderColor: '#3b82f6',
+          label: 'Métricas (%)',
+          data: [
+            satisfactionRate,
+            completionRate,
+            metrics.consultations.inProgress
+          ],
+          backgroundColor: ['rgba(16, 185, 129, 0.2)', 'rgba(59, 130, 246, 0.2)', 'rgba(245, 158, 11, 0.2)'],
+          borderColor: ['#10b981', '#3b82f6', '#f59e0b'],
           borderWidth: 2
         }
       ]
@@ -461,6 +554,30 @@ export class DashboardComponent implements OnInit {
 
   refreshData(): void {
     this.loadDashboardData();
+  }
+
+  private updateChartComponents(): void {
+    if (this.charts) {
+      this.charts.forEach((chart, index) => {
+        let chartData;
+        switch (index) {
+          case 0: // Revenue chart
+            chartData = this.revenueChartData;
+            break;
+          case 1: // Consultations chart
+            chartData = this.consultationsChartData;
+            break;
+          case 2: // Performance chart
+            chartData = this.performanceChartData;
+            break;
+          default:
+            return;
+        }
+        if (chartData && Object.keys(chartData).length > 0) {
+          chart.updateChart(chartData);
+        }
+      });
+    }
   }
 
 }

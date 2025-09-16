@@ -36,7 +36,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetMetrics()` */
-  static readonly DashboardControllerGetMetricsPath = '/api/dashboard/metrics';
+  static readonly DashboardControllerGetMetricsPath = '/dashboard/metrics';
 
   /**
    * Obtener métricas completas del dashboard.
@@ -69,7 +69,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetQuickStats()` */
-  static readonly DashboardControllerGetQuickStatsPath = '/api/dashboard/quick-stats';
+  static readonly DashboardControllerGetQuickStatsPath = '/dashboard/quick-stats';
 
   /**
    * Obtener estadísticas rápidas para widgets.
@@ -102,7 +102,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetRecentActivity()` */
-  static readonly DashboardControllerGetRecentActivityPath = '/api/dashboard/recent-activity';
+  static readonly DashboardControllerGetRecentActivityPath = '/dashboard/recent-activity';
 
   /**
    * Obtener actividad reciente.
@@ -135,7 +135,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetAppointmentsSummary()` */
-  static readonly DashboardControllerGetAppointmentsSummaryPath = '/api/dashboard/appointments/summary';
+  static readonly DashboardControllerGetAppointmentsSummaryPath = '/dashboard/appointments/summary';
 
   /**
    * Resumen de citas para dashboard.
@@ -168,7 +168,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetConsultationsSummary()` */
-  static readonly DashboardControllerGetConsultationsSummaryPath = '/api/dashboard/consultations/summary';
+  static readonly DashboardControllerGetConsultationsSummaryPath = '/dashboard/consultations/summary';
 
   /**
    * Resumen de consultas para dashboard.
@@ -201,7 +201,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetClientsSummary()` */
-  static readonly DashboardControllerGetClientsSummaryPath = '/api/dashboard/clients/summary';
+  static readonly DashboardControllerGetClientsSummaryPath = '/dashboard/clients/summary';
 
   /**
    * Resumen de clientes para dashboard.
@@ -234,7 +234,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetRevenueSummary()` */
-  static readonly DashboardControllerGetRevenueSummaryPath = '/api/dashboard/revenue/summary';
+  static readonly DashboardControllerGetRevenueSummaryPath = '/dashboard/revenue/summary';
 
   /**
    * Resumen de ingresos para dashboard.
@@ -267,7 +267,7 @@ export class DashboardService extends BaseService {
   }
 
   /** Path part for operation `dashboardControllerGetBusinessTypePerformance()` */
-  static readonly DashboardControllerGetBusinessTypePerformancePath = '/api/dashboard/business-types/performance';
+  static readonly DashboardControllerGetBusinessTypePerformancePath = '/dashboard/business-types/performance';
 
   /**
    * Rendimiento por tipo de negocio.

@@ -1,55 +1,57 @@
 <p-toast />
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="grid">
-    
-    <!-- Avatar Section - Solo en modo edición -->
-    <div class="col-12" *ngIf="isEditMode && currentProductEntity">
+  <div class="grid" style="gap: 0.5rem;">
+
+    <!-- Información Básica -->
+    <div class="col-12">
       <orb-card>
         <div orbHeader class="flex align-items-center">
-          <i class="pi pi-image mr-2"></i>
-          <h3 class="m-0">Imagen del Producto</h3>
+          <i class="pi pi-box mr-2"></i>
+          <h3 class="m-0">Información Básica</h3>
         </div>
-        <div orbBody class="flex justify-content-center align-items-center">
-          <div class="avatar-section text-center">
-            <div class="avatar-display">
-              <orb-entity-avatar
-                [entity]="currentProductEntity"
-                entityType="product"
-                size="xlarge"
-                shape="square"
-                [showTooltip]="false"
-                [showUploadButton]="true"
-                context="profile"
-                [avatar]="currentAvatar"
-                [autoLoad]="false"
-                (avatarUpdated)="onAvatarUploaded($event)">
-              </orb-entity-avatar>
-            </div>
+        <div orbBody class="grid">
+          <!-- Nombre -->
+          <div class="field col-12">
+            <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))">
+              <orb-text-input formControlName="name" inputId="name"></orb-text-input>
+            </orb-form-field>
+          </div>
+
+          <!-- Precio -->
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Precio" [required]="utilsService.isRequired(form.get('price'))">
+              <orb-currency-input formControlName="price" inputId="price"></orb-currency-input>
+            </orb-form-field>
+          </div>
+
+          <!-- Estado -->
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))">
+              <orb-select
+                formControlName="status"
+                [options]="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                [showClear]="false">
+              </orb-select>
+            </orb-form-field>
+          </div>
+
+          <!-- Avatar URL (nuevo campo) -->
+          <div class="field col-12">
+            <orb-form-field label="URL de Imagen">
+              <orb-text-input formControlName="avatarUrl" inputId="avatarUrl"></orb-text-input>
+            </orb-form-field>
+          </div>
+
+          <!-- Descripción -->
+          <div class="field col-12">
+            <orb-form-field label="Descripción" [required]="utilsService.isRequired(form.get('description'))">
+              <orb-simple-textarea formControlName="description" [rows]="3" [autoResize]="true" inputId="description"></orb-simple-textarea>
+            </orb-form-field>
           </div>
         </div>
       </orb-card>
-    </div>
-
-    <!-- Nombre -->
-    <div class="col-12">
-       <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))" >
-                <orb-text-input formControlName="name"   inputId="name"></orb-text-input>
-      </orb-form-field>
-    </div>
-
-    <!-- Precio -->
-    <div class="col-12">
-        <orb-form-field label="Precio" [required]="utilsService.isRequired(form.get('price'))" >
-        <orb-currency-input formControlName="price" inputId="price" placeholder="Precio"></orb-currency-input>
-      </orb-form-field>
-    </div>
-    
-    
-    <!-- Descripción -->
-    <div class="col-12">
-      <orb-form-field label="Descripción" [required]="utilsService.isRequired(form.get('description'))">
-        <orb-simple-textarea formControlName="description" [rows]="3" [autoResize]="true" inputId="description"></orb-simple-textarea>
-      </orb-form-field>
     </div>
 
   </div>

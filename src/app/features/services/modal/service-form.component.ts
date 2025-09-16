@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
 import { ServiceResponseDto } from '../../../api/models/service-response-dto';
 import { CreateServiceDto } from '../../../api/models/create-service-dto';
 import { UpdateServiceDto } from '../../../api/models/update-service-dto';
-import { ServicesService } from '../../../api/services/services.service';
+import { ServicesStore } from '@orb-stores';
 import { FormButtonAction } from '@orb-models';
 import { UtilsService, NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
@@ -141,7 +142,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
   @Output() cancel = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
-  private servicesService = inject(ServicesService);
+  readonly servicesStore = inject(ServicesStore);
   public utilsService = inject(UtilsService);
   private notificationService = inject(NotificationService);
 
@@ -189,9 +190,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         this.initForm();
       }
       
-      const priceValue = typeof this.service.basePrice === 'string' 
-        ? parseFloat(this.service.basePrice as string) 
-        : this.service.basePrice || 0.01;
+      const priceValue = this.service.basePrice || 0.01;
         
       const formData = {
         name: this.service.name || '',
@@ -241,7 +240,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         : formData.basePrice;
       
       if (this.isEditMode) {
-        const updateData: UpdateServiceDto = {
+        const updateData = {
           name: formData.name,
           description: formData.description,
           category: formData.category,
@@ -252,7 +251,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         };        
         this.updateService(updateData);
       } else {
-        const createData: CreateServiceDto = {
+        const createData = {
           name: formData.name,
           description: formData.description,
           category: formData.category,
@@ -277,49 +276,42 @@ export class ServiceFormComponent implements OnInit, OnChanges {
     }
   }
 
-  private createService(serviceData: CreateServiceDto): void {
-    this.servicesService.serviceControllerCreate({ body: serviceData })
-      .subscribe({
-        next: (service) => {
-          this.notificationService.show(
-            NotificationSeverity.Success,
-            'Servicio creado exitosamente'
-          );
-          this.saved.emit();
-        },
-        error: (error) => {
-          console.error('Error creating service:', error);
-          this.notificationService.show(
-            NotificationSeverity.Error,
-            'Error al crear el servicio'
-          );
-        }
-      });
+  private createService(serviceData: any): void {
+    const createDto: CreateServiceDto = {
+      name: serviceData.name,
+      description: serviceData.description || undefined,
+      basePrice: serviceData.basePrice,
+      category: serviceData.category || undefined,
+      duration: serviceData.duration || undefined,
+      notes: serviceData.notes || undefined
+    };
+
+    this.servicesStore.create(createDto);
+    this.notificationService.show(
+      NotificationSeverity.Success,
+      `Servicio "${serviceData.name}" creado exitosamente`
+    );
+    this.saved.emit();
   }
 
-  private updateService(serviceData: UpdateServiceDto): void {
+  private updateService(serviceData: any): void {
     if (!this.service?.id) return;
-    
-    this.servicesService.serviceControllerUpdate({ 
-      id: this.service.id, 
-      body: serviceData 
-    })
-      .subscribe({
-        next: (service) => {
-          this.notificationService.show(
-            NotificationSeverity.Success,
-            'Servicio actualizado exitosamente'
-          );
-          this.saved.emit();
-        },
-        error: (error) => {
-          console.error('Error updating service:', error);
-          this.notificationService.show(
-            NotificationSeverity.Error,
-            'Error al actualizar el servicio'
-          );
-        }
-      });
+
+    const updateDto: UpdateServiceDto = {
+      name: serviceData.name,
+      description: serviceData.description || undefined,
+      basePrice: serviceData.basePrice,
+      category: serviceData.category || undefined,
+      duration: serviceData.duration || undefined,
+      notes: serviceData.notes || undefined
+    };
+
+    this.servicesStore.update({ id: this.service.id, serviceDto: updateDto });
+    this.notificationService.show(
+      NotificationSeverity.Success,
+      `Servicio "${serviceData.name}" actualizado exitosamente`
+    );
+    this.saved.emit();
   }
 
   onCancel(): void {

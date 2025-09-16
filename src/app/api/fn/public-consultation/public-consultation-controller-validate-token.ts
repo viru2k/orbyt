@@ -29,4 +29,4 @@ export function publicConsultationControllerValidateToken(http: HttpClient, root
   );
 }
 
-publicConsultationControllerValidateToken.PATH = '/api/public/consultations/validate/{token}';
+publicConsultationControllerValidateToken.PATH = '/public/consultations/validate/{token}';

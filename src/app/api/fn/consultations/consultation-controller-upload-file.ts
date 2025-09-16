@@ -29,4 +29,4 @@ export function consultationControllerUploadFile(http: HttpClient, rootUrl: stri
   );
 }
 
-consultationControllerUploadFile.PATH = '/api/consultations/{id}/files';
+consultationControllerUploadFile.PATH = '/consultations/{id}/files';

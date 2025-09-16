@@ -30,4 +30,4 @@ export function inventoryControllerGetLowStockProducts(http: HttpClient, rootUrl
   );
 }
 
-inventoryControllerGetLowStockProducts.PATH = '/api/inventory/products/low-stock';
+inventoryControllerGetLowStockProducts.PATH = '/inventory/products/low-stock';

@@ -34,4 +34,4 @@ export function businessTypeControllerFindBusinessTypeByCode(http: HttpClient, r
   );
 }
 
-businessTypeControllerFindBusinessTypeByCode.PATH = '/api/business-types/code/{code}';
+businessTypeControllerFindBusinessTypeByCode.PATH = '/business-types/code/{code}';

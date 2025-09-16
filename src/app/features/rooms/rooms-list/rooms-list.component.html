@@ -3,15 +3,7 @@
   <orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
 
   <orb-toolbar>
-    <div body>
-      <div class="filter-toggle">
-        <p-inputSwitch
-          [ngModel]="showOnlyActive()"
-          (ngModelChange)="onToggleShowOnlyActive()">
-        </p-inputSwitch>
-        <label class="toggle-label">Mostrar solo activos</label>
-      </div>
-    </div>
+    <div body></div>
     <div footer>
       <orb-button label="Nueva Sala" (click)="onCreateRoom()" />
     </div>
@@ -22,17 +14,17 @@
 
       <!-- Tabla de salas -->
       <orb-table
-        [value]="filteredRooms()"
+        [value]="rooms()"
         [columns]="tableColumns"
         [loading]="isLoading()"
-        [totalRecords]="filteredRooms().length"
-        [rows]="15"
-        [first]="0"
+        [totalRecords]="rooms().length"
+        [rows]="tableRows()"
+        [first]="tableFirst()"
         [tableFeatures]="tableFeaturesConfig"
         [globalFilterFields]="['name', 'description', 'location']"
         [rowActions]="roomRowActions"
         dataKey="id"
-        paginatorPosition="both"
+        paginatorPosition="bottom"
         [rowsPerPageOptions]="[15, 30, 50]"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} salas">
         
@@ -41,22 +33,11 @@
             <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.field">
                 
-                <!-- Caso para la columna de sala: avatar + información -->
+                <!-- Caso para la columna de sala: información -->
                 <ng-container *ngSwitchCase="'room'">
-                  <div class="flex align-items-center gap-3">
-                    <orb-entity-avatar
-                      [entity]="room"
-                      entityType="product"
-                      size="normal"
-                      shape="square"
-                      [showTooltip]="true"
-                      context="table"
-                      [autoLoad]="true">
-                    </orb-entity-avatar>
-                    <div class="room-info">
-                      <div class="room-name font-medium text-900">{{ room.name }}</div>
-                      <div class="room-description text-600 text-sm">{{ room.description || 'Sin descripción' }}</div>
-                    </div>
+                  <div class="room-info">
+                    <div class="room-name font-medium text-900">{{ room.name }}</div>
+                    <div class="room-description text-600 text-sm">{{ room.description || 'Sin descripción' }}</div>
                   </div>
                 </ng-container>
                 
@@ -74,7 +55,7 @@
                 <!-- Caso para la columna de estado -->
                 <ng-container *ngSwitchCase="'statusText'">
                   <span [ngClass]="room.isActive ? 'status-active' : 'status-inactive'">
-                    {{ room.isActive ? 'Activa' : 'Inactiva' }}
+                    {{ room.isActive ? 'Activo' : 'Inactivo' }}
                   </span>
                 </ng-container>
                 
@@ -106,11 +87,11 @@
   </orb-card>
 
   <!-- Modal para crear/editar sala -->
-  <orb-dialog 
+  <orb-dialog
     [visible]="showRoomModal()"
     (visibleChange)="showRoomModal.set($event)"
     [header]="modalTitle"
-    size="md"
+    size="sm"
     (onHide)="closeModal()">
     
     <form [formGroup]="roomForm" (ngSubmit)="onSaveRoom()">
@@ -121,8 +102,7 @@
             label="Nombre de la Sala"
             [required]="true">
             <orb-text-input
-              formControlName="name"
-              placeholder="Ej: Sala de Consulta 1">
+              formControlName="name">
             </orb-text-input>
           </orb-form-field>
         </div>
@@ -130,10 +110,9 @@
         <!-- Descripción -->
         <div class="field">
           <orb-form-field label="Descripción">
-            <textarea 
-              pInputTextarea 
+            <textarea
+              pInputTextarea
               formControlName="description"
-              placeholder="Describe el propósito o características de la sala"
               rows="3"
               class="w-full">
             </textarea>
@@ -145,14 +124,13 @@
           <div class="field">
             <orb-form-field label="Ubicación">
               <orb-text-input
-                formControlName="location"
-                placeholder="Ej: Planta Baja, Primer Piso">
+                formControlName="location">
               </orb-text-input>
             </orb-form-field>
           </div>
 
           <div class="field">
-            <orb-form-field 
+            <orb-form-field
               label="Capacidad">
               <p-inputNumber
                 formControlName="capacity"
@@ -160,7 +138,6 @@
                 [useGrouping]="false"
                 [min]="1"
                 [max]="100"
-                placeholder="Número de personas"
                 styleClass="w-full">
               </p-inputNumber>
             </orb-form-field>
@@ -169,42 +146,40 @@
 
         <!-- Estado -->
         <div class="field">
-          <div class="status-field">
-            <p-checkbox
+          <orb-form-field label="Estado" [required]="true">
+            <orb-select
               formControlName="isActive"
-              [binary]="true"
-              inputId="roomActive">
-            </p-checkbox>
-            <label for="roomActive" class="status-label">
-              Sala activa (disponible para asignar citas)
-            </label>
-          </div>
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="false">
+            </orb-select>
+          </orb-form-field>
         </div>
       </div>
-
-      <!-- Footer con botones -->
-      <ng-template pTemplate="footer">
-        <div class="modal-footer">
-          <orb-button
-            label="Cancelar"
-            icon="fas fa-times"
-            variant="outline"
-            severity="secondary"
-            type="button"
-            (clicked)="closeModal()">
-          </orb-button>
-          
-          <orb-button
-            [label]="saveButtonText"
-            icon="fas fa-save"
-            variant="primary"
-            severity="primary"
-            type="submit"
-            [disabled]="roomForm.invalid">
-          </orb-button>
-        </div>
-      </ng-template>
     </form>
+
+    <!-- Footer con botones -->
+    <div orbDialogFooter class="modal-footer">
+      <orb-button
+        label="Cancelar"
+        icon="fas fa-times"
+        variant="outline"
+        severity="secondary"
+        type="button"
+        (clicked)="closeModal()">
+      </orb-button>
+
+      <orb-button
+        [label]="saveButtonText"
+        icon="fas fa-save"
+        variant="primary"
+        severity="primary"
+        type="button"
+        [disabled]="roomForm.invalid"
+        (clicked)="onSaveRoom()">
+      </orb-button>
+    </div>
   </orb-dialog>
 
   <!-- Confirmation Dialog -->

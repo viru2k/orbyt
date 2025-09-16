@@ -36,4 +36,4 @@ export function agendaControllerBlockMultipleDates(http: HttpClient, rootUrl: st
   );
 }
 
-agendaControllerBlockMultipleDates.PATH = '/api/agenda/block-dates';
+agendaControllerBlockMultipleDates.PATH = '/agenda/block-dates';

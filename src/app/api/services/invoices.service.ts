@@ -42,7 +42,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerFindAll()` */
-  static readonly InvoiceControllerFindAllPath = '/api/invoices';
+  static readonly InvoiceControllerFindAllPath = '/invoices';
 
   /**
    * Listar facturas del usuario.
@@ -75,7 +75,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerCreate()` */
-  static readonly InvoiceControllerCreatePath = '/api/invoices';
+  static readonly InvoiceControllerCreatePath = '/invoices';
 
   /**
    * Crear nueva factura.
@@ -108,7 +108,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerGetPendingInvoices()` */
-  static readonly InvoiceControllerGetPendingInvoicesPath = '/api/invoices/pending';
+  static readonly InvoiceControllerGetPendingInvoicesPath = '/invoices/pending';
 
   /**
    * Obtener facturas pendientes.
@@ -141,7 +141,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerGetOverdueInvoices()` */
-  static readonly InvoiceControllerGetOverdueInvoicesPath = '/api/invoices/overdue';
+  static readonly InvoiceControllerGetOverdueInvoicesPath = '/invoices/overdue';
 
   /**
    * Obtener facturas vencidas.
@@ -174,7 +174,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerGetSalesStats()` */
-  static readonly InvoiceControllerGetSalesStatsPath = '/api/invoices/stats/sales';
+  static readonly InvoiceControllerGetSalesStatsPath = '/invoices/stats/sales';
 
   /**
    * Obtener estadísticas de ventas.
@@ -207,7 +207,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerGetTodaySales()` */
-  static readonly InvoiceControllerGetTodaySalesPath = '/api/invoices/stats/today';
+  static readonly InvoiceControllerGetTodaySalesPath = '/invoices/stats/today';
 
   /**
    * Obtener ventas de hoy.
@@ -240,7 +240,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerFindOne()` */
-  static readonly InvoiceControllerFindOnePath = '/api/invoices/{id}';
+  static readonly InvoiceControllerFindOnePath = '/invoices/{id}';
 
   /**
    * Obtener factura por ID.
@@ -273,7 +273,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerRemove()` */
-  static readonly InvoiceControllerRemovePath = '/api/invoices/{id}';
+  static readonly InvoiceControllerRemovePath = '/invoices/{id}';
 
   /**
    * Eliminar factura.
@@ -306,7 +306,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerUpdate()` */
-  static readonly InvoiceControllerUpdatePath = '/api/invoices/{id}';
+  static readonly InvoiceControllerUpdatePath = '/invoices/{id}';
 
   /**
    * Actualizar factura.
@@ -339,7 +339,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerProcessPayment()` */
-  static readonly InvoiceControllerProcessPaymentPath = '/api/invoices/{id}/pay';
+  static readonly InvoiceControllerProcessPaymentPath = '/invoices/{id}/pay';
 
   /**
    * Procesar pago de factura.
@@ -372,7 +372,7 @@ export class InvoicesService extends BaseService {
   }
 
   /** Path part for operation `invoiceControllerCancel()` */
-  static readonly InvoiceControllerCancelPath = '/api/invoices/{id}/cancel';
+  static readonly InvoiceControllerCancelPath = '/invoices/{id}/cancel';
 
   /**
    * Cancelar factura.

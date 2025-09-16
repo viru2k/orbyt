@@ -31,4 +31,4 @@ export function rolesControllerCreate(http: HttpClient, rootUrl: string, params:
   );
 }
 
-rolesControllerCreate.PATH = '/api/roles';
+rolesControllerCreate.PATH = '/roles';

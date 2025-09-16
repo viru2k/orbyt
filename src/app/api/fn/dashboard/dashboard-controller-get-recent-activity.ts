@@ -33,4 +33,4 @@ export function dashboardControllerGetRecentActivity(http: HttpClient, rootUrl: 
   );
 }
 
-dashboardControllerGetRecentActivity.PATH = '/api/dashboard/recent-activity';
+dashboardControllerGetRecentActivity.PATH = '/dashboard/recent-activity';

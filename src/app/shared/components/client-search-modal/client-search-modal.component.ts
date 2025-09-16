@@ -19,7 +19,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { AvatarModule } from 'primeng/avatar';
 
 // Orb Components
-import { OrbButtonComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbButtonComponent, OrbDialogComponent, OrbEntityAvatarComponent } from '@orb-components';
 
 // Models and Services
 import { ClientResponseDto } from '../../../api/models';
@@ -59,7 +59,8 @@ export interface ClientSearchResult extends ClientResponseDto {
     CheckboxModule,
     AvatarModule,
     OrbButtonComponent,
-    OrbEntityAvatarComponent
+    OrbEntityAvatarComponent,
+    OrbDialogComponent
   ],
   templateUrl: './client-search-modal.component.html',
   styleUrls: ['./client-search-modal.component.scss']

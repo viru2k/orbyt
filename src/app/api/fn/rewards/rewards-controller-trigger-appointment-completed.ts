@@ -29,4 +29,4 @@ export function rewardsControllerTriggerAppointmentCompleted(http: HttpClient, r
   );
 }
 
-rewardsControllerTriggerAppointmentCompleted.PATH = '/api/rewards/trigger/appointment-completed/{clientId}';
+rewardsControllerTriggerAppointmentCompleted.PATH = '/rewards/trigger/appointment-completed/{clientId}';

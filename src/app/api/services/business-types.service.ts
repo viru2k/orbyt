@@ -45,7 +45,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerFindAllBusinessTypes()` */
-  static readonly BusinessTypeControllerFindAllBusinessTypesPath = '/api/business-types';
+  static readonly BusinessTypeControllerFindAllBusinessTypesPath = '/business-types';
 
   /**
    * Listar todos los tipos de negocio.
@@ -78,7 +78,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerCreateBusinessType()` */
-  static readonly BusinessTypeControllerCreateBusinessTypePath = '/api/business-types';
+  static readonly BusinessTypeControllerCreateBusinessTypePath = '/business-types';
 
   /**
    * Crear nuevo tipo de negocio.
@@ -111,7 +111,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerFindBusinessTypeById()` */
-  static readonly BusinessTypeControllerFindBusinessTypeByIdPath = '/api/business-types/{id}';
+  static readonly BusinessTypeControllerFindBusinessTypeByIdPath = '/business-types/{id}';
 
   /**
    * Obtener tipo de negocio por ID.
@@ -144,7 +144,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerDeleteBusinessType()` */
-  static readonly BusinessTypeControllerDeleteBusinessTypePath = '/api/business-types/{id}';
+  static readonly BusinessTypeControllerDeleteBusinessTypePath = '/business-types/{id}';
 
   /**
    * Desactivar tipo de negocio.
@@ -177,7 +177,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerUpdateBusinessType()` */
-  static readonly BusinessTypeControllerUpdateBusinessTypePath = '/api/business-types/{id}';
+  static readonly BusinessTypeControllerUpdateBusinessTypePath = '/business-types/{id}';
 
   /**
    * Actualizar tipo de negocio.
@@ -210,7 +210,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerFindBusinessTypeByCode()` */
-  static readonly BusinessTypeControllerFindBusinessTypeByCodePath = '/api/business-types/code/{code}';
+  static readonly BusinessTypeControllerFindBusinessTypeByCodePath = '/business-types/code/{code}';
 
   /**
    * Obtener tipo de negocio por código.
@@ -243,7 +243,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerCreateConsultationType()` */
-  static readonly BusinessTypeControllerCreateConsultationTypePath = '/api/business-types/consultation-types';
+  static readonly BusinessTypeControllerCreateConsultationTypePath = '/business-types/consultation-types';
 
   /**
    * Crear nuevo tipo de consulta.
@@ -276,7 +276,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerFindConsultationTypesByBusinessType()` */
-  static readonly BusinessTypeControllerFindConsultationTypesByBusinessTypePath = '/api/business-types/{businessTypeId}/consultation-types';
+  static readonly BusinessTypeControllerFindConsultationTypesByBusinessTypePath = '/business-types/{businessTypeId}/consultation-types';
 
   /**
    * Obtener tipos de consulta por tipo de negocio.
@@ -309,7 +309,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerFindConsultationTypeById()` */
-  static readonly BusinessTypeControllerFindConsultationTypeByIdPath = '/api/business-types/consultation-types/{id}';
+  static readonly BusinessTypeControllerFindConsultationTypeByIdPath = '/business-types/consultation-types/{id}';
 
   /**
    * Obtener tipo de consulta por ID.
@@ -342,7 +342,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerDeleteConsultationType()` */
-  static readonly BusinessTypeControllerDeleteConsultationTypePath = '/api/business-types/consultation-types/{id}';
+  static readonly BusinessTypeControllerDeleteConsultationTypePath = '/business-types/consultation-types/{id}';
 
   /**
    * Desactivar tipo de consulta.
@@ -375,7 +375,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerUpdateConsultationType()` */
-  static readonly BusinessTypeControllerUpdateConsultationTypePath = '/api/business-types/consultation-types/{id}';
+  static readonly BusinessTypeControllerUpdateConsultationTypePath = '/business-types/consultation-types/{id}';
 
   /**
    * Actualizar tipo de consulta.
@@ -408,7 +408,7 @@ export class BusinessTypesService extends BaseService {
   }
 
   /** Path part for operation `businessTypeControllerGetConsultationTemplate()` */
-  static readonly BusinessTypeControllerGetConsultationTemplatePath = '/api/business-types/code/{code}/consultation-template';
+  static readonly BusinessTypeControllerGetConsultationTemplatePath = '/business-types/code/{code}/consultation-template';
 
   /**
    * Obtener template de consulta por tipo de negocio.

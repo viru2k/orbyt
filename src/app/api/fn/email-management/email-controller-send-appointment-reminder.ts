@@ -30,4 +30,4 @@ export function emailControllerSendAppointmentReminder(http: HttpClient, rootUrl
   );
 }
 
-emailControllerSendAppointmentReminder.PATH = '/api/email/send/appointment-reminder/{appointmentId}';
+emailControllerSendAppointmentReminder.PATH = '/email/send/appointment-reminder/{appointmentId}';

@@ -29,4 +29,4 @@ export function publicConsultationControllerGetTokenInfo(http: HttpClient, rootU
   );
 }
 
-publicConsultationControllerGetTokenInfo.PATH = '/api/public/consultations/info/{token}';
+publicConsultationControllerGetTokenInfo.PATH = '/public/consultations/info/{token}';

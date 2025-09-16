@@ -29,4 +29,4 @@ export function emailControllerDeleteTemplate(http: HttpClient, rootUrl: string,
   );
 }
 
-emailControllerDeleteTemplate.PATH = '/api/email/templates/{id}';
+emailControllerDeleteTemplate.PATH = '/email/templates/{id}';

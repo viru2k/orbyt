@@ -37,4 +37,4 @@ export function businessTypeControllerUpdateConsultationType(http: HttpClient, r
   );
 }
 
-businessTypeControllerUpdateConsultationType.PATH = '/api/business-types/consultation-types/{id}';
+businessTypeControllerUpdateConsultationType.PATH = '/business-types/consultation-types/{id}';

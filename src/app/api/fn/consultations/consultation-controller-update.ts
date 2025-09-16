@@ -33,4 +33,4 @@ export function consultationControllerUpdate(http: HttpClient, rootUrl: string, 
   );
 }
 
-consultationControllerUpdate.PATH = '/api/consultations/{id}';
+consultationControllerUpdate.PATH = '/consultations/{id}';

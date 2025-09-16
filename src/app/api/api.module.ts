@@ -10,19 +10,19 @@ import { AppService } from './services/app.service';
 import { AuthService } from './services/auth.service';
 import { UsersService } from './services/users.service';
 import { RolesService } from './services/roles.service';
-import { UploadService } from './services/upload.service';
-import { EmailManagementService } from './services/email-management.service';
-import { NotificationsService } from './services/notifications.service';
 import { SubscriptionService } from './services/subscription.service';
 import { ServicesService } from './services/services.service';
 import { ServiceItemsService } from './services/service-items.service';
 import { ProductsService } from './services/products.service';
 import { AgendaService } from './services/agenda.service';
+import { NotificationsService } from './services/notifications.service';
 import { RewardsService } from './services/rewards.service';
+import { EmailManagementService } from './services/email-management.service';
 import { StockService } from './services/stock.service';
 import { ClientsService } from './services/clients.service';
 import { SubscriptionPlanService } from './services/subscription-plan.service';
 import { PermissionsService } from './services/permissions.service';
+import { UploadService } from './services/upload.service';
 import { ConsultationsService } from './services/consultations.service';
 import { PublicConsultationService } from './services/public-consultation.service';
 import { InvoicesService } from './services/invoices.service';
@@ -30,8 +30,7 @@ import { DashboardService } from './services/dashboard.service';
 import { BusinessTypesService } from './services/business-types.service';
 import { BusinessTypesPublicService } from './services/business-types-public.service';
 import { InventoryDashboardService } from './services/inventory-dashboard.service';
-import { ClientPortalService } from './services/client-portal.service';
-import { ClientAuthenticationService } from './services/client-authentication.service';
+import { RoomsService } from './services/rooms.service';
 
 /**
  * Module that provides all services and configuration.
@@ -45,19 +44,19 @@ import { ClientAuthenticationService } from './services/client-authentication.se
     AuthService,
     UsersService,
     RolesService,
-    UploadService,
-    EmailManagementService,
-    NotificationsService,
     SubscriptionService,
     ServicesService,
     ServiceItemsService,
     ProductsService,
     AgendaService,
+    NotificationsService,
     RewardsService,
+    EmailManagementService,
     StockService,
     ClientsService,
     SubscriptionPlanService,
     PermissionsService,
+    UploadService,
     ConsultationsService,
     PublicConsultationService,
     InvoicesService,
@@ -65,8 +64,7 @@ import { ClientAuthenticationService } from './services/client-authentication.se
     BusinessTypesService,
     BusinessTypesPublicService,
     InventoryDashboardService,
-    ClientPortalService,
-    ClientAuthenticationService,
+    RoomsService,
     ApiConfiguration
   ],
 })

@@ -33,4 +33,4 @@ export function invoiceControllerUpdate(http: HttpClient, rootUrl: string, param
   );
 }
 
-invoiceControllerUpdate.PATH = '/api/invoices/{id}';
+invoiceControllerUpdate.PATH = '/invoices/{id}';

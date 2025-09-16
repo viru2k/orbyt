@@ -27,4 +27,4 @@ export function dashboardControllerGetConsultationsSummary(http: HttpClient, roo
   );
 }
 
-dashboardControllerGetConsultationsSummary.PATH = '/api/dashboard/consultations/summary';
+dashboardControllerGetConsultationsSummary.PATH = '/dashboard/consultations/summary';

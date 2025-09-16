@@ -21,8 +21,6 @@ import { userControllerGetSubUsers } from '../fn/users/user-controller-get-sub-u
 import { UserControllerGetSubUsers$Params } from '../fn/users/user-controller-get-sub-users';
 import { userControllerUpdateSubUser } from '../fn/users/user-controller-update-sub-user';
 import { UserControllerUpdateSubUser$Params } from '../fn/users/user-controller-update-sub-user';
-import { userControllerUploadAvatar } from '../fn/users/user-controller-upload-avatar';
-import { UserControllerUploadAvatar$Params } from '../fn/users/user-controller-upload-avatar';
 import { UserResponseDto } from '../models/user-response-dto';
 
 @Injectable({ providedIn: 'root' })
@@ -32,7 +30,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerGetMyProfile()` */
-  static readonly UserControllerGetMyProfilePath = '/api/users/me';
+  static readonly UserControllerGetMyProfilePath = '/users/me';
 
   /**
    * Obtener el perfil del usuario autenticado.
@@ -65,7 +63,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerCreateSubUser()` */
-  static readonly UserControllerCreateSubUserPath = '/api/users/sub-user';
+  static readonly UserControllerCreateSubUserPath = '/users/sub-user';
 
   /**
    * Admin: Crear un nuevo sub-usuario en el grupo.
@@ -98,7 +96,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerGetGroupUsers()` */
-  static readonly UserControllerGetGroupUsersPath = '/api/users/group';
+  static readonly UserControllerGetGroupUsersPath = '/users/group';
 
   /**
    * Admin: Listar todos los usuarios del grupo incluyendo admin.
@@ -131,7 +129,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerGetSubUsers()` */
-  static readonly UserControllerGetSubUsersPath = '/api/users/sub-users';
+  static readonly UserControllerGetSubUsersPath = '/users/sub-users';
 
   /**
    * Admin: Listar solo los sub-usuarios del grupo.
@@ -164,7 +162,7 @@ export class UsersService extends BaseService {
   }
 
   /** Path part for operation `userControllerUpdateSubUser()` */
-  static readonly UserControllerUpdateSubUserPath = '/api/users/sub-user/{id}';
+  static readonly UserControllerUpdateSubUserPath = '/users/sub-user/{id}';
 
   /**
    * Admin: Actualizar un sub-usuario (perfil, permisos, estado).
@@ -192,39 +190,6 @@ export class UsersService extends BaseService {
    */
   userControllerUpdateSubUser(params: UserControllerUpdateSubUser$Params, context?: HttpContext): Observable<UserResponseDto> {
     return this.userControllerUpdateSubUser$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserResponseDto>): UserResponseDto => r.body)
-    );
-  }
-
-  /** Path part for operation `userControllerUploadAvatar()` */
-  static readonly UserControllerUploadAvatarPath = '/api/users/upload-avatar';
-
-  /**
-   * Subir avatar del usuario.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `userControllerUploadAvatar()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  userControllerUploadAvatar$Response(params: UserControllerUploadAvatar$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponseDto>> {
-    return userControllerUploadAvatar(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Subir avatar del usuario.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `userControllerUploadAvatar$Response()` instead.
-   *
-   * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
-   */
-  userControllerUploadAvatar(params: UserControllerUploadAvatar$Params, context?: HttpContext): Observable<UserResponseDto> {
-    return this.userControllerUploadAvatar$Response(params, context).pipe(
       map((r: StrictHttpResponse<UserResponseDto>): UserResponseDto => r.body)
     );
   }

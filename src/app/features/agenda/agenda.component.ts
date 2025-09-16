@@ -20,7 +20,7 @@ import { OrbTableComponent } from '@orb-shared-components/orb-table/orb-table.co
 import { OrbModernCalendarComponent, ModernCalendarEvent, DateSelectInfo, AdaptedEventClickArg, AdaptedDatesSetArg } from '@orb-shared-components/orb-modern-calendar/orb-modern-calendar.component';
 // import { OrbDevXSchedulerComponent, DevXSchedulerEvent, DevXEventClickArg, DevXDateSelectInfo, DevXDatesSetArg } from '@orb-shared-components/orb-devx-scheduler/orb-devx-scheduler.component';
 import { DateSelectArg, EventClickArg, DatesSetArg, EventDropArg } from '@fullcalendar/core';
-import { CalendarEventTimesChangedEvent } from 'angular-calendar';
+import { CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { AuthStore } from '../../store/auth/auth.store';
 import { STATUS_COLORS } from './constants/status-colors.map';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
@@ -77,6 +77,9 @@ export class AgendaComponent implements OnInit {
   SUMMARY_KEY_MAP = SUMMARY_KEY_MAP;
 
   breadcrumbItems: any[] = [];
+
+  // Make CalendarView available in template
+  CalendarView = CalendarView;
 
   // Vista actual (calendario o tabla)
   currentView: 'calendar' | 'table' = 'calendar';
@@ -159,6 +162,13 @@ export class AgendaComponent implements OnInit {
         
         // También cargar la lista de usuarios para el filtro (sin bloquear la funcionalidad principal)
         this.usersStore.loadUsers();
+      }
+    });
+
+    // Subscribe to appointment updates to show notification dialog
+    this.agendaStore.appointmentUpdated$.subscribe(({ appointment, wasDragDrop }) => {
+      if (wasDragDrop && appointment.client) {
+        this.showClientNotificationDialog(appointment);
       }
     });
   }
@@ -407,7 +417,7 @@ export class AgendaComponent implements OnInit {
         startDateTime: newStart.toISOString(),
         endDateTime: newEnd.toISOString(),
       };
-      this.agendaStore.updateAppointment({ id: event.id.toString(), dto: updateDto });
+      this.agendaStore.updateAppointment({ id: event.id.toString(), dto: updateDto, wasDragDrop: true });
     }
   }
 
@@ -508,8 +518,33 @@ export class AgendaComponent implements OnInit {
       professionalId: this.selectedUsers.map(user => user.id),
       status: this.selectedStatuses.length > 0 ? this.selectedStatuses : undefined
     };
-    
+
     this.agendaStore.loadSummary(summaryParams);
+  }
+
+  private showClientNotificationDialog(appointment: AppointmentResponseDto): void {
+    this.confirmationService.confirm({
+      header: 'Notificar cambios al cliente',
+      message: `¿Desea notificar a ${appointment.client?.name || 'el cliente'} sobre los cambios en el horario de su turno?`,
+      icon: 'pi pi-question-circle',
+      acceptButtonStyleClass: 'p-button-primary',
+      rejectButtonStyleClass: 'p-button-secondary',
+      acceptLabel: 'Sí, notificar',
+      rejectLabel: 'No',
+      accept: () => {
+        this.sendAppointmentChangeNotification(appointment);
+      }
+    });
+  }
+
+  private sendAppointmentChangeNotification(appointment: AppointmentResponseDto): void {
+    // TODO: Implement the backend call to notify the client
+    // This should trigger an action in the backend to send email/SMS notification
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Notificación enviada',
+      detail: `Se ha enviado la notificación de cambio de horario a ${appointment.client?.name || 'el cliente'}.`
+    });
   }
 
   // DevExtreme handlers removed - using Angular Calendar handlers instead

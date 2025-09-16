@@ -31,4 +31,4 @@ export function subscriptionPlanControllerCreate(http: HttpClient, rootUrl: stri
   );
 }
 
-subscriptionPlanControllerCreate.PATH = '/api/subscription-plan';
+subscriptionPlanControllerCreate.PATH = '/subscription-plan';

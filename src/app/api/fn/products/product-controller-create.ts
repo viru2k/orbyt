@@ -31,4 +31,4 @@ export function productControllerCreate(http: HttpClient, rootUrl: string, param
   );
 }
 
-productControllerCreate.PATH = '/api/products';
+productControllerCreate.PATH = '/products';

@@ -5,16 +5,14 @@ import { CommonModule } from '@angular/common';
 import { ProductStore } from '@orb-stores';
 import { ProductResponseDto, CreateProductDto, UpdateProductDto } from '../../../../api/model/models';
 import { FormButtonAction } from '@orb-models';
-import { FileUploadResponseDto } from '../../../../api/models/file-upload-response-dto';
-import { AvatarEntity } from '../../../../shared/models/entity-avatar.interfaces';
+import { ImageUploadService } from '../../../../shared/services/image-upload.service';
 
 // PrimeNG & Orb Components
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent, OrbSimpleTextareaComponent, OrbEntityAvatarComponent, OrbCardComponent } from '@orb-components';
+import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent, OrbSimpleTextareaComponent, OrbCardComponent, OrbSelectComponent } from '@orb-components';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
-import { ImageUploadService } from '../../../../shared/services/image-upload.service';
 import { NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
 
@@ -33,8 +31,8 @@ import { NotificationSeverity } from '@orb-models';
     OrbTextInputComponent,
     OrbCurrencyInputComponent,
     OrbSimpleTextareaComponent,
-    OrbEntityAvatarComponent,
-    OrbCardComponent
+    OrbCardComponent,
+    OrbSelectComponent
   ],
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss'],
@@ -47,14 +45,17 @@ export class ProductFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private productStore = inject(ProductStore);
   public utilsService = inject(UtilsService);
-  private imageUploadService = inject(ImageUploadService);
   private notificationService = inject(NotificationService);
-
+  private imageUploadService = inject(ImageUploadService);
 
   form!: FormGroup;
   isEditMode = false;
-  currentProductEntity: AvatarEntity | null = null;
-  currentAvatar: FileUploadResponseDto | null = null;
+  private pendingAvatarUpload: File | null = null;
+
+  statusOptions = [
+    { label: 'Activo', value: 'activo' },
+    { label: 'Inactivo', value: 'inactivo' }
+  ];
 
   footerActions: FormButtonAction[] = [
     { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text' , severity: 'secondary'},
@@ -80,37 +81,24 @@ export class ProductFormComponent implements OnInit {
         this.form.patchValue({
           name: this.product!.name || '',
           description: this.product!.description || '',
-          price: priceValue
+          price: priceValue,
+          status: this.product!.status || 'activo',
+          avatarUrl: (this.product as any).avatarUrl || ''
         });
                 
       }, 0);
       
-      this.currentProductEntity = { ...this.product };
-    } else {
-      // Para modo creación, crear una entidad temporal
-      this.currentProductEntity = ({
-        id: 0, // ID temporal para nuevo producto
-        name: '',
-        description: '',
-        currentPrice: 0,
-        status: 'ACTIVE',
-        owner: {
-          id: 0,
-          email: '',
-          fullName: 'Usuario Temporal'
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      } as unknown) as ProductResponseDto;
     }
   }
 
   private initForm(): void {
-    // El formulario coincide con los campos del CreateProductDto
+    // El formulario incluye el campo avatarUrl
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: [''],
       price: [0.01, [Validators.required, Validators.min(0.01)]],
+      status: ['activo', Validators.required],
+      avatarUrl: [''],
     });
   }
 
@@ -139,7 +127,12 @@ export class ProductFormComponent implements OnInit {
         name: formValue.name,
         description: formValue.description,
         price: price,
-      };            
+      };
+
+      // Add avatarUrl if provided (extend the DTO)
+      if (formValue.avatarUrl) {
+        (updateDto as any).avatarUrl = formValue.avatarUrl;
+      }            
       
       this.productStore.update({ id: this.product.id, dto: updateDto });
     } else {
@@ -148,8 +141,10 @@ export class ProductFormComponent implements OnInit {
         name: formValue.name,
         description: formValue.description,
         price: price,
-      };      
-      
+      };
+
+      // Note: Avatar upload after creation will be handled separately when backend provides creation response
+
       this.productStore.create(createDto);
     }
 
@@ -159,20 +154,37 @@ export class ProductFormComponent implements OnInit {
     }, 500);
   }
 
-  // Manejar la carga de avatar
-  onAvatarUploaded(result: any): void {    
-    this.currentAvatar = result;
-    
-    // Recargar los productos para reflejar el cambio
-    this.productStore.load();
+  // Handle file selection for avatar (before upload)
+  onAvatarFileSelected(file: File): void {
+    if (!this.isEditMode) {
+      // In create mode, store the file for later upload
+      this.pendingAvatarUpload = file;
+    }
+    // In edit mode, upload immediately (existing behavior)
   }
-  
-  // Manejar errores de upload
-  onUploadError(error: string): void {
-    console.error('Upload error:', error);
-    this.notificationService.showError(
-      NotificationSeverity.Error, 
-      `Error al subir imagen: ${error}`
-    );
+
+  // Upload pending avatar after product creation
+  private uploadPendingAvatar(productId: number): void {
+    if (this.pendingAvatarUpload) {
+      this.imageUploadService.uploadAvatar(
+        this.pendingAvatarUpload,
+        'product',
+        productId,
+        { fileType: 'avatar' }
+      ).subscribe({
+        next: (result) => {
+          console.log('Avatar uploaded after product creation:', result);
+          this.productStore.load();
+          this.pendingAvatarUpload = null;
+        },
+        error: (error) => {
+          console.error('Error uploading avatar after product creation:', error);
+          this.notificationService.showError(
+            NotificationSeverity.Error,
+            `Error al subir avatar: ${error.message || error}`
+          );
+        }
+      });
+    }
   }
 }

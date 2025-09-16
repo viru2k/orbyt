@@ -22,7 +22,7 @@ export class PermissionsService extends BaseService {
   }
 
   /** Path part for operation `permissionsControllerFindAll()` */
-  static readonly PermissionsControllerFindAllPath = '/api/permissions';
+  static readonly PermissionsControllerFindAllPath = '/permissions';
 
   /**
    * Retrieve all permissions.

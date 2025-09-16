@@ -63,9 +63,9 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   public columns: TableColumn[] = [
     { field: 'profile', header: 'Usuario', sortable: false, width: '300px' },
-    { field: 'isAdmin', header: 'Admin', sortable: true, width: '100px' },
+    { field: 'roles', header: 'Roles', sortable: false, width: '200px' },
+    { field: 'isAdmin', header: 'Admin', sortable: true, width: '68px' },
     { field: 'active', header: 'Estado', sortable: true, width: '120px' },
-    { field: 'createdAt', header: 'Fecha Creación', sortable: true, width: '180px' },
     { field: 'actions', header: '', sortable: false, width: '10px' }
   ];
 

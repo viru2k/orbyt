@@ -20,4 +20,9 @@ export interface ServiceListResponseDto {
    * Total number of services
    */
   total: number;
+
+  /**
+   * Total number of pages
+   */
+  totalPages: number;
 }

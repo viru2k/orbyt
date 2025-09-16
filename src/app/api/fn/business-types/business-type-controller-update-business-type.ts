@@ -37,4 +37,4 @@ export function businessTypeControllerUpdateBusinessType(http: HttpClient, rootU
   );
 }
 
-businessTypeControllerUpdateBusinessType.PATH = '/api/business-types/{id}';
+businessTypeControllerUpdateBusinessType.PATH = '/business-types/{id}';

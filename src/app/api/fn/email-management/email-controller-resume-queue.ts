@@ -28,4 +28,4 @@ export function emailControllerResumeQueue(http: HttpClient, rootUrl: string, pa
   );
 }
 
-emailControllerResumeQueue.PATH = '/api/email/queue/resume';
+emailControllerResumeQueue.PATH = '/email/queue/resume';

@@ -28,4 +28,4 @@ export function notificationControllerGetAll(http: HttpClient, rootUrl: string, 
   );
 }
 
-notificationControllerGetAll.PATH = '/api/notifications';
+notificationControllerGetAll.PATH = '/notifications';

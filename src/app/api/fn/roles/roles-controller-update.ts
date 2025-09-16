@@ -33,4 +33,4 @@ export function rolesControllerUpdate(http: HttpClient, rootUrl: string, params:
   );
 }
 
-rolesControllerUpdate.PATH = '/api/roles/{id}';
+rolesControllerUpdate.PATH = '/roles/{id}';

@@ -2,5 +2,9 @@
   "$schema": "./node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
   "input": "http://localhost:3000/api-json",
   "output": "src/app/api",
-  "angularVersion": "18"
+  "angularVersion": "18",
+  "ignoreUnusedModels": false,
+  "removeStaleFiles": true,
+  "customizedResponseType": {},
+  "requestBuilder": "RequestBuilder"
 }

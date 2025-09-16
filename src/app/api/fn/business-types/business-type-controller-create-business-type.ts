@@ -31,4 +31,4 @@ export function businessTypeControllerCreateBusinessType(http: HttpClient, rootU
   );
 }
 
-businessTypeControllerCreateBusinessType.PATH = '/api/business-types';
+businessTypeControllerCreateBusinessType.PATH = '/business-types';

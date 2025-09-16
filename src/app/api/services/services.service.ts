@@ -17,8 +17,12 @@ import { serviceControllerFindAll } from '../fn/services/service-controller-find
 import { ServiceControllerFindAll$Params } from '../fn/services/service-controller-find-all';
 import { serviceControllerFindOne } from '../fn/services/service-controller-find-one';
 import { ServiceControllerFindOne$Params } from '../fn/services/service-controller-find-one';
+import { serviceControllerGetCategories } from '../fn/services/service-controller-get-categories';
+import { ServiceControllerGetCategories$Params } from '../fn/services/service-controller-get-categories';
 import { serviceControllerRemove } from '../fn/services/service-controller-remove';
 import { ServiceControllerRemove$Params } from '../fn/services/service-controller-remove';
+import { serviceControllerToggleStatus } from '../fn/services/service-controller-toggle-status';
+import { ServiceControllerToggleStatus$Params } from '../fn/services/service-controller-toggle-status';
 import { serviceControllerUpdate } from '../fn/services/service-controller-update';
 import { ServiceControllerUpdate$Params } from '../fn/services/service-controller-update';
 import { ServiceListResponseDto } from '../models/service-list-response-dto';
@@ -31,10 +35,10 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerFindAll()` */
-  static readonly ServiceControllerFindAllPath = '/api/services';
+  static readonly ServiceControllerFindAllPath = '/service';
 
   /**
-   * Get all services with pagination.
+   * Get all services with optional filters.
    *
    *
    *
@@ -48,7 +52,7 @@ export class ServicesService extends BaseService {
   }
 
   /**
-   * Get all services with pagination.
+   * Get all services with optional filters.
    *
    *
    *
@@ -64,7 +68,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerCreate()` */
-  static readonly ServiceControllerCreatePath = '/api/services';
+  static readonly ServiceControllerCreatePath = '/service';
 
   /**
    * Create a new service.
@@ -97,7 +101,7 @@ export class ServicesService extends BaseService {
   }
 
   /** Path part for operation `serviceControllerFindOne()` */
-  static readonly ServiceControllerFindOnePath = '/api/services/{id}';
+  static readonly ServiceControllerFindOnePath = '/service/{id}';
 
   /**
    * Get service by ID.
@@ -129,11 +133,44 @@ export class ServicesService extends BaseService {
     );
   }
 
-  /** Path part for operation `serviceControllerUpdate()` */
-  static readonly ServiceControllerUpdatePath = '/api/services/{id}';
+  /** Path part for operation `serviceControllerRemove()` */
+  static readonly ServiceControllerRemovePath = '/service/{id}';
 
   /**
-   * Update a service.
+   * Delete service by ID.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `serviceControllerRemove()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  serviceControllerRemove$Response(params: ServiceControllerRemove$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return serviceControllerRemove(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Delete service by ID.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `serviceControllerRemove$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  serviceControllerRemove(params: ServiceControllerRemove$Params, context?: HttpContext): Observable<void> {
+    return this.serviceControllerRemove$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `serviceControllerUpdate()` */
+  static readonly ServiceControllerUpdatePath = '/service/{id}';
+
+  /**
+   * Update service by ID.
    *
    *
    *
@@ -147,7 +184,7 @@ export class ServicesService extends BaseService {
   }
 
   /**
-   * Update a service.
+   * Update service by ID.
    *
    *
    *
@@ -162,36 +199,69 @@ export class ServicesService extends BaseService {
     );
   }
 
-  /** Path part for operation `serviceControllerRemove()` */
-  static readonly ServiceControllerRemovePath = '/api/services/{id}';
+  /** Path part for operation `serviceControllerGetCategories()` */
+  static readonly ServiceControllerGetCategoriesPath = '/service/categories/list';
 
   /**
-   * Delete a service.
+   * Get all service categories for current user.
    *
    *
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `serviceControllerRemove()` instead.
+   * To access only the response body, use `serviceControllerGetCategories()` instead.
    *
    * This method doesn't expect any request body.
    */
-  serviceControllerRemove$Response(params: ServiceControllerRemove$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return serviceControllerRemove(this.http, this.rootUrl, params, context);
+  serviceControllerGetCategories$Response(params?: ServiceControllerGetCategories$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return serviceControllerGetCategories(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * Delete a service.
+   * Get all service categories for current user.
    *
    *
    *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `serviceControllerRemove$Response()` instead.
+   * To access the full response (for headers, for example), `serviceControllerGetCategories$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  serviceControllerRemove(params: ServiceControllerRemove$Params, context?: HttpContext): Observable<void> {
-    return this.serviceControllerRemove$Response(params, context).pipe(
+  serviceControllerGetCategories(params?: ServiceControllerGetCategories$Params, context?: HttpContext): Observable<void> {
+    return this.serviceControllerGetCategories$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `serviceControllerToggleStatus()` */
+  static readonly ServiceControllerToggleStatusPath = '/service/{id}/toggle-status';
+
+  /**
+   * Toggle service status (ACTIVE/INACTIVE).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `serviceControllerToggleStatus()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  serviceControllerToggleStatus$Response(params: ServiceControllerToggleStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<ServiceResponseDto>> {
+    return serviceControllerToggleStatus(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Toggle service status (ACTIVE/INACTIVE).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `serviceControllerToggleStatus$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  serviceControllerToggleStatus(params: ServiceControllerToggleStatus$Params, context?: HttpContext): Observable<ServiceResponseDto> {
+    return this.serviceControllerToggleStatus$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ServiceResponseDto>): ServiceResponseDto => r.body)
     );
   }
 

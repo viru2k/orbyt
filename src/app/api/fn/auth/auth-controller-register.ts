@@ -30,4 +30,4 @@ export function authControllerRegister(http: HttpClient, rootUrl: string, params
   );
 }
 
-authControllerRegister.PATH = '/api/auth/register';
+authControllerRegister.PATH = '/auth/register';

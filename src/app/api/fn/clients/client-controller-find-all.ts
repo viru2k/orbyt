@@ -34,4 +34,4 @@ export function clientControllerFindAll(http: HttpClient, rootUrl: string, param
   );
 }
 
-clientControllerFindAll.PATH = '/api/clients';
+clientControllerFindAll.PATH = '/clients';

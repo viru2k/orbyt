@@ -32,4 +32,4 @@ export function agendaControllerRegisterProductsUsed(http: HttpClient, rootUrl: 
   );
 }
 
-agendaControllerRegisterProductsUsed.PATH = '/api/agenda/{id}/products-used';
+agendaControllerRegisterProductsUsed.PATH = '/agenda/{id}/products-used';

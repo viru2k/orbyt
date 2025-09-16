@@ -31,7 +31,7 @@
           <td *ngFor="let col of columns">
             <ng-container [ngSwitch]="col.field">
               
-              <!-- Caso para la columna de producto: avatar + información -->
+              <!-- Caso para la columna de producto: avatar + nombre solamente -->
               <ng-container *ngSwitchCase="'product'">
                 <div class="flex align-items-center gap-3">
                   <orb-entity-avatar
@@ -45,8 +45,14 @@
                   </orb-entity-avatar>
                   <div class="product-info">
                     <div class="product-name font-medium text-900">{{ product.name }}</div>
-                    <div class="product-description text-600 text-sm">{{ product.description || 'Sin descripción' }}</div>
                   </div>
+                </div>
+              </ng-container>
+
+              <!-- Nueva columna de descripción separada -->
+              <ng-container *ngSwitchCase="'description'">
+                <div class="product-description text-600">
+                  {{ product.description || 'Sin descripción' }}
                 </div>
               </ng-container>
               
@@ -56,9 +62,27 @@
 
               <!-- Caso para la columna de estado: mostramos badge -->
               <ng-container *ngSwitchCase="'statusText'">
-                <span [ngClass]="product.statusText === 'Activo' ? 'status-active' : 'status-inactive'">
-                  {{ product.statusText }}
+                <span [ngClass]="isProductActive(product.status) ? 'status-active' : 'status-inactive'">
+                  {{ isProductActive(product.status) ? 'Activo' : 'Inactivo' }}
                 </span>
+              </ng-container>
+
+              <!-- Columna de propietario simplificada - solo avatar -->
+              <ng-container *ngSwitchCase="'ownerName'">
+                <div class="owner-avatar-container" *ngIf="product.owner">
+                  <orb-entity-avatar
+                    [entity]="product.owner"
+                    entityType="user"
+                    size="normal"
+                    shape="circle"
+                    [showTooltip]="true"
+                    [tooltipText]="product.owner.fullName || 'Propietario no asignado'"
+                    [customTooltipText]="true"
+                    context="table"
+                    [autoLoad]="true">
+                  </orb-entity-avatar>
+                </div>
+                <span *ngIf="!product.owner" class="text-muted">Sin propietario</span>
               </ng-container>
 
               <ng-container *ngSwitchCase="'actions'">

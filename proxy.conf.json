@@ -4,17 +4,14 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",
-    "headers": {
-      "Connection": "keep-alive"
+    "pathRewrite": {
+      "^/api": ""
     }
   },
   "/upload/*": {
     "target": "http://localhost:3000",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug",
-    "headers": {
-      "Connection": "keep-alive"
-    }
+    "logLevel": "debug"
   }
 }

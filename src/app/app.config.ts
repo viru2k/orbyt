@@ -1,4 +1,3 @@
-
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ApiConfiguration } from './api/api-configuration';
 import { ActivityTrackerService } from './services/activity-tracker.service';
@@ -22,6 +21,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe, registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { environment } from '../environments/environment';
 
 
 registerLocaleData(localeEs, 'es-ES');
@@ -91,7 +91,7 @@ export const appConfig: ApplicationConfig = {
   // Devtools de NgRx
   provideStoreDevtools({
     maxAge: 25,
-    logOnly: true
+    logOnly: !environment.production
   }),
     MessageService,
     ConfirmationService,
@@ -112,6 +112,7 @@ export const appConfig: ApplicationConfig = {
 
 export function apiConfigFactory(localStorage: LocalStorageService): ApiConfiguration {
   const config = new ApiConfiguration();
-  config.rootUrl = 'http://127.0.0.1:3000';
+  config.rootUrl = environment.apiUrl || '';
+  console.log('API Config - rootUrl:', config.rootUrl, 'environment.apiUrl:', environment.apiUrl);
   return config;
 }

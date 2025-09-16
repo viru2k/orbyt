@@ -36,4 +36,4 @@ export function agendaControllerBulkConfigUpdate(http: HttpClient, rootUrl: stri
   );
 }
 
-agendaControllerBulkConfigUpdate.PATH = '/api/agenda/bulk-config';
+agendaControllerBulkConfigUpdate.PATH = '/agenda/bulk-config';

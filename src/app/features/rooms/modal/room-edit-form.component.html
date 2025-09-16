@@ -1,0 +1,93 @@
+<form [formGroup]="form" (ngSubmit)="accept()">
+  <div class="grid">
+    <!-- Avatar Section - Solo en modo edición -->
+
+
+    <!-- Salas -->
+    <div class="col-12 md:col-6">
+      <orb-card>
+        <div orbHeader class="flex align-items-center">
+          <i class="pi pi-user mr-2"></i>
+          <h3 class="m-0">Salas</h3>
+        </div>
+        <div orbBody class="grid">
+            <div class="form-content">
+        <!-- Nombre -->
+        <div class="field">
+          <orb-form-field
+            label="Nombre de la Sala"
+            [required]="true">
+            <orb-text-input
+              formControlName="name"
+              placeholder="Ej: Sala de Consulta 1">
+            </orb-text-input>
+          </orb-form-field>
+        </div>
+
+        <!-- Descripción -->
+        <div class="field">
+          <orb-form-field label="Descripción">
+            <textarea 
+              pInputTextarea 
+              formControlName="description"
+              placeholder="Describe el propósito o características de la sala"
+              rows="3"
+              class="w-full">
+            </textarea>
+          </orb-form-field>
+        </div>
+
+        <!-- Ubicación y Capacidad en la misma fila -->
+        <div class="form-row">
+          <div class="field">
+            <orb-form-field label="Ubicación">
+              <orb-text-input
+                formControlName="location"
+                placeholder="Ej: Planta Baja, Primer Piso">
+              </orb-text-input>
+            </orb-form-field>
+          </div>
+
+          <div class="field">
+            <orb-form-field 
+              label="Capacidad">
+              <p-inputNumber
+                formControlName="capacity"
+                mode="decimal"
+                [useGrouping]="false"
+                [min]="1"
+                [max]="100"
+                placeholder="Número de personas"
+                styleClass="w-full">
+              </p-inputNumber>
+            </orb-form-field>
+          </div>
+        </div>
+
+        <!-- Estado -->
+        <div class="field">
+          <orb-form-field label="Estado" [required]="true">
+            <orb-select
+              formControlName="isActive"
+              [options]="statusOptions"
+              optionLabel="label"
+              optionValue="value"
+              [showClear]="false">
+            </orb-select>
+          </orb-form-field>
+        </div>
+      </div>
+          </div>
+         
+      </orb-card>
+    </div>
+
+
+  </div>
+</form>
+
+<orb-form-footer 
+  [buttons]="footerButtons" 
+  alignment="right"
+  (actionClicked)="handleFooterAction($event)">
+</orb-form-footer>

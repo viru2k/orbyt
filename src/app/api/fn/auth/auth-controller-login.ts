@@ -30,4 +30,4 @@ export function authControllerLogin(http: HttpClient, rootUrl: string, params: A
   );
 }
 
-authControllerLogin.PATH = '/api/auth/login';
+authControllerLogin.PATH = '/auth/login';

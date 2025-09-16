@@ -30,4 +30,4 @@ export function rewardsControllerGetClientActiveRewards(http: HttpClient, rootUr
   );
 }
 
-rewardsControllerGetClientActiveRewards.PATH = '/api/rewards/customer/{clientId}/active';
+rewardsControllerGetClientActiveRewards.PATH = '/rewards/customer/{clientId}/active';

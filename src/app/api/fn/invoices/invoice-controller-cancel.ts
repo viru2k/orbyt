@@ -30,4 +30,4 @@ export function invoiceControllerCancel(http: HttpClient, rootUrl: string, param
   );
 }
 
-invoiceControllerCancel.PATH = '/api/invoices/{id}/cancel';
+invoiceControllerCancel.PATH = '/invoices/{id}/cancel';

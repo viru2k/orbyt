@@ -29,4 +29,4 @@ export function consultationControllerRemove(http: HttpClient, rootUrl: string, 
   );
 }
 
-consultationControllerRemove.PATH = '/api/consultations/{id}';
+consultationControllerRemove.PATH = '/consultations/{id}';

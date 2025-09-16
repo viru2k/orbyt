@@ -49,12 +49,13 @@ export class ProductListComponent implements OnInit {
   products$ = this.productStore.selectProductsWithMappedData;
   isLoading$ = this.productStore.loading$;
 
-  // Columnas actualizadas para reflejar el DTO con avatar
+  // Columnas actualizadas para reflejar el DTO con avatar y descripción separada
   tableColumns: TableColumn[] = [
-    { field: 'product', header: 'Producto', sortable: false, width: '300px' },
+    { field: 'product', header: 'Producto', sortable: false, width: '200px' },
+    { field: 'description', header: 'Descripción', sortable: false, width: '250px' },
     { field: 'currentPrice', header: 'Precio', sortable: true, width: '120px' },
     { field: 'statusText', header: 'Estado', sortable: true, width: '120px' },
-    { field: 'ownerName', header: 'Propietario', sortable: true, width: '150px' },
+    { field: 'ownerName', header: 'Propietario', sortable: true, width: '80px' },
     { field: 'actions', header: '', sortable: false, width: '10px' }
   ];
 
@@ -90,6 +91,10 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.productStore.load();
+  }
+
+  isProductActive(status: string): boolean {
+    return status === 'ACTIVE' || status === 'activo';
   }
 
   showProductForm() {

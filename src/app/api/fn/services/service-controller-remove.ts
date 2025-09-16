@@ -29,4 +29,4 @@ export function serviceControllerRemove(http: HttpClient, rootUrl: string, param
   );
 }
 
-serviceControllerRemove.PATH = '/api/services/{id}';
+serviceControllerRemove.PATH = '/service/{id}';

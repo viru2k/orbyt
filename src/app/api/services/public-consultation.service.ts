@@ -27,7 +27,7 @@ export class PublicConsultationService extends BaseService {
   }
 
   /** Path part for operation `publicConsultationControllerAccessConsultationByToken()` */
-  static readonly PublicConsultationControllerAccessConsultationByTokenPath = '/api/public/consultations/access/{token}';
+  static readonly PublicConsultationControllerAccessConsultationByTokenPath = '/public/consultations/access/{token}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -52,7 +52,7 @@ export class PublicConsultationService extends BaseService {
   }
 
   /** Path part for operation `publicConsultationControllerUseTokenAndAccessConsultation()` */
-  static readonly PublicConsultationControllerUseTokenAndAccessConsultationPath = '/api/public/consultations/access/{token}/use';
+  static readonly PublicConsultationControllerUseTokenAndAccessConsultationPath = '/public/consultations/access/{token}/use';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -77,7 +77,7 @@ export class PublicConsultationService extends BaseService {
   }
 
   /** Path part for operation `publicConsultationControllerValidateToken()` */
-  static readonly PublicConsultationControllerValidateTokenPath = '/api/public/consultations/validate/{token}';
+  static readonly PublicConsultationControllerValidateTokenPath = '/public/consultations/validate/{token}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -102,7 +102,7 @@ export class PublicConsultationService extends BaseService {
   }
 
   /** Path part for operation `publicConsultationControllerGetTokenInfo()` */
-  static readonly PublicConsultationControllerGetTokenInfoPath = '/api/public/consultations/info/{token}';
+  static readonly PublicConsultationControllerGetTokenInfoPath = '/public/consultations/info/{token}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

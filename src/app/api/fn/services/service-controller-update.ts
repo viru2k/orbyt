@@ -17,7 +17,7 @@ export interface ServiceControllerUpdate$Params {
 }
 
 export function serviceControllerUpdate(http: HttpClient, rootUrl: string, params: ServiceControllerUpdate$Params, context?: HttpContext): Observable<StrictHttpResponse<ServiceResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, serviceControllerUpdate.PATH, 'put');
+  const rb = new RequestBuilder(rootUrl, serviceControllerUpdate.PATH, 'patch');
   if (params) {
     rb.path('id', params.id, {});
     rb.body(params.body, 'application/json');
@@ -33,4 +33,4 @@ export function serviceControllerUpdate(http: HttpClient, rootUrl: string, param
   );
 }
 
-serviceControllerUpdate.PATH = '/api/services/{id}';
+serviceControllerUpdate.PATH = '/service/{id}';

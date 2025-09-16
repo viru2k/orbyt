@@ -138,6 +138,7 @@
       <orb-modern-calendar
         [events]="(agendaStore.calendarEvents$ | async) || []"
         [slotDuration]="(agendaStore.agendaConfig$ | async)?.slotDurationMinutes || 30"
+        [view]="CalendarView.Day"
         (datesSetRange)="handleDatesSet($event)"
         (eventClick)="handleEventClick($event)"
         (dateSelect)="handleDateSelect($event)"

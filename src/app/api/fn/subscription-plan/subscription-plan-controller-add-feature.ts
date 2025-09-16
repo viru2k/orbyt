@@ -33,4 +33,4 @@ export function subscriptionPlanControllerAddFeature(http: HttpClient, rootUrl: 
   );
 }
 
-subscriptionPlanControllerAddFeature.PATH = '/api/subscription-plan/{id}/feature';
+subscriptionPlanControllerAddFeature.PATH = '/subscription-plan/{id}/feature';

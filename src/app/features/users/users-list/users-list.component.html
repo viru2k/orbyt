@@ -21,7 +21,7 @@
       [globalFilterFields]="['email', 'fullName']"
       [rowActions]="actions"
       dataKey="id"
-      paginatorPosition="both"
+      paginatorPosition="bottom"
       [rowsPerPageOptions]="[15, 30, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
     >
@@ -49,9 +49,17 @@
                 </div>
               </ng-container>
               
-              <!-- Caso para la columna de fecha: mostramos el valor formateado -->
-              <ng-container *ngSwitchCase="'createdAt'">
-                {{ user.createdAt | date:'dd/MM/yyyy HH:mm' }}
+              <!-- Caso para la columna de roles: mostramos tags -->
+              <ng-container *ngSwitchCase="'roles'">
+                <div class="flex gap-1 flex-wrap">
+                  <p-tag
+                    *ngFor="let role of user.roles"
+                    [value]="role.name"
+                    severity="info"
+                    [style]="{ 'font-size': '0.75rem', 'padding': '0.25rem 0.5rem' }">
+                  </p-tag>
+                  <span *ngIf="!user.roles || user.roles.length === 0" class="text-muted">Sin roles</span>
+                </div>
               </ng-container>
 
               <!-- Caso para la columna de estado activo: mostramos badge -->

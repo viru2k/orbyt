@@ -11,21 +11,54 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { AdvancedLowStockProductDto } from '../models/advanced-low-stock-product-dto';
+import { ExtendedProductResponseDto } from '../models/extended-product-response-dto';
+import { inventoryControllerGetAdvancedDashboardMetrics } from '../fn/inventory-dashboard/inventory-controller-get-advanced-dashboard-metrics';
+import { InventoryControllerGetAdvancedDashboardMetrics$Params } from '../fn/inventory-dashboard/inventory-controller-get-advanced-dashboard-metrics';
+import { inventoryControllerGetAdvancedLowStockProducts } from '../fn/inventory-dashboard/inventory-controller-get-advanced-low-stock-products';
+import { InventoryControllerGetAdvancedLowStockProducts$Params } from '../fn/inventory-dashboard/inventory-controller-get-advanced-low-stock-products';
 import { inventoryControllerGetDashboardMetrics } from '../fn/inventory-dashboard/inventory-controller-get-dashboard-metrics';
 import { InventoryControllerGetDashboardMetrics$Params } from '../fn/inventory-dashboard/inventory-controller-get-dashboard-metrics';
+import { inventoryControllerGetInventoryConfig } from '../fn/inventory-dashboard/inventory-controller-get-inventory-config';
+import { InventoryControllerGetInventoryConfig$Params } from '../fn/inventory-dashboard/inventory-controller-get-inventory-config';
 import { inventoryControllerGetLowStockProducts } from '../fn/inventory-dashboard/inventory-controller-get-low-stock-products';
 import { InventoryControllerGetLowStockProducts$Params } from '../fn/inventory-dashboard/inventory-controller-get-low-stock-products';
+import { inventoryControllerGetMovementAnalysis } from '../fn/inventory-dashboard/inventory-controller-get-movement-analysis';
+import { InventoryControllerGetMovementAnalysis$Params } from '../fn/inventory-dashboard/inventory-controller-get-movement-analysis';
 import { inventoryControllerGetMovementsChart } from '../fn/inventory-dashboard/inventory-controller-get-movements-chart';
 import { InventoryControllerGetMovementsChart$Params } from '../fn/inventory-dashboard/inventory-controller-get-movements-chart';
+import { inventoryControllerGetProductDimensions } from '../fn/inventory-dashboard/inventory-controller-get-product-dimensions';
+import { InventoryControllerGetProductDimensions$Params } from '../fn/inventory-dashboard/inventory-controller-get-product-dimensions';
+import { inventoryControllerGetProductPackaging } from '../fn/inventory-dashboard/inventory-controller-get-product-packaging';
+import { InventoryControllerGetProductPackaging$Params } from '../fn/inventory-dashboard/inventory-controller-get-product-packaging';
 import { inventoryControllerGetRecentMovements } from '../fn/inventory-dashboard/inventory-controller-get-recent-movements';
 import { InventoryControllerGetRecentMovements$Params } from '../fn/inventory-dashboard/inventory-controller-get-recent-movements';
 import { inventoryControllerGetStockDistribution } from '../fn/inventory-dashboard/inventory-controller-get-stock-distribution';
 import { InventoryControllerGetStockDistribution$Params } from '../fn/inventory-dashboard/inventory-controller-get-stock-distribution';
+import { inventoryControllerGetStockValueHistory } from '../fn/inventory-dashboard/inventory-controller-get-stock-value-history';
+import { InventoryControllerGetStockValueHistory$Params } from '../fn/inventory-dashboard/inventory-controller-get-stock-value-history';
+import { inventoryControllerGetTopMovers } from '../fn/inventory-dashboard/inventory-controller-get-top-movers';
+import { InventoryControllerGetTopMovers$Params } from '../fn/inventory-dashboard/inventory-controller-get-top-movers';
+import { inventoryControllerSearchProducts } from '../fn/inventory-dashboard/inventory-controller-search-products';
+import { InventoryControllerSearchProducts$Params } from '../fn/inventory-dashboard/inventory-controller-search-products';
+import { inventoryControllerUpdateInventoryConfig } from '../fn/inventory-dashboard/inventory-controller-update-inventory-config';
+import { InventoryControllerUpdateInventoryConfig$Params } from '../fn/inventory-dashboard/inventory-controller-update-inventory-config';
+import { inventoryControllerUpdateProductDimensions } from '../fn/inventory-dashboard/inventory-controller-update-product-dimensions';
+import { InventoryControllerUpdateProductDimensions$Params } from '../fn/inventory-dashboard/inventory-controller-update-product-dimensions';
+import { inventoryControllerUpdateProductPackaging } from '../fn/inventory-dashboard/inventory-controller-update-product-packaging';
+import { InventoryControllerUpdateProductPackaging$Params } from '../fn/inventory-dashboard/inventory-controller-update-product-packaging';
+import { InventoryDashboardAdvancedMetricsDto } from '../models/inventory-dashboard-advanced-metrics-dto';
 import { InventoryDashboardMetricsDto } from '../models/inventory-dashboard-metrics-dto';
 import { LowStockProductsDto } from '../models/low-stock-products-dto';
+import { MovementAnalysisDto } from '../models/movement-analysis-dto';
 import { MovementsChartDto } from '../models/movements-chart-dto';
+import { ProductDimensionsDto } from '../models/product-dimensions-dto';
+import { ProductInventoryConfigDto } from '../models/product-inventory-config-dto';
+import { ProductPackagingDto } from '../models/product-packaging-dto';
 import { RecentMovementsDto } from '../models/recent-movements-dto';
 import { StockDistributionDto } from '../models/stock-distribution-dto';
+import { StockValueHistoryDto } from '../models/stock-value-history-dto';
+import { TopMoversDto } from '../models/top-movers-dto';
 
 @Injectable({ providedIn: 'root' })
 export class InventoryDashboardService extends BaseService {
@@ -34,7 +67,7 @@ export class InventoryDashboardService extends BaseService {
   }
 
   /** Path part for operation `inventoryControllerGetDashboardMetrics()` */
-  static readonly InventoryControllerGetDashboardMetricsPath = '/api/inventory/dashboard/metrics';
+  static readonly InventoryControllerGetDashboardMetricsPath = '/inventory/dashboard/metrics';
 
   /**
    * Obtener métricas consolidadas del dashboard de inventario.
@@ -67,7 +100,7 @@ export class InventoryDashboardService extends BaseService {
   }
 
   /** Path part for operation `inventoryControllerGetRecentMovements()` */
-  static readonly InventoryControllerGetRecentMovementsPath = '/api/inventory/movements/recent';
+  static readonly InventoryControllerGetRecentMovementsPath = '/inventory/movements/recent';
 
   /**
    * Obtener movimientos recientes de inventario.
@@ -100,7 +133,7 @@ export class InventoryDashboardService extends BaseService {
   }
 
   /** Path part for operation `inventoryControllerGetLowStockProducts()` */
-  static readonly InventoryControllerGetLowStockProductsPath = '/api/inventory/products/low-stock';
+  static readonly InventoryControllerGetLowStockProductsPath = '/inventory/products/low-stock';
 
   /**
    * Obtener productos con stock bajo.
@@ -133,7 +166,7 @@ export class InventoryDashboardService extends BaseService {
   }
 
   /** Path part for operation `inventoryControllerGetStockDistribution()` */
-  static readonly InventoryControllerGetStockDistributionPath = '/api/inventory/dashboard/stock-distribution';
+  static readonly InventoryControllerGetStockDistributionPath = '/inventory/dashboard/stock-distribution';
 
   /**
    * Obtener distribución del stock para gráficos.
@@ -166,7 +199,7 @@ export class InventoryDashboardService extends BaseService {
   }
 
   /** Path part for operation `inventoryControllerGetMovementsChart()` */
-  static readonly InventoryControllerGetMovementsChartPath = '/api/inventory/dashboard/movements-chart';
+  static readonly InventoryControllerGetMovementsChartPath = '/inventory/dashboard/movements-chart';
 
   /**
    * Obtener datos de movimientos para gráfico semanal.
@@ -195,6 +228,402 @@ export class InventoryDashboardService extends BaseService {
   inventoryControllerGetMovementsChart(params?: InventoryControllerGetMovementsChart$Params, context?: HttpContext): Observable<MovementsChartDto> {
     return this.inventoryControllerGetMovementsChart$Response(params, context).pipe(
       map((r: StrictHttpResponse<MovementsChartDto>): MovementsChartDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetProductDimensions()` */
+  static readonly InventoryControllerGetProductDimensionsPath = '/inventory/products/{id}/dimensions';
+
+  /**
+   * Obtener dimensiones del producto.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetProductDimensions()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetProductDimensions$Response(params: InventoryControllerGetProductDimensions$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductDimensionsDto>> {
+    return inventoryControllerGetProductDimensions(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener dimensiones del producto.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetProductDimensions$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetProductDimensions(params: InventoryControllerGetProductDimensions$Params, context?: HttpContext): Observable<ProductDimensionsDto> {
+    return this.inventoryControllerGetProductDimensions$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductDimensionsDto>): ProductDimensionsDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerUpdateProductDimensions()` */
+  static readonly InventoryControllerUpdateProductDimensionsPath = '/inventory/products/{id}/dimensions';
+
+  /**
+   * Actualizar dimensiones del producto.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerUpdateProductDimensions()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  inventoryControllerUpdateProductDimensions$Response(params: InventoryControllerUpdateProductDimensions$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductDimensionsDto>> {
+    return inventoryControllerUpdateProductDimensions(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Actualizar dimensiones del producto.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerUpdateProductDimensions$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  inventoryControllerUpdateProductDimensions(params: InventoryControllerUpdateProductDimensions$Params, context?: HttpContext): Observable<ProductDimensionsDto> {
+    return this.inventoryControllerUpdateProductDimensions$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductDimensionsDto>): ProductDimensionsDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetProductPackaging()` */
+  static readonly InventoryControllerGetProductPackagingPath = '/inventory/products/{id}/packaging';
+
+  /**
+   * Obtener información de empaquetado.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetProductPackaging()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetProductPackaging$Response(params: InventoryControllerGetProductPackaging$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductPackagingDto>> {
+    return inventoryControllerGetProductPackaging(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener información de empaquetado.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetProductPackaging$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetProductPackaging(params: InventoryControllerGetProductPackaging$Params, context?: HttpContext): Observable<ProductPackagingDto> {
+    return this.inventoryControllerGetProductPackaging$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductPackagingDto>): ProductPackagingDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerUpdateProductPackaging()` */
+  static readonly InventoryControllerUpdateProductPackagingPath = '/inventory/products/{id}/packaging';
+
+  /**
+   * Actualizar información de empaquetado.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerUpdateProductPackaging()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  inventoryControllerUpdateProductPackaging$Response(params: InventoryControllerUpdateProductPackaging$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductPackagingDto>> {
+    return inventoryControllerUpdateProductPackaging(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Actualizar información de empaquetado.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerUpdateProductPackaging$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  inventoryControllerUpdateProductPackaging(params: InventoryControllerUpdateProductPackaging$Params, context?: HttpContext): Observable<ProductPackagingDto> {
+    return this.inventoryControllerUpdateProductPackaging$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductPackagingDto>): ProductPackagingDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetInventoryConfig()` */
+  static readonly InventoryControllerGetInventoryConfigPath = '/inventory/products/{id}/inventory-config';
+
+  /**
+   * Obtener configuración de inventario.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetInventoryConfig()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetInventoryConfig$Response(params: InventoryControllerGetInventoryConfig$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductInventoryConfigDto>> {
+    return inventoryControllerGetInventoryConfig(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener configuración de inventario.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetInventoryConfig$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetInventoryConfig(params: InventoryControllerGetInventoryConfig$Params, context?: HttpContext): Observable<ProductInventoryConfigDto> {
+    return this.inventoryControllerGetInventoryConfig$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductInventoryConfigDto>): ProductInventoryConfigDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerUpdateInventoryConfig()` */
+  static readonly InventoryControllerUpdateInventoryConfigPath = '/inventory/products/{id}/inventory-config';
+
+  /**
+   * Configurar parámetros de inventario.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerUpdateInventoryConfig()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  inventoryControllerUpdateInventoryConfig$Response(params: InventoryControllerUpdateInventoryConfig$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductInventoryConfigDto>> {
+    return inventoryControllerUpdateInventoryConfig(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Configurar parámetros de inventario.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerUpdateInventoryConfig$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  inventoryControllerUpdateInventoryConfig(params: InventoryControllerUpdateInventoryConfig$Params, context?: HttpContext): Observable<ProductInventoryConfigDto> {
+    return this.inventoryControllerUpdateInventoryConfig$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductInventoryConfigDto>): ProductInventoryConfigDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerSearchProducts()` */
+  static readonly InventoryControllerSearchProductsPath = '/inventory/products/search';
+
+  /**
+   * Búsqueda avanzada de productos con información extendida.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerSearchProducts()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerSearchProducts$Response(params?: InventoryControllerSearchProducts$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ExtendedProductResponseDto>>> {
+    return inventoryControllerSearchProducts(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Búsqueda avanzada de productos con información extendida.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerSearchProducts$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerSearchProducts(params?: InventoryControllerSearchProducts$Params, context?: HttpContext): Observable<Array<ExtendedProductResponseDto>> {
+    return this.inventoryControllerSearchProducts$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<ExtendedProductResponseDto>>): Array<ExtendedProductResponseDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetAdvancedDashboardMetrics()` */
+  static readonly InventoryControllerGetAdvancedDashboardMetricsPath = '/inventory/dashboard/advanced-metrics';
+
+  /**
+   * Obtener métricas avanzadas del dashboard de inventario.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetAdvancedDashboardMetrics()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetAdvancedDashboardMetrics$Response(params?: InventoryControllerGetAdvancedDashboardMetrics$Params, context?: HttpContext): Observable<StrictHttpResponse<InventoryDashboardAdvancedMetricsDto>> {
+    return inventoryControllerGetAdvancedDashboardMetrics(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener métricas avanzadas del dashboard de inventario.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetAdvancedDashboardMetrics$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetAdvancedDashboardMetrics(params?: InventoryControllerGetAdvancedDashboardMetrics$Params, context?: HttpContext): Observable<InventoryDashboardAdvancedMetricsDto> {
+    return this.inventoryControllerGetAdvancedDashboardMetrics$Response(params, context).pipe(
+      map((r: StrictHttpResponse<InventoryDashboardAdvancedMetricsDto>): InventoryDashboardAdvancedMetricsDto => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetAdvancedLowStockProducts()` */
+  static readonly InventoryControllerGetAdvancedLowStockProductsPath = '/inventory/dashboard/low-stock-advanced';
+
+  /**
+   * Obtener análisis avanzado de productos con stock bajo.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetAdvancedLowStockProducts()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetAdvancedLowStockProducts$Response(params?: InventoryControllerGetAdvancedLowStockProducts$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<AdvancedLowStockProductDto>>> {
+    return inventoryControllerGetAdvancedLowStockProducts(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener análisis avanzado de productos con stock bajo.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetAdvancedLowStockProducts$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetAdvancedLowStockProducts(params?: InventoryControllerGetAdvancedLowStockProducts$Params, context?: HttpContext): Observable<Array<AdvancedLowStockProductDto>> {
+    return this.inventoryControllerGetAdvancedLowStockProducts$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<AdvancedLowStockProductDto>>): Array<AdvancedLowStockProductDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetTopMovers()` */
+  static readonly InventoryControllerGetTopMoversPath = '/inventory/dashboard/top-movers';
+
+  /**
+   * Obtener productos con más movimientos.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetTopMovers()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetTopMovers$Response(params?: InventoryControllerGetTopMovers$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<TopMoversDto>>> {
+    return inventoryControllerGetTopMovers(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener productos con más movimientos.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetTopMovers$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetTopMovers(params?: InventoryControllerGetTopMovers$Params, context?: HttpContext): Observable<Array<TopMoversDto>> {
+    return this.inventoryControllerGetTopMovers$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<TopMoversDto>>): Array<TopMoversDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetStockValueHistory()` */
+  static readonly InventoryControllerGetStockValueHistoryPath = '/inventory/dashboard/stock-value-history';
+
+  /**
+   * Obtener histórico de valor de inventario.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetStockValueHistory()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetStockValueHistory$Response(params?: InventoryControllerGetStockValueHistory$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<StockValueHistoryDto>>> {
+    return inventoryControllerGetStockValueHistory(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener histórico de valor de inventario.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetStockValueHistory$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetStockValueHistory(params?: InventoryControllerGetStockValueHistory$Params, context?: HttpContext): Observable<Array<StockValueHistoryDto>> {
+    return this.inventoryControllerGetStockValueHistory$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<StockValueHistoryDto>>): Array<StockValueHistoryDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `inventoryControllerGetMovementAnalysis()` */
+  static readonly InventoryControllerGetMovementAnalysisPath = '/inventory/dashboard/movement-analysis';
+
+  /**
+   * Obtener análisis detallado de movimientos de inventario.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `inventoryControllerGetMovementAnalysis()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetMovementAnalysis$Response(params?: InventoryControllerGetMovementAnalysis$Params, context?: HttpContext): Observable<StrictHttpResponse<MovementAnalysisDto>> {
+    return inventoryControllerGetMovementAnalysis(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener análisis detallado de movimientos de inventario.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `inventoryControllerGetMovementAnalysis$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  inventoryControllerGetMovementAnalysis(params?: InventoryControllerGetMovementAnalysis$Params, context?: HttpContext): Observable<MovementAnalysisDto> {
+    return this.inventoryControllerGetMovementAnalysis$Response(params, context).pipe(
+      map((r: StrictHttpResponse<MovementAnalysisDto>): MovementAnalysisDto => r.body)
     );
   }
 

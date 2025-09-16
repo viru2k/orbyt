@@ -40,4 +40,4 @@ export function agendaControllerGetAvailable(http: HttpClient, rootUrl: string, 
   );
 }
 
-agendaControllerGetAvailable.PATH = '/api/agenda/available';
+agendaControllerGetAvailable.PATH = '/agenda/available';

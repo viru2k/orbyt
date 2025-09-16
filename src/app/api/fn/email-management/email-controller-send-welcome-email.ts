@@ -30,4 +30,4 @@ export function emailControllerSendWelcomeEmail(http: HttpClient, rootUrl: strin
   );
 }
 
-emailControllerSendWelcomeEmail.PATH = '/api/email/send/welcome/{userId}';
+emailControllerSendWelcomeEmail.PATH = '/email/send/welcome/{userId}';

@@ -33,4 +33,4 @@ export function clientControllerUpdate(http: HttpClient, rootUrl: string, params
   );
 }
 
-clientControllerUpdate.PATH = '/api/clients/{id}';
+clientControllerUpdate.PATH = '/clients/{id}';

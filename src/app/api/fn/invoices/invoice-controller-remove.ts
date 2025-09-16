@@ -29,4 +29,4 @@ export function invoiceControllerRemove(http: HttpClient, rootUrl: string, param
   );
 }
 
-invoiceControllerRemove.PATH = '/api/invoices/{id}';
+invoiceControllerRemove.PATH = '/invoices/{id}';

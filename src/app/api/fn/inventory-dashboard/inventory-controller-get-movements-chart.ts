@@ -30,4 +30,4 @@ export function inventoryControllerGetMovementsChart(http: HttpClient, rootUrl: 
   );
 }
 
-inventoryControllerGetMovementsChart.PATH = '/api/inventory/dashboard/movements-chart';
+inventoryControllerGetMovementsChart.PATH = '/inventory/dashboard/movements-chart';

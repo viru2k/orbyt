@@ -8,4 +8,26 @@
     max-width: 400px;
     min-width: 250px;
   }
+
+  // Estilos para el paginador
+  :host ::ng-deep .p-datatable-paginator {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+
+    .p-paginator-left-content {
+      flex-shrink: 0;
+      margin-right: auto;
+    }
+
+    .p-paginator-page-options {
+      flex-shrink: 0;
+      margin-left: 1rem;
+    }
+
+    .p-dropdown {
+      margin-left: 0.5rem;
+    }
+  }
   

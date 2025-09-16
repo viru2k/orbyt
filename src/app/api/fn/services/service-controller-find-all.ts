@@ -58,4 +58,4 @@ export function serviceControllerFindAll(http: HttpClient, rootUrl: string, para
   );
 }
 
-serviceControllerFindAll.PATH = '/api/services';
+serviceControllerFindAll.PATH = '/service';

@@ -32,4 +32,4 @@ export function emailControllerGetEmailMetrics(http: HttpClient, rootUrl: string
   );
 }
 
-emailControllerGetEmailMetrics.PATH = '/api/email/metrics';
+emailControllerGetEmailMetrics.PATH = '/email/metrics';

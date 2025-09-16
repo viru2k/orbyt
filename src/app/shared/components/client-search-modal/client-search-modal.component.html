@@ -1,4 +1,6 @@
-<p-dialog 
+<orb-dialog 
+[size]="'custom'"
+[customWidth]="'90vw'"
   [header]="title"
   [visible]="visible" 
   (visibleChange)="visibleChange.emit($event)"
@@ -7,7 +9,7 @@
   [resizable]="true"
   [closable]="true"
   styleClass="client-search-modal"
-  [style]="{width: '95vw', maxWidth: '1200px', height: '85vh'}"
+  
   (onHide)="onCancel()">
 
   <!-- Header con búsqueda -->
@@ -136,6 +138,7 @@
           <orb-entity-avatar
             [entity]="client"
             entityType="client"
+            [autoLoad]="false"
             size="large">
           </orb-entity-avatar>
           
@@ -186,6 +189,7 @@
           <orb-entity-avatar
             [entity]="client"
             entityType="client"
+            [autoLoad]="false"
             size="normal">
           </orb-entity-avatar>
         </div>
@@ -245,4 +249,4 @@
       </orb-button>
     </div>
   </div>
-</p-dialog>
+</orb-dialog>

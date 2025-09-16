@@ -28,4 +28,4 @@ export function notificationControllerGetFailed(http: HttpClient, rootUrl: strin
   );
 }
 
-notificationControllerGetFailed.PATH = '/api/notifications/failed';
+notificationControllerGetFailed.PATH = '/notifications/failed';

@@ -31,4 +31,4 @@ export function rewardsControllerCreateRewardProgram(http: HttpClient, rootUrl: 
   );
 }
 
-rewardsControllerCreateRewardProgram.PATH = '/api/rewards/programs';
+rewardsControllerCreateRewardProgram.PATH = '/rewards/programs';

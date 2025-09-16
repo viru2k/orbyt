@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 
 // PrimeNG y Componentes Orb
 import { CheckboxModule } from 'primeng/checkbox';
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbCheckboxComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbCheckboxComponent, OrbEntityAvatarComponent, OrbSelectComponent } from '@orb-components';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 
 // Store y DTOs
@@ -49,7 +49,8 @@ import { ImageUploadService } from '../../../shared/services/image-upload.servic
     OrbFormFooterComponent,
     OrbCardComponent,
     OrbCheckboxComponent,
-    OrbEntityAvatarComponent
+    OrbEntityAvatarComponent,
+    OrbSelectComponent
   ],
   templateUrl: './user-edit-form.component.html',
   styleUrls: ['./user-edit-form.component.scss'],
@@ -72,6 +73,11 @@ export class UserEditFormComponent implements OnInit {
   selectedRoles: number[] = [];
   currentUserEntity: AvatarEntity | null = null;
   currentAvatar: FileUploadResponseDto | null = null;
+
+  statusOptions = [
+    { label: 'Activo', value: true },
+    { label: 'Inactivo', value: false }
+  ];
 
   footerButtons: FormButtonAction[] = [
     {

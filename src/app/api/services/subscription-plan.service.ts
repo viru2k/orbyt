@@ -29,7 +29,7 @@ export class SubscriptionPlanService extends BaseService {
   }
 
   /** Path part for operation `subscriptionPlanControllerFindAll()` */
-  static readonly SubscriptionPlanControllerFindAllPath = '/api/subscription-plan';
+  static readonly SubscriptionPlanControllerFindAllPath = '/subscription-plan';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -54,7 +54,7 @@ export class SubscriptionPlanService extends BaseService {
   }
 
   /** Path part for operation `subscriptionPlanControllerCreate()` */
-  static readonly SubscriptionPlanControllerCreatePath = '/api/subscription-plan';
+  static readonly SubscriptionPlanControllerCreatePath = '/subscription-plan';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -79,7 +79,7 @@ export class SubscriptionPlanService extends BaseService {
   }
 
   /** Path part for operation `subscriptionPlanControllerFindOne()` */
-  static readonly SubscriptionPlanControllerFindOnePath = '/api/subscription-plan/{id}';
+  static readonly SubscriptionPlanControllerFindOnePath = '/subscription-plan/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -104,7 +104,7 @@ export class SubscriptionPlanService extends BaseService {
   }
 
   /** Path part for operation `subscriptionPlanControllerAddFeature()` */
-  static readonly SubscriptionPlanControllerAddFeaturePath = '/api/subscription-plan/{id}/feature';
+  static readonly SubscriptionPlanControllerAddFeaturePath = '/subscription-plan/{id}/feature';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

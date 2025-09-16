@@ -28,4 +28,4 @@ export function consultationControllerGetTodayConsultations(http: HttpClient, ro
   );
 }
 
-consultationControllerGetTodayConsultations.PATH = '/api/consultations/today';
+consultationControllerGetTodayConsultations.PATH = '/consultations/today';

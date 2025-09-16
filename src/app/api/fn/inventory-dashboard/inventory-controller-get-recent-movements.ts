@@ -30,4 +30,4 @@ export function inventoryControllerGetRecentMovements(http: HttpClient, rootUrl:
   );
 }
 
-inventoryControllerGetRecentMovements.PATH = '/api/inventory/movements/recent';
+inventoryControllerGetRecentMovements.PATH = '/inventory/movements/recent';

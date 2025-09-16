@@ -49,6 +49,7 @@ export class ClientFormComponent implements OnInit {
   isEditMode = false;
   currentClientEntity: AvatarEntity | null = null;
   currentAvatar: FileUploadResponseDto | null = null;
+  private pendingAvatarUpload: File | null = null;
 
   // Opciones para los menús desplegables
   genderOptions = [
@@ -60,6 +61,13 @@ export class ClientFormComponent implements OnInit {
   statusOptions = [
     { label: 'Activo', value: 'ACTIVE' },
     { label: 'Inactivo', value: 'INACTIVE' },
+  ];
+
+  dniTypeOptions = [
+    { label: 'Cédula de Ciudadanía', value: 'CC' },
+    { label: 'Cédula de Extranjería', value: 'CE' },
+    { label: 'Pasaporte', value: 'PP' },
+    { label: 'Tarjeta de Identidad', value: 'TI' },
   ];
 
   // Configuración para el pie de página del formulario
@@ -106,6 +114,8 @@ export class ClientFormComponent implements OnInit {
       birthDate: [null],
       gender: [null],
       status: ['ACTIVE', Validators.required],
+      dniType: [null],
+      dniNumber: [''],
       notes: ['']
     });
 
@@ -136,7 +146,11 @@ export class ClientFormComponent implements OnInit {
       this.clientStore.update({ id: this.client.id, clientDto: updateDto });
       this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente actualizado con éxito.');
     } else {
+      // For create mode, first create the client, then upload avatar if needed
       const createDto: CreateClientDto = formValue;
+
+      // Note: Avatar upload after creation will be handled separately when backend provides creation response
+
       this.clientStore.create(createDto);
       this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente creado con éxito.');
     }
@@ -148,9 +162,44 @@ export class ClientFormComponent implements OnInit {
   onAvatarUploaded(result: any): void {
     console.log('Avatar uploaded:', result);
     this.currentAvatar = result;
-    
+
     // Recargar los clientes para reflejar el cambio
     this.clientStore.load();
+  }
+
+  // Handle file selection (before upload)
+  onAvatarFileSelected(file: File): void {
+    if (!this.isEditMode) {
+      // In create mode, store the file for later upload
+      this.pendingAvatarUpload = file;
+    }
+    // In edit mode, upload immediately (existing behavior)
+  }
+
+  // Upload pending avatar after client creation
+  private uploadPendingAvatar(clientId: number): void {
+    if (this.pendingAvatarUpload) {
+      this.imageUploadService.uploadAvatar(
+        this.pendingAvatarUpload,
+        'client',
+        clientId,
+        { fileType: 'avatar' }
+      ).subscribe({
+        next: (result) => {
+          console.log('Avatar uploaded after client creation:', result);
+          this.currentAvatar = result;
+          this.clientStore.load();
+          this.pendingAvatarUpload = null;
+        },
+        error: (error) => {
+          console.error('Error uploading avatar after client creation:', error);
+          this.notificationService.showError(
+            NotificationSeverity.Error,
+            `Error al subir avatar: ${error.message || error}`
+          );
+        }
+      });
+    }
   }
   
   // Manejar errores de upload

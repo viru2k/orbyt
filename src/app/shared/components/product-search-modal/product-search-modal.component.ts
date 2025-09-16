@@ -356,18 +356,13 @@ export class ProductSearchModalComponent {
 
   // Métodos para manejo de imágenes
   getProductImageUrl(product: ProductResponseDto): string {
-    // Priorizar thumbnailUrl, luego imageUrl, luego placeholder
-    if (product.thumbnailUrl) {
-      return product.thumbnailUrl;
-    }
-    if (product.imageUrl) {
-      return product.imageUrl;
-    }
+    // TODO: Add image URL properties when backend supports them
     return 'assets/images/no-product-image.svg';
   }
 
   hasValidImage(product: ProductResponseDto): boolean {
-    return !!(product.thumbnailUrl || product.imageUrl);
+    // TODO: Check for image properties when backend supports them
+    return false;
   }
 
   onImageError(event: Event): void {

@@ -114,15 +114,22 @@
       <!-- Resultados principales de búsqueda -->
       <div class="search-results">
         
-        <!-- Servicios recientes -->
+        <!-- Servicios recientes (máximo 3) -->
         <div *ngIf="hasRecentServices() && !filtersForm.get('query')?.value" class="recent-services-section">
-          <h3 class="section-title">
-            <i class="pi pi-history"></i>
-            Servicios utilizados recientemente
-          </h3>
+          <div class="section-header">
+            <h3 class="section-title">
+              <i class="pi pi-history"></i>
+              Servicios utilizados recientemente
+            </h3>
+            <p-badge
+              [value]="recentServices().length.toString()"
+              severity="info"
+              class="count-badge">
+            </p-badge>
+          </div>
           <div class="recent-services-grid">
-            <div *ngFor="let service of recentServices()" 
-                 class="recent-service-card" 
+            <div *ngFor="let service of recentServices().slice(0, 3)"
+                 class="recent-service-card"
                  (click)="onServiceSelect(service)">
               <div class="recent-service-info">
                 <h4>{{ service.name }}</h4>
@@ -131,7 +138,7 @@
                   <span class="usage">{{ service.usageCount }} veces</span>
                   <span class="last-used">{{ formatLastUsed(service.lastUsed) }}</span>
                 </div>
-                <p-badge 
+                <p-badge
                   [value]="service.usageCount.toString()"
                   [severity]="getUsageBadgeSeverity(service.usageCount)"
                   class="usage-badge">
@@ -142,7 +149,12 @@
               </div>
             </div>
           </div>
-          <p-divider></p-divider>
+          <div class="section-separator">
+            <p-divider type="solid"></p-divider>
+            <div class="separator-text">
+              <span>Todos los servicios</span>
+            </div>
+          </div>
         </div>
 
         <!-- Loading -->
@@ -185,35 +197,41 @@
 
         <!-- Vista Grid -->
         <div class="services-grid" *ngIf="!isLoading() && hasResults() && viewMode() === 'grid'">
-          <div 
-            class="service-card" 
+          <div
+            class="service-card"
             *ngFor="let service of searchResults()"
             [class.recently-used]="service.isRecentlyUsed"
             (click)="onServiceSelect(service)">
-            
-            <div class="service-badges">
-              <p-badge 
-                *ngIf="service.isRecentlyUsed" 
-                value="Reciente" 
-                severity="info"
-                icon="pi pi-star">
-              </p-badge>
-              <p-badge 
-                *ngIf="service.usageCount && service.usageCount > 0" 
-                [value]="service.usageCount + ' usos'"
-                [severity]="getUsageBadgeSeverity(service.usageCount)">
-              </p-badge>
-            </div>
 
             <div class="service-info">
-              <h4 class="service-name" [pTooltip]="service.name">{{ service.name }}</h4>
-              <p class="service-description" *ngIf="service.description">{{ service.description }}</p>
-              
-              <div class="service-meta">
+              <div class="service-main">
+                <h4 class="service-name" [pTooltip]="service.name">{{ service.name }}</h4>
+                <p class="service-description" *ngIf="service.description">{{ service.description }}</p>
+              </div>
+
+              <div class="service-details">
                 <span class="service-price" *ngIf="getServicePrice(service)">
                   {{ formatPrice(getServicePrice(service)) }}
                 </span>
+                <div class="service-badges">
+                  <p-badge
+                    *ngIf="service.isRecentlyUsed"
+                    value="Reciente"
+                    severity="info"
+                    class="recent-badge">
+                  </p-badge>
+                  <p-badge
+                    *ngIf="service.usageCount && service.usageCount > 0"
+                    [value]="service.usageCount.toString()"
+                    [severity]="getUsageBadgeSeverity(service.usageCount)"
+                    class="usage-badge">
+                  </p-badge>
+                </div>
               </div>
+            </div>
+
+            <div class="service-actions">
+              <i class="pi pi-chevron-right"></i>
             </div>
           </div>
         </div>

@@ -31,4 +31,4 @@ export function notificationControllerTestWebSocket(http: HttpClient, rootUrl: s
   );
 }
 
-notificationControllerTestWebSocket.PATH = '/api/notifications/test-websocket';
+notificationControllerTestWebSocket.PATH = '/notifications/test-websocket';

@@ -31,4 +31,4 @@ export function clientControllerCreate(http: HttpClient, rootUrl: string, params
   );
 }
 
-clientControllerCreate.PATH = '/api/clients';
+clientControllerCreate.PATH = '/clients';

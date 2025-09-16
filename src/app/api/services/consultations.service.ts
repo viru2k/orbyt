@@ -52,7 +52,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerFindAll()` */
-  static readonly ConsultationControllerFindAllPath = '/api/consultations';
+  static readonly ConsultationControllerFindAllPath = '/consultations';
 
   /**
    * Listar consultas del usuario con filtros avanzados.
@@ -85,7 +85,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerCreate()` */
-  static readonly ConsultationControllerCreatePath = '/api/consultations';
+  static readonly ConsultationControllerCreatePath = '/consultations';
 
   /**
    * Crear nueva consulta.
@@ -118,7 +118,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerGetStats()` */
-  static readonly ConsultationControllerGetStatsPath = '/api/consultations/stats';
+  static readonly ConsultationControllerGetStatsPath = '/consultations/stats';
 
   /**
    * Obtener estadísticas de consultas.
@@ -151,7 +151,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerGetTodayConsultations()` */
-  static readonly ConsultationControllerGetTodayConsultationsPath = '/api/consultations/today';
+  static readonly ConsultationControllerGetTodayConsultationsPath = '/consultations/today';
 
   /**
    * Obtener consultas de hoy.
@@ -184,7 +184,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerGetClientHistory()` */
-  static readonly ConsultationControllerGetClientHistoryPath = '/api/consultations/client/{clientId}';
+  static readonly ConsultationControllerGetClientHistoryPath = '/consultations/client/{clientId}';
 
   /**
    * Obtener historial de consultas de un cliente.
@@ -217,7 +217,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerFindOne()` */
-  static readonly ConsultationControllerFindOnePath = '/api/consultations/{id}';
+  static readonly ConsultationControllerFindOnePath = '/consultations/{id}';
 
   /**
    * Obtener consulta por ID.
@@ -250,7 +250,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerRemove()` */
-  static readonly ConsultationControllerRemovePath = '/api/consultations/{id}';
+  static readonly ConsultationControllerRemovePath = '/consultations/{id}';
 
   /**
    * Eliminar consulta.
@@ -283,7 +283,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerUpdate()` */
-  static readonly ConsultationControllerUpdatePath = '/api/consultations/{id}';
+  static readonly ConsultationControllerUpdatePath = '/consultations/{id}';
 
   /**
    * Actualizar consulta.
@@ -316,7 +316,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerUpdateStatus()` */
-  static readonly ConsultationControllerUpdateStatusPath = '/api/consultations/{id}/status';
+  static readonly ConsultationControllerUpdateStatusPath = '/consultations/{id}/status';
 
   /**
    * Actualizar estado de consulta.
@@ -349,7 +349,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerUploadFile()` */
-  static readonly ConsultationControllerUploadFilePath = '/api/consultations/{id}/files';
+  static readonly ConsultationControllerUploadFilePath = '/consultations/{id}/files';
 
   /**
    * Subir archivo a consulta.
@@ -382,7 +382,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerGetTokensForConsultation()` */
-  static readonly ConsultationControllerGetTokensForConsultationPath = '/api/consultations/{id}/tokens';
+  static readonly ConsultationControllerGetTokensForConsultationPath = '/consultations/{id}/tokens';
 
   /**
    * Obtener todos los tokens de una consulta.
@@ -415,7 +415,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerCreateToken()` */
-  static readonly ConsultationControllerCreateTokenPath = '/api/consultations/{id}/tokens';
+  static readonly ConsultationControllerCreateTokenPath = '/consultations/{id}/tokens';
 
   /**
    * Crear token manual para consulta.
@@ -448,7 +448,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerCreateAutoTokens()` */
-  static readonly ConsultationControllerCreateAutoTokensPath = '/api/consultations/{id}/tokens/auto';
+  static readonly ConsultationControllerCreateAutoTokensPath = '/consultations/{id}/tokens/auto';
 
   /**
    * Crear tokens automáticos para consulta.
@@ -481,7 +481,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerCreateTokenByScenario()` */
-  static readonly ConsultationControllerCreateTokenByScenarioPath = '/api/consultations/{id}/tokens/scenario/{scenario}';
+  static readonly ConsultationControllerCreateTokenByScenarioPath = '/consultations/{id}/tokens/scenario/{scenario}';
 
   /**
    * Crear token por escenario específico.
@@ -514,7 +514,7 @@ export class ConsultationsService extends BaseService {
   }
 
   /** Path part for operation `consultationControllerRevokeToken()` */
-  static readonly ConsultationControllerRevokeTokenPath = '/api/consultations/tokens/{tokenId}';
+  static readonly ConsultationControllerRevokeTokenPath = '/consultations/tokens/{tokenId}';
 
   /**
    * Revocar token específico.

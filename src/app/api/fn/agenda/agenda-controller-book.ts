@@ -31,4 +31,4 @@ export function agendaControllerBook(http: HttpClient, rootUrl: string, params: 
   );
 }
 
-agendaControllerBook.PATH = '/api/agenda/book';
+agendaControllerBook.PATH = '/agenda/book';

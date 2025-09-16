@@ -487,11 +487,14 @@ export class InvoiceFormComponent implements OnInit {
       unitPrice: item.unitPrice,
       discount: item.discount,
       discountType: item.discountType,
-      total: item.total,
+      total: 0, // Will be recalculated
       notes: item.notes
     }));
 
-    this.calculateTotals();
+    // Recalculate totals for all items
+    this.items.forEach((item, index) => {
+      this.updateItemTotal(index);
+    });
   }
 
   showItemSelector(): void {
@@ -499,6 +502,8 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   onItemSelected(selection: InvoiceItemSelection): void {
+    const newIndex = this.items.length;
+
     this.items.push({
       itemId: selection.itemId,
       itemType: selection.itemType,
@@ -507,12 +512,13 @@ export class InvoiceFormComponent implements OnInit {
       unitPrice: selection.basePrice,
       discount: 0,
       discountType: 'percentage',
-      total: selection.basePrice,
+      total: 0, // Will be calculated by updateItemTotal
       category: selection.category,
       duration: selection.duration
     });
-    
-    this.calculateTotals();
+
+    // Recalculate the total for the new item
+    this.updateItemTotal(newIndex);
     this.showItemSelectorModal = false;
   }
 
@@ -521,6 +527,8 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   addManualItem(): void {
+    const newIndex = this.items.length;
+
     this.items.push({
       itemId: null,
       itemType: 'manual',
@@ -531,6 +539,9 @@ export class InvoiceFormComponent implements OnInit {
       discountType: 'percentage',
       total: 0
     });
+
+    // Calculate total for the new manual item
+    this.updateItemTotal(newIndex);
   }
 
   getItemTypeLabel(type: string): string {

@@ -63,6 +63,19 @@
   }
 }
 
+/* Font size fix for phone and creation date columns */
+::ng-deep orb-table table tbody tr td {
+  // Phone column font size
+  &:nth-child(2) {
+    font-size: 12px !important;
+  }
+
+  // Creation date column font size
+  &:nth-child(4) {
+    font-size: 12px !important;
+  }
+}
+
 /* Status styling consistent with users */
 ::ng-deep .status-active {
   background: rgba(34, 197, 94, 0.1) !important;

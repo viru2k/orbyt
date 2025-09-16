@@ -27,4 +27,4 @@ export function dashboardControllerGetQuickStats(http: HttpClient, rootUrl: stri
   );
 }
 
-dashboardControllerGetQuickStats.PATH = '/api/dashboard/quick-stats';
+dashboardControllerGetQuickStats.PATH = '/dashboard/quick-stats';

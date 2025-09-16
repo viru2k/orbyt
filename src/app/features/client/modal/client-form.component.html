@@ -1,19 +1,21 @@
 <form [formGroup]="form" (ngSubmit)="accept()">
-  <div class="grid">
+  <div class="grid" style="gap: 0.5rem;">
     <!-- Avatar Section - Solo en modo edición -->
-    <div class="col-12" *ngIf="isEditMode">
-      <orb-card>
-        <div orbHeader class="flex align-items-center">
-          <i class="pi pi-image mr-2"></i>
-          <h3 class="m-0">Avatar</h3>
+
+    <!-- Información Básica -->
+    <div class="col-12">
+      <orb-card class="mb-5">
+        <div orbHeader class="flex row align-items-center">
+          <i class="pi pi-user mr-2"></i>
+          <h3 class="m-0">Información Básica</h3>
         </div>
-        <div orbBody class="flex justify-content-center align-items-center">
+        <div orbBody class="grid">
           <div class="avatar-section text-center" *ngIf="currentClientEntity">
-            <div class="avatar-display">
+            <div class="avatar-display ">
               <orb-entity-avatar
                 [entity]="currentClientEntity"
                 entityType="client"
-                size="xlarge"
+                size="large"
                 shape="circle"
                 [showTooltip]="false"
                 [showUploadButton]="true"
@@ -24,18 +26,6 @@
               </orb-entity-avatar>
             </div>
           </div>
-        </div>
-      </orb-card>
-    </div>
-
-    <!-- Información Básica -->
-    <div class="col-12">
-      <orb-card>
-        <div orbHeader class="flex align-items-center">
-          <i class="pi pi-user mr-2"></i>
-          <h3 class="m-0">Información Básica</h3>
-        </div>
-        <div orbBody class="grid">
           <div class="field col-12">
             <orb-form-field label="Nombre Completo" [required]="utilsService.isRequired(form.get('fullname'))">
               <orb-text-input formControlName="fullname" inputId="fullname"></orb-text-input>
@@ -53,7 +43,7 @@
           </div>
           <div class="field col-12">
             <orb-form-field label="Estado" [required]="utilsService.isRequired(form.get('status'))">
-              <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value" [showClear]="false" appendTo="body" [styleClass]="'display-block'"></orb-select>
+              <orb-select id="statusClientForm" [options]="statusOptions" formControlName="status" optionLabel="label" optionValue="value" [showClear]="false" appendTo="body"></orb-select>
             </orb-form-field>
           </div>
         </div>
@@ -103,6 +93,16 @@
           <div class="field col-12 md:col-6">
             <orb-form-field label="Género" [required]="utilsService.isRequired(form.get('gender'))">
               <orb-select id="genderClientForm" [options]="genderOptions" formControlName="gender" optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
+            </orb-form-field>
+          </div>
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Tipo de Documento" [required]="utilsService.isRequired(form.get('dniType'))">
+              <orb-select id="dniTypeClientForm" [options]="dniTypeOptions" formControlName="dniType" optionLabel="label" optionValue="value" [showClear]="true" appendTo="body"></orb-select>
+            </orb-form-field>
+          </div>
+          <div class="field col-12 md:col-6">
+            <orb-form-field label="Número de Documento" [required]="utilsService.isRequired(form.get('dniNumber'))">
+              <orb-text-input formControlName="dniNumber" inputId="dniNumber"></orb-text-input>
             </orb-form-field>
           </div>
         </div>

@@ -21,21 +21,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 
 // Orb Components
-import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTableComponent, OrbCardComponent, OrbToolbarComponent, OrbBreadcrumbComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTableComponent, OrbCardComponent, OrbToolbarComponent, OrbBreadcrumbComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbSelectComponent } from '@orb-components';
 import { TableColumn, OrbTableFeatures, OrbActionItem } from '@orb-models';
 
-export interface Room {
-  id?: number;
-  name: string;
-  description?: string;
-  isActive: boolean;
-  capacity?: number;
-  location?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  statusText?: string;
-  statusClass?: string;
-}
+// Store and DTOs
+import { RoomsStore } from '@orb-stores';
+import { RoomResponseDto, CreateRoomDto, UpdateRoomDto } from '../../../api/models';
 
 @Component({
   selector: 'orb-rooms-list',
@@ -66,7 +57,7 @@ export interface Room {
     OrbBreadcrumbComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
-    OrbEntityAvatarComponent
+    OrbSelectComponent
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './rooms-list.component.html',
@@ -76,19 +67,23 @@ export class RoomsListComponent implements OnInit {
   private fb = inject(FormBuilder);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
+  readonly roomsStore = inject(RoomsStore);
 
-  // Signals para estado reactivo
-  rooms = signal<Room[]>([]);
-  isLoading = signal(false);
-  showOnlyActive = signal(true);
-  
   // Modal state
   showRoomModal = signal(false);
   isEditMode = signal(false);
-  currentRoom = signal<Room | null>(null);
-  
+  currentRoom = signal<RoomResponseDto | null>(null);
+
+  // Table pagination signals
+  tableRows = signal(15);
+  tableFirst = signal(0);
+
   // Form
   roomForm!: FormGroup;
+
+  // Store computed properties
+  rooms = this.roomsStore.selectRoomsWithMappedData;
+  isLoading = this.roomsStore.loading;
   
   // Table configuration
   tableColumns: TableColumn[] = [
@@ -105,22 +100,18 @@ export class RoomsListComponent implements OnInit {
     globalSearchPlaceholder: 'Buscar salas...'
   };
 
-  roomRowActions: OrbActionItem<Room>[] = [
+  statusOptions = [
+    { label: 'Activo', value: true },
+    { label: 'Inactivo', value: false }
+  ];
+
+  roomRowActions: OrbActionItem<RoomResponseDto>[] = [
     {
       label: 'Editar',
       icon: 'fas fa-edit',
-      action: (room?: Room) => {
+      action: (room?: RoomResponseDto) => {
         if (room) {
           this.onEditRoom(room);
-        }
-      }
-    },
-    {
-      label: 'Cambiar estado',
-      icon: 'fas fa-toggle-on',
-      action: (room?: Room) => {
-        if (room) {
-          this.onToggleRoomStatus(room);
         }
       }
     }
@@ -132,20 +123,9 @@ export class RoomsListComponent implements OnInit {
     { label: 'Salas', icon: 'fas fa-door-open' }
   ];
 
-  // Computed properties
-  filteredRooms = computed(() => {
-    const allRooms = this.rooms();
-    const showActive = this.showOnlyActive();
-    
-    if (showActive) {
-      return allRooms.filter(room => room.isActive);
-    }
-    return allRooms;
-  });
-
   ngOnInit(): void {
     this.initializeForm();
-    this.loadRooms();
+    this.roomsStore.load();
   }
 
   private initializeForm(): void {
@@ -156,56 +136,6 @@ export class RoomsListComponent implements OnInit {
       location: [''],
       isActive: [true]
     });
-  }
-
-  private loadRooms(): void {
-    this.isLoading.set(true);
-    
-    // Mock data - replace with actual API call when backend is ready
-    const mockRooms: Room[] = [
-      {
-        id: 1,
-        name: 'Sala de Consulta 1',
-        description: 'Sala principal para consultas generales',
-        capacity: 2,
-        location: 'Planta Baja',
-        isActive: true,
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15')
-      },
-      {
-        id: 2,
-        name: 'Sala de Procedimientos',
-        description: 'Sala equipada para procedimientos médicos',
-        capacity: 4,
-        location: 'Primer Piso',
-        isActive: true,
-        createdAt: new Date('2024-01-20'),
-        updatedAt: new Date('2024-01-20')
-      },
-      {
-        id: 3,
-        name: 'Sala de Reuniones',
-        description: 'Sala para reuniones y capacitaciones',
-        capacity: 10,
-        location: 'Segundo Piso',
-        isActive: false,
-        createdAt: new Date('2024-01-10'),
-        updatedAt: new Date('2024-02-15')
-      }
-    ];
-
-    // Simulate API call delay
-    setTimeout(() => {
-      // Transform rooms to add statusText and statusClass
-      const transformedRooms = mockRooms.map(room => ({
-        ...room,
-        statusText: this.getStatusText(room.isActive),
-        statusClass: room.isActive ? 'status-active' : 'status-inactive'
-      }));
-      this.rooms.set(transformedRooms);
-      this.isLoading.set(false);
-    }, 500);
   }
 
   // Event handlers
@@ -219,7 +149,7 @@ export class RoomsListComponent implements OnInit {
     this.showRoomModal.set(true);
   }
 
-  onEditRoom(room: Room): void {
+  onEditRoom(room: RoomResponseDto): void {
     this.isEditMode.set(true);
     this.currentRoom.set(room);
     this.roomForm.patchValue({
@@ -232,31 +162,6 @@ export class RoomsListComponent implements OnInit {
     this.showRoomModal.set(true);
   }
 
-  onToggleRoomStatus(room: Room): void {
-    const action = room.isActive ? 'deshabilitar' : 'habilitar';
-    const newStatus = !room.isActive;
-    
-    this.confirmationService.confirm({
-      message: `¿Está seguro de ${action} la sala "${room.name}"?`,
-      header: `Confirmar ${action}`,
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí',
-      rejectLabel: 'No',
-      accept: () => {
-        // TODO: Replace with actual API call
-        const updatedRooms = this.rooms().map(r => 
-          r.id === room.id ? { ...r, isActive: newStatus, updatedAt: new Date() } : r
-        );
-        this.rooms.set(updatedRooms);
-        
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: `Sala ${action}ada correctamente`
-        });
-      }
-    });
-  }
 
   onSaveRoom(): void {
     if (this.roomForm.invalid) {
@@ -265,29 +170,20 @@ export class RoomsListComponent implements OnInit {
     }
 
     const formValue = this.roomForm.value;
-    const roomData: Room = {
-      name: formValue.name,
-      description: formValue.description,
-      capacity: formValue.capacity,
-      location: formValue.location,
-      isActive: formValue.isActive
-    };
 
     if (this.isEditMode()) {
       // Edit existing room
       const currentRoom = this.currentRoom();
       if (currentRoom) {
-        const updatedRoom: Room = {
-          ...currentRoom,
-          ...roomData,
-          updatedAt: new Date()
+        const updateDto: UpdateRoomDto = {
+          name: formValue.name,
+          description: formValue.description,
+          capacity: formValue.capacity,
+          location: formValue.location,
+          isActive: formValue.isActive
         };
 
-        // TODO: Replace with actual API call
-        const updatedRooms = this.rooms().map(r => 
-          r.id === currentRoom.id ? updatedRoom : r
-        );
-        this.rooms.set(updatedRooms);
+        this.roomsStore.update({ id: currentRoom.id, roomDto: updateDto });
 
         this.messageService.add({
           severity: 'success',
@@ -297,15 +193,15 @@ export class RoomsListComponent implements OnInit {
       }
     } else {
       // Create new room
-      const newRoom: Room = {
-        ...roomData,
-        id: Date.now(), // Temporary ID - backend will assign real ID
-        createdAt: new Date(),
-        updatedAt: new Date()
+      const createDto: CreateRoomDto = {
+        name: formValue.name,
+        description: formValue.description,
+        capacity: formValue.capacity,
+        location: formValue.location,
+        isActive: formValue.isActive
       };
 
-      // TODO: Replace with actual API call
-      this.rooms.set([...this.rooms(), newRoom]);
+      this.roomsStore.create(createDto);
 
       this.messageService.add({
         severity: 'success',
@@ -315,10 +211,6 @@ export class RoomsListComponent implements OnInit {
     }
 
     this.closeModal();
-  }
-
-  onToggleShowOnlyActive(): void {
-    this.showOnlyActive.update(value => !value);
   }
 
   closeModal(): void {
@@ -343,8 +235,9 @@ export class RoomsListComponent implements OnInit {
     return isActive ? 'Activa' : 'Inactiva';
   }
 
-  formatDate(date?: Date): string {
-    if (!date) return '-';
+  formatDate(dateString?: string): string {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat('es-ES', {
       day: '2-digit',
       month: '2-digit',

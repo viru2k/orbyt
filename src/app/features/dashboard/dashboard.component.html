@@ -10,18 +10,6 @@
       <p class="dashboard-subtitle">Gestión integral de consultas e ingresos - {{ currentMonth }}</p>
     </div>
     <div class="header-actions">
-      <orb-button 
-        label="Nueva Consulta" 
-        icon="fa fa-plus" 
-        variant="success"
-        (clicked)="navigateToConsultations()">
-      </orb-button>
-      <orb-button 
-        label="Nueva Factura" 
-        icon="fa fa-file-invoice" 
-        variant="primary"
-        (clicked)="createNewInvoice()">
-      </orb-button>
     </div>
   </div>
 
@@ -93,6 +81,13 @@
       <div orbHeader>
         <h3><i class="fa fa-chart-line"></i> Evolución de Ingresos</h3>
         <div class="chart-period">
+          <orb-button 
+            label="Actual" 
+            variant="text" 
+            size="small"
+            [class.active]="currentPeriod() === 'current'"
+            (clicked)="currentPeriod.set('current')">
+          </orb-button>
           <orb-button 
             label="6M" 
             variant="text" 
@@ -297,20 +292,6 @@
     </div>
     <div orbBody>
       <div class="quick-actions-grid">
-        <orb-button 
-          label="Nueva Consulta" 
-          icon="fa fa-stethoscope" 
-          size="large"
-          variant="success"
-          (clicked)="navigateToConsultations()">
-        </orb-button>
-        <orb-button 
-          label="Nueva Factura" 
-          icon="fa fa-file-invoice" 
-          size="large"
-          variant="primary"
-          (clicked)="createNewInvoice()">
-        </orb-button>
         <orb-button 
           label="Ver Agenda" 
           icon="fa fa-calendar" 

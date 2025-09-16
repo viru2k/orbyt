@@ -28,4 +28,4 @@ export function invoiceControllerGetPendingInvoices(http: HttpClient, rootUrl: s
   );
 }
 
-invoiceControllerGetPendingInvoices.PATH = '/api/invoices/pending';
+invoiceControllerGetPendingInvoices.PATH = '/invoices/pending';

@@ -24,8 +24,8 @@ import { DividerModule } from 'primeng/divider';
 import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent } from '@orb-components';
 
 // Models and Services
-import { ServiceResponseDto, CreateServiceDto, ServiceListResponseDto } from '../../../api/models';
-import { ServicesService } from '../../../api/services/services.service';
+import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
+import { ServiceItemsService } from '../../../api/services/service-items.service';
 
 export interface ServiceSearchFilters {
   query: string;
@@ -33,12 +33,11 @@ export interface ServiceSearchFilters {
   category?: string;
 }
 
-export interface ServiceSearchResult extends ServiceResponseDto {
+export interface ServiceSearchResult extends ItemSelectorResponseDto {
   // Campos calculados para el display
   isRecentlyUsed?: boolean;
   usageCount?: number;
   isCustom?: boolean;
-  price?: number; // Alias para basePrice
 }
 
 export interface RecentService {
@@ -82,15 +81,15 @@ export interface RecentService {
 export class ServiceSearchModalComponent {
   @Input() visible = false;
   @Input() title = 'Seleccionar Servicio';
-  @Input() preSelectedService?: ServiceResponseDto;
+  @Input() preSelectedService?: ItemSelectorResponseDto;
   @Input() clientId?: number; // Para obtener servicios utilizados por el cliente
   
   @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() serviceSelected = new EventEmitter<ServiceResponseDto | CreateServiceDto>();
+  @Output() serviceSelected = new EventEmitter<ItemSelectorResponseDto>();
   @Output() cancel = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
-  private servicesService = inject(ServicesService);
+  private serviceItemsService = inject(ServiceItemsService);
 
   // Signals para estado reactivo
   private searchSubject = new Subject<string>();
@@ -189,53 +188,26 @@ export class ServiceSearchModalComponent {
   }
 
   private loadRecentServices(): void {
-    // Simulación de servicios recientes - esto debería venir del backend
-    // basado en el historial de citas del cliente o del profesional
-    const mockRecentServices: RecentService[] = [
-      {
-        id: 'recent-1',
-        name: 'Consulta General',
-        basePrice: 50000,
-        price: 50000,
-        lastUsed: new Date(Date.now() - 86400000), // Ayer
-        usageCount: 15
-      },
-      {
-        id: 'recent-2',
-        name: 'Control de Rutina',
-        basePrice: 35000,
-        price: 35000,
-        lastUsed: new Date(Date.now() - 172800000), // Hace 2 días
-        usageCount: 8
-      },
-      {
-        id: 'recent-3',
-        name: 'Seguimiento Tratamiento',
-        basePrice: 45000,
-        price: 45000,
-        lastUsed: new Date(Date.now() - 259200000), // Hace 3 días
-        usageCount: 12
-      }
-    ];
-    
-    this.recentServices.set(mockRecentServices);
+    // TODO: Implement backend call to get recently used services
+    // This should be based on appointment history of the client or professional
+    // When implemented, limit to maximum 3 recent services
+    const recentServices: RecentService[] = []; // Backend call result should be limited here
+    this.recentServices.set(recentServices.slice(0, 3)); // Ensure max 3 items
   }
 
   private searchServices(query: string) {
     const filters = this.buildFilters(query);
         
     
-    return this.servicesService.serviceControllerFindAll().pipe(
-      map((response: ServiceListResponseDto) => {        
-        
-        const services = response.services || [];
+    return this.serviceItemsService.serviceItemsControllerGetItems({ type: 'service' }).pipe(
+      map((services: ItemSelectorResponseDto[]) => {        
         
         // Filtrar servicios por query
         let filtered = services;
         
         if (query && query.trim().length > 0) {
           const searchTerm = query.toLowerCase().trim();
-          filtered = services.filter((service: ServiceResponseDto) => 
+          filtered = services.filter((service: ItemSelectorResponseDto) => 
             this.serviceMatchesSearch(service, searchTerm)
           );
         }
@@ -246,11 +218,11 @@ export class ServiceSearchModalComponent {
         }
         
         if (filters.priceRange?.min !== undefined && filters.priceRange?.min !== null) {
-          filtered = filtered.filter((s: ServiceResponseDto) => s.basePrice && s.basePrice >= filters.priceRange!.min!);
+          filtered = filtered.filter((s: ItemSelectorResponseDto) => s.price && s.price >= filters.priceRange!.min!);
         }
         
         if (filters.priceRange?.max !== undefined && filters.priceRange?.max !== null) {
-          filtered = filtered.filter((s: ServiceResponseDto) => s.basePrice && s.basePrice <= filters.priceRange!.max!);
+          filtered = filtered.filter((s: ItemSelectorResponseDto) => s.price && s.price <= filters.priceRange!.max!);
         }
                 
         
@@ -265,7 +237,7 @@ export class ServiceSearchModalComponent {
     );
   }
 
-  private serviceMatchesSearch(service: ServiceResponseDto, searchTerm: string): boolean {
+  private serviceMatchesSearch(service: ItemSelectorResponseDto, searchTerm: string): boolean {
     const fieldsToSearch = [
       service.name,
       service.description
@@ -276,10 +248,9 @@ export class ServiceSearchModalComponent {
     );
   }
 
-  private processSearchResults(services: ServiceResponseDto[], query: string): ServiceSearchResult[] {
+  private processSearchResults(services: ItemSelectorResponseDto[], query: string): ServiceSearchResult[] {
     return services.map(service => ({
       ...service,
-      price: service.basePrice, // Alias para compatibilidad
       isRecentlyUsed: this.isServiceRecentlyUsed(service),
       usageCount: this.getServiceUsageCount(service),
       isCustom: false
@@ -293,11 +264,11 @@ export class ServiceSearchModalComponent {
     });
   }
 
-  private isServiceRecentlyUsed(service: ServiceResponseDto): boolean {
+  private isServiceRecentlyUsed(service: ItemSelectorResponseDto): boolean {
     return this.recentServices().some(recent => recent.name === service.name);
   }
 
-  private getServiceUsageCount(service: ServiceResponseDto): number {
+  private getServiceUsageCount(service: ItemSelectorResponseDto): number {
     const recent = this.recentServices().find(recent => recent.name === service.name);
     return recent?.usageCount || 0;
   }
@@ -321,12 +292,15 @@ export class ServiceSearchModalComponent {
     this.searchSubject.next(query);
   }
 
-  onServiceSelect(service: ServiceResponseDto | RecentService): void {
+  onServiceSelect(service: ItemSelectorResponseDto | RecentService): void {
     if ('lastUsed' in service) {
       // Es un servicio reciente, crear un DTO compatible
-      const serviceDto: CreateServiceDto = {
+      const serviceDto: ItemSelectorResponseDto = {
+        id: parseInt(service.id),
         name: service.name,
-        basePrice: service.basePrice || 0,
+        price: service.basePrice || service.price || 0,
+        type: 'service',
+        status: 'ACTIVE',
         description: `Servicio utilizado recientemente (${service.usageCount} veces)`
       };
       this.serviceSelected.emit(serviceDto);
@@ -357,11 +331,13 @@ export class ServiceSearchModalComponent {
   onCreateService(): void {
     if (this.newServiceForm.valid) {
       const formValue = this.newServiceForm.value;
-      const newService: CreateServiceDto = {
+      const newService: ItemSelectorResponseDto = {
+        id: 0, // Temporary ID for new service
         name: formValue.name,
-        basePrice: formValue.basePrice || 0,
+        price: formValue.basePrice || 0,
+        type: 'service',
+        status: 'ACTIVE',
         description: formValue.description || ''
-        // TODO: Agregar otros campos cuando el backend los soporte
       };
 
       this.serviceSelected.emit(newService);
@@ -413,7 +389,7 @@ export class ServiceSearchModalComponent {
     }).format(price);
   }
 
-  getServicePrice(service: ServiceResponseDto | RecentService): number | undefined {
+  getServicePrice(service: ItemSelectorResponseDto | RecentService): number | undefined {
     if ('basePrice' in service) {
       return service.basePrice;
     }

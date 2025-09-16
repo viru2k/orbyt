@@ -32,6 +32,39 @@ orb-card {
   }
 }
 
+/* Standalone description column */
+.product-description {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  max-height: 3.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Owner avatar container */
+.owner-avatar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  
+  ::ng-deep orb-entity-avatar {
+    cursor: pointer;
+    
+    .entity-avatar-container {
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
 /* Product layout en tabla - Forzar layout horizontal */
 ::ng-deep orb-table table tbody tr td {
   .flex.align-items-center {
@@ -73,8 +106,8 @@ orb-card {
   }
 }
 
-/* Status styling consistent with users and clients */
-::ng-deep .status-activo {
+/* Status styling consistent with services */
+::ng-deep .status-active {
   background: rgba(34, 197, 94, 0.1) !important;
   color: rgb(34, 197, 94) !important;
   padding: 0.25rem 0.75rem !important;
@@ -84,7 +117,7 @@ orb-card {
   text-transform: capitalize !important;
 }
 
-::ng-deep .status-inactivo {
+::ng-deep .status-inactive {
   background: rgba(239, 68, 68, 0.1) !important;
   color: rgb(239, 68, 68) !important;
   padding: 0.25rem 0.75rem !important;

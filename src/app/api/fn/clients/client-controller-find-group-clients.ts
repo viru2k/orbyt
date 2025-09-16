@@ -28,4 +28,4 @@ export function clientControllerFindGroupClients(http: HttpClient, rootUrl: stri
   );
 }
 
-clientControllerFindGroupClients.PATH = '/api/clients/group';
+clientControllerFindGroupClients.PATH = '/clients/group';

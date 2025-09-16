@@ -29,4 +29,4 @@ export function rewardsControllerGetClientRewardHistory(http: HttpClient, rootUr
   );
 }
 
-rewardsControllerGetClientRewardHistory.PATH = '/api/rewards/customer/{clientId}/history';
+rewardsControllerGetClientRewardHistory.PATH = '/rewards/customer/{clientId}/history';

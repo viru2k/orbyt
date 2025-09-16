@@ -26,8 +26,6 @@ import { agendaControllerCreateDayOverride } from '../fn/agenda/agenda-controlle
 import { AgendaControllerCreateDayOverride$Params } from '../fn/agenda/agenda-controller-create-day-override';
 import { agendaControllerDeleteAppointment } from '../fn/agenda/agenda-controller-delete-appointment';
 import { AgendaControllerDeleteAppointment$Params } from '../fn/agenda/agenda-controller-delete-appointment';
-import { agendaControllerDeleteHoliday } from '../fn/agenda/agenda-controller-delete-holiday';
-import { AgendaControllerDeleteHoliday$Params } from '../fn/agenda/agenda-controller-delete-holiday';
 import { agendaControllerGetAppointments } from '../fn/agenda/agenda-controller-get-appointments';
 import { AgendaControllerGetAppointments$Params } from '../fn/agenda/agenda-controller-get-appointments';
 import { agendaControllerGetAvailabilityRange } from '../fn/agenda/agenda-controller-get-availability-range';
@@ -76,7 +74,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetAppointments()` */
-  static readonly AgendaControllerGetAppointmentsPath = '/api/agenda';
+  static readonly AgendaControllerGetAppointmentsPath = '/agenda';
 
   /**
    * Obtener turnos por diversos filtros (fecha, rango, estado, profesional).
@@ -109,7 +107,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerCreate()` */
-  static readonly AgendaControllerCreatePath = '/api/agenda';
+  static readonly AgendaControllerCreatePath = '/agenda';
 
   /**
    * Crear un turno manual.
@@ -142,7 +140,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerDeleteAppointment()` */
-  static readonly AgendaControllerDeleteAppointmentPath = '/api/agenda/{id}';
+  static readonly AgendaControllerDeleteAppointmentPath = '/agenda/{id}';
 
   /**
    * Eliminar un turno (o marcarlo como cancelado).
@@ -175,7 +173,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerUpdate()` */
-  static readonly AgendaControllerUpdatePath = '/api/agenda/{id}';
+  static readonly AgendaControllerUpdatePath = '/agenda/{id}';
 
   /**
    * Actualizar un turno existente.
@@ -208,7 +206,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerBook()` */
-  static readonly AgendaControllerBookPath = '/api/agenda/book';
+  static readonly AgendaControllerBookPath = '/agenda/book';
 
   /**
    * Reservar un turno en un slot disponible (cliente o profesional).
@@ -241,7 +239,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetAvailable()` */
-  static readonly AgendaControllerGetAvailablePath = '/api/agenda/available';
+  static readonly AgendaControllerGetAvailablePath = '/agenda/available';
 
   /**
    * Ver slots disponibles para un día y profesional.
@@ -274,7 +272,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetConfig()` */
-  static readonly AgendaControllerGetConfigPath = '/api/agenda/config';
+  static readonly AgendaControllerGetConfigPath = '/agenda/config';
 
   /**
    * Obtener configuración de agenda del profesional actual (o especificado).
@@ -307,7 +305,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerUpdateConfigTest()` */
-  static readonly AgendaControllerUpdateConfigTestPath = '/api/agenda/config-test';
+  static readonly AgendaControllerUpdateConfigTestPath = '/agenda/config-test';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -332,7 +330,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerTestSimple()` */
-  static readonly AgendaControllerTestSimplePath = '/api/agenda/test-simple';
+  static readonly AgendaControllerTestSimplePath = '/agenda/test-simple';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -357,7 +355,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerUpdateConfig()` */
-  static readonly AgendaControllerUpdateConfigPath = '/api/agenda/config/update';
+  static readonly AgendaControllerUpdateConfigPath = '/agenda/config/update';
 
   /**
    * Actualizar configuración de agenda del profesional actual (o especificado).
@@ -390,7 +388,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerAddHoliday()` */
-  static readonly AgendaControllerAddHolidayPath = '/api/agenda/holiday';
+  static readonly AgendaControllerAddHolidayPath = '/agenda/holiday';
 
   /**
    * Agregar feriado para un profesional.
@@ -423,7 +421,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetHolidays()` */
-  static readonly AgendaControllerGetHolidaysPath = '/api/agenda/holidays';
+  static readonly AgendaControllerGetHolidaysPath = '/agenda/holidays';
 
   /**
    * Listar feriados de un profesional.
@@ -455,41 +453,8 @@ export class AgendaService extends BaseService {
     );
   }
 
-  /** Path part for operation `agendaControllerDeleteHoliday()` */
-  static readonly AgendaControllerDeleteHolidayPath = '/api/agenda/holiday/{id}';
-
-  /**
-   * Eliminar día festivo.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `agendaControllerDeleteHoliday()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  agendaControllerDeleteHoliday$Response(params: AgendaControllerDeleteHoliday$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return agendaControllerDeleteHoliday(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Eliminar día festivo.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `agendaControllerDeleteHoliday$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  agendaControllerDeleteHoliday(params: AgendaControllerDeleteHoliday$Params, context?: HttpContext): Observable<void> {
-    return this.agendaControllerDeleteHoliday$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
-    );
-  }
-
   /** Path part for operation `agendaControllerGetSummary()` */
-  static readonly AgendaControllerGetSummaryPath = '/api/agenda/summary';
+  static readonly AgendaControllerGetSummaryPath = '/agenda/summary';
 
   /**
    * Resumen de citas por estado y día para un profesional.
@@ -522,7 +487,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetToday()` */
-  static readonly AgendaControllerGetTodayPath = '/api/agenda/today';
+  static readonly AgendaControllerGetTodayPath = '/agenda/today';
 
   /**
    * Turnos del día actual del profesional logueado (o especificado).
@@ -555,7 +520,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetWeek()` */
-  static readonly AgendaControllerGetWeekPath = '/api/agenda/week';
+  static readonly AgendaControllerGetWeekPath = '/agenda/week';
 
   /**
    * Turnos de la semana actual del profesional logueado (o especificado).
@@ -588,7 +553,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerRegisterProductsUsed()` */
-  static readonly AgendaControllerRegisterProductsUsedPath = '/api/agenda/{id}/products-used';
+  static readonly AgendaControllerRegisterProductsUsedPath = '/agenda/{id}/products-used';
 
   /**
    * Registrar productos utilizados en la cita.
@@ -621,7 +586,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetProductsUsed()` */
-  static readonly AgendaControllerGetProductsUsedPath = '/api/agenda/{id}/products';
+  static readonly AgendaControllerGetProductsUsedPath = '/agenda/{id}/products';
 
   /**
    * Obtener productos utilizados en una cita.
@@ -654,7 +619,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerBlockMultipleDates()` */
-  static readonly AgendaControllerBlockMultipleDatesPath = '/api/agenda/block-dates';
+  static readonly AgendaControllerBlockMultipleDatesPath = '/agenda/block-dates';
 
   /**
    * Bloquear múltiples fechas (vacaciones, días libres).
@@ -687,7 +652,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerUnblockDates()` */
-  static readonly AgendaControllerUnblockDatesPath = '/api/agenda/block-dates';
+  static readonly AgendaControllerUnblockDatesPath = '/agenda/block-dates';
 
   /**
    * Desbloquear fechas específicas.
@@ -720,7 +685,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerCreateDayOverride()` */
-  static readonly AgendaControllerCreateDayOverridePath = '/api/agenda/day-override';
+  static readonly AgendaControllerCreateDayOverridePath = '/agenda/day-override';
 
   /**
    * Configurar horario especial para un día específico.
@@ -753,7 +718,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetDayOverrides()` */
-  static readonly AgendaControllerGetDayOverridesPath = '/api/agenda/day-overrides';
+  static readonly AgendaControllerGetDayOverridesPath = '/agenda/day-overrides';
 
   /**
    * Listar overrides de días específicos.
@@ -786,7 +751,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerBulkConfigUpdate()` */
-  static readonly AgendaControllerBulkConfigUpdatePath = '/api/agenda/bulk-config';
+  static readonly AgendaControllerBulkConfigUpdatePath = '/agenda/bulk-config';
 
   /**
    * Actualización masiva de configuración para rango de fechas.
@@ -819,7 +784,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetAvailabilityRange()` */
-  static readonly AgendaControllerGetAvailabilityRangePath = '/api/agenda/availability-range';
+  static readonly AgendaControllerGetAvailabilityRangePath = '/agenda/availability-range';
 
   /**
    * Obtener disponibilidad para un rango de fechas.
@@ -852,7 +817,7 @@ export class AgendaService extends BaseService {
   }
 
   /** Path part for operation `agendaControllerGetCalendarAvailability()` */
-  static readonly AgendaControllerGetCalendarAvailabilityPath = '/api/agenda/calendar-availability';
+  static readonly AgendaControllerGetCalendarAvailabilityPath = '/agenda/calendar-availability';
 
   /**
    * Obtener disponibilidad del calendario mensual.

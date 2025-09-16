@@ -28,24 +28,10 @@ import { notificationControllerMarkAsRead } from '../fn/notifications/notificati
 import { NotificationControllerMarkAsRead$Params } from '../fn/notifications/notification-controller-mark-as-read';
 import { notificationControllerRetry } from '../fn/notifications/notification-controller-retry';
 import { NotificationControllerRetry$Params } from '../fn/notifications/notification-controller-retry';
-import { notificationControllerSendTestAppointmentConfirmation } from '../fn/notifications/notification-controller-send-test-appointment-confirmation';
-import { NotificationControllerSendTestAppointmentConfirmation$Params } from '../fn/notifications/notification-controller-send-test-appointment-confirmation';
-import { notificationControllerSendTestWelcome } from '../fn/notifications/notification-controller-send-test-welcome';
-import { NotificationControllerSendTestWelcome$Params } from '../fn/notifications/notification-controller-send-test-welcome';
-import { notificationControllerTestAutomationSystem } from '../fn/notifications/notification-controller-test-automation-system';
-import { NotificationControllerTestAutomationSystem$Params } from '../fn/notifications/notification-controller-test-automation-system';
 import { notificationControllerTestBroadcast } from '../fn/notifications/notification-controller-test-broadcast';
 import { NotificationControllerTestBroadcast$Params } from '../fn/notifications/notification-controller-test-broadcast';
 import { notificationControllerTestWebSocket } from '../fn/notifications/notification-controller-test-web-socket';
 import { NotificationControllerTestWebSocket$Params } from '../fn/notifications/notification-controller-test-web-socket';
-import { notificationControllerTriggerAppointmentReminders } from '../fn/notifications/notification-controller-trigger-appointment-reminders';
-import { NotificationControllerTriggerAppointmentReminders$Params } from '../fn/notifications/notification-controller-trigger-appointment-reminders';
-import { notificationControllerTriggerBirthdayWishes } from '../fn/notifications/notification-controller-trigger-birthday-wishes';
-import { NotificationControllerTriggerBirthdayWishes$Params } from '../fn/notifications/notification-controller-trigger-birthday-wishes';
-import { notificationControllerTriggerClientReactivation } from '../fn/notifications/notification-controller-trigger-client-reactivation';
-import { NotificationControllerTriggerClientReactivation$Params } from '../fn/notifications/notification-controller-trigger-client-reactivation';
-import { notificationControllerTriggerWeeklyPromotions } from '../fn/notifications/notification-controller-trigger-weekly-promotions';
-import { NotificationControllerTriggerWeeklyPromotions$Params } from '../fn/notifications/notification-controller-trigger-weekly-promotions';
 import { NotificationOperationDto } from '../models/notification-operation-dto';
 import { NotificationResponseDto } from '../models/notification-response-dto';
 import { NotificationSummaryResponseDto } from '../models/notification-summary-response-dto';
@@ -59,7 +45,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerGetAll()` */
-  static readonly NotificationControllerGetAllPath = '/api/notifications';
+  static readonly NotificationControllerGetAllPath = '/notifications';
 
   /**
    * Obtener todas las notificaciones del usuario.
@@ -92,7 +78,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerCreateNotification()` */
-  static readonly NotificationControllerCreateNotificationPath = '/api/notifications';
+  static readonly NotificationControllerCreateNotificationPath = '/notifications';
 
   /**
    * Crear una notificación manual.
@@ -125,7 +111,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerMarkAsRead()` */
-  static readonly NotificationControllerMarkAsReadPath = '/api/notifications/{id}/read';
+  static readonly NotificationControllerMarkAsReadPath = '/notifications/{id}/read';
 
   /**
    * Marcar una notificación como leída.
@@ -158,7 +144,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerGetFailed()` */
-  static readonly NotificationControllerGetFailedPath = '/api/notifications/failed';
+  static readonly NotificationControllerGetFailedPath = '/notifications/failed';
 
   /**
    * Listar notificaciones fallidas (admin).
@@ -191,7 +177,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerRetry()` */
-  static readonly NotificationControllerRetryPath = '/api/notifications/retry/{id}';
+  static readonly NotificationControllerRetryPath = '/notifications/retry/{id}';
 
   /**
    * Reintentar envío de notificación fallida.
@@ -224,7 +210,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerGetUnread()` */
-  static readonly NotificationControllerGetUnreadPath = '/api/notifications/unread';
+  static readonly NotificationControllerGetUnreadPath = '/notifications/unread';
 
   /**
    * Obtener notificaciones no leídas del usuario actual.
@@ -257,7 +243,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerGetSummary()` */
-  static readonly NotificationControllerGetSummaryPath = '/api/notifications/summary';
+  static readonly NotificationControllerGetSummaryPath = '/notifications/summary';
 
   /**
    * Resumen de notificaciones para dashboard.
@@ -290,7 +276,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerTestWebSocket()` */
-  static readonly NotificationControllerTestWebSocketPath = '/api/notifications/test-websocket';
+  static readonly NotificationControllerTestWebSocketPath = '/notifications/test-websocket';
 
   /**
    * Enviar notificación de prueba por WebSocket.
@@ -323,7 +309,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerTestBroadcast()` */
-  static readonly NotificationControllerTestBroadcastPath = '/api/notifications/test-broadcast';
+  static readonly NotificationControllerTestBroadcastPath = '/notifications/test-broadcast';
 
   /**
    * Enviar notificación broadcast de prueba por WebSocket.
@@ -356,7 +342,7 @@ export class NotificationsService extends BaseService {
   }
 
   /** Path part for operation `notificationControllerGetWebSocketStats()` */
-  static readonly NotificationControllerGetWebSocketStatsPath = '/api/notifications/websocket-stats';
+  static readonly NotificationControllerGetWebSocketStatsPath = '/notifications/websocket-stats';
 
   /**
    * Obtener estadísticas de conexiones WebSocket.
@@ -385,237 +371,6 @@ export class NotificationsService extends BaseService {
   notificationControllerGetWebSocketStats(params?: NotificationControllerGetWebSocketStats$Params, context?: HttpContext): Observable<WebSocketStatsDto> {
     return this.notificationControllerGetWebSocketStats$Response(params, context).pipe(
       map((r: StrictHttpResponse<WebSocketStatsDto>): WebSocketStatsDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerTestAutomationSystem()` */
-  static readonly NotificationControllerTestAutomationSystemPath = '/api/notifications/test-automation-system';
-
-  /**
-   * Probar el sistema de notificaciones automatizadas.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerTestAutomationSystem()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTestAutomationSystem$Response(params?: NotificationControllerTestAutomationSystem$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerTestAutomationSystem(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Probar el sistema de notificaciones automatizadas.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerTestAutomationSystem$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTestAutomationSystem(params?: NotificationControllerTestAutomationSystem$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerTestAutomationSystem$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerSendTestWelcome()` */
-  static readonly NotificationControllerSendTestWelcomePath = '/api/notifications/send-test-welcome/{userId}';
-
-  /**
-   * Enviar email de bienvenida de prueba.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerSendTestWelcome()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerSendTestWelcome$Response(params: NotificationControllerSendTestWelcome$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerSendTestWelcome(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Enviar email de bienvenida de prueba.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerSendTestWelcome$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerSendTestWelcome(params: NotificationControllerSendTestWelcome$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerSendTestWelcome$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerSendTestAppointmentConfirmation()` */
-  static readonly NotificationControllerSendTestAppointmentConfirmationPath = '/api/notifications/send-test-appointment-confirmation/{appointmentId}';
-
-  /**
-   * Enviar confirmación de cita de prueba.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerSendTestAppointmentConfirmation()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerSendTestAppointmentConfirmation$Response(params: NotificationControllerSendTestAppointmentConfirmation$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerSendTestAppointmentConfirmation(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Enviar confirmación de cita de prueba.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerSendTestAppointmentConfirmation$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerSendTestAppointmentConfirmation(params: NotificationControllerSendTestAppointmentConfirmation$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerSendTestAppointmentConfirmation$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerTriggerWeeklyPromotions()` */
-  static readonly NotificationControllerTriggerWeeklyPromotionsPath = '/api/notifications/trigger-manual-promotions';
-
-  /**
-   * Disparar promociones semanales manualmente.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerTriggerWeeklyPromotions()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerWeeklyPromotions$Response(params?: NotificationControllerTriggerWeeklyPromotions$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerTriggerWeeklyPromotions(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Disparar promociones semanales manualmente.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerTriggerWeeklyPromotions$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerWeeklyPromotions(params?: NotificationControllerTriggerWeeklyPromotions$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerTriggerWeeklyPromotions$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerTriggerClientReactivation()` */
-  static readonly NotificationControllerTriggerClientReactivationPath = '/api/notifications/trigger-manual-reactivation';
-
-  /**
-   * Disparar campaña de reactivación manualmente.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerTriggerClientReactivation()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerClientReactivation$Response(params?: NotificationControllerTriggerClientReactivation$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerTriggerClientReactivation(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Disparar campaña de reactivación manualmente.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerTriggerClientReactivation$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerClientReactivation(params?: NotificationControllerTriggerClientReactivation$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerTriggerClientReactivation$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerTriggerAppointmentReminders()` */
-  static readonly NotificationControllerTriggerAppointmentRemindersPath = '/api/notifications/trigger-manual-reminders';
-
-  /**
-   * Disparar recordatorios de citas manualmente.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerTriggerAppointmentReminders()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerAppointmentReminders$Response(params?: NotificationControllerTriggerAppointmentReminders$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerTriggerAppointmentReminders(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Disparar recordatorios de citas manualmente.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerTriggerAppointmentReminders$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerAppointmentReminders(params?: NotificationControllerTriggerAppointmentReminders$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerTriggerAppointmentReminders$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
-    );
-  }
-
-  /** Path part for operation `notificationControllerTriggerBirthdayWishes()` */
-  static readonly NotificationControllerTriggerBirthdayWishesPath = '/api/notifications/trigger-manual-birthdays';
-
-  /**
-   * Disparar felicitaciones de cumpleaños manualmente.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `notificationControllerTriggerBirthdayWishes()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerBirthdayWishes$Response(params?: NotificationControllerTriggerBirthdayWishes$Params, context?: HttpContext): Observable<StrictHttpResponse<NotificationOperationDto>> {
-    return notificationControllerTriggerBirthdayWishes(this.http, this.rootUrl, params, context);
-  }
-
-  /**
-   * Disparar felicitaciones de cumpleaños manualmente.
-   *
-   *
-   *
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `notificationControllerTriggerBirthdayWishes$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  notificationControllerTriggerBirthdayWishes(params?: NotificationControllerTriggerBirthdayWishes$Params, context?: HttpContext): Observable<NotificationOperationDto> {
-    return this.notificationControllerTriggerBirthdayWishes$Response(params, context).pipe(
-      map((r: StrictHttpResponse<NotificationOperationDto>): NotificationOperationDto => r.body)
     );
   }
 

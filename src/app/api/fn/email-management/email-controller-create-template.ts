@@ -31,4 +31,4 @@ export function emailControllerCreateTemplate(http: HttpClient, rootUrl: string,
   );
 }
 
-emailControllerCreateTemplate.PATH = '/api/email/templates';
+emailControllerCreateTemplate.PATH = '/email/templates';

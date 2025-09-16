@@ -31,4 +31,4 @@ export function emailControllerCreateEmailSettings(http: HttpClient, rootUrl: st
   );
 }
 
-emailControllerCreateEmailSettings.PATH = '/api/email/settings';
+emailControllerCreateEmailSettings.PATH = '/email/settings';

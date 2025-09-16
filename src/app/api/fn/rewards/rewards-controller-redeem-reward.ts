@@ -31,4 +31,4 @@ export function rewardsControllerRedeemReward(http: HttpClient, rootUrl: string,
   );
 }
 
-rewardsControllerRedeemReward.PATH = '/api/rewards/customer/{clientId}/redeem/{rewardId}';
+rewardsControllerRedeemReward.PATH = '/rewards/customer/{clientId}/redeem/{rewardId}';

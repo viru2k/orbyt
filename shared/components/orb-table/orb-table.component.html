@@ -106,10 +106,12 @@
   </ng-template>
 
   <ng-template pTemplate="paginatorleft" let-state>
-    @if(state.totalRecords > 0) {
-      Mostrando {{(state.first || 0) + 1}} a {{ (state.first || 0) + (state.rows || 0) > state.totalRecords ? state.totalRecords : (state.first || 0) + (state.rows || 0) }} de {{state.totalRecords}}
-    } @else {
-      Mostrando 0 de 0
-    }
+    <div class="flex align-items-center gap-2">
+      @if(state.totalRecords > 0) {
+        <span>Mostrando {{(state.first || 0) + 1}} a {{ (state.first || 0) + (state.rows || 0) > state.totalRecords ? state.totalRecords : (state.first || 0) + (state.rows || 0) }} de {{state.totalRecords}}</span>
+      } @else {
+        <span>Mostrando 0 de 0</span>
+      }
+    </div>
   </ng-template>
 </p-table>

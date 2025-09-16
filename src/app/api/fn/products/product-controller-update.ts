@@ -33,4 +33,4 @@ export function productControllerUpdate(http: HttpClient, rootUrl: string, param
   );
 }
 
-productControllerUpdate.PATH = '/api/products/{id}';
+productControllerUpdate.PATH = '/products/{id}';

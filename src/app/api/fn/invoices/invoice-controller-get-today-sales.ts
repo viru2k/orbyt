@@ -27,4 +27,4 @@ export function invoiceControllerGetTodaySales(http: HttpClient, rootUrl: string
   );
 }
 
-invoiceControllerGetTodaySales.PATH = '/api/invoices/stats/today';
+invoiceControllerGetTodaySales.PATH = '/invoices/stats/today';

@@ -82,6 +82,42 @@
         }
       }
 
+      // Select action button
+      .select-action {
+        display: flex;
+        justify-content: center;
+        
+        ::ng-deep .select-button.rounded-button {
+          border-radius: 50% !important;
+          width: 40px !important;
+          height: 40px !important;
+          padding: 0 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          transition: all 0.2s ease !important;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+          
+          &:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+          }
+          
+          &:active {
+            transform: translateY(0) !important;
+          }
+          
+          .p-button-label {
+            display: none !important;
+          }
+          
+          .p-button-icon {
+            margin: 0 !important;
+            font-size: 1.1rem !important;
+          }
+        }
+      }
+
       .empty-state {
         padding: var(--space-8, 2rem);
         text-align: center;

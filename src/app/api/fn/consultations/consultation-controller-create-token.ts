@@ -33,4 +33,4 @@ export function consultationControllerCreateToken(http: HttpClient, rootUrl: str
   );
 }
 
-consultationControllerCreateToken.PATH = '/api/consultations/{id}/tokens';
+consultationControllerCreateToken.PATH = '/consultations/{id}/tokens';

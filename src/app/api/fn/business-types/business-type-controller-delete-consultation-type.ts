@@ -33,4 +33,4 @@ export function businessTypeControllerDeleteConsultationType(http: HttpClient, r
   );
 }
 
-businessTypeControllerDeleteConsultationType.PATH = '/api/business-types/consultation-types/{id}';
+businessTypeControllerDeleteConsultationType.PATH = '/business-types/consultation-types/{id}';

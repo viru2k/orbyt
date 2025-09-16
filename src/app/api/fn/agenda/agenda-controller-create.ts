@@ -31,4 +31,4 @@ export function agendaControllerCreate(http: HttpClient, rootUrl: string, params
   );
 }
 
-agendaControllerCreate.PATH = '/api/agenda';
+agendaControllerCreate.PATH = '/agenda';

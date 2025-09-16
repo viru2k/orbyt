@@ -8,12 +8,14 @@
     "start:landing": "nx serve orbyt-landing",
     "start:orbyt": "nx serve orbyt --port=4200",
     "build": "nx build",
-    
     "build:orbyt": "nx build orbyt",
     "build:landing": "nx build orbyt-landing",
     "lint": "nx lint",
     "test": "nx test",
-    "openapi:generate": "npx ng-openapi-gen"
+    "openapi:generate": "npx ng-openapi-gen",
+    "serve:local": "nx serve --configuration=development",
+    "serve:docker": "nx serve --configuration=docker",
+    "build:docker": "nx build --configuration=docker"
   },
   "dependencies": {
     "@angular/animations": "~19.2.0",
@@ -42,6 +44,8 @@
     "@primeng/themes": "^19.1.2",
     "@stripe/stripe-js": "^7.9.0",
     "angular-calendar": "^0.31.1",
+    "angular-draggable-droppable": "^8.0.0",
+    "angular-resizable-element": "^6.0.0",
     "bootstrap": "^5.3.5",
     "chart.js": "^4.5.0",
     "date-fns": "^4.1.0",

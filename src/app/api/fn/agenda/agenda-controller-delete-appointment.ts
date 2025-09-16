@@ -30,4 +30,4 @@ export function agendaControllerDeleteAppointment(http: HttpClient, rootUrl: str
   );
 }
 
-agendaControllerDeleteAppointment.PATH = '/api/agenda/{id}';
+agendaControllerDeleteAppointment.PATH = '/agenda/{id}';

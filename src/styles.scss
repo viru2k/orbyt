@@ -167,8 +167,8 @@ html, body {
 
 /* Variables CSS para las medidas estándar del proyecto */
 :root {
-  --project-font-size: 14px;
-  --project-font-size-small: 12px;
+  --project-font-size: 12px;
+  --project-font-size-small: 10px;
   --project-input-height: 32px;
   --project-button-height: 32px;
   --project-table-padding: 1px 0.5rem;
@@ -404,7 +404,7 @@ label {
 /* Global dropdown and input styling fixes */
 :root {
   --project-input-height: 32px;
-  --project-font-size: 14px;
+  --project-font-size: 12px;
 }
 
 .p-inputtext,

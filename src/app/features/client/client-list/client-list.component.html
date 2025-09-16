@@ -24,7 +24,8 @@
       [rowActions]="clientRowActions"
       [tableHeaderActions]="clientTableHeaderActions"
       dataKey="id"
-      paginatorPosition="both"
+      paginatorPosition="bottom"
+      [rowsPerPageOptions]="[15, 30, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
     >
       <!--
@@ -40,12 +41,13 @@
                 <div class="flex align-items-center gap-3">
                   <orb-entity-avatar
                     [entity]="client"
+                    [avatar]="client.avatarUrl ? {url: client.avatarUrl, id: 0, filename: '', fileType: 'avatar', entityType: 'client', createdAt: '', updatedAt: '', isActive: true, mimeType: '', originalName: '', path: '', size: 0, uploadedBy: {}} : null"
                     entityType="client"
                     size="normal"
                     shape="circle"
                     [showTooltip]="true"
                     context="table"
-                    [autoLoad]="true">
+                    [autoLoad]="false">
                   </orb-entity-avatar>
                   <div class="client-info">
                     <div class="client-name font-medium text-900">{{ client.fullname }}</div>

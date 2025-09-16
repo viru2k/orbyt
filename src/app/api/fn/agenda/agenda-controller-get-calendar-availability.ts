@@ -46,4 +46,4 @@ export function agendaControllerGetCalendarAvailability(http: HttpClient, rootUr
   );
 }
 
-agendaControllerGetCalendarAvailability.PATH = '/api/agenda/calendar-availability';
+agendaControllerGetCalendarAvailability.PATH = '/agenda/calendar-availability';

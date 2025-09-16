@@ -61,7 +61,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetAllRewardPrograms()` */
-  static readonly RewardsControllerGetAllRewardProgramsPath = '/api/rewards/programs';
+  static readonly RewardsControllerGetAllRewardProgramsPath = '/rewards/programs';
 
   /**
    * Obtener todos los programas de recompensas.
@@ -94,7 +94,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerCreateRewardProgram()` */
-  static readonly RewardsControllerCreateRewardProgramPath = '/api/rewards/programs';
+  static readonly RewardsControllerCreateRewardProgramPath = '/rewards/programs';
 
   /**
    * Crear nuevo programa de recompensas.
@@ -127,7 +127,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetActiveRewardPrograms()` */
-  static readonly RewardsControllerGetActiveRewardProgramsPath = '/api/rewards/programs/active';
+  static readonly RewardsControllerGetActiveRewardProgramsPath = '/rewards/programs/active';
 
   /**
    * Obtener programas de recompensas activos.
@@ -160,7 +160,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetRewardProgramsByBusinessType()` */
-  static readonly RewardsControllerGetRewardProgramsByBusinessTypePath = '/api/rewards/programs/business-type/{businessTypeId}';
+  static readonly RewardsControllerGetRewardProgramsByBusinessTypePath = '/rewards/programs/business-type/{businessTypeId}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -185,7 +185,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetRewardProgramById()` */
-  static readonly RewardsControllerGetRewardProgramByIdPath = '/api/rewards/programs/{id}';
+  static readonly RewardsControllerGetRewardProgramByIdPath = '/rewards/programs/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -210,7 +210,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerDeleteRewardProgram()` */
-  static readonly RewardsControllerDeleteRewardProgramPath = '/api/rewards/programs/{id}';
+  static readonly RewardsControllerDeleteRewardProgramPath = '/rewards/programs/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -235,7 +235,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerUpdateRewardProgram()` */
-  static readonly RewardsControllerUpdateRewardProgramPath = '/api/rewards/programs/{id}';
+  static readonly RewardsControllerUpdateRewardProgramPath = '/rewards/programs/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -260,7 +260,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetClientRewards()` */
-  static readonly RewardsControllerGetClientRewardsPath = '/api/rewards/customer/{clientId}';
+  static readonly RewardsControllerGetClientRewardsPath = '/rewards/customer/{clientId}';
 
   /**
    * Obtener todas las recompensas de un cliente.
@@ -293,7 +293,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetClientActiveRewards()` */
-  static readonly RewardsControllerGetClientActiveRewardsPath = '/api/rewards/customer/{clientId}/active';
+  static readonly RewardsControllerGetClientActiveRewardsPath = '/rewards/customer/{clientId}/active';
 
   /**
    * Obtener recompensas activas (en progreso) de un cliente.
@@ -326,7 +326,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetClientEarnedRewards()` */
-  static readonly RewardsControllerGetClientEarnedRewardsPath = '/api/rewards/customer/{clientId}/earned';
+  static readonly RewardsControllerGetClientEarnedRewardsPath = '/rewards/customer/{clientId}/earned';
 
   /**
    * Obtener recompensas ganadas de un cliente.
@@ -359,7 +359,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetClientRewardHistory()` */
-  static readonly RewardsControllerGetClientRewardHistoryPath = '/api/rewards/customer/{clientId}/history';
+  static readonly RewardsControllerGetClientRewardHistoryPath = '/rewards/customer/{clientId}/history';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -384,7 +384,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerRedeemReward()` */
-  static readonly RewardsControllerRedeemRewardPath = '/api/rewards/customer/{clientId}/redeem/{rewardId}';
+  static readonly RewardsControllerRedeemRewardPath = '/rewards/customer/{clientId}/redeem/{rewardId}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -409,7 +409,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerGetRewardsMetrics()` */
-  static readonly RewardsControllerGetRewardsMetricsPath = '/api/rewards/metrics';
+  static readonly RewardsControllerGetRewardsMetricsPath = '/rewards/metrics';
 
   /**
    * Obtener métricas del sistema de recompensas.
@@ -442,7 +442,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerSearchClientsForRewards()` */
-  static readonly RewardsControllerSearchClientsForRewardsPath = '/api/rewards/client-search';
+  static readonly RewardsControllerSearchClientsForRewardsPath = '/rewards/client-search';
 
   /**
    * Buscar clientes para el sistema de recompensas.
@@ -475,7 +475,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerTriggerAppointmentCompleted()` */
-  static readonly RewardsControllerTriggerAppointmentCompletedPath = '/api/rewards/trigger/appointment-completed/{clientId}';
+  static readonly RewardsControllerTriggerAppointmentCompletedPath = '/rewards/trigger/appointment-completed/{clientId}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -500,7 +500,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerTriggerConsultationCompleted()` */
-  static readonly RewardsControllerTriggerConsultationCompletedPath = '/api/rewards/trigger/consultation-completed/{clientId}';
+  static readonly RewardsControllerTriggerConsultationCompletedPath = '/rewards/trigger/consultation-completed/{clientId}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -525,7 +525,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerTriggerServiceCompleted()` */
-  static readonly RewardsControllerTriggerServiceCompletedPath = '/api/rewards/trigger/service-completed/{clientId}';
+  static readonly RewardsControllerTriggerServiceCompletedPath = '/rewards/trigger/service-completed/{clientId}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -550,7 +550,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerTriggerPurchaseCompleted()` */
-  static readonly RewardsControllerTriggerPurchaseCompletedPath = '/api/rewards/trigger/purchase-completed/{clientId}';
+  static readonly RewardsControllerTriggerPurchaseCompletedPath = '/rewards/trigger/purchase-completed/{clientId}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -575,7 +575,7 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerCleanupExpiredRewards()` */
-  static readonly RewardsControllerCleanupExpiredRewardsPath = '/api/rewards/cleanup/expired';
+  static readonly RewardsControllerCleanupExpiredRewardsPath = '/rewards/cleanup/expired';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

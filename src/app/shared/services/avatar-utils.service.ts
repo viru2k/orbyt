@@ -80,13 +80,8 @@ export class AvatarUtilsService {
     }
     
     // Si no hay avatar como parámetro, buscar en las propiedades de la entidad
-    if (this.isUserEntity(entity) && entity.avatarUrl) {
-      return this.processAvatarUrl(entity.avatarUrl);
-    }
-    
-    if (this.isProductEntity(entity) && entity.thumbnailUrl) {
-      return this.processAvatarUrl(entity.thumbnailUrl);
-    }
+    // TODO: Add avatar support when backend provides image URLs
+    // UserResponseDto and ProductResponseDto don't have image properties yet
     
     // Los clientes actualmente no tienen campo avatarUrl en el DTO
     // Esto se puede agregar en el futuro si se implementa

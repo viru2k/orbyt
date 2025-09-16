@@ -28,4 +28,4 @@ export function userControllerGetGroupUsers(http: HttpClient, rootUrl: string, p
   );
 }
 
-userControllerGetGroupUsers.PATH = '/api/users/group';
+userControllerGetGroupUsers.PATH = '/users/group';

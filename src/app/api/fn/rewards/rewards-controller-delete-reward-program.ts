@@ -29,4 +29,4 @@ export function rewardsControllerDeleteRewardProgram(http: HttpClient, rootUrl: 
   );
 }
 
-rewardsControllerDeleteRewardProgram.PATH = '/api/rewards/programs/{id}';
+rewardsControllerDeleteRewardProgram.PATH = '/rewards/programs/{id}';

@@ -64,12 +64,15 @@
             </orb-form-field>
           </div>
           <div class="field col-12">
-            <orb-checkbox
-              formControlName="isActive"
-              inputId="isActive"
-              label="Usuario Activo"
-              [binary]="true">
-            </orb-checkbox>
+            <orb-form-field label="Estado" [required]="true">
+              <orb-select
+                formControlName="isActive"
+                [options]="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                [showClear]="false">
+              </orb-select>
+            </orb-form-field>
           </div>
           <div class="field col-12">
             <orb-checkbox

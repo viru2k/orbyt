@@ -5,14 +5,15 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentResponseDto, CreateAppointmentDto, UpdateAppointmentDto } from '../../../../api/models';
 import { AgendaStore } from '../../../../store/agenda/agenda.store';
-import { ClientResponseDto, UserResponseDto, ServiceResponseDto } from '../../../../api/models';
+import { ClientResponseDto, UserResponseDto } from '../../../../api/models';
+import { ItemSelectorResponseDto } from '../../../../api/models/item-selector-response-dto';
 import { ClientsService } from '../../../../api/services/clients.service';
 import { UsersService } from '../../../../api/services/users.service';
+import { ServicesService } from '../../../../api/services/services.service';
 import { Observable, of, debounceTime, distinctUntilChanged, map, take } from 'rxjs';
 import { OrbButtonComponent, OrbDatepickerComponent, OrbFormFieldComponent, OrbSelectComponent, OrbTextAreaComponent, OrbTextInputComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { ClientSearchModalComponent } from '../../../../shared/components/client-search-modal/client-search-modal.component';
 import { ServiceSearchModalComponent } from '../../../../shared/components/service-search-modal/service-search-modal.component';
-import { CreateServiceDto } from '../../../../api/models';
 import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
@@ -65,12 +66,17 @@ export class AgendaFormComponent implements OnChanges {
   showClientSearchModal = false;
   showServiceSearchModal = false;
   selectedClient: ClientResponseDto | null = null;
-  selectedService: ServiceResponseDto | CreateServiceDto | null = null;
+  selectedService: ItemSelectorResponseDto | null = null;
 
-  statusOptions = Object.keys(AppointmentStatus).map(key => ({
-    label: key.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()),
-    value: (AppointmentStatus as any)[key]
-  }));
+  statusOptions = [
+    { label: 'Pendiente', value: AppointmentStatus.PENDING },
+    { label: 'Confirmada', value: AppointmentStatus.CONFIRMED },
+    { label: 'Registrado', value: AppointmentStatus.CHECKED_IN },
+    { label: 'En Progreso', value: AppointmentStatus.IN_PROGRESS },
+    { label: 'Completada', value: AppointmentStatus.COMPLETED },
+    { label: 'Cancelada', value: AppointmentStatus.CANCELLED },
+    { label: 'No Asistió', value: AppointmentStatus.NO_SHOW }
+  ];
 
   // Validación de disponibilidad
   availabilityMessage: { severity: 'success' | 'info' | 'warn' | 'error', text: string } | null = null;
@@ -81,6 +87,7 @@ export class AgendaFormComponent implements OnChanges {
     public agendaStore: AgendaStore,
     private clientsService: ClientsService,
     private userService: UsersService,
+    private servicesService: ServicesService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private translate: TranslateService,
@@ -101,7 +108,13 @@ export class AgendaFormComponent implements OnChanges {
     // Cargar profesionales del grupo
     this.professionals$ = this.userService.userControllerGetGroupUsers();
     this.services$ = of([]);  // TODO: Implement services API
-    this.rooms$ = of([]);    // TODO: Implement rooms API
+    
+    // Load rooms data (mock for now until API is implemented)
+    this.rooms$ = of([
+      { id: 1, name: 'Sala de Consulta 1', description: 'Sala principal para consultas generales', isActive: true },
+      { id: 2, name: 'Sala de Procedimientos', description: 'Sala equipada para procedimientos médicos', isActive: true },
+      { id: 3, name: 'Sala de Reuniones', description: 'Sala para reuniones y capacitaciones', isActive: false }
+    ]);
     
     // Escuchar cambios en el profesional seleccionado
     this.agendaForm.get('professionalId')?.valueChanges.subscribe((professionalId: number) => {
@@ -146,10 +159,10 @@ export class AgendaFormComponent implements OnChanges {
         };
       }
       
-      // TODO: Cargar servicio si existe
-      // if (this.appointment.service) {
-      //   this.selectedService = this.appointment.service;
-      // }
+      // Cargar servicio si existe
+      if (this.appointment.serviceId) {
+        this.loadServiceById(this.appointment.serviceId);
+      }
       
       this.agendaForm.patchValue({
         title: this.appointment.title,
@@ -489,7 +502,7 @@ export class AgendaFormComponent implements OnChanges {
     this.showServiceSearchModal = true;
   }
 
-  onServiceSelected(service: ServiceResponseDto | CreateServiceDto): void {
+  onServiceSelected(service: ItemSelectorResponseDto): void {
     this.selectedService = service;
     // Si el servicio tiene ID, es uno existente del backend
     if ('id' in service && service.id) {
@@ -549,11 +562,91 @@ export class AgendaFormComponent implements OnChanges {
     }).format(price);
   }
 
-  getServicePrice(service: ServiceResponseDto | CreateServiceDto): number | undefined {
-    if ('basePrice' in service && service.basePrice !== undefined) {
-      return service.basePrice;
+  getServicePrice(service: ItemSelectorResponseDto): number | undefined {
+    if (service.price !== undefined) {
+      return service.price;
     }
     return undefined;
+  }
+
+  /**
+   * Cargar servicio por ID y establecerlo como seleccionado
+   */
+  private loadServiceById(serviceId: number): void {
+    this.servicesService.serviceControllerFindOne({ id: serviceId }).pipe(
+      take(1)
+    ).subscribe({
+      next: (service) => {
+        // Convertir ServiceResponseDto a ItemSelectorResponseDto
+        this.selectedService = {
+          id: service.id,
+          name: service.name,
+          description: service.description || '',
+          type: 'service' as 'product' | 'service',
+          price: service.basePrice,
+          category: service.category || '',
+          status: service.status
+        };
+      },
+      error: (error) => {
+        console.error('Error loading service:', error);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Advertencia',
+          detail: 'No se pudo cargar el servicio asociado'
+        });
+      }
+    });
+  }
+
+  onOpenConsultation(): void {
+    if (this.appointment && this.selectedClient) {
+      this.confirmationService.confirm({
+        header: 'Crear consulta',
+        message: '¿Desea cerrar esta ventana y abrir el formulario de consulta para este cliente?',
+        icon: 'pi pi-question-circle',
+        acceptButtonStyleClass: 'p-button-primary',
+        rejectButtonStyleClass: 'p-button-secondary',
+        acceptLabel: 'Sí, continuar',
+        rejectLabel: 'Cancelar',
+        accept: () => {
+          this.navigateToConsultation();
+        }
+      });
+    }
+  }
+
+  onOpenInvoice(): void {
+    if (this.appointment && this.selectedClient) {
+      this.confirmationService.confirm({
+        header: 'Crear factura',
+        message: '¿Desea cerrar esta ventana y abrir el formulario de factura para este cliente?',
+        icon: 'pi pi-question-circle',
+        acceptButtonStyleClass: 'p-button-primary',
+        rejectButtonStyleClass: 'p-button-secondary',
+        acceptLabel: 'Sí, continuar',
+        rejectLabel: 'Cancelar',
+        accept: () => {
+          this.navigateToInvoiceCreation(this.selectedClient!.id!);
+        }
+      });
+    }
+  }
+
+  private navigateToConsultation(): void {
+    // Close the current modal first
+    this.close.emit();
+
+    // Navigate to consultations page with appointment and client data
+    this.router.navigate(['/consultations'], {
+      queryParams: {
+        appointmentId: this.appointment?.id,
+        clientId: this.selectedClient?.id,
+        professionalId: this.selectedProfessionalId,
+        appointmentDate: this.appointment?.start,
+        fromAppointment: true
+      }
+    });
   }
 }
 

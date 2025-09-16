@@ -8,10 +8,8 @@ export interface ProductResponseDto {
   currentPrice: number;
   description?: string;
   id: number;
-  imageUrl?: string;
   name: string;
   owner: ProductOwnerResponseDto;
   status: 'activo' | 'inactivo' | 'descatalogado' | 'agotado' | 'suspendido';
-  thumbnailUrl?: string;
   updatedAt: string;
 }

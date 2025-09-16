@@ -13,13 +13,13 @@ import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 
 // Orb Components
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent } from '@orb-components';
+import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbInputNumberComponent } from '@orb-components';
 
 // Services and Models
 import { ProductsService } from '../../../api/services/products.service';
 import { ProductResponseDto } from '../../../api/models/product-response-dto';
-import { ServicesService } from '../../../api/services/services.service';
-import { ServiceResponseDto } from '../../../api/models/service-response-dto';
+import { ServiceItemsService } from '../../../api/services/service-items.service';
+import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
 import { BusinessTypesService } from '../../../api/services/business-types.service';
 import { ConsultationTypeResponseDto } from '../../../api/models/consultation-type-response-dto';
 import { MessageService } from 'primeng/api';
@@ -51,6 +51,7 @@ export interface InvoiceItemSelection {
     OrbButtonComponent,
     OrbTextInputComponent,
     OrbFormFieldComponent,
+    OrbInputNumberComponent
   ],
   template: `
     <p-dialog
@@ -66,7 +67,7 @@ export interface InvoiceItemSelection {
       
       <div class="modal-content">
         <!-- Tabs para diferentes tipos de items -->
-        <p-tabView>
+        <p-tabView (onChange)="onTabChange($event)">
           <!-- Tab de Productos -->
           <p-tabPanel header="Productos" leftIcon="pi pi-box">
             <div class="tab-content">
@@ -135,19 +136,21 @@ export interface InvoiceItemSelection {
                         </div>
                       </td>
                       <td>
-                        <p-tag 
-                          [value]="getStatusLabel(product.status)"
-                          [severity]="getStatusSeverity(product.status)">
-                        </p-tag>
+                        <span [ngClass]="getStatusClass(product.status)">
+                          {{ getStatusLabel(product.status) }}
+                        </span>
                       </td>
                       <td>
-                        <orb-button
-                          label="Seleccionar"
-                          icon="pi pi-plus"
-                          (clicked)="selectProduct(product)"
-                          size="small"
-                          variant="primary">
-                        </orb-button>
+                        <div class="select-action">
+                          <orb-button
+                            icon="pi pi-shopping-cart"
+                            (clicked)="selectProduct(product)"
+                            size="small"
+                            variant="primary"
+                            styleClass="rounded-button select-button"
+                            [title]="'Seleccionar ' + product.name">
+                          </orb-button>
+                        </div>
                       </td>
                     </tr>
                   </ng-template>
@@ -232,7 +235,7 @@ export interface InvoiceItemSelection {
                       </td>
                       <td>
                         <div class="item-price">
-                          {{ (service.basePrice || service.defaultPrice) | currency:'EUR':'symbol':'1.2-2' }}
+                          {{ (service.price || service.defaultPrice) | currency:'EUR':'symbol':'1.2-2' }}
                         </div>
                       </td>
                       <td>
@@ -242,19 +245,21 @@ export interface InvoiceItemSelection {
                         </div>
                       </td>
                       <td>
-                        <p-tag 
-                          [value]="getServiceStatusLabel(service)"
-                          [severity]="getServiceStatusSeverity(service)">
-                        </p-tag>
+                        <span [ngClass]="getServiceStatusClass(service)">
+                          {{ getServiceStatusLabel(service) }}
+                        </span>
                       </td>
                       <td>
-                        <orb-button
-                          label="Seleccionar"
-                          icon="pi pi-plus"
-                          (clicked)="selectService(service)"
-                          size="small"
-                          variant="primary">
-                        </orb-button>
+                        <div class="select-action">
+                          <orb-button
+                            icon="pi pi-briefcase"
+                            (clicked)="selectService(service)"
+                            size="small"
+                            variant="primary"
+                            styleClass="rounded-button select-button"
+                            [title]="'Seleccionar ' + service.name">
+                          </orb-button>
+                        </div>
                       </td>
                     </tr>
                   </ng-template>
@@ -284,36 +289,43 @@ export interface InvoiceItemSelection {
                 <div class="form-grid">
                   <orb-form-field label="Descripción" [required]="true">
                     <orb-text-input
-                      [(ngModel)]="manualItem.name"
-                      placeholder="Ej: Consulta personalizada, Tratamiento especial..."
+                      [(ngModel)]="manualItem.name"                      
                       >
                     </orb-text-input>
+                     <small class="help-text">
+              Ej: Consulta personalizada, Tratamiento especial...
+            </small>
                   </orb-form-field>
 
                   <orb-form-field label="Precio Unitario" [required]="true">
-                    <input 
-                      type="number" 
-                      class="orb-input"
-                      [(ngModel)]="manualItem.basePrice"
-                      min="0" 
-                      step="0.01" 
-                      placeholder="0.00">
+                              <orb-input-number
+            [(ngModel)]="manualItem.basePrice"
+            [min]="0"
+            [step]="0.01" 
+            suffix=" €">
+          </orb-input-number>
+          
                   </orb-form-field>
 
                   <orb-form-field label="Categoría">
                     <orb-text-input
                       [(ngModel)]="manualItem.category"
-                      placeholder="Ej: Consultoría, Tratamiento, Otro..."
                       >
                     </orb-text-input>
+                       <small class="help-text">
+          Ej: Consultoría, Tratamiento, Otro...
+            </small>
                   </orb-form-field>
 
                   <orb-form-field label="Notas adicionales">
                     <orb-text-input
                       [(ngModel)]="manualItem.description"
-                      placeholder="Información adicional del item..."
+                  
                       >
                     </orb-text-input>
+                      <small class="help-text">
+          Información adicional del item...
+            </small>
                   </orb-form-field>
                 </div>
 
@@ -351,7 +363,7 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
   @Output() cancel = new EventEmitter<void>();
 
   private productsService = inject(ProductsService);
-  private servicesService = inject(ServicesService);
+  private serviceItemsService = inject(ServiceItemsService);
   private businessTypesService = inject(BusinessTypesService);
   private messageService = inject(MessageService);
 
@@ -359,8 +371,8 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
   loading = signal(false);
   products = signal<ProductResponseDto[]>([]);
   filteredProducts = signal<ProductResponseDto[]>([]);
-  services = signal<(ServiceResponseDto | ConsultationTypeResponseDto)[]>([]);
-  filteredServices = signal<(ServiceResponseDto | ConsultationTypeResponseDto)[]>([]);
+  services = signal<(ItemSelectorResponseDto | ConsultationTypeResponseDto)[]>([]);
+  filteredServices = signal<(ItemSelectorResponseDto | ConsultationTypeResponseDto)[]>([]);
 
   // Search and filters
   productSearch = '';
@@ -389,8 +401,16 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible'] && changes['visible'].currentValue) {
-
       this.loadProducts();
+      // Don't load services immediately, wait for tab selection
+    }
+  }
+
+  onTabChange(event: any): void {
+    const selectedIndex = event.index;
+    
+    // Load services only when services tab is selected (index 1)
+    if (selectedIndex === 1 && this.services().length === 0) {
       this.loadServices();
     }
   }
@@ -418,10 +438,10 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
 
   private loadServices(): void {
     // Intentar cargar servicios reales primero
-    this.servicesService.serviceControllerFindAll({ status: 'ACTIVE' }).subscribe({
+    this.serviceItemsService.serviceItemsControllerGetItems({ type: 'service' }).subscribe({
       next: (response) => {
   
-        this.services.set(response.services || []);
+        this.services.set(response || []);
         this.filterServices();
       },
       error: (error) => {
@@ -506,7 +526,7 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
     // Filter by status
     if (this.selectedServiceStatus) {
       filtered = filtered.filter(service => {
-        // Handle both ServiceResponseDto (status property) and ConsultationTypeResponseDto (isActive property)
+        // Handle both ItemSelectorResponseDto (status property) and ConsultationTypeResponseDto (isActive property)
         const serviceStatus = 'status' in service ? service.status : (service.isActive ? 'ACTIVE' : 'INACTIVE');
         return serviceStatus === this.selectedServiceStatus;
       });
@@ -531,9 +551,9 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
     this.closeModal();
   }
 
-  selectService(service: ServiceResponseDto | ConsultationTypeResponseDto): void {
-    // Handle both ServiceResponseDto and ConsultationTypeResponseDto
-    const basePrice = 'basePrice' in service ? service.basePrice : (service.defaultPrice || 0);
+  selectService(service: ItemSelectorResponseDto | ConsultationTypeResponseDto): void {
+    // Handle both ItemSelectorResponseDto and ConsultationTypeResponseDto
+    const basePrice = 'price' in service ? service.price : (service.defaultPrice || 0);
     const duration = 'duration' in service ? service.duration : ('defaultDuration' in service ? service.defaultDuration : undefined);
     
     const selection: InvoiceItemSelection = {
@@ -589,6 +609,10 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
     return status === 'ACTIVE' ? 'success' : 'danger';
   }
 
+  getStatusClass(status: string): string {
+    return status === 'ACTIVE' ? 'status-active' : 'status-inactive';
+  }
+
   onHide(): void {
     this.visible = false;
     this.visibleChange.emit(false);
@@ -605,13 +629,18 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
   }
 
   // Methods for service status handling
-  getServiceStatusLabel(service: ServiceResponseDto | ConsultationTypeResponseDto): string {
+  getServiceStatusLabel(service: ItemSelectorResponseDto | ConsultationTypeResponseDto): string {
     const status = 'status' in service ? service.status : (service.isActive ? 'ACTIVE' : 'INACTIVE');
     return status === 'ACTIVE' ? 'Activo' : 'Inactivo';
   }
 
-  getServiceStatusSeverity(service: ServiceResponseDto | ConsultationTypeResponseDto): 'success' | 'danger' {
+  getServiceStatusSeverity(service: ItemSelectorResponseDto | ConsultationTypeResponseDto): 'success' | 'danger' {
     const status = 'status' in service ? service.status : (service.isActive ? 'ACTIVE' : 'INACTIVE');
     return status === 'ACTIVE' ? 'success' : 'danger';
+  }
+
+  getServiceStatusClass(service: ItemSelectorResponseDto | ConsultationTypeResponseDto): string {
+    const status = 'status' in service ? service.status : (service.isActive ? 'ACTIVE' : 'INACTIVE');
+    return status === 'ACTIVE' ? 'status-active' : 'status-inactive';
   }
 }

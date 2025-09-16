@@ -30,4 +30,4 @@ export function emailControllerSendPasswordResetEmail(http: HttpClient, rootUrl:
   );
 }
 
-emailControllerSendPasswordResetEmail.PATH = '/api/email/send/password-reset/{userId}';
+emailControllerSendPasswordResetEmail.PATH = '/email/send/password-reset/{userId}';

@@ -85,7 +85,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetEmailSettings()` */
-  static readonly EmailControllerGetEmailSettingsPath = '/api/email/settings';
+  static readonly EmailControllerGetEmailSettingsPath = '/email/settings';
 
   /**
    * Obtener configuración SMTP actual.
@@ -118,7 +118,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerCreateEmailSettings()` */
-  static readonly EmailControllerCreateEmailSettingsPath = '/api/email/settings';
+  static readonly EmailControllerCreateEmailSettingsPath = '/email/settings';
 
   /**
    * Crear nueva configuración SMTP.
@@ -151,7 +151,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSaveEmailSettings()` */
-  static readonly EmailControllerSaveEmailSettingsPath = '/api/email/settings/save';
+  static readonly EmailControllerSaveEmailSettingsPath = '/email/settings/save';
 
   /**
    * Guardar configuración SMTP (método legacy).
@@ -184,7 +184,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerValidateSmtpSettings()` */
-  static readonly EmailControllerValidateSmtpSettingsPath = '/api/email/settings/validate';
+  static readonly EmailControllerValidateSmtpSettingsPath = '/email/settings/validate';
 
   /**
    * Validar configuración SMTP sin guardar.
@@ -217,7 +217,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerUpdateEmailSettings()` */
-  static readonly EmailControllerUpdateEmailSettingsPath = '/api/email/settings/{id}';
+  static readonly EmailControllerUpdateEmailSettingsPath = '/email/settings/{id}';
 
   /**
    * Actualizar configuración SMTP.
@@ -250,7 +250,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerTestSmtpConnection()` */
-  static readonly EmailControllerTestSmtpConnectionPath = '/api/email/settings/test';
+  static readonly EmailControllerTestSmtpConnectionPath = '/email/settings/test';
 
   /**
    * Probar conexión SMTP.
@@ -283,7 +283,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetAllTemplates()` */
-  static readonly EmailControllerGetAllTemplatesPath = '/api/email/templates';
+  static readonly EmailControllerGetAllTemplatesPath = '/email/templates';
 
   /**
    * Listar todas las plantillas.
@@ -316,7 +316,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerCreateTemplate()` */
-  static readonly EmailControllerCreateTemplatePath = '/api/email/templates';
+  static readonly EmailControllerCreateTemplatePath = '/email/templates';
 
   /**
    * Crear nueva plantilla.
@@ -349,7 +349,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetTemplateById()` */
-  static readonly EmailControllerGetTemplateByIdPath = '/api/email/templates/{id}';
+  static readonly EmailControllerGetTemplateByIdPath = '/email/templates/{id}';
 
   /**
    * Obtener plantilla por ID.
@@ -382,7 +382,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerUpdateTemplate()` */
-  static readonly EmailControllerUpdateTemplatePath = '/api/email/templates/{id}';
+  static readonly EmailControllerUpdateTemplatePath = '/email/templates/{id}';
 
   /**
    * Actualizar plantilla.
@@ -415,7 +415,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerDeleteTemplate()` */
-  static readonly EmailControllerDeleteTemplatePath = '/api/email/templates/{id}';
+  static readonly EmailControllerDeleteTemplatePath = '/email/templates/{id}';
 
   /**
    * Eliminar plantilla.
@@ -448,7 +448,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSendCustomEmail()` */
-  static readonly EmailControllerSendCustomEmailPath = '/api/email/send';
+  static readonly EmailControllerSendCustomEmailPath = '/email/send';
 
   /**
    * Enviar email personalizado.
@@ -481,7 +481,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSendTemplateEmail()` */
-  static readonly EmailControllerSendTemplateEmailPath = '/api/email/send/template';
+  static readonly EmailControllerSendTemplateEmailPath = '/email/send/template';
 
   /**
    * Enviar email usando plantilla.
@@ -514,7 +514,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSendBulkEmails()` */
-  static readonly EmailControllerSendBulkEmailsPath = '/api/email/send/bulk';
+  static readonly EmailControllerSendBulkEmailsPath = '/email/send/bulk';
 
   /**
    * Envío masivo de emails.
@@ -547,7 +547,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSendWelcomeEmail()` */
-  static readonly EmailControllerSendWelcomeEmailPath = '/api/email/send/welcome/{userId}';
+  static readonly EmailControllerSendWelcomeEmailPath = '/email/send/welcome/{userId}';
 
   /**
    * Enviar email de bienvenida.
@@ -580,7 +580,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSendPasswordResetEmail()` */
-  static readonly EmailControllerSendPasswordResetEmailPath = '/api/email/send/password-reset/{userId}';
+  static readonly EmailControllerSendPasswordResetEmailPath = '/email/send/password-reset/{userId}';
 
   /**
    * Enviar email de reset de contraseña.
@@ -613,7 +613,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerSendAppointmentReminder()` */
-  static readonly EmailControllerSendAppointmentReminderPath = '/api/email/send/appointment-reminder/{appointmentId}';
+  static readonly EmailControllerSendAppointmentReminderPath = '/email/send/appointment-reminder/{appointmentId}';
 
   /**
    * Enviar recordatorio de cita.
@@ -646,7 +646,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetEmailLogs()` */
-  static readonly EmailControllerGetEmailLogsPath = '/api/email/logs';
+  static readonly EmailControllerGetEmailLogsPath = '/email/logs';
 
   /**
    * Obtener logs de emails enviados.
@@ -679,7 +679,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetFailedEmails()` */
-  static readonly EmailControllerGetFailedEmailsPath = '/api/email/logs/failed';
+  static readonly EmailControllerGetFailedEmailsPath = '/email/logs/failed';
 
   /**
    * Obtener emails fallidos.
@@ -712,7 +712,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerRetryFailedEmail()` */
-  static readonly EmailControllerRetryFailedEmailPath = '/api/email/logs/retry/{logId}';
+  static readonly EmailControllerRetryFailedEmailPath = '/email/logs/retry/{logId}';
 
   /**
    * Reintentar envío de email fallido.
@@ -745,7 +745,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetEmailMetrics()` */
-  static readonly EmailControllerGetEmailMetricsPath = '/api/email/metrics';
+  static readonly EmailControllerGetEmailMetricsPath = '/email/metrics';
 
   /**
    * Obtener métricas del sistema de email.
@@ -778,7 +778,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetMetricsSummary()` */
-  static readonly EmailControllerGetMetricsSummaryPath = '/api/email/metrics/summary';
+  static readonly EmailControllerGetMetricsSummaryPath = '/email/metrics/summary';
 
   /**
    * Resumen rápido de métricas.
@@ -811,7 +811,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerTrackEmailOpen()` */
-  static readonly EmailControllerTrackEmailOpenPath = '/api/email/track/open/{emailId}';
+  static readonly EmailControllerTrackEmailOpenPath = '/email/track/open/{emailId}';
 
   /**
    * Registrar apertura de email.
@@ -844,7 +844,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerTrackEmailClick()` */
-  static readonly EmailControllerTrackEmailClickPath = '/api/email/track/click/{emailId}';
+  static readonly EmailControllerTrackEmailClickPath = '/email/track/click/{emailId}';
 
   /**
    * Registrar click en email.
@@ -877,7 +877,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerGetQueueStats()` */
-  static readonly EmailControllerGetQueueStatsPath = '/api/email/queue/stats';
+  static readonly EmailControllerGetQueueStatsPath = '/email/queue/stats';
 
   /**
    * Obtener estadísticas de cola.
@@ -910,7 +910,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerPauseQueue()` */
-  static readonly EmailControllerPauseQueuePath = '/api/email/queue/pause';
+  static readonly EmailControllerPauseQueuePath = '/email/queue/pause';
 
   /**
    * Pausar cola de emails.
@@ -943,7 +943,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerResumeQueue()` */
-  static readonly EmailControllerResumeQueuePath = '/api/email/queue/resume';
+  static readonly EmailControllerResumeQueuePath = '/email/queue/resume';
 
   /**
    * Reanudar cola de emails.
@@ -976,7 +976,7 @@ export class EmailManagementService extends BaseService {
   }
 
   /** Path part for operation `emailControllerCleanQueue()` */
-  static readonly EmailControllerCleanQueuePath = '/api/email/queue/clean';
+  static readonly EmailControllerCleanQueuePath = '/email/queue/clean';
 
   /**
    * Limpiar cola de emails.

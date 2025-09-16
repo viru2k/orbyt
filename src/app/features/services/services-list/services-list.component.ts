@@ -8,15 +8,14 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 // Orb Components
-import { OrbToolbarComponent, OrbBreadcrumbComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbToolbarComponent, OrbBreadcrumbComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
 
 // Services and Models
-import { BusinessTypesService } from '../../../api/services/business-types.service';
-import { ConsultationTypeResponseDto } from '../../../api/models/consultation-type-response-dto';
 import { ServiceFormComponent } from '../modal/service-form.component';
+import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
 import { ServiceResponseDto } from '../../../api/models/service-response-dto';
-import { ServicesService } from '../../../api/services/services.service';
 import { OrbActionItem } from '@orb-models';
+import { ServicesStore } from '@orb-stores';
 
 @Component({
   selector: 'app-services-list',
@@ -33,7 +32,6 @@ import { OrbActionItem } from '@orb-models';
     OrbTableComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
-    OrbEntityAvatarComponent,
     ServiceFormComponent
   ],
   providers: [MessageService, ConfirmationService],
@@ -56,14 +54,14 @@ import { OrbActionItem } from '@orb-models';
           [columns]="tableColumns"
           [loading]="isLoading()"
           [totalRecords]="services().length"
-          [rows]="15"
-          [first]="0"
+          [rows]="tableRows()"
+          [first]="tableFirst()"
           [tableFeatures]="tableFeaturesConfig"
           [globalFilterFields]="['name', 'description']"
           [rowActions]="serviceRowActions"
           [tableHeaderActions]="serviceTableHeaderActions"
           dataKey="id"
-          paginatorPosition="both"
+          paginatorPosition="bottom"
           [rowsPerPageOptions]="[15, 30, 50]"
           currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} servicios">
           
@@ -74,40 +72,33 @@ import { OrbActionItem } from '@orb-models';
                   
                   <!-- Service info column -->
                   <ng-container *ngSwitchCase="'service'">
-                    <div class="flex align-items-center gap-3">
-                      <orb-entity-avatar
-                        [entity]="service"
-                        entityType="product"
-                        size="normal"
-                        shape="circle"
-                        [showTooltip]="true"
-                        context="table"
-                        [autoLoad]="true">
-                      </orb-entity-avatar>
-                      <div class="service-info">
-                        <div class="service-name font-medium text-900">{{ service.name }}</div>
-                        <div class="service-description text-600 text-sm">
-                          {{ service.description || 'Sin descripción' }}
-                        </div>
+                    <div class="service-info">
+                      <div class="service-name font-medium text-900">{{ service.name }}</div>
+                      <div class="service-description text-600 text-sm">
+                        {{ service.description || 'Sin descripción' }}
                       </div>
                     </div>
                   </ng-container>
 
                   <!-- Base price column -->
                   <ng-container *ngSwitchCase="'basePrice'">
-                    {{ service.basePrice | currency:'EUR':'symbol':'1.2-2' }}
+                    {{ service.formattedPrice }}
+                  </ng-container>
+
+                  <!-- Category column -->
+                  <ng-container *ngSwitchCase="'category'">
+                    <span class="category-tag">{{ service.categoryText }}</span>
                   </ng-container>
 
                   <!-- Duration column -->
                   <ng-container *ngSwitchCase="'duration'">
-                    <span *ngIf="service.duration">{{ service.duration }} min</span>
-                    <span *ngIf="!service.duration" class="text-muted">-</span>
+                    {{ service.durationText }}
                   </ng-container>
 
                   <!-- Status column -->
                   <ng-container *ngSwitchCase="'status'">
                     <span [ngClass]="service.status === 'ACTIVE' ? 'status-active' : 'status-inactive'">
-                      {{ service.status === 'ACTIVE' ? 'Activo' : 'Inactivo' }}
+                      {{ service.statusText }}
                     </span>
                   </ng-container>
 
@@ -155,20 +146,22 @@ import { OrbActionItem } from '@orb-models';
   styleUrls: ['./services-list.component.scss']
 })
 export class ServicesListComponent implements OnInit {
-  private businessTypesService = inject(BusinessTypesService);
-  private servicesService = inject(ServicesService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  readonly servicesStore = inject(ServicesStore);
 
-  // Flag para determinar si usar endpoints reales o temporales
-  private useRealEndpoints = true; // ¡Ahora usar endpoints reales!
+  // Store computed properties
+  services = this.servicesStore.selectServicesWithMappedData;
+  isLoading = this.servicesStore.loading;
 
-  // State signals
-  services = signal<ServiceResponseDto[]>([]);
-  isLoading = signal(false);
+  // Modal state
   displayServiceModal = signal(false);
   isEditMode = signal(false);
   serviceToEdit = signal<ServiceResponseDto | undefined>(undefined);
+
+  // Table pagination signals
+  tableRows = signal(15);
+  tableFirst = signal(0);
 
   // Breadcrumb configuration
   breadcrumbItems = [
@@ -182,6 +175,7 @@ export class ServicesListComponent implements OnInit {
     { field: 'service', header: 'Servicio', sortable: true },
     { field: 'basePrice', header: 'Precio Base', sortable: true },
     { field: 'duration', header: 'Duración', sortable: true },
+    { field: 'category', header: 'Categoría', sortable: true },
     { field: 'status', header: 'Estado', sortable: true },
     { field: 'actions', header: '', width: '10px', sortable: false }
   ];
@@ -191,7 +185,7 @@ export class ServicesListComponent implements OnInit {
     globalSearchPlaceholder: 'Buscar servicios...'
   };
 
-  // Acciones para cada fila de la tabla (Editar, Eliminar)
+  // Acciones para cada fila de la tabla (Solo Editar)
   serviceRowActions: OrbActionItem<ServiceResponseDto>[] = [
     {
       label: 'Editar',
@@ -199,14 +193,6 @@ export class ServicesListComponent implements OnInit {
       action: (service) => {
         if (service) this.editService(service);
       }
-    },
-    {
-      label: 'Eliminar',
-      icon: 'pi pi-trash',
-      action: (service) => {
-        if (service) this.deleteService(service);
-      },
-      styleClass: 'p-button-danger'
     }
   ];
 
@@ -220,91 +206,9 @@ export class ServicesListComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.loadServices();
+    this.servicesStore.load();
   }
 
-  private loadServices(): void {
-    this.isLoading.set(true);
-    
-    if (this.useRealEndpoints) {
-      // Usar endpoints reales de servicios
-      this.servicesService.serviceControllerFindAll({ status: 'ACTIVE' })
-        .subscribe({
-          next: (response) => {
-            this.services.set(response.services);
-            this.isLoading.set(false);
-          },
-          error: (error) => {
-            console.error('Error loading services:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al cargar la lista de servicios'
-            });
-            this.isLoading.set(false);
-          }
-        });
-    } else {
-      // Usar consultation types como fallback temporal
-      this.businessTypesService.businessTypeControllerFindAllBusinessTypes()
-        .subscribe({
-          next: (businessTypes) => {
-            if (businessTypes.length > 0) {
-              // Cargar tipos de consulta del primer tipo de negocio
-              const firstBusinessType = businessTypes[0];
-              this.businessTypesService
-                .businessTypeControllerFindConsultationTypesByBusinessType({ businessTypeId: firstBusinessType.id })
-                .subscribe({
-                  next: (consultationTypes) => {
-                    // Convertir ConsultationTypeResponseDto a ServiceResponseDto
-                    const convertedServices: ServiceResponseDto[] = consultationTypes.map(ct => ({
-                      id: ct.id,
-                      name: ct.name,
-                      description: ct.description || '',
-                      category: 'Consulta',
-                      basePrice: ct.defaultPrice || 0,
-                      duration: ct.defaultDuration,
-                      status: ct.isActive ? 'ACTIVE' : 'INACTIVE' as 'ACTIVE' | 'INACTIVE',
-                      thumbnailUrl: undefined,
-                      notes: '',
-                      createdAt: ct.createdAt,
-                      updatedAt: ct.updatedAt,
-                      owner: {
-                        id: 1,
-                        email: 'system@orbyt.com',
-                        fullName: 'Sistema'
-                      }
-                    }));
-                    this.services.set(convertedServices);
-                    this.isLoading.set(false);
-                  },
-                  error: (error) => {
-                    console.error('Error loading consultation types:', error);
-                    this.messageService.add({
-                      severity: 'error',
-                      summary: 'Error',
-                      detail: 'Error al cargar la lista de servicios'
-                    });
-                    this.isLoading.set(false);
-                  }
-                });
-            } else {
-              this.services.set([]);
-              this.isLoading.set(false);
-            }
-          },
-          error: (error) => {
-            console.error('Error loading business types:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al cargar la lista de servicios'
-            });
-            this.isLoading.set(false);
-          }
-        });
-    }
-  }
 
   showServiceForm(): void {
     this.isEditMode.set(false);
@@ -312,52 +216,19 @@ export class ServicesListComponent implements OnInit {
     this.displayServiceModal.set(true);
   }
 
+
   editService(service: ServiceResponseDto): void {
     this.isEditMode.set(true);
     this.serviceToEdit.set(service);
     this.displayServiceModal.set(true);
   }
 
-  deleteService(service: ServiceResponseDto): void {
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que deseas eliminar el servicio "${service.name}"?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.performDelete(service.id);
-      }
-    });
-  }
-
-  private performDelete(serviceId: number): void {
-    this.servicesService.serviceControllerRemove({ id: serviceId })
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Servicio eliminado exitosamente'
-          });
-          this.loadServices();
-        },
-        error: (error) => {
-          console.error('Error deleting service:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al eliminar el servicio'
-          });
-        }
-      });
-  }
 
   onServiceSaved(): void {
     this.displayServiceModal.set(false);
     this.isEditMode.set(false);
     this.serviceToEdit.set(undefined);
-    this.loadServices(); // Recargar la lista
+    this.servicesStore.load(); // Recargar la lista usando el store
   }
 
   onCancelForm(): void {
@@ -365,4 +236,6 @@ export class ServicesListComponent implements OnInit {
     this.isEditMode.set(false);
     this.serviceToEdit.set(undefined);
   }
+
+  // Removed conversion method - now passing ServiceResponseDto directly
 }

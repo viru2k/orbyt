@@ -29,4 +29,4 @@ export function rolesControllerRemove(http: HttpClient, rootUrl: string, params:
   );
 }
 
-rolesControllerRemove.PATH = '/api/roles/{id}';
+rolesControllerRemove.PATH = '/roles/{id}';

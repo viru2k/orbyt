@@ -28,4 +28,4 @@ export function authControllerGetProfile(http: HttpClient, rootUrl: string, para
   );
 }
 
-authControllerGetProfile.PATH = '/api/auth/profile';
+authControllerGetProfile.PATH = '/auth/profile';

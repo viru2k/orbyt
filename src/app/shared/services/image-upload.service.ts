@@ -71,73 +71,18 @@ export class ImageUploadService {
    * Subir avatar de usuario
    */
   private uploadUserAvatar(file: File): Observable<FileUploadResponseDto> {
-    return this.usersService.userControllerUploadAvatar({
-      body: { file }
-    }).pipe(
-      map((userResponse: UserResponseDto) => {
-        // Convertir UserResponseDto a FileUploadResponseDto
-        return {
-          id: userResponse.id,
-          filename: `user_${userResponse.id}_avatar`,
-          originalName: file.name,
-          fileType: 'avatar' as const,
-          mimeType: file.type,
-          size: file.size,
-          url: userResponse.avatarUrl || '',
-          thumbnailUrl: userResponse.avatarUrl || '',
-          entityType: 'user' as const,
-          entityId: userResponse.id,
-          description: 'Avatar de usuario',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          path: `avatars/user_${userResponse.id}`,
-          thumbnailPath: `thumbnails/user_${userResponse.id}`,
-          isActive: true,
-          uploadedBy: {}
-        } as FileUploadResponseDto;
-      }),
-      catchError(error => {
-        console.error('Error uploading user avatar:', error);
-        return throwError(() => new Error('Error al subir el avatar del usuario. Por favor, inténtalo de nuevo.'));
-      })
-    );
+    // TODO: Implement when backend supports avatar upload
+    console.warn('User avatar upload not implemented in backend');
+    return throwError(() => new Error('User avatar upload not implemented'));
   }
 
   /**
    * Subir imagen principal de producto
    */
   private uploadProductImage(file: File, productId: number): Observable<FileUploadResponseDto> {
-    return this.productsService.productControllerUploadImage({
-      id: productId,
-      body: { file }
-    }).pipe(
-      map((productResponse: ProductResponseDto) => {
-        // Convertir ProductResponseDto a FileUploadResponseDto
-        return {
-          id: productResponse.id,
-          filename: `product_${productResponse.id}_image`,
-          originalName: file.name,
-          fileType: 'image' as const,
-          mimeType: file.type,
-          size: file.size,
-          url: productResponse.imageUrl || '',
-          thumbnailUrl: productResponse.thumbnailUrl || '',
-          entityType: 'product' as const,
-          entityId: productResponse.id,
-          description: 'Imagen principal del producto',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          path: `products/images/${productResponse.id}`,
-          thumbnailPath: `products/thumbnails/${productResponse.id}`,
-          isActive: true,
-          uploadedBy: {}
-        } as FileUploadResponseDto;
-      }),
-      catchError(error => {
-        console.error('Error uploading product image:', error);
-        return throwError(() => new Error('Error al subir la imagen del producto. Por favor, inténtalo de nuevo.'));
-      })
-    );
+    // TODO: Implement when backend supports product image upload
+    console.warn('Product image upload not implemented in backend');
+    return throwError(() => new Error('Product image upload not implemented'));
   }
 
   /**
@@ -149,37 +94,9 @@ export class ImageUploadService {
       return throwError(() => new Error(validation.errors.join(', ')));
     }
 
-    return this.productsService.productControllerUploadThumbnail({
-      id: productId,
-      body: { file }
-    }).pipe(
-      map((productResponse: ProductResponseDto) => {
-        // Convertir ProductResponseDto a FileUploadResponseDto
-        return {
-          id: productResponse.id,
-          filename: `product_${productResponse.id}_thumbnail`,
-          originalName: file.name,
-          fileType: 'thumbnail' as const,
-          mimeType: file.type,
-          size: file.size,
-          url: productResponse.thumbnailUrl || '',
-          thumbnailUrl: productResponse.thumbnailUrl || '',
-          entityType: 'product' as const,
-          entityId: productResponse.id,
-          description: 'Thumbnail del producto',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          path: `products/thumbnails/${productResponse.id}`,
-          thumbnailPath: `products/thumbnails/${productResponse.id}`,
-          isActive: true,
-          uploadedBy: {}
-        } as FileUploadResponseDto;
-      }),
-      catchError(error => {
-        console.error('Error uploading product thumbnail:', error);
-        return throwError(() => new Error('Error al subir el thumbnail del producto. Por favor, inténtalo de nuevo.'));
-      })
-    );
+    // TODO: Implement when backend supports product thumbnail upload
+    console.warn('Product thumbnail upload not implemented in backend');
+    return throwError(() => new Error('Product thumbnail upload not implemented'));
   }
 
   /**
@@ -212,12 +129,17 @@ export class ImageUploadService {
    * Método genérico para upload usando el servicio general
    */
   private uploadGenericImage(
-    file: File, 
-    entityType: EntityType, 
+    file: File,
+    entityType: EntityType,
     entityId: number,
     options?: Partial<ImageUploadOptions>
   ): Observable<FileUploadResponseDto> {
-    
+
+    // Validate entityId is a valid number
+    if (!entityId || isNaN(Number(entityId)) || Number(entityId) <= 0) {
+      return throwError(() => new Error('ID de entidad válido requerido para subir la imagen'));
+    }
+
     const uploadOptions: ImageUploadOptions = {
       fileType: 'image',
       generateThumbnail: true,
@@ -313,8 +235,8 @@ export class ImageUploadService {
    * Crear parámetros para upload
    */
   private createUploadParams(
-    file: File, 
-    entityType: EntityType, 
+    file: File,
+    entityType: EntityType,
     entityId: number,
     options: ImageUploadOptions
   ) {
@@ -322,7 +244,7 @@ export class ImageUploadService {
       file: file as Blob,
       fileType: options.fileType,
       entityType,
-      entityId,
+      entityId: Number(entityId), // Ensure entityId is a number
       description: options.description
     };
 

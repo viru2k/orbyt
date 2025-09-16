@@ -145,7 +145,9 @@ export const ClientStore = signalStore(
           statusText,
           statusClass,
           displayCreatedAt,
-          displayUpdatedAt
+          displayUpdatedAt,
+          // Include avatar URL if provided by backend (using any cast until backend provides avatar field)
+          avatarUrl: (client as any).avatar?.fileUrl || (client as any).avatarUrl || null
         };
       });
     }),

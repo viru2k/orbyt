@@ -30,4 +30,4 @@ export function notificationControllerRetry(http: HttpClient, rootUrl: string, p
   );
 }
 
-notificationControllerRetry.PATH = '/api/notifications/retry/{id}';
+notificationControllerRetry.PATH = '/notifications/retry/{id}';

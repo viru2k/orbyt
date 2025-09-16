@@ -28,4 +28,4 @@ export function userControllerGetMyProfile(http: HttpClient, rootUrl: string, pa
   );
 }
 
-userControllerGetMyProfile.PATH = '/api/users/me';
+userControllerGetMyProfile.PATH = '/users/me';
