@@ -1,7 +1,35 @@
-<p-card>
-    <ng-content select="[orbHeader]" pTemplate="header"></ng-content>
-    <ng-content select="[orbSubHeader]"></ng-content>
+<div [class]="cardClasses">
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="orb-card__loading">
+    <i class="fa fa-spinner fa-spin"></i>
+  </div>
+
+  <!-- Header Section -->
+  <div *ngIf="title || subtitle || headerIcon" class="orb-card__header">
+    <div class="orb-card__header-content">
+      <i *ngIf="headerIcon" [class]="'fa fa-' + headerIcon + ' orb-card__header-icon'"></i>
+      <div class="orb-card__header-text">
+        <h3 *ngIf="title" class="orb-card__title">{{ title }}</h3>
+        <p *ngIf="subtitle" class="orb-card__subtitle">{{ subtitle }}</p>
+      </div>
+    </div>
+    <ng-content select="[orbHeaderActions]"></ng-content>
+  </div>
+
+  <!-- Custom Header (for complex content) -->
+  <ng-content select="[orbHeader]"></ng-content>
+
+  <!-- Divider -->
+  <div *ngIf="(title || subtitle || headerIcon) && !noDivider" class="orb-card__divider"></div>
+
+  <!-- Body Section -->
+  <div class="orb-card__body">
+    <ng-content></ng-content>
     <ng-content select="[orbBody]"></ng-content>
-    <ng-content select="[orbFooter]" pTemplate="footer"></ng-content>
-    
-  </p-card>
+  </div>
+
+  <!-- Footer Section -->
+  <div *ngIf="true" class="orb-card__footer">
+    <ng-content select="[orbFooter]"></ng-content>
+  </div>
+</div>

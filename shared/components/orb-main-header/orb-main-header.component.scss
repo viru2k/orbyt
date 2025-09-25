@@ -1,0 +1,61 @@
+@import '../../../src/styles/_design-system.scss';
+
+.orb-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .header-content {
+    .header-title {
+      margin: 0 0 0.5rem 0;
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+        justify-content: center;
+      }
+
+      i {
+        font-size: 1.75rem;
+      }
+    }
+
+    .header-subtitle {
+      margin: 0;
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    // Hide actions if empty
+    &:empty {
+      display: none;
+    }
+  }
+}

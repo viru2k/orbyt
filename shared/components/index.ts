@@ -38,3 +38,5 @@ export * from './orb-image-upload-modal/orb-image-upload-modal.component';
 export * from './orb-entity-avatar/orb-entity-avatar.component';
 export * from './orb-file-upload/orb-file-upload.component';
 export * from './orb-simple-upload/orb-simple-upload.component';
+export * from './orb-main-header/orb-main-header.component';
+export * from './layout/orb-container.component';

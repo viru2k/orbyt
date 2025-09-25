@@ -1,3 +1,343 @@
+@import '../../../../src/styles/_design-system.scss';
 
+.orb-card {
+  position: relative;
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: var(--transition-base);
 
-  
+  // Size variants
+  &--sm {
+    border-radius: var(--border-radius-md);
+  }
+
+  &--md {
+    border-radius: var(--border-radius-lg);
+  }
+
+  &--lg {
+    border-radius: var(--border-radius-xl);
+  }
+
+  &--xl {
+    border-radius: var(--border-radius-2xl);
+  }
+
+  // Padding variants
+  &--padding-none {
+    .orb-card__header,
+    .orb-card__body,
+    .orb-card__footer {
+      padding: 0;
+    }
+  }
+
+  &--padding-sm {
+    .orb-card__header,
+    .orb-card__body,
+    .orb-card__footer {
+      padding: var(--space-3);
+    }
+  }
+
+  &--padding-md {
+    .orb-card__header,
+    .orb-card__body,
+    .orb-card__footer {
+      padding: var(--space-4);
+    }
+  }
+
+  &--padding-lg {
+    .orb-card__header,
+    .orb-card__body,
+    .orb-card__footer {
+      padding: var(--space-6);
+    }
+  }
+
+  // Variant styles
+  &--default {
+    box-shadow: var(--shadow-sm);
+  }
+
+  &--elevated {
+    box-shadow: var(--shadow-lg);
+    border: none;
+  }
+
+  &--outlined {
+    border: 2px solid var(--color-gray-300);
+    box-shadow: none;
+  }
+
+  &--filled {
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-300);
+  }
+
+  &--glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-lg);
+  }
+
+  // Interactive states
+  &--hover {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--color-primary-200);
+    }
+  }
+
+  &--clickable {
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--color-primary-300);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // Loading state
+  &--loading {
+    pointer-events: none;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 1;
+    }
+  }
+
+  // No divider
+  &--no-divider {
+    .orb-card__divider {
+      display: none;
+    }
+  }
+
+  // Loading overlay
+  &__loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 10;
+
+    i {
+      font-size: var(--text-2xl);
+      color: var(--color-primary-500);
+    }
+  }
+
+  // Header section
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    background: var(--color-gray-50);
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+
+  &__header-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+  }
+
+  &__header-icon {
+    font-size: var(--text-lg);
+    color: var(--color-primary-600);
+    width: var(--space-6);
+    text-align: center;
+  }
+
+  &__header-text {
+    flex: 1;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-900);
+    line-height: 1.4;
+  }
+
+  &__subtitle {
+    margin: var(--space-1) 0 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    line-height: 1.4;
+  }
+
+  // Divider
+  &__divider {
+    height: 1px;
+    background: var(--color-gray-200);
+    margin: 0;
+  }
+
+  // Body section
+  &__body {
+    font-size: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    border-radius: .55rem;
+    background: #fff;
+    color: #616161;
+    font-weight: 400;
+    transition: all 0.2s ease-in-out;
+    flex: 1;
+
+    // Remove bottom padding if footer exists
+    .orb-card:has(.orb-card__footer:not(:empty)) & {
+      padding-bottom: 0;
+    }
+  }
+
+  // Footer section
+  &__footer {
+    padding: var(--space-4);
+    padding-top: 0;
+    border-top: 1px solid var(--color-gray-200);
+    background: var(--color-gray-50);
+
+    &:empty {
+      display: none;
+    }
+
+    // If footer has content, add border and background
+    &:not(:empty) {
+      border-top: 1px solid var(--color-gray-200);
+      background: var(--color-gray-50);
+      padding-top: var(--space-4);
+    }
+  }
+
+  // Dark theme support
+  @media (prefers-color-scheme: dark) {
+    &--default,
+    &--elevated,
+    &--outlined {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: var(--color-gray-100);
+    }
+
+    &--filled {
+      background: var(--color-gray-900);
+      border-color: var(--color-gray-600);
+    }
+
+    &--glass {
+      background: rgba(31, 41, 55, 0.85);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .orb-card__header {
+      background: var(--color-gray-900);
+      border-color: var(--color-gray-700);
+    }
+
+    .orb-card__title {
+      color: var(--color-gray-100);
+    }
+
+    .orb-card__subtitle {
+      color: var(--color-gray-400);
+    }
+
+    .orb-card__divider {
+      background: var(--color-gray-700);
+    }
+
+    .orb-card__footer {
+      background: var(--color-gray-900);
+      border-color: var(--color-gray-700);
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    &--padding-lg {
+      .orb-card__header,
+      .orb-card__body,
+      .orb-card__footer {
+        padding: var(--space-4);
+      }
+    }
+
+    &__header {
+      padding: var(--space-3);
+    }
+
+    &__body {
+      padding: var(--space-3);
+    }
+
+    &__footer {
+      padding: var(--space-3);
+      padding-top: 0;
+
+      &:not(:empty) {
+        padding-top: var(--space-3);
+      }
+    }
+
+    &__title {
+      font-size: var(--text-base);
+    }
+
+    &__subtitle {
+      font-size: var(--text-xs);
+    }
+  }
+}
+
+// Special card variants
+.orb-card-grid {
+  display: grid;
+  gap: var(--space-4);
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.orb-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

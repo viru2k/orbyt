@@ -1,0 +1,82 @@
+<div [class]="containerClasses">
+  <!-- Label -->
+  <label *ngIf="label" [attr.for]="inputId" class="orb-input__label">
+    {{ label }}
+    <span *ngIf="required" class="orb-input__required">*</span>
+  </label>
+
+  <!-- Input Container -->
+  <div [class]="inputContainerClasses">
+    <!-- Left Icon or Decrement Button -->
+    <div *ngIf="leftIcon || showButtons" class="orb-input__left-section">
+      <i *ngIf="leftIcon && !showButtons" [class]="'fa fa-' + leftIcon + ' orb-input__icon orb-input__icon--left'"></i>
+      <button
+        *ngIf="showButtons"
+        type="button"
+        class="orb-input__number-btn orb-input__number-btn--left"
+        (click)="decrement()"
+        [disabled]="disabled || readOnly"
+        tabindex="-1"
+      >
+        <i class="fa fa-minus"></i>
+      </button>
+    </div>
+
+    <!-- Input Field -->
+    <input
+      [id]="inputId"
+      type="number"
+      [value]="value"
+      [disabled]="disabled"
+      [readonly]="readOnly"
+      [placeholder]="placeholder"
+      [min]="min"
+      [max]="max"
+      [step]="step"
+      [class]="inputClasses"
+      (input)="onInputChange($event)"
+      (blur)="onInputBlur()"
+      (focus)="onInputFocus()"
+      (keydown)="handleKeyDown($event)"
+    />
+
+    <!-- Right Icon, Clear Button, or Increment Button -->
+    <div *ngIf="rightIcon || clearable || showButtons" class="orb-input__right-section">
+      <!-- Clear Button -->
+      <button
+        *ngIf="clearable && value !== null && value !== undefined && !disabled && !readOnly"
+        type="button"
+        class="orb-input__clear"
+        (click)="clearValue()"
+        tabindex="-1"
+      >
+        <i class="fa fa-times"></i>
+      </button>
+
+      <!-- Right Icon -->
+      <i *ngIf="rightIcon && !showButtons" [class]="'fa fa-' + rightIcon + ' orb-input__icon orb-input__icon--right'"></i>
+
+      <!-- Increment Button -->
+      <button
+        *ngIf="showButtons"
+        type="button"
+        class="orb-input__number-btn orb-input__number-btn--right"
+        (click)="increment()"
+        [disabled]="disabled || readOnly"
+        tabindex="-1"
+      >
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Helper Text -->
+  <div *ngIf="helperText || isInvalid" class="orb-input__helper">
+    <span *ngIf="isInvalid && errorMessage" class="orb-input__error">
+      {{ errorMessage }}
+    </span>
+    <span *ngIf="!isInvalid && helperText" class="orb-input__help">
+      {{ helperText }}
+    </span>
+  </div>
+</div>

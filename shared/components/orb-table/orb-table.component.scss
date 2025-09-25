@@ -1,33 +1,382 @@
+@import '../../../src/styles/_design-system.scss';
+
 :host {
-    display: block;
-  }
+  display: block;
+}
 
-  // Contenedor del buscador de tabla - 70% de ancho
-  .table-search-container {
-    width: 70%;
-    max-width: 400px;
-    min-width: 250px;
-  }
+// Contenedor del buscador de tabla
+.table-search-container {
+  width: 70%;
+  max-width: 400px;
+  min-width: 250px;
+}
 
-  // Estilos para el paginador
-  :host ::ng-deep .p-datatable-paginator {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: nowrap !important;
+// Alpino Table Styles - Override PrimeNG
+:host ::ng-deep {
+  // Main table container
+  .p-datatable {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
 
-    .p-paginator-left-content {
-      flex-shrink: 0;
-      margin-right: auto;
+    // Table wrapper
+    .p-datatable-wrapper {
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
     }
 
-    .p-paginator-page-options {
-      flex-shrink: 0;
-      margin-left: 1rem;
+    // Caption/Header area
+    .p-datatable-header {
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-gray-200);
+      padding: var(--space-6);
+
+      .flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+
+        h5 {
+          font-size: var(--text-lg);
+          font-weight: var(--font-weight-semibold);
+          color: var(--color-gray-900);
+          margin: 0;
+        }
+      }
     }
 
-    .p-dropdown {
-      margin-left: 0.5rem;
+    // Table itself
+    .p-datatable-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      // Header styling
+      .p-datatable-thead > tr > th {
+        background: var(--color-gray-50);
+        border-bottom: 1px solid var(--color-gray-200);
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--text-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-gray-700);
+        text-align: left;
+
+        &:first-child {
+          border-top-left-radius: var(--border-radius-md);
+        }
+
+        &:last-child {
+          border-top-right-radius: var(--border-radius-md);
+        }
+
+        // Sort icons
+        .p-sortable-column-icon {
+          color: var(--color-gray-400);
+          margin-left: var(--space-2);
+        }
+
+        &.p-highlight .p-sortable-column-icon {
+          color: var(--color-primary-600);
+        }
+      }
+
+      // Body rows
+      .p-datatable-tbody > tr {
+        border-bottom: 1px solid var(--color-gray-100);
+        transition: var(--transition-base);
+
+        &:hover {
+          background: var(--color-gray-25);
+        }
+
+        &.p-highlight {
+          background: var(--color-primary-50);
+          color: var(--color-primary-900);
+        }
+
+        > td {
+          padding: var(--space-4);
+          font-size: var(--text-sm);
+          color: var(--color-gray-900);
+          border-bottom: 1px solid var(--color-gray-100);
+
+          &.text-center {
+            text-align: center;
+          }
+
+          // Actions column
+          &.p-checkbox-column {
+            width: 3rem;
+            text-align: center;
+          }
+        }
+
+        &:last-child > td {
+          border-bottom: none;
+        }
+      }
+    }
+
+    // Empty message styling
+    .p-datatable-emptymessage > td {
+      text-align: center;
+      padding: var(--space-8) var(--space-4);
+      color: var(--color-gray-500);
+      font-style: italic;
+    }
+
+    // Paginator styling
+    .p-datatable-paginator {
+      background: var(--color-gray-50);
+      border-top: 1px solid var(--color-gray-200);
+      padding: var(--space-4) var(--space-6);
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: nowrap !important;
+
+      .p-paginator-left-content {
+        flex-shrink: 0;
+        margin-right: auto;
+
+        span {
+          font-size: var(--text-sm);
+          color: var(--color-gray-600);
+        }
+      }
+
+      .p-paginator-current {
+        display: none; // Hide duplicate pagination info
+      }
+
+      // Pagination controls
+      .p-paginator-pages {
+        display: flex;
+        gap: var(--space-1);
+
+        .p-paginator-page {
+          min-width: var(--space-8);
+          height: var(--space-8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: var(--border-radius-md);
+          font-size: var(--text-sm);
+          font-weight: var(--font-weight-medium);
+          color: var(--color-gray-700);
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: var(--transition-base);
+
+          &:hover {
+            background: var(--color-gray-100);
+            color: var(--color-gray-900);
+          }
+
+          &.p-highlight {
+            background: var(--color-primary-600);
+            color: var(--color-white);
+          }
+        }
+      }
+
+      .p-paginator-first,
+      .p-paginator-prev,
+      .p-paginator-next,
+      .p-paginator-last {
+        min-width: var(--space-8);
+        height: var(--space-8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--border-radius-md);
+        color: var(--color-gray-700);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition-base);
+
+        &:hover:not(.p-disabled) {
+          background: var(--color-gray-100);
+          color: var(--color-gray-900);
+        }
+
+        &.p-disabled {
+          color: var(--color-gray-400);
+          cursor: not-allowed;
+        }
+      }
+
+      // Rows per page dropdown
+      .p-paginator-page-options {
+        flex-shrink: 0;
+        margin-left: var(--space-4);
+
+        .p-dropdown {
+          margin-left: var(--space-2);
+          border: 1px solid var(--color-gray-300);
+          border-radius: var(--border-radius-md);
+          font-size: var(--text-sm);
+
+          .p-dropdown-label {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--color-gray-700);
+          }
+
+          .p-dropdown-trigger {
+            width: var(--space-8);
+            color: var(--color-gray-500);
+          }
+
+          &:focus {
+            border-color: var(--color-primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+          }
+        }
+      }
+    }
+
+    // Loading overlay
+    .p-datatable-loading-overlay {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(2px);
+    }
+
+    .p-datatable-loading-icon {
+      color: var(--color-primary-600);
     }
   }
+
+  // Action buttons styling
+  .p-button.p-button-rounded.p-button-text {
+    width: var(--space-8);
+    height: var(--space-8);
+    color: var(--color-gray-500);
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius-full);
+    transition: var(--transition-base);
+
+    &:hover {
+      background: var(--color-gray-100);
+      color: var(--color-gray-700);
+    }
+
+    &:focus {
+      background: var(--color-gray-100);
+      color: var(--color-gray-700);
+      box-shadow: 0 0 0 2px var(--color-primary-300);
+    }
+  }
+
+  // Checkbox styling
+  .p-checkbox {
+    .p-checkbox-box {
+      border: 2px solid var(--color-gray-300);
+      border-radius: var(--border-radius-sm);
+      background: var(--color-white);
+      width: var(--space-4);
+      height: var(--space-4);
+      transition: var(--transition-base);
+
+      &:hover {
+        border-color: var(--color-primary-400);
+      }
+
+      &.p-highlight {
+        background: var(--color-primary-600);
+        border-color: var(--color-primary-600);
+
+        .p-checkbox-icon {
+          color: var(--color-white);
+        }
+      }
+
+      &.p-focus {
+        box-shadow: 0 0 0 2px var(--color-primary-300);
+      }
+    }
+  }
+
+  // Menu styling for actions
+  .p-menu {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2);
+
+    .p-menuitem {
+      .p-menuitem-link {
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--border-radius-md);
+        color: var(--color-gray-700);
+        font-size: var(--text-sm);
+        transition: var(--transition-base);
+
+        &:hover {
+          background: var(--color-gray-50);
+          color: var(--color-gray-900);
+        }
+
+        .p-menuitem-icon {
+          margin-right: var(--space-2);
+          color: var(--color-gray-500);
+        }
+      }
+    }
+  }
+
+  // Dark theme support
+  @media (prefers-color-scheme: dark) {
+    .p-datatable {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+
+      .p-datatable-header {
+        background: var(--color-gray-800);
+        border-bottom-color: var(--color-gray-700);
+
+        h5 {
+          color: var(--color-gray-100);
+        }
+      }
+
+      .p-datatable-table {
+        .p-datatable-thead > tr > th {
+          background: var(--color-gray-900);
+          border-bottom-color: var(--color-gray-700);
+          color: var(--color-gray-300);
+        }
+
+        .p-datatable-tbody > tr {
+          border-bottom-color: var(--color-gray-700);
+
+          &:hover {
+            background: var(--color-gray-700);
+          }
+
+          &.p-highlight {
+            background: var(--color-primary-900);
+            color: var(--color-primary-100);
+          }
+
+          > td {
+            color: var(--color-gray-100);
+            border-bottom-color: var(--color-gray-700);
+          }
+        }
+      }
+
+      .p-datatable-paginator {
+        background: var(--color-gray-900);
+        border-top-color: var(--color-gray-700);
+      }
+    }
+  }
+}
   

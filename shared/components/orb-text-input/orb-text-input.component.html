@@ -1,17 +1,52 @@
-<p-floatLabel>
-  <input
-    pInputText
-    [id]="inputId"
-    [type]="type"
-    [value]="_value"
-    [disabled]="_disabled"
-    [readOnly]="readOnly"
-    (input)="onInputChange($event)"
-    (blur)="onInputBlur()"
-    autocomplete="off"
-    class="w-full" 
-    [ngClass]="{'ng-invalid ng-dirty': isInvalid}"
-    placeholder=" "
-  />
-  <label [attr.for]="inputId">{{ placeholder }}</label>
-</p-floatLabel>
+<div [class]="containerClasses">
+  <!-- Label -->
+  <label *ngIf="label" [attr.for]="inputId" class="orb-input__label">
+    {{ label }}
+    <span *ngIf="required" class="orb-input__required">*</span>
+  </label>
+
+  <!-- Input Container -->
+  <div [class]="inputContainerClasses">
+    <!-- Left Icon -->
+    <i *ngIf="leftIcon" [class]="'fa fa-' + leftIcon + ' orb-input__icon orb-input__icon--left'"></i>
+
+    <!-- Input Field -->
+    <input
+      [id]="inputId"
+      [type]="type"
+      [value]="_value"
+      [disabled]="_disabled"
+      [readonly]="readOnly"
+      [placeholder]="placeholder"
+      [autocomplete]="autocomplete"
+      [class]="inputClasses"
+      (input)="onInputChange($event)"
+      (blur)="onInputBlur()"
+      (focus)="onInputFocus()"
+    />
+
+    <!-- Right Icon -->
+    <i *ngIf="rightIcon" [class]="'fa fa-' + rightIcon + ' orb-input__icon orb-input__icon--right'"></i>
+
+    <!-- Clear Button -->
+    <button
+      *ngIf="clearable && _value && !_disabled && !readOnly"
+      type="button"
+      class="orb-input__clear"
+      (click)="clearValue()"
+      tabindex="-1"
+    >
+      <i class="fa fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Helper Text -->
+  <div *ngIf="helperText || isInvalid" class="orb-input__helper">
+    <span *ngIf="isInvalid && errorMessage" class="orb-input__error">
+      {{ errorMessage }}
+    </span>
+    <span *ngIf="!isInvalid && helperText" class="orb-input__help">
+      {{ helperText }}
+    </span>
+  </div>
+</div>

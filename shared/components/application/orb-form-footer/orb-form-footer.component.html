@@ -5,7 +5,7 @@
       [label]="button.label"
       [severity]="button.severity ?? 'primary'"
       [styleType]="button.styleType"
-      [icon]="button.icon"
+      [icon]="button.icon || ''"
       [loading]="button.loading || false"
       [disabled]="button.disabled || false"
       (click)="onButtonClick(button.action)"

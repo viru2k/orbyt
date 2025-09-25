@@ -1,0 +1,112 @@
+@import '../../../src/styles/_design-system.scss';
+
+.orb-container {
+  width: 100%;
+
+  // Size variants
+  &--xs {
+    max-width: 20rem; /* 320px */
+  }
+
+  &--sm {
+    max-width: 24rem; /* 384px */
+  }
+
+  &--md {
+    max-width: 28rem; /* 448px */
+  }
+
+  &--lg {
+    max-width: 32rem; /* 512px */
+  }
+
+  &--xl {
+    max-width: 36rem; /* 576px */
+  }
+
+  &--2xl {
+    max-width: 42rem; /* 672px */
+  }
+
+  // Responsive breakpoints
+  @media (min-width: 640px) {
+    &--sm {
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    &--md {
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    &--lg {
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    &--xl {
+      max-width: 1280px;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    &--2xl {
+      max-width: 1536px;
+    }
+  }
+
+  // Fluid container
+  &--fluid {
+    max-width: none;
+  }
+
+  // Centered
+  &--centered {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  // Padding variants
+  &--padding-none {
+    padding: 0;
+  }
+
+  &--padding-sm {
+    padding: var(--space-4);
+  }
+
+  &--padding-md {
+    padding: var(--space-6);
+  }
+
+  &--padding-lg {
+    padding: var(--space-8);
+  }
+
+  &--padding-xl {
+    padding: var(--space-12);
+  }
+
+  // Responsive padding adjustments
+  @media (max-width: 768px) {
+    &--padding-sm {
+      padding: var(--space-3);
+    }
+
+    &--padding-md {
+      padding: var(--space-4);
+    }
+
+    &--padding-lg {
+      padding: var(--space-6);
+    }
+
+    &--padding-xl {
+      padding: var(--space-8);
+    }
+  }
+}

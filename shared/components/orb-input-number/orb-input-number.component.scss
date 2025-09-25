@@ -49,6 +49,11 @@
       .orb-input__icon {
         font-size: var(--text-sm);
       }
+
+      .orb-input__number-btn {
+        width: var(--space-8);
+        font-size: var(--text-xs);
+      }
     }
 
     &--md {
@@ -60,6 +65,11 @@
       .orb-input__icon {
         font-size: var(--text-base);
       }
+
+      .orb-input__number-btn {
+        width: var(--space-10);
+        font-size: var(--text-sm);
+      }
     }
 
     &--lg {
@@ -70,6 +80,11 @@
 
       .orb-input__icon {
         font-size: var(--text-lg);
+      }
+
+      .orb-input__number-btn {
+        width: var(--space-12);
+        font-size: var(--text-base);
       }
     }
 
@@ -108,6 +123,11 @@
       .orb-input__icon {
         color: var(--gray-400);
       }
+
+      .orb-input__number-btn {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
     }
 
     &--readonly {
@@ -116,6 +136,10 @@
 
       .orb-input__field {
         cursor: default;
+      }
+
+      .orb-input__number-btn {
+        display: none;
       }
     }
 
@@ -160,28 +184,95 @@
       cursor: not-allowed;
       color: var(--gray-500);
     }
+
+    // Number input specific styles
+    &--number {
+      text-align: right;
+
+      // Hide Chrome's increment/decrement arrows
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      // Hide Firefox's increment/decrement arrows
+      &[type=number] {
+        -moz-appearance: textfield;
+      }
+    }
+  }
+
+  // Left and Right Sections
+  &__left-section,
+  &__right-section {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
   }
 
   // Icons
   &__icon {
-    position: absolute;
     color: var(--gray-500);
     pointer-events: none;
-    z-index: 1;
 
     &--left {
-      left: var(--space-3);
+      margin-left: var(--space-3);
     }
 
     &--right {
-      right: var(--space-3);
+      margin-right: var(--space-3);
+    }
+  }
+
+  // Number Buttons
+  &__number-btn {
+    background: var(--gray-100);
+    border: none;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    border-radius: 0;
+
+    &:hover:not(:disabled) {
+      background: var(--gray-200);
+      color: var(--gray-800);
+    }
+
+    &:active:not(:disabled) {
+      background: var(--gray-300);
+    }
+
+    &:focus {
+      outline: 2px solid var(--primary-300);
+      outline-offset: -2px;
+      z-index: 1;
+    }
+
+    &--left {
+      border-top-left-radius: var(--radius-md);
+      border-bottom-left-radius: var(--radius-md);
+      margin-left: -2px;
+    }
+
+    &--right {
+      border-top-right-radius: var(--radius-md);
+      border-bottom-right-radius: var(--radius-md);
+      margin-right: -2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
     }
   }
 
   // Clear Button
   &__clear {
-    position: absolute;
-    right: var(--space-3);
     background: none;
     border: none;
     padding: var(--space-1);
@@ -189,7 +280,7 @@
     cursor: pointer;
     border-radius: var(--radius-sm);
     transition: var(--transition-base);
-    z-index: 2;
+    margin-right: var(--space-2);
 
     &:hover {
       color: var(--gray-600);
@@ -222,5 +313,98 @@
     color: var(--error-600);
     font-weight: var(--font-medium);
     line-height: 1.4;
+  }
+
+  // Dark theme support
+  @media (prefers-color-scheme: dark) {
+    &__label {
+      color: var(--gray-300);
+    }
+
+    &__container {
+      background: var(--gray-800);
+      border-color: var(--gray-600);
+
+      &:focus-within {
+        border-color: var(--primary-400);
+      }
+
+      &--filled {
+        background: var(--gray-900);
+        border-color: var(--gray-700);
+      }
+
+      &--disabled {
+        background: var(--gray-900);
+        border-color: var(--gray-700);
+      }
+
+      &--readonly {
+        background: var(--gray-900);
+        border-color: var(--gray-700);
+      }
+    }
+
+    &__field {
+      color: var(--gray-100);
+
+      &::placeholder {
+        color: var(--gray-500);
+      }
+
+      &:disabled {
+        color: var(--gray-600);
+      }
+    }
+
+    &__icon {
+      color: var(--gray-400);
+    }
+
+    &__number-btn {
+      background: var(--gray-700);
+      color: var(--gray-300);
+
+      &:hover:not(:disabled) {
+        background: var(--gray-600);
+        color: var(--gray-100);
+      }
+
+      &:active:not(:disabled) {
+        background: var(--gray-500);
+      }
+    }
+
+    &__clear {
+      color: var(--gray-500);
+
+      &:hover {
+        color: var(--gray-300);
+        background: var(--gray-700);
+      }
+    }
+
+    &__help {
+      color: var(--gray-400);
+    }
+
+    &__error {
+      color: var(--error-400);
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    &__container--lg {
+      .orb-input__field {
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--text-base);
+      }
+
+      .orb-input__number-btn {
+        width: var(--space-10);
+        font-size: var(--text-sm);
+      }
+    }
   }
 }

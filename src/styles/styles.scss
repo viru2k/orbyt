@@ -1,11 +1,10 @@
 @use 'bootstrap/scss/bootstrap';
-@use './variables';
+// @use './variables';
 @use './mixins';
 @use './themes';
 
-/* Import Google Fonts for orbyt Theme - More elegant fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
+/* Import Google Fonts for Alpino Theme - Mulish font family */
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;500;600;700;800;900&display=swap');
 
 /* Global Reset and orbyt Theme Styles */
 * {
@@ -24,117 +23,201 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  font-family: variables.$font-family;
-  font-weight: variables.$font-normal;
-  color: variables.$text-primary;
-  background-color: variables.$background-secondary;
-  line-height: variables.$leading-normal;
+  font-family: 'Mulish', Arial, Tahoma, sans-serif;
+  font-weight: 400;
+  color: #333;
+  background-color: #f8f9fa;
+  line-height: 1.5;
 }
 
-/* CSS Custom Properties for Runtime Theme Changes */
+/* Global Dashboard Header Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  color: white;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .header-content {
+    .dashboard-title {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+        justify-content: center;
+      }
+
+      i {
+        font-size: 1.75rem;
+      }
+    }
+
+    .dashboard-subtitle {
+      margin: 0;
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+}
+
+/* Alpino Color Palette */
 :root {
-  // Colors
-  --primary-blue: #{variables.$primary-blue};
-  --primary-purple: #{variables.$primary-purple};
-  --primary-teal: #{variables.$primary-teal};
+  // Alpino Material Colors
+  --red: #F44336;
+  --pink: #E91E63;
+  --purple: #9C27B0;
+  --deep-purple: #673AB7;
+  --indigo: #3F51B5;
+  --blue: #2196F3;
+  --light-blue: #03A9F4;
+  --cyan: #00BCD4;
+  --teal: #009688;
+  --green: #4CAF50;
+  --light-green: #8BC34A;
+  --lime: #CDDC39;
+  --amber: #FFC107;
+  --orange: #FF9800;
+  --deep-orange: #FF5722;
+  --brown: #795548;
+  --grey: #9E9E9E;
+  --blue-grey: #607D8B;
+
+  // Background colors
+  --bg-red: #F44336;
+  --bg-pink: #E91E63;
+  --bg-purple: #9C27B0;
+  --bg-deep-purple: #673AB7;
+  --bg-indigo: #3F51B5;
+  --bg-blue: #2196F3;
+  --bg-light-blue: #03A9F4;
+  --bg-cyan: #00BCD4;
+  --bg-teal: #009688;
+  --bg-green: #4CAF50;
+  --bg-light-green: #8BC34A;
+  --bg-lime: #CDDC39;
+  --bg-amber: #FFC107;
+  --bg-orange: #FF9800;
+  --bg-deep-orange: #FF5722;
+  --bg-brown: #795548;
+  --bg-grey: #9E9E9E;
+  --bg-blue-grey: #607D8B;
   
-  --orbyt-rose: #{variables.$orbyt-rose};
-  --orbyt-coral: #{variables.$orbyt-coral};
-  --orbyt-mint: #{variables.$orbyt-mint};
-  --orbyt-lavender: #{variables.$orbyt-lavender};
-  --orbyt-peach: #{variables.$orbyt-peach};
-  --orbyt-cream: #{variables.$orbyt-cream};
-  
-  --white: #{variables.$white};
-  --gray-50: #{variables.$gray-50};
-  --gray-100: #{variables.$gray-100};
-  --gray-200: #{variables.$gray-200};
-  --gray-300: #{variables.$gray-300};
-  --gray-400: #{variables.$gray-400};
-  --gray-500: #{variables.$gray-500};
-  --gray-600: #{variables.$gray-600};
-  --gray-700: #{variables.$gray-700};
-  --gray-800: #{variables.$gray-800};
-  --gray-900: #{variables.$gray-900};
-  
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
   // Background Colors
-  --background-primary: #{variables.$background-primary};
-  --background-secondary: #{variables.$background-secondary};
-  --background-card: #{variables.$background-card};
-  --background-sidebar: #{variables.$background-sidebar};
-  
+  --background-primary: #ffffff;
+  --background-secondary: #f8f9fa;
+  --background-card: #ffffff;
+  --background-sidebar: #1f2937;
+
   // Text Colors
-  --text-primary: #{variables.$text-primary};
-  --text-secondary: #{variables.$text-secondary};
-  --text-muted: #{variables.$text-muted};
-  --text-inverse: #{variables.$text-inverse};
-  
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+
   // Borders & Shadows
-  --border-color: #{variables.$border-color};
-  --border-light: #{variables.$border-light};
-  --shadow-sm: #{variables.$shadow-sm};
-  --shadow-md: #{variables.$shadow-md};
-  --shadow-lg: #{variables.$shadow-lg};
-  --shadow-xl: #{variables.$shadow-xl};
-  
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
   // Spacing
-  --space-1: #{variables.$space-1};
-  --space-2: #{variables.$space-2};
-  --space-3: #{variables.$space-3};
-  --space-4: #{variables.$space-4};
-  --space-5: #{variables.$space-5};
-  --space-6: #{variables.$space-6};
-  --space-8: #{variables.$space-8};
-  --space-10: #{variables.$space-10};
-  --space-12: #{variables.$space-12};
-  --space-16: #{variables.$space-16};
-  
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
   // Border Radius
-  --radius-sm: #{variables.$radius-sm};
-  --radius-md: #{variables.$radius-md};
-  --radius-lg: #{variables.$radius-lg};
-  --radius-xl: #{variables.$radius-xl};
-  --radius-2xl: #{variables.$radius-2xl};
-  --radius-full: #{variables.$radius-full};
-  
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
   // Typography
-  --text-xs: #{variables.$text-xs};
-  --text-sm: #{variables.$text-sm};
-  --text-base: #{variables.$text-base};
-  --text-lg: #{variables.$text-lg};
-  --text-xl: #{variables.$text-xl};
-  --text-2xl: #{variables.$text-2xl};
-  --text-3xl: #{variables.$text-3xl};
-  --text-4xl: #{variables.$text-4xl};
-  
-  --font-normal: #{variables.$font-normal};
-  --font-medium: #{variables.$font-medium};
-  --font-semibold: #{variables.$font-semibold};
-  --font-bold: #{variables.$font-bold};
-  
-  --leading-tight: #{variables.$leading-tight};
-  --leading-normal: #{variables.$leading-normal};
-  --leading-relaxed: #{variables.$leading-relaxed};
-  
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
   // Transitions
-  --transition-fast: #{variables.$transition-fast};
-  --transition-normal: #{variables.$transition-normal};
-  --transition-slow: #{variables.$transition-slow};
-  
+  --transition-fast: all 0.15s ease-in-out;
+  --transition-normal: all 0.3s ease-in-out;
+  --transition-slow: all 0.5s ease-in-out;
+
   // Gradients
-  --gradient-primary: #{variables.$gradient-primary};
-  --gradient-orbyt: #{variables.$gradient-orbyt};
-  --gradient-wellness: #{variables.$gradient-wellness};
-  --gradient-soft: #{variables.$gradient-soft};
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-orbyt: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-wellness: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --gradient-soft: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
 }
 
 /* Global orbyt Theme Styles */
 .orbyt-page-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, 
-    variables.$gray-50 0%, 
-    rgba(variables.$orbyt-cream, 0.3) 50%, 
-    variables.$gray-50 100%
+  background: linear-gradient(135deg,
+    #f9fafb 0%,
+    rgba(254, 252, 191, 0.3) 50%,
+    #f9fafb 100%
   );
 }
 
@@ -196,58 +279,58 @@ body {
 
 /* Enhanced Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: variables.$font-family-display; // Use elegant display font for headings
-  font-weight: variables.$font-semibold;
-  line-height: variables.$leading-tight;
-  color: variables.$text-primary;
-  margin-bottom: variables.$space-4;
+  font-family: 'Mulish', Arial, Tahoma, sans-serif;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #111827;
+  margin-bottom: 1rem;
 }
 
 h1 {
-  font-size: variables.$text-4xl;
+  font-size: 2.25rem;
 }
 
 h2 {
-  font-size: variables.$text-3xl;
+  font-size: 1.875rem;
 }
 
 h3 {
-  font-size: variables.$text-2xl;
+  font-size: 1.5rem;
 }
 
 h4 {
-  font-size: variables.$text-xl;
+  font-size: 1.25rem;
 }
 
 h5 {
-  font-size: variables.$text-lg;
+  font-size: 1.125rem;
 }
 
 h6 {
-  font-size: variables.$text-base;
+  font-size: 1rem;
 }
 
 p {
-  color: variables.$text-secondary;
-  line-height: variables.$leading-relaxed;
-  margin-bottom: variables.$space-4;
+  color: #6b7280;
+  line-height: 1.625;
+  margin-bottom: 1rem;
 }
 
 /* Smooth transitions for all interactive elements */
 button, input, select, textarea, a {
-  transition: variables.$transition-fast;
+  transition: all 0.15s ease-in-out;
 }
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid variables.$primary-blue;
+  outline: 2px solid #2196F3;
   outline-offset: 2px;
 }
 
 /* Selection styles */
 ::selection {
-  background: rgba(variables.$orbyt-rose, 0.3);
-  color: variables.$text-primary;
+  background: rgba(244, 63, 94, 0.3);
+  color: #111827;
 }
 
 /* Scrollbar styling for webkit browsers */
@@ -257,97 +340,115 @@ button, input, select, textarea, a {
 }
 
 ::-webkit-scrollbar-track {
-  background: variables.$gray-100;
-  border-radius: variables.$radius-full;
+  background: #f3f4f6;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: variables.$gray-300;
-  border-radius: variables.$radius-full;
-  
+  background: #d1d5db;
+  border-radius: 9999px;
+
   &:hover {
-    background: variables.$gray-400;
+    background: #9ca3af;
   }
 }
 
-/* Override PrimeNG ugly button styles globally */
+/* Alpino Button Styles */
 ::ng-deep {
-  /* Primary buttons - replace green with orbyt gradients */
-  .p-button {
-    font-family: variables.$font-family !important;
-    font-weight: variables.$font-medium !important;
-    border-radius: var(--radius-md, 0.5rem) !important;
-    padding: var(--space-3, 0.75rem) var(--space-6, 1.5rem) !important;
-    transition: var(--transition-fast) !important;
+  .p-button, .btn, .navbar .navbar-nav > a.btn {
+    font-family: 'Mulish', Arial, Tahoma, sans-serif !important;
+    border-width: 2px !important;
+    font-weight: 400 !important;
+    font-size: 0.93em !important;
+    line-height: 1.35em !important;
+    margin: 5px 1px !important;
     border: none !important;
-    text-transform: none !important;
-    letter-spacing: 0.025em !important;
-    
-    &:not(.p-button-text):not(.p-button-outlined) {
-      background: var(--gradient-primary) !important;
-      color: white !important;
-      box-shadow: var(--shadow-sm) !important;
-      
+    border-radius: 0.1875rem !important;
+    padding: 11px 22px !important;
+    cursor: pointer !important;
+    background-color: #888 !important;
+    color: #fff !important;
+    transition: all 0.2s ease-in-out !important;
+
+    /* Primary buttons */
+    &.p-button-primary,
+    &.btn-primary {
+      background: #313740 !important;
+      color: #fff !important;
+
       &:hover {
+        background: #2a2f38 !important;
         transform: translateY(-1px) !important;
-        box-shadow: var(--shadow-lg) !important;
-        background: var(--gradient-primary) !important;
-      }
-      
-      &:active {
-        transform: translateY(0) !important;
       }
     }
-    
-    /* Success buttons (like "Guardar") */
-    &.p-button-success {
-      background: var(--gradient-wellness) !important;
-      
+
+    /* Success buttons */
+    &.p-button-success,
+    &.btn-success {
+      background-color: #18ce0f !important;
+      color: #fff !important;
+
       &:hover {
-        background: var(--gradient-wellness) !important;
-        box-shadow: 0 10px 25px -5px rgba(20, 184, 166, 0.25) !important;
+        background-color: #15b30e !important;
+        transform: translateY(-1px) !important;
       }
     }
-    
-    /* Secondary/Cancel buttons */
+
+    /* Info buttons */
+    &.p-button-info,
+    &.btn-info {
+      background-color: #2CA8FF !important;
+      color: #fff !important;
+
+      &:hover {
+        background-color: #1a96e6 !important;
+        transform: translateY(-1px) !important;
+      }
+    }
+
+    /* Warning buttons */
+    &.p-button-warning,
+    &.btn-warning {
+      background-color: #FFB236 !important;
+      color: #fff !important;
+
+      &:hover {
+        background-color: #e69b1f !important;
+        transform: translateY(-1px) !important;
+      }
+    }
+
+    /* Danger buttons */
+    &.p-button-danger,
+    &.btn-danger {
+      background-color: #FF3636 !important;
+      color: #fff !important;
+
+      &:hover {
+        background-color: #e62e2e !important;
+        transform: translateY(-1px) !important;
+      }
+    }
+
+    /* Secondary buttons */
     &.p-button-secondary,
     &.p-button-text {
       background: transparent !important;
-      color: var(--text-secondary) !important;
-      border: 1px solid var(--border-color) !important;
-      
+      color: #666 !important;
+      border: 1px solid #ddd !important;
+
       &:hover {
-        background: var(--gray-50) !important;
-        color: var(--text-primary) !important;
-        border-color: var(--gray-300) !important;
+        background: #f8f9fa !important;
+        color: #333 !important;
+        border-color: #ccc !important;
       }
     }
-    
-    /* Danger/Delete buttons */
-    &.p-button-danger {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-      
-      &:hover {
-        box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.25) !important;
-      }
-    }
-    
-    /* orbyt themed buttons */
-    &.orbyt-themed {
-      background: var(--gradient-orbyt) !important;
-      
-      &:hover {
-        box-shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.25) !important;
-      }
-    }
-    
-    /* Soft themed buttons */
-    &.soft-themed {
-      background: var(--gradient-soft) !important;
-      color: var(--gray-800) !important;
-      
-      &:hover {
-        box-shadow: 0 10px 25px -5px rgba(196, 181, 253, 0.25) !important;
+
+    /* Black theme primary button */
+    .theme-black & {
+      &.p-button-primary,
+      &.btn-primary {
+        background: #313740 !important;
       }
     }
   }
@@ -372,12 +473,12 @@ button, input, select, textarea, a {
   .p-dropdown,
   .p-multiselect,
   .p-inputtextarea {
-    font-family: variables.$font-family !important;
+    font-family: 'Mulish', Arial, Tahoma, sans-serif !important;
     border: 1px solid var(--border-color) !important;
     border-radius: var(--radius-md, 0.5rem) !important;
     padding: var(--space-3, 0.75rem) var(--space-4, 1rem) !important;
     transition: var(--transition-fast) !important;
-    
+
     &:focus {
       border-color: var(--primary-blue) !important;
       box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
@@ -386,27 +487,27 @@ button, input, select, textarea, a {
   
   /* Enhanced table styling */
   .p-datatable {
-    font-family: variables.$font-family !important;
+    font-family: 'Mulish', Arial, Tahoma, sans-serif !important;
     border-radius: var(--radius-lg, 0.75rem) !important;
     overflow: hidden !important;
     box-shadow: var(--shadow-md) !important;
-    
+
     .p-datatable-thead > tr > th {
-      background: linear-gradient(135deg, 
-        variables.$gray-50 0%, 
-        rgba(variables.$orbyt-cream, 0.5) 100%
+      background: linear-gradient(135deg,
+        #f9fafb 0%,
+        rgba(254, 252, 191, 0.5) 100%
       ) !important;
-      font-family: variables.$font-family !important;
-      font-weight: variables.$font-semibold !important;
+      font-family: 'Mulish', Arial, Tahoma, sans-serif !important;
+      font-weight: 600 !important;
       color: var(--text-primary) !important;
       text-transform: uppercase !important;
       letter-spacing: 0.025em !important;
       font-size: var(--text-sm, 0.875rem) !important;
     }
-    
+
     .p-datatable-tbody > tr {
       &:hover {
-        background: rgba(variables.$orbyt-lavender, 0.05) !important;
+        background: rgba(102, 126, 234, 0.05) !important;
       }
     }
   }
@@ -416,12 +517,12 @@ button, input, select, textarea, a {
     border-radius: var(--radius-lg, 0.75rem) !important;
     box-shadow: var(--shadow-md) !important;
     border: none !important;
-    
+
     .p-card-title {
-      font-family: variables.$font-family-display !important;
+      font-family: 'Mulish', Arial, Tahoma, sans-serif !important;
       color: var(--text-primary) !important;
     }
-    
+
     .p-card-content {
       color: var(--text-secondary) !important;
     }
@@ -436,10 +537,10 @@ button, input, select, textarea, a {
     
     .p-dropdown-items .p-dropdown-item {
       &:hover {
-        background: rgba(variables.$orbyt-lavender, 0.1) !important;
+        background: rgba(102, 126, 234, 0.1) !important;
         color: var(--text-primary) !important;
       }
-      
+
       &.p-highlight {
         background: var(--gradient-primary) !important;
         color: white !important;
@@ -453,16 +554,16 @@ button, input, select, textarea, a {
     box-shadow: var(--shadow-lg) !important;
     
     &.p-toast-message-success {
-      background: linear-gradient(135deg, 
-        rgba(variables.$primary-teal, 0.9) 0%, 
-        rgba(variables.$orbyt-mint, 0.9) 100%
+      background: linear-gradient(135deg,
+        rgba(32, 201, 151, 0.9) 0%,
+        rgba(72, 187, 120, 0.9) 100%
       ) !important;
     }
-    
+
     &.p-toast-message-error {
-      background: linear-gradient(135deg, 
-        rgba(variables.$error, 0.9) 0%, 
-        rgba(#dc2626, 0.9) 100%
+      background: linear-gradient(135deg,
+        rgba(220, 38, 38, 0.9) 0%,
+        rgba(220, 38, 38, 0.9) 100%
       ) !important;
     }
   }
@@ -517,7 +618,7 @@ button, input, select, textarea, a {
       }
       
       &:hover:not(.p-highlight) {
-        background: rgba(variables.$orbyt-lavender, 0.15) !important;
+        background: rgba(102, 126, 234, 0.15) !important;
         color: var(--primary-blue) !important;
         border-color: var(--primary-blue) !important;
         transform: translateY(-1px) !important;
