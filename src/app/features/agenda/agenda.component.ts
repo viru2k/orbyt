@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { AgendaStore } from '../../store/agenda/agenda.store';
+import { AppointmentsStore } from '../../store/appointments/appointments.store';
 import { UsersStore } from '../../store/users/users.store';
 import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button.component';
-import { OrbBreadcrumbComponent } from '@orb-shared-components/orb-breadcrumb/orb-breadcrumb.component';
+import { OrbMainHeaderComponent } from '@orb-shared-components/orb-main-header/orb-main-header.component';
 import { OrbDialogComponent } from '@orb-shared-components/orb-dialog/orb-dialog.component';
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbMultiselectComponent } from '@orb-shared-components/orb-multiselect/orb-multiselect.component';
@@ -34,6 +34,9 @@ import { STATUS_TRANSLATION } from './constants/status-translation.map';
 import { SUMMARY_KEY_MAP } from './constants/summary-key.map';
 import { STATUS_SEVERITY } from './constants/status-severity.map';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DOCUMENT } from '@angular/common';
+import { importProvidersFrom } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-agenda',
@@ -43,7 +46,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     FormsModule,
     TranslateModule,
     OrbButtonComponent,
-    OrbBreadcrumbComponent,
+    OrbMainHeaderComponent,
     OrbDialogComponent,
     OrbDatepickerComponent,
     OrbMultiselectComponent,
@@ -63,7 +66,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
   ],
   providers: [
     ConfirmationService,
-    MessageService
+    MessageService,
+    { provide: DOCUMENT, useFactory: () => document }
   ],
   templateUrl: './agenda.component.html',
   styleUrls: ['./agenda.component.scss'],
@@ -76,7 +80,6 @@ export class AgendaComponent implements OnInit {
   statusColors = STATUS_COLORS;
   SUMMARY_KEY_MAP = SUMMARY_KEY_MAP;
 
-  breadcrumbItems: any[] = [];
 
   // Make CalendarView available in template
   CalendarView = CalendarView;
@@ -114,7 +117,7 @@ export class AgendaComponent implements OnInit {
   tableColumns: any[] = [];
 
   constructor(
-    public agendaStore: AgendaStore,
+    public appointmentsStore: AppointmentsStore,
     public usersStore: UsersStore,
     private authStore: AuthStore,
     private router: Router,
@@ -133,14 +136,14 @@ export class AgendaComponent implements OnInit {
     this.initializeTranslations();
     
     // Cargar usuarios para el filtro
-    this.usersStore.loadUsers();
+    this.usersStore.loadSubUsers();
     
     // Subscribirse a cambios del usuario actual
     this.authStore.user$.subscribe(user => {
       if (user && user.id) {       
         
         // Cargar configuración de agenda del usuario actual
-        this.agendaStore.loadAgendaConfig(user.id);
+        this.appointmentsStore.loadAvailabilitySlots();
         
         // Usar el usuario actual directamente, sin necesidad de buscarlo en la lista de usuarios
         // Crear un objeto compatible con selectedUsers que use el ProfileResponseDto
@@ -161,12 +164,12 @@ export class AgendaComponent implements OnInit {
         this.performSearch();
         
         // También cargar la lista de usuarios para el filtro (sin bloquear la funcionalidad principal)
-        this.usersStore.loadUsers();
+        this.usersStore.loadSubUsers();
       }
     });
 
     // Subscribe to appointment updates to show notification dialog
-    this.agendaStore.appointmentUpdated$.subscribe(({ appointment, wasDragDrop }) => {
+    this.appointmentsStore.appointmentUpdated$.subscribe(({ appointment, wasDragDrop }) => {
       if (wasDragDrop && appointment.client) {
         this.showClientNotificationDialog(appointment);
       }
@@ -218,31 +221,23 @@ export class AgendaComponent implements OnInit {
   }
 
   performSearch(): void {
-    // Construir parámetros de filtro usando la nueva API
+    // Construir parámetros de filtro usando la nueva API del AppointmentsStore
     const filters: any = {
-      from: this.selectedDateFrom.toISOString(),
-      to: this.selectedDateTo.toISOString(),
+      startDate: this.selectedDateFrom.toISOString(),
+      endDate: this.selectedDateTo.toISOString(),
     };
-    
+
     // Agregar filtros de usuario si hay selecciones (array)
     if (this.selectedUsers.length > 0) {
       filters.professionalId = this.selectedUsers.map(u => u.id);
     }
-    
-    // Agregar filtros de estado si hay selecciones (array)  
+
+    // Agregar filtros de estado si hay selecciones (array)
     if (this.selectedStatuses.length > 0) {
       filters.status = this.selectedStatuses;
     }
-       
 
-    
-    this.agendaStore.loadAppointments(filters);
-    this.agendaStore.loadSummary({ 
-      from: filters.from, 
-      to: filters.to, 
-      professionalId: filters.professionalId,
-      status: filters.status
-    });
+    this.appointmentsStore.loadAppointments(filters);
   }
 
   onDateFromChange(date: Date): void {
@@ -271,8 +266,8 @@ export class AgendaComponent implements OnInit {
     // Solo actualizar si no es la carga inicial
     if (!this.isInitialLoad(dateInfo)) {
       const filters: any = {
-        from: dateInfo.start.toISOString(),
-        to: dateInfo.end.toISOString(),
+        startDate: dateInfo.start.toISOString(),
+        endDate: dateInfo.end.toISOString(),
       };
       if (this.selectedUsers.length > 0) {
         filters.professionalId = this.selectedUsers.map(u => u.id);
@@ -280,13 +275,7 @@ export class AgendaComponent implements OnInit {
       if (this.selectedStatuses.length > 0) {
         filters.status = this.selectedStatuses;
       }
-      this.agendaStore.loadAppointments(filters);
-      this.agendaStore.loadSummary({ 
-        from: filters.from, 
-        to: filters.to, 
-        professionalId: filters.professionalId,
-        status: filters.status
-      });
+      this.appointmentsStore.loadAppointments(filters);
     }
   }
 
@@ -355,25 +344,8 @@ export class AgendaComponent implements OnInit {
     const selectedDate = new Date(dateSelectInfo.startStr);
     const dayOfWeek = selectedDate.getDay(); // 0 = domingo, 1 = lunes, etc.
     
-    // Verificar días laborales desde la configuración de agenda
-    this.agendaStore.agendaConfig$.subscribe(config => {
-      if (config && config.workingDays && config.workingDays.length > 0) {
-        const isWorkingDay = config.workingDays.includes(dayOfWeek);
-        
-        if (!isWorkingDay && !config.allowBookingOnBlockedDays) {
-          // Mostrar modal de confirmación para días no laborales
-          this.showNonWorkingDayDialog(dayOfWeek, () => {
-            this.openAppointmentForm(dateSelectInfo);
-          });
-        } else {
-          // Día laboral normal o permitido booking en días bloqueados
-          this.openAppointmentForm(dateSelectInfo);
-        }
-      } else {
-        // Si no hay configuración, permitir cualquier día
-        this.openAppointmentForm(dateSelectInfo);
-      }
-    }).unsubscribe(); // Unsubscribe inmediatamente ya que solo necesitamos el valor actual
+    // Por ahora permitir cualquier día (configuración de agenda pendiente de implementar)
+    this.openAppointmentForm(dateSelectInfo);
   }
 
   private openAppointmentForm(dateSelectInfo: DateSelectInfo): void {
@@ -417,12 +389,12 @@ export class AgendaComponent implements OnInit {
         startDateTime: newStart.toISOString(),
         endDateTime: newEnd.toISOString(),
       };
-      this.agendaStore.updateAppointment({ id: event.id.toString(), dto: updateDto, wasDragDrop: true });
+      this.appointmentsStore.updateAppointment({ id: event.id.toString(), updateData: updateDto });
     }
   }
 
   handleDelete(appointmentId: string): void {
-    this.agendaStore.deleteAppointment(appointmentId);
+    this.appointmentsStore.deleteAppointment({ id: appointmentId });
     this.onFormClose();
   }
 
@@ -474,10 +446,6 @@ export class AgendaComponent implements OnInit {
   }
 
   private initializeTranslations(): void {
-    this.breadcrumbItems = [
-      { label: 'Agenda' }
-    ];
-
     this.statusOptions = [
       { label: 'Pendiente', value: 'pending' },
       { label: 'Confirmada', value: 'confirmed' },
@@ -519,7 +487,7 @@ export class AgendaComponent implements OnInit {
       status: this.selectedStatuses.length > 0 ? this.selectedStatuses : undefined
     };
 
-    this.agendaStore.loadSummary(summaryParams);
+    this.appointmentsStore.loadSummary(summaryParams);
   }
 
   private showClientNotificationDialog(appointment: AppointmentResponseDto): void {

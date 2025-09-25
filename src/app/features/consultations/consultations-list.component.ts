@@ -13,14 +13,21 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChartModule } from 'primeng/chart';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
-import { OrbActionsPopoverComponent, OrbTableComponent, OrbCardComponent, OrbButtonComponent, OrbDialogComponent } from '@orb-components';
+import {
+  OrbActionsPopoverComponent,
+  OrbTableComponent,
+  OrbCardComponent,
+  OrbButtonComponent,
+  OrbDialogComponent,
+  OrbMainHeaderComponent,
+} from '@orb-components';
 
 import { ConsultationsService } from '../../api/services/consultations.service';
 import { ConsultationResponseDto } from '../../api/models/consultation-response-dto';
 import { TableColumn, OrbActionItem } from '@orb-models';
 import { ConsultationFormComponent } from './components/consultation-form.component';
 import { ConsultationDetailsComponent } from './components/consultation-details.component';
-import { ConsultationStore } from './store/consultation.store';
+import { ConsultationsStore } from '../../store/consultations/consultations.store';
 
 @Component({
   selector: 'app-consultations-list',
@@ -44,29 +51,20 @@ import { ConsultationStore } from './store/consultation.store';
     OrbDialogComponent,
     ConsultationFormComponent,
     ConsultationDetailsComponent,
-    OrbTextInputGroupComponent
+    OrbTextInputGroupComponent,
+    OrbMainHeaderComponent,
   ],
   providers: [MessageService, ConfirmationService],
   template: `
-    <orb-card>
-      <div orbHeader>
-        <h2><i class="fa fa-stethoscope"></i> Gestión de Consultas Médicas</h2>
-        <div class="header-actions">
-          <orb-button 
-            label="Nueva Consulta" 
-            icon="fa fa-plus" 
-            (clicked)="openNewConsultationDialog()"
-            variant="success">
-          </orb-button>
-          <orb-button 
-            label="Estadísticas" 
-            icon="fa fa-chart-line" 
-            (clicked)="viewStats()"
-            variant="secondary">
-          </orb-button>
-        </div>
-      </div>
+    <!-- Header Section -->
+    <orb-main-header
+      title="  Gestión de Consultas"
+      icon="fa fa-stethoscope"
+      subtitle="Consultas médicas y gestión de pacientes"
+    >
+    </orb-main-header>
 
+    <orb-card>
       <div orbBody>
         <div class="stats-cards">
           <div class="stat-card">
@@ -75,7 +73,7 @@ import { ConsultationStore } from './store/consultation.store';
                 <i class="fa fa-stethoscope"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ consultationStore.totalConsultations() }}</h3>
+                <h3>{{ (consultationsStore.totalConsultations$ | async) ?? 0 }}</h3>
                 <p>Total Consultas</p>
               </div>
             </div>
@@ -86,7 +84,7 @@ import { ConsultationStore } from './store/consultation.store';
                 <i class="fa fa-clock"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ consultationStore.pendingConsultations() }}</h3>
+                <h3>{{ (consultationsStore.pendingConsultations$ | async) ?? 0 }}</h3>
                 <p>Pendientes</p>
               </div>
             </div>
@@ -97,7 +95,7 @@ import { ConsultationStore } from './store/consultation.store';
                 <i class="fa fa-check-circle"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ consultationStore.completedConsultations() }}</h3>
+                <h3>{{ (consultationsStore.completedConsultations$ | async) ?? 0 }}</h3>
                 <p>Completadas</p>
               </div>
             </div>
@@ -108,7 +106,7 @@ import { ConsultationStore } from './store/consultation.store';
                 <i class="fa fa-calendar-day"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ consultationStore.consultationsToday() }}</h3>
+                <h3>{{ (consultationsStore.todayConsultations$ | async) ?? 0 }}</h3>
                 <p>Hoy</p>
               </div>
             </div>
@@ -116,36 +114,54 @@ import { ConsultationStore } from './store/consultation.store';
         </div>
 
         <div class="filters-section">
+          <div class="header-actions">
+            <orb-button
+              label="Nueva Consulta"
+              icon="fa fa-plus"
+              (clicked)="openNewConsultationDialog()"
+              variant="success"
+            >
+            </orb-button>
+            <orb-button
+              label="Estadísticas"
+              icon="fa fa-chart-line"
+              (clicked)="viewStats()"
+              variant="secondary"
+            >
+            </orb-button>
+          </div>
           <div class="filters-grid">
             <div class="filter-item">
               <label>Estado:</label>
-              <p-select 
-                [options]="statusOptions" 
+              <p-select
+                [options]="statusOptions"
                 [(ngModel)]="selectedStatus"
                 placeholder="Todos los estados"
                 optionLabel="label"
                 optionValue="value"
                 [showClear]="true"
-                (onChange)="loadConsultations()">
+                (onChange)="loadConsultations()"
+              >
               </p-select>
             </div>
             <div class="filter-item">
               <label>Búsqueda:</label>
-              <orb-text-input-group 
-                [icon]="'fa fa-search'"   
-                type="text" 
+              <orb-text-input-group
+                [icon]="'fa fa-search'"
+                type="text"
                 [(ngModel)]="searchTerm"
                 placeholder="Buscar por cliente, síntomas..."
-                (input)="onSearch()">
+                (input)="onSearch()"
+              >
               </orb-text-input-group>
             </div>
           </div>
         </div>
 
         <orb-table
-          [value]="consultationStore.filteredConsultations()"
+          [value]="(consultationsStore.filteredConsultations$ | async) ?? []"
           [columns]="columns"
-          [loading]="consultationStore.loading()"
+          [loading]="(consultationsStore.loading$ | async) ?? false"
           [rowActions]="actions"
           [paginator]="true"
           [rows]="10"
@@ -156,45 +172,45 @@ import { ConsultationStore } from './store/consultation.store';
               <td *ngFor="let col of columns">
                 <ng-container [ngSwitch]="col.field">
                   <ng-container *ngSwitchCase="'actions'">
-                    <orb-actions-popover
-                      [actions]="actions"
-                      [itemData]="consultation">
+                    <orb-actions-popover [actions]="actions" [itemData]="consultation">
                     </orb-actions-popover>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'consultationNumber'">
                     <strong>{{ consultation.consultationNumber }}</strong>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'client'">
                     <div class="client-info">
                       <strong>{{ getClientName(consultation) }}</strong>
                       <small>{{ getClientEmail(consultation) }}</small>
                     </div>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'createdAt'">
                     <div class="date-info">
                       <div>{{ formatDate(consultation.createdAt) }}</div>
                       <small *ngIf="consultation.startTime">
-                        {{ formatTime(consultation.startTime) }} - {{ formatTime(consultation.endTime) }}
+                        {{ formatTime(consultation.startTime) }} -
+                        {{ formatTime(consultation.endTime) }}
                       </small>
                     </div>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'symptoms'">
                     <div class="symptoms-preview">
                       {{ consultation.symptoms || 'Sin síntomas especificados' }}
                     </div>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'status'">
-                    <p-tag 
-                      [value]="getStatusLabel(consultation.status)" 
-                      [severity]="getStatusSeverity(consultation.status)">
+                    <p-tag
+                      [value]="getStatusLabel(consultation.status)"
+                      [severity]="getStatusSeverity(consultation.status)"
+                    >
                     </p-tag>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchDefault>
                     {{ consultation[col.field] }}
                   </ng-container>
@@ -223,28 +239,28 @@ import { ConsultationStore } from './store/consultation.store';
           <div class="summary-card">
             <div class="summary-icon">🩺</div>
             <div class="summary-details">
-              <h3>{{ consultationStore.totalConsultations() }}</h3>
+              <h3>{{ (consultationsStore.totalConsultations$ | async) ?? 0 }}</h3>
               <p>Total Consultas</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">⏰</div>
             <div class="summary-details">
-              <h3>{{ consultationStore.pendingConsultations() }}</h3>
+              <h3>{{ (consultationsStore.pendingConsultations$ | async) ?? 0 }}</h3>
               <p>Pendientes</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">✅</div>
             <div class="summary-details">
-              <h3>{{ consultationStore.completedConsultations() }}</h3>
+              <h3>{{ (consultationsStore.completedConsultations$ | async) ?? 0 }}</h3>
               <p>Completadas</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">📋</div>
             <div class="summary-details">
-              <h3>{{ consultationStore.consultationsNeedingFollowUp() }}</h3>
+              <h3>{{ (consultationsStore.consultationsWithFollowUp$ | async) ?? 0 }}</h3>
               <p>Seguimiento</p>
             </div>
           </div>
@@ -254,23 +270,25 @@ import { ConsultationStore } from './store/consultation.store';
         <div class="charts-section">
           <div class="chart-container">
             <h4>Estado de Consultas</h4>
-            <p-chart 
-              type="doughnut" 
-              [data]="statusChartData" 
+            <p-chart
+              type="doughnut"
+              [data]="statusChartData"
               [options]="chartOptions"
               width="300"
-              height="300">
+              height="300"
+            >
             </p-chart>
           </div>
-          
+
           <div class="chart-container">
             <h4>Consultas por Mes</h4>
-            <p-chart 
-              type="bar" 
-              [data]="monthlyChartData" 
+            <p-chart
+              type="bar"
+              [data]="monthlyChartData"
               [options]="barChartOptions"
               [width]="'400'"
-              [height]="'300'">
+              [height]="'300'"
+            >
             </p-chart>
           </div>
         </div>
@@ -279,15 +297,17 @@ import { ConsultationStore } from './store/consultation.store';
         <div class="additional-stats">
           <div class="stat-row">
             <span class="stat-label">Duración Promedio:</span>
-            <span class="stat-value">{{ consultationStore.averageConsultationDuration() }} minutos</span>
+            <span class="stat-value"
+              >{{ (consultationsStore.averageConsultationDuration$ | async) ?? 0 }} minutos</span
+            >
           </div>
           <div class="stat-row">
             <span class="stat-label">Consultas Hoy:</span>
-            <span class="stat-value">{{ consultationStore.consultationsToday() }}</span>
+            <span class="stat-value">{{ (consultationsStore.todayConsultations$ | async) ?? 0 }}</span>
           </div>
           <div class="stat-row">
             <span class="stat-label">En Progreso:</span>
-            <span class="stat-value">{{ consultationStore.inProgressConsultations() }}</span>
+            <span class="stat-value">{{ (consultationsStore.inProgressConsultations$ | async) ?? 0 }}</span>
           </div>
         </div>
       </div>
@@ -305,7 +325,8 @@ import { ConsultationStore } from './store/consultation.store';
         [visible]="displayFormModal()"
         [consultation]="selectedConsultationForEdit || null"
         (consultationSaved)="onConsultationSaved($event)"
-        (visibleChange)="onFormModalClose()">
+        (visibleChange)="onFormModalClose()"
+      >
       </app-consultation-form>
     </orb-dialog>
 
@@ -315,10 +336,11 @@ import { ConsultationStore } from './store/consultation.store';
       (visibleChange)="displayDetailsModal.set($event)"
       [consultation]="selectedConsultationForView"
       (edit)="onEditFromDetails($event)"
-      (generateInvoice)="onGenerateInvoiceFromDetails($event)">
+      (generateInvoice)="onGenerateInvoiceFromDetails($event)"
+    >
     </app-consultation-details>
   `,
-  styleUrls: ['./consultations-list.component.scss']
+  styleUrls: ['./consultations-list.component.scss'],
 })
 export class ConsultationsListComponent implements OnInit {
   selectedStatus: string | null = null;
@@ -344,7 +366,7 @@ export class ConsultationsListComponent implements OnInit {
     { label: 'Pendiente', value: 'pending' },
     { label: 'En Progreso', value: 'in_progress' },
     { label: 'Completada', value: 'completed' },
-    { label: 'Cancelada', value: 'cancelled' }
+    { label: 'Cancelada', value: 'cancelled' },
   ];
 
   // Table columns
@@ -354,7 +376,7 @@ export class ConsultationsListComponent implements OnInit {
     { field: 'createdAt', header: 'Fecha/Hora', sortable: true },
     { field: 'symptoms', header: 'Síntomas', sortable: false },
     { field: 'status', header: 'Estado', sortable: true },
-    { field: 'actions', header: 'Acciones', sortable: false, width: '10px' }
+    { field: 'actions', header: 'Acciones', sortable: false, width: '10px' },
   ];
 
   // Action items for popover
@@ -362,33 +384,35 @@ export class ConsultationsListComponent implements OnInit {
     {
       label: 'Ver Detalles',
       icon: 'fas fa-eye',
-      action: (item?: ConsultationResponseDto) => item && this.viewConsultation(item)
+      action: (item?: ConsultationResponseDto) => item && this.viewConsultation(item),
     },
     {
       label: 'Editar',
       icon: 'fas fa-edit',
       action: (item?: ConsultationResponseDto) => item && this.editConsultation(item),
-      visible: (item?: ConsultationResponseDto) => item?.status !== 'completed' && item?.status !== 'cancelled'
+      visible: (item?: ConsultationResponseDto) =>
+        item?.status !== 'completed' && item?.status !== 'cancelled',
     },
     {
       label: 'Generar Factura',
       icon: 'fas fa-file-invoice',
       action: (item?: ConsultationResponseDto) => item && this.generateInvoice(item),
-      visible: (item?: ConsultationResponseDto) => item?.status === 'completed'
+      visible: (item?: ConsultationResponseDto) => item?.status === 'completed',
     },
     {
       label: 'Cancelar',
       icon: 'fas fa-times-circle',
       action: (item?: ConsultationResponseDto) => item && this.confirmCancelConsultation(item),
-      visible: (item?: ConsultationResponseDto) => item?.status !== 'completed' && item?.status !== 'cancelled'
-    }
+      visible: (item?: ConsultationResponseDto) =>
+        item?.status !== 'completed' && item?.status !== 'cancelled',
+    },
   ];
 
   constructor(
     private consultationsService: ConsultationsService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    public consultationStore: ConsultationStore
+    public consultationsStore: ConsultationsStore,
   ) {}
 
   ngOnInit() {
@@ -397,23 +421,19 @@ export class ConsultationsListComponent implements OnInit {
   }
 
   loadConsultations() {
-    const params: any = {};
+    const filters: any = {};
     if (this.selectedStatus) {
-      params.status = this.selectedStatus;
+      filters.status = this.selectedStatus;
     }
     if (this.searchTerm) {
-      params.search = this.searchTerm;
+      filters.searchTerm = this.searchTerm;
     }
 
-    this.consultationStore.setFilters({ 
-      status: this.selectedStatus || undefined, 
-      search: this.searchTerm || undefined 
-    });
-    this.consultationStore.loadConsultations(params);
+    this.consultationsStore.loadConsultations(filters);
   }
 
   onSearch() {
-    this.consultationStore.setFilters({ search: this.searchTerm || undefined });
+    this.consultationsStore.updateFilters({ searchTerm: this.searchTerm || '' });
     setTimeout(() => {
       this.loadConsultations();
     }, 300);
@@ -449,7 +469,7 @@ export class ConsultationsListComponent implements OnInit {
     this.messageService.add({
       severity: 'info',
       summary: 'Generando Factura',
-      detail: `Preparando factura para consulta ${consultation.consultationNumber}...`
+      detail: `Preparando factura para consulta ${consultation.consultationNumber}...`,
     });
     // TODO: Implementar navegación a facturas con datos pre-populados
   }
@@ -466,9 +486,9 @@ export class ConsultationsListComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Cancelado',
-          detail: `Consulta ${consultation.consultationNumber} cancelada exitosamente`
+          detail: `Consulta ${consultation.consultationNumber} cancelada exitosamente`,
         });
-      }
+      },
     });
   }
 
@@ -490,7 +510,9 @@ export class ConsultationsListComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Éxito',
-      detail: this.isEditMode ? 'Consulta actualizada exitosamente' : 'Consulta creada exitosamente'
+      detail: this.isEditMode
+        ? 'Consulta actualizada exitosamente'
+        : 'Consulta creada exitosamente',
     });
   }
 
@@ -508,7 +530,7 @@ export class ConsultationsListComponent implements OnInit {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 
@@ -516,26 +538,26 @@ export class ConsultationsListComponent implements OnInit {
     if (!timeString) return '';
     return new Date(timeString).toLocaleTimeString('es-ES', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 
   getStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'pending': 'Pendiente',
-      'in_progress': 'En Progreso',
-      'completed': 'Completada',
-      'cancelled': 'Cancelada'
+      pending: 'Pendiente',
+      in_progress: 'En Progreso',
+      completed: 'Completada',
+      cancelled: 'Cancelada',
     };
     return statusMap[status] || status;
   }
 
   getStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'pending': 'warning',
-      'in_progress': 'info',
-      'completed': 'success',
-      'cancelled': 'danger'
+      pending: 'warning',
+      in_progress: 'info',
+      completed: 'success',
+      cancelled: 'danger',
     };
     return severityMap[status] || 'info';
   }
@@ -549,18 +571,18 @@ export class ConsultationsListComponent implements OnInit {
     this.chartOptions = {
       plugins: {
         legend: {
-          position: 'bottom'
-        }
+          position: 'bottom',
+        },
       },
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
     };
 
     this.barChartOptions = {
       plugins: {
         legend: {
-          display: false
-        }
+          display: false,
+        },
       },
       responsive: true,
       maintainAspectRatio: false,
@@ -568,53 +590,61 @@ export class ConsultationsListComponent implements OnInit {
         y: {
           beginAtZero: true,
           ticks: {
-            callback: function(value: any) {
+            callback: function (value: any) {
               return value + ' consultas';
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     };
   }
 
   updateChartData(): void {
-    const consultations = this.consultationStore.consultations();
-    
-    // Status Chart Data
-    const statusCounts = {
-      pending: this.consultationStore.pendingConsultations(),
-      in_progress: this.consultationStore.inProgressConsultations(),
-      completed: this.consultationStore.completedConsultations(),
-      cancelled: this.consultationStore.cancelledConsultations()
-    };
+    // Update chart data using reactive approach
+    this.consultationsStore.consultations$.subscribe(consultations => {
+      if (!consultations) return;
 
-    this.statusChartData = {
-      labels: ['Pendientes', 'En Progreso', 'Completadas', 'Canceladas'],
-      datasets: [{
-        data: [statusCounts.pending, statusCounts.in_progress, statusCounts.completed, statusCounts.cancelled],
-        backgroundColor: [
-          '#f59e0b', // amber
-          '#3b82f6', // blue
-          '#10b981', // emerald
-          '#ef4444'  // red
+      // Status Chart Data
+      this.consultationsStore.pendingConsultations$.subscribe(pending => {
+        this.consultationsStore.inProgressConsultations$.subscribe(inProgress => {
+          this.consultationsStore.completedConsultations$.subscribe(completed => {
+            this.consultationsStore.cancelledConsultations$.subscribe(cancelled => {
+              this.statusChartData = {
+                labels: ['Pendientes', 'En Progreso', 'Completadas', 'Canceladas'],
+                datasets: [
+                  {
+                    data: [pending || 0, inProgress || 0, completed || 0, cancelled || 0],
+                    backgroundColor: [
+                      '#f59e0b', // amber
+                      '#3b82f6', // blue
+                      '#10b981', // emerald
+                      '#ef4444', // red
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                  },
+                ],
+              };
+            });
+          });
+        });
+      });
+
+      // Monthly Chart Data
+      const monthlyStats = this.consultationsStore.getMonthlyConsultationStats(6);
+      this.monthlyChartData = {
+        labels: monthlyStats.labels,
+        datasets: [
+          {
+            label: 'Consultas',
+            data: monthlyStats.data,
+            backgroundColor: '#3b82f6',
+            borderColor: '#1d4ed8',
+            borderWidth: 2,
+          },
         ],
-        borderWidth: 2,
-        borderColor: '#ffffff'
-      }]
-    };
-
-    // Monthly Chart Data
-    const monthlyStats = this.consultationStore.getMonthlyConsultationStats(6);
-    this.monthlyChartData = {
-      labels: monthlyStats.labels,
-      datasets: [{
-        label: 'Consultas',
-        data: monthlyStats.data,
-        backgroundColor: '#3b82f6',
-        borderColor: '#1d4ed8',
-        borderWidth: 2
-      }]
-    };
+      };
+    });
   }
 
   // Helper methods for client data

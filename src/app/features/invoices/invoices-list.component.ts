@@ -11,12 +11,12 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChartModule } from 'primeng/chart';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { OrbActionsPopoverComponent, OrbTableComponent, OrbCardComponent, OrbButtonComponent, OrbDialogComponent } from '@orb-components';
+import { OrbActionsPopoverComponent, OrbTableComponent, OrbCardComponent, OrbButtonComponent, OrbDialogComponent, OrbMainHeaderComponent } from '@orb-components';
 
 import { InvoicesService } from '../../api/services/invoices.service';
 import { InvoiceResponseDto } from '../../api/models/invoice-response-dto';
 import { TableColumn, OrbActionItem } from '@orb-models';
-import { InvoiceStore } from './store/invoice.store';
+import { InvoicesStore } from '../../store/invoices/invoices.store';
 import { InvoiceFormComponent } from './components/invoice-form.component';
 import { InvoiceDetailsComponent } from './components/invoice-details.component';
 import { PaymentFormComponent } from './components/payment-form.component';
@@ -43,30 +43,21 @@ import { PaymentFormComponent } from './components/payment-form.component';
     OrbDialogComponent,
     InvoiceFormComponent,
     InvoiceDetailsComponent,
-    PaymentFormComponent
+    PaymentFormComponent,
+    OrbMainHeaderComponent
   ],
   providers: [MessageService, ConfirmationService],
   template: `
-    <orb-card>
-      <div orbHeader>
-        <h2><i class="fa fa-file-invoice-dollar"></i> Gestión de Facturas</h2>
-        <div class="header-actions">
-          <orb-button 
-            label="Nueva Factura" 
-            icon="fa fa-plus" 
-            (clicked)="openNewInvoiceDialog()"
-            variant="success">
-          </orb-button>
-          <orb-button 
-            label="Estadísticas" 
-            icon="fa fa-chart-line" 
-            (clicked)="viewStats()"
-            variant="secondary">
-          </orb-button>
-        </div>
-      </div>
+    <!-- Header Section -->
+     <orb-main-header
+  title=" Gestión de Facturas"
+  icon="fa fa-file-invoice-dollar"
+  subtitle="Control de facturación y pagos">
+</orb-main-header>
 
+    <orb-card>
       <div orbBody>
+        
         <div class="stats-cards">
           <div class="stat-card">
             <div class="stat-content">
@@ -74,7 +65,7 @@ import { PaymentFormComponent } from './components/payment-form.component';
                 <i class="fa fa-money-bill-wave"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ invoiceStore.totalRevenue() | currency:'EUR':'symbol':'1.2-2' }}</h3>
+                <h3>{{ (invoicesStore.totalRevenue$ | async) ?? 0 | currency:'EUR':'symbol':'1.2-2' }}</h3>
                 <p>Ingresos Totales</p>
               </div>
             </div>
@@ -85,7 +76,7 @@ import { PaymentFormComponent } from './components/payment-form.component';
                 <i class="fa fa-clock"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ invoiceStore.pendingInvoices() }}</h3>
+                <h3>{{ (invoicesStore.pendingInvoices$ | async) ?? 0 }}</h3>
                 <p>Facturas Pendientes</p>
               </div>
             </div>
@@ -96,7 +87,7 @@ import { PaymentFormComponent } from './components/payment-form.component';
                 <i class="fa fa-exclamation-triangle"></i>
               </div>
               <div class="stat-details">
-                <h3>{{ invoiceStore.overdueInvoices() }}</h3>
+                <h3>{{ (invoicesStore.overdueInvoices$ | async) ?? 0 }}</h3>
                 <p>Facturas Vencidas</p>
               </div>
             </div>
@@ -104,6 +95,20 @@ import { PaymentFormComponent } from './components/payment-form.component';
         </div>
 
         <div class="filters-section">
+               <div class="header-actions">
+        <orb-button
+          label="Nueva Factura"
+          icon="fa fa-plus"
+          (clicked)="openNewInvoiceDialog()"
+          variant="success">
+        </orb-button>
+        <orb-button
+          label="Estadísticas"
+          icon="fa fa-chart-line"
+          (clicked)="viewStats()"
+          variant="secondary">
+        </orb-button>
+      </div>
           <div class="filters-grid">
             <div class="filter-item">
               <label>Estado:</label>
@@ -131,9 +136,9 @@ import { PaymentFormComponent } from './components/payment-form.component';
         </div>
 
         <orb-table
-          [value]="invoiceStore.filteredInvoices()"
+          [value]="(invoicesStore.filteredInvoices$ | async) ?? []"
           [columns]="columns"
-          [loading]="invoiceStore.loading()"
+          [loading]="(invoicesStore.loading$ | async) ?? false"
           [rowActions]="actions"
           [paginator]="true"
           [rows]="10"
@@ -217,28 +222,28 @@ import { PaymentFormComponent } from './components/payment-form.component';
           <div class="summary-card">
             <div class="summary-icon">💰</div>
             <div class="summary-details">
-              <h3>{{ invoiceStore.totalRevenue() | currency:'EUR':'symbol':'1.2-2' }}</h3>
+              <h3>{{ (invoicesStore.totalRevenue$ | async) ?? 0 | currency:'EUR':'symbol':'1.2-2' }}</h3>
               <p>Ingresos Totales</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">📋</div>
             <div class="summary-details">
-              <h3>{{ invoiceStore.totalInvoices() }}</h3>
+              <h3>{{ (invoicesStore.totalInvoices$ | async) ?? 0 }}</h3>
               <p>Total Facturas</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">⏰</div>
             <div class="summary-details">
-              <h3>{{ invoiceStore.pendingInvoices() }}</h3>
+              <h3>{{ (invoicesStore.pendingInvoices$ | async) ?? 0 }}</h3>
               <p>Pendientes</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">⚠️</div>
             <div class="summary-details">
-              <h3>{{ invoiceStore.overdueInvoices() }}</h3>
+              <h3>{{ (invoicesStore.overdueInvoices$ | async) ?? 0 }}</h3>
               <p>Vencidas</p>
             </div>
           </div>
@@ -413,7 +418,7 @@ export class InvoicesListComponent implements OnInit {
     private invoicesService: InvoicesService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    public invoiceStore: InvoiceStore
+    public invoicesStore: InvoicesStore
   ) {}
 
   ngOnInit() {
@@ -422,20 +427,20 @@ export class InvoicesListComponent implements OnInit {
   }
 
   loadInvoices() {
-    const params: any = {};
+    const filters: any = {};
     if (this.selectedStatus) {
-      params.status = this.selectedStatus;
+      filters.status = this.selectedStatus;
     }
     if (this.searchTerm) {
-      params.search = this.searchTerm;
+      filters.searchTerm = this.searchTerm;
     }
 
-    this.invoiceStore.loadInvoices(params);
-    this.invoiceStore.loadStats();
+    this.invoicesStore.loadInvoices(filters);
+    this.invoicesStore.loadSalesStats();
   }
 
   onSearch() {
-    this.invoiceStore.setFilters({ search: this.searchTerm });
+    this.invoicesStore.updateFilters({ searchTerm: this.searchTerm });
     setTimeout(() => {
       this.loadInvoices();
     }, 300);
@@ -485,21 +490,13 @@ export class InvoicesListComponent implements OnInit {
       icon: 'fa fa-exclamation-triangle',
       acceptLabel: 'Sí, Cancelar',
       rejectLabel: 'No',
-      accept: async () => {
-        const result = await this.invoiceStore.cancelInvoice(invoice.id);
-        if (result) {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Cancelado',
-            detail: `Factura ${invoice.invoiceNumber} cancelada exitosamente`
-          });
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al cancelar la factura'
-          });
-        }
+      accept: () => {
+        this.invoicesStore.cancelInvoice({ id: invoice.id.toString() });
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Cancelado',
+          detail: `Factura ${invoice.invoiceNumber} cancelada exitosamente`
+        });
       }
     });
   }
@@ -619,16 +616,17 @@ export class InvoicesListComponent implements OnInit {
   }
 
   updateChartData(): void {
-    const invoices = this.invoiceStore.invoices();
-    
-    // Status Chart Data
-    const statusCounts = {
-      draft: invoices.filter(i => i.status === 'draft').length,
-      pending: invoices.filter(i => i.status === 'pending').length,
-      paid: invoices.filter(i => i.status === 'paid').length,
-      cancelled: invoices.filter(i => i.status === 'cancelled').length,
-      overdue: invoices.filter(i => i.status === 'overdue').length
-    };
+    this.invoicesStore.invoices$.subscribe(invoices => {
+      if (!invoices) return;
+
+      // Status Chart Data
+      const statusCounts = {
+        draft: invoices.filter(i => i.status === 'draft').length,
+        pending: invoices.filter(i => i.status === 'pending').length,
+        paid: invoices.filter(i => i.status === 'paid').length,
+        cancelled: invoices.filter(i => i.status === 'cancelled').length,
+        overdue: invoices.filter(i => i.status === 'overdue').length
+      };
 
     this.statusChartData = {
       labels: ['Borrador', 'Pendiente', 'Pagada', 'Cancelada', 'Vencida'],
@@ -646,18 +644,19 @@ export class InvoicesListComponent implements OnInit {
       }]
     };
 
-    // Revenue Chart Data (last 6 months)
-    const monthlyRevenue = this.getMonthlyRevenue(invoices);
-    this.revenueChartData = {
-      labels: monthlyRevenue.labels,
-      datasets: [{
-        label: 'Ingresos (€)',
-        data: monthlyRevenue.data,
-        backgroundColor: '#3b82f6',
-        borderColor: '#1d4ed8',
-        borderWidth: 2
-      }]
-    };
+      // Revenue Chart Data (last 6 months)
+      const monthlyRevenue = this.getMonthlyRevenue(invoices);
+      this.revenueChartData = {
+        labels: monthlyRevenue.labels,
+        datasets: [{
+          label: 'Ingresos (€)',
+          data: monthlyRevenue.data,
+          backgroundColor: '#3b82f6',
+          borderColor: '#1d4ed8',
+          borderWidth: 2
+        }]
+      };
+    });
   }
 
   getMonthlyRevenue(invoices: InvoiceResponseDto[]): { labels: string[], data: number[] } {
@@ -687,15 +686,22 @@ export class InvoicesListComponent implements OnInit {
   }
 
   getAverageInvoiceAmount(): number {
-    return this.invoiceStore.averageInvoiceAmount();
+    let amount = 0;
+    this.invoicesStore.averageInvoiceAmount$.subscribe(value => amount = value || 0);
+    return amount;
   }
 
   getPaymentRate(): number {
-    return this.invoiceStore.paymentRate();
+    let rate = 0;
+    this.invoicesStore.paymentRate$.subscribe(value => rate = value || 0);
+    return rate;
   }
 
   getAveragePaymentTime(): number {
-    const paidInvoices = this.invoiceStore.invoices().filter(i => i.status === 'paid' && i.dueDate);
+    let paidInvoices: any[] = [];
+    this.invoicesStore.invoices$.subscribe(invoices => {
+      paidInvoices = invoices?.filter(i => i.status === 'paid' && i.dueDate) || [];
+    });
     if (paidInvoices.length === 0) return 0;
     
     const totalDays = paidInvoices.reduce((sum, invoice) => {

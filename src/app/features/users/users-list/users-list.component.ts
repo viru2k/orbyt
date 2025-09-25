@@ -3,7 +3,7 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbToolbarComponent, OrbButtonComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent, OrbMainHeaderComponent, OrbButtonComponent, OrbEntityAvatarComponent } from '@orb-components';
 import { UsersStore } from '@orb-stores/users/users.store';
 import { AuthStore } from '@orb-stores';
 import { UserResponseDto, RoleResponseDto, PermissionResponseDto } from '../../../api/model/models';
@@ -27,8 +27,7 @@ import { AgendaConfigModalComponent } from '../../agenda/components/agenda-confi
     OrbTableComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
-    OrbBreadcrumbComponent,
-    OrbToolbarComponent,
+    OrbMainHeaderComponent,
     OrbButtonComponent,
     OrbEntityAvatarComponent,
     MessageModule,
@@ -59,7 +58,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
   
   private canManageAgendaValue = false;
 
-  breadcrumbItems: any[] = [];
 
   public columns: TableColumn[] = [
     { field: 'profile', header: 'Usuario', sortable: false, width: '300px' },
@@ -97,7 +95,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeActions();
-    this.usersStore.loadUsers();
+    this.usersStore.loadSubUsers();
     
     // Subscribe to canManageAgenda and store the value
     this.authStore.canManageAgenda$
@@ -125,7 +123,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.displayUserEditModal.set(false);
     this.userToEdit.set(undefined);
     // Recargar la lista de usuarios para reflejar los cambios
-    this.usersStore.loadUsers();
+    this.usersStore.loadSubUsers();
   }
 
   onUserFormCancel(): void {
@@ -234,11 +232,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
   }
 
   private initializeActions(): void {
-    this.breadcrumbItems = [
-      { label: 'Gestión' },
-      { label: 'Usuarios' }
-    ];
-
     this.actions = [
       {
         label: 'Editar',

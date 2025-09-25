@@ -1,5 +1,20 @@
 import { createAction, createReducer, on, props, Store } from '@ngrx/store';
-import { isEqual } from 'lodash';
+// Helper function to deep compare objects
+const isEqual = (a: any, b: any): boolean => {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (typeof a !== typeof b) return false;
+
+  if (typeof a === 'object') {
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length) return false;
+
+    return keysA.every(key => isEqual(a[key], b[key]));
+  }
+
+  return false;
+};
 import { Observable } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 
