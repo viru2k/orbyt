@@ -1,13 +1,9 @@
-<!-- Breadcrumb superior -->
-<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
-
-<!-- Header Card -->
-<orb-card>
-  <div orbHeader>
-    <h2>⚙️ Configuración de Agenda</h2>
-    <p class="text-gray-600">Gestiona los horarios, días laborales y configuraciones de agenda</p>
-  </div>
-</orb-card>
+<!-- Header unificado como dashboard -->
+<orb-main-header
+  title="Configuración de Agenda"
+  icon="fa fa-cog"
+  subtitle="Gestiona los horarios, días laborales y configuraciones de agenda">
+</orb-main-header>
 
 <!-- Professional Selection Card (only if user can manage agenda) -->
 <orb-card style="margin-top: 1rem;" *ngIf="canManageAgenda$ | async">

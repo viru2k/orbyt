@@ -1,6 +1,7 @@
+@import '../../../../styles/_design-system.scss';
 :host {
   display: block;
-  padding: var(--space-6, 1.5rem);
+  padding: var(--space-6);
 }
 
 /* Client profile column styling */

@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG Components
@@ -20,6 +21,7 @@ import {
 
 // Local Components
 import { ClientSearchComponent, ClientSearchResult } from '../client-search/client-search.component';
+import { RewardApplicationModalComponent } from '../reward-application-modal/reward-application-modal.component';
 
 // Services and Models
 import { RewardsService } from '../../../../api/services/rewards.service';
@@ -40,7 +42,8 @@ import { ClientResponseDto, CustomerRewardResponseDto } from '../../../../api/mo
     ToastModule,
     OrbCardComponent,
     OrbButtonComponent,
-    ClientSearchComponent
+    ClientSearchComponent,
+    RewardApplicationModalComponent
   ],
   providers: [MessageService],
   template: `
@@ -178,16 +181,23 @@ import { ClientResponseDto, CustomerRewardResponseDto } from '../../../../api/mo
                     <ng-template pTemplate="header">
                       <tr>
                         <th>Programa</th>
-                        <th>Fecha de Canje</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
                         <th>Valor</th>
                         <th>Tipo</th>
                       </tr>
                     </ng-template>
-                    
+
                     <ng-template pTemplate="body" let-reward>
                       <tr>
                         <td>{{ reward.rewardProgram?.name || 'Programa sin nombre' }}</td>
-                        <td>{{ formatDate(reward.redeemedAt) }}</td>
+                        <td>
+                          <p-tag
+                            [value]="getRewardStatusLabel(reward.status)"
+                            [severity]="getRewardStatusSeverity(reward.status)">
+                          </p-tag>
+                        </td>
+                        <td>{{ formatDate(reward.redeemedAt || reward.createdAt) }}</td>
                         <td>
                           <span class="reward-value">{{ getRewardValueDisplay(reward) }}</span>
                         </td>
@@ -199,8 +209,8 @@ import { ClientResponseDto, CustomerRewardResponseDto } from '../../../../api/mo
 
                     <ng-template pTemplate="emptymessage">
                       <tr>
-                        <td colspan="4" class="empty-message">
-                          El cliente no ha canjeado recompensas aún
+                        <td colspan="5" class="empty-message">
+                          El cliente no tiene historial de recompensas
                         </td>
                       </tr>
                     </ng-template>
@@ -214,6 +224,14 @@ import { ClientResponseDto, CustomerRewardResponseDto } from '../../../../api/mo
 
       <!-- Toast Messages -->
       <p-toast></p-toast>
+
+      <!-- Reward Application Modal -->
+      <app-reward-application-modal
+        [visible]="showRewardApplicationModal()"
+        [client]="clientForRewardApplication()"
+        (applied)="onRewardApplicationCompleted()"
+        (cancelled)="onRewardApplicationCancelled()">
+      </app-reward-application-modal>
     </div>
   `,
   styleUrls: ['./client-rewards-view.component.scss']
@@ -221,12 +239,15 @@ import { ClientResponseDto, CustomerRewardResponseDto } from '../../../../api/mo
 export class ClientRewardsViewComponent implements OnInit {
   private rewardsService = inject(RewardsService);
   private messageService = inject(MessageService);
+  private http = inject(HttpClient);
 
   // State
   selectedClient = signal<ClientResponseDto | null>(null);
   loading = signal(false);
   activeRewards = signal<CustomerRewardResponseDto[]>([]);
   redeemedRewards = signal<CustomerRewardResponseDto[]>([]);
+  showRewardApplicationModal = signal(false);
+  clientForRewardApplication = signal<ClientResponseDto | null>(null);
 
   ngOnInit(): void {
     // Initialize any data if needed
@@ -247,11 +268,8 @@ export class ClientRewardsViewComponent implements OnInit {
   }
 
   onApplyRewardRequested(client: ClientResponseDto): void {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Función en desarrollo',
-      detail: 'La aplicación manual de recompensas estará disponible próximamente.'
-    });
+    this.showRewardApplicationModal.set(true);
+    this.clientForRewardApplication.set(client);
   }
 
   private loadClientRewards(clientId: number): void {
@@ -272,12 +290,21 @@ export class ClientRewardsViewComponent implements OnInit {
       }
     });
 
-    // Load client reward history
-    this.rewardsService.rewardsControllerGetClientRewardHistory({ clientId }).subscribe({
+    // Load client reward history (using direct HTTP call due to OpenAPI generation issue)
+    this.http.get<CustomerRewardResponseDto[]>(`http://localhost:3000/rewards/customer/${clientId}/history`).subscribe({
       next: (rewards) => {
+        console.log('Raw reward history data:', rewards);
         const rewardsList = Array.isArray(rewards) ? rewards : [];
-        const redeemed = rewardsList.filter(r => r.status === 'REDEEMED');
-        this.redeemedRewards.set(redeemed);
+        console.log('Rewards list:', rewardsList);
+        console.log('Reward statuses:', rewardsList.map(r => ({ id: r.id, status: r.status })));
+
+        // Show all rewards in history, not just redeemed ones
+        // const redeemed = rewardsList.filter(r => r.status === 'REDEEMED');
+        // For now, let's show all historical rewards
+        const historicalRewards = rewardsList;
+        console.log('Historical rewards to display:', historicalRewards);
+
+        this.redeemedRewards.set(historicalRewards);
         this.loading.set(false);
       },
       error: (error) => {
@@ -382,5 +409,20 @@ export class ClientRewardsViewComponent implements OnInit {
       month: 'short',
       day: 'numeric'
     });
+  }
+
+  onRewardApplicationCompleted(): void {
+    this.showRewardApplicationModal.set(false);
+    this.clientForRewardApplication.set(null);
+
+    // Refresh client rewards if there's a selected client
+    if (this.selectedClient()) {
+      this.loadClientRewards(this.selectedClient()!.id);
+    }
+  }
+
+  onRewardApplicationCancelled(): void {
+    this.showRewardApplicationModal.set(false);
+    this.clientForRewardApplication.set(null);
   }
 }

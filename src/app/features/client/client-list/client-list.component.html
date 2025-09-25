@@ -1,14 +1,9 @@
-<!-- Breadcrumb superior -->
-<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
-
-<orb-toolbar>
-  <div body>
-    <!-- Este espacio puede ser para filtros avanzados en el futuro -->
-  </div>
-  <div footer>
-    <orb-button label="Nuevo Cliente" (click)="showClientForm()" />
-  </div>
-</orb-toolbar>
+<!-- Header unificado como dashboard -->
+<orb-main-header
+  title="Gestión de Clientes"
+  icon="fa fa-users"
+  subtitle="Administra y consulta la información de tus clientes">
+</orb-main-header>
 
 <orb-card>
   <div class="grid" orbBody>

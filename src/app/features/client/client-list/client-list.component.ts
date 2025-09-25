@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 
 // Store y DTOs
 import { ClientStore } from '@orb-stores';
-import { ClientResponseDto } from '../../../api/model/models';
+import { ClientResponseDto } from '../../../api/models';
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent, OrbMainHeaderComponent } from '@orb-components';
 import { ClientFormComponent } from '../modal/client-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -23,11 +23,10 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
     OrbCardComponent,
     OrbTableComponent,
     OrbButtonComponent,
-    OrbBreadcrumbComponent,
+    OrbMainHeaderComponent,
     OrbDialogComponent,
     ClientFormComponent,
     ConfirmDialogModule,
-    OrbToolbarComponent,
     OrbActionsPopoverComponent,
     OrbEntityAvatarComponent
   ],
@@ -40,10 +39,6 @@ export class ClientListComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private notificationService = inject(NotificationService);
 
-  breadcrumbItems = [
-    { label: 'Gestión' },
-    { label: 'Clientes' }
-  ];
 
   displayClientModal = signal(false);
   clientToEdit = signal<ClientResponseDto | undefined>(undefined);

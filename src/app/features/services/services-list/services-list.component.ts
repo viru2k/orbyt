@@ -8,7 +8,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 // Orb Components
-import { OrbToolbarComponent, OrbBreadcrumbComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { OrbMainHeaderComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
 
 // Services and Models
 import { ServiceFormComponent } from '../modal/service-form.component';
@@ -25,8 +25,7 @@ import { ServicesStore } from '@orb-stores';
     RouterModule,
     ToastModule,
     ConfirmDialogModule,
-    OrbToolbarComponent,
-    OrbBreadcrumbComponent,
+    OrbMainHeaderComponent,
     OrbCardComponent,
     OrbButtonComponent,
     OrbTableComponent,
@@ -36,15 +35,12 @@ import { ServicesStore } from '@orb-stores';
   ],
   providers: [MessageService, ConfirmationService],
   template: `
-    <!-- Breadcrumb superior -->
-    <orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
-
-    <orb-toolbar>
-      <div body></div>
-      <div footer>
-        <orb-button label="Nuevo Servicio" (click)="showServiceForm()" />
-      </div>
-    </orb-toolbar>
+    <!-- Header unificado como dashboard -->
+    <orb-main-header
+      title="Gestión de Servicios"
+      icon="fa fa-cog"
+      subtitle="Administra y configura los servicios disponibles">
+    </orb-main-header>
 
     <orb-card>
       <div class="grid" orbBody>
@@ -163,12 +159,6 @@ export class ServicesListComponent implements OnInit {
   tableRows = signal(15);
   tableFirst = signal(0);
 
-  // Breadcrumb configuration
-  breadcrumbItems = [
-    { label: 'Inicio', routerLink: '/dashboard' },
-    { label: 'Gestión', routerLink: '/management' },
-    { label: 'Servicios', routerLink: '/management/services' }
-  ];
 
   // Table configuration
   tableColumns = [

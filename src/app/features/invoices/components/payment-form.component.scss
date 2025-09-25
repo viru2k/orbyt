@@ -303,3 +303,372 @@
     color: variables.$gray-400;
   }
 }
+
+// Nuevos estilos para las secciones de recompensas
+
+.rewards-preview {
+  background: linear-gradient(135deg, rgba(variables.$orbyt-lavender, 0.05) 0%, rgba(variables.$primary-purple, 0.03) 100%);
+  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
+  border-radius: var(--radius-lg, 0.75rem);
+  padding: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-6, 1.5rem);
+
+  h4 {
+    margin: 0 0 var(--space-2, 0.5rem) 0;
+    font-family: variables.$font-family;
+    font-size: variables.$text-lg;
+    font-weight: variables.$font-semibold;
+    color: variables.$gray-800;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$orbyt-lavender;
+    }
+  }
+
+  .rewards-subtitle {
+    color: variables.$gray-600;
+    font-size: variables.$text-sm;
+    margin: 0 0 var(--space-4, 1rem) 0;
+  }
+
+  .rewards-grid {
+    display: grid;
+    gap: var(--space-4, 1rem);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .reward-item {
+    background: white;
+    border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: var(--space-4, 1rem);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .reward-info {
+    .reward-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-2, 0.5rem);
+      gap: var(--space-2, 0.5rem);
+
+      .reward-name {
+        font-weight: variables.$font-semibold;
+        color: variables.$gray-800;
+        font-size: variables.$text-base;
+        flex: 1;
+      }
+    }
+
+    .reward-description {
+      color: variables.$gray-600;
+      font-size: variables.$text-sm;
+      margin: 0 0 var(--space-3, 0.75rem) 0;
+      line-height: 1.4;
+    }
+
+    .progress-container {
+      margin-bottom: var(--space-3, 0.75rem);
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-2, 0.5rem);
+
+        .progress-text {
+          font-size: variables.$text-sm;
+          font-weight: variables.$font-medium;
+          color: variables.$gray-700;
+        }
+
+        .progress-percentage {
+          font-size: variables.$text-xs;
+          color: variables.$gray-500;
+          background: rgba(variables.$gray-100, 0.5);
+          padding: 2px 6px;
+          border-radius: var(--radius-sm, 0.25rem);
+        }
+      }
+    }
+
+    .reward-value {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1, 0.25rem);
+      color: variables.$orbyt-lavender;
+      font-size: variables.$text-sm;
+      font-weight: variables.$font-medium;
+
+      i {
+        font-size: variables.$text-xs;
+      }
+    }
+  }
+
+  .rewards-note {
+    background: rgba(variables.$primary-blue, 0.05);
+    border: 1px solid rgba(variables.$primary-blue, 0.1);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2, 0.5rem);
+
+    i {
+      color: variables.$primary-blue;
+      font-size: variables.$text-sm;
+    }
+
+    span {
+      color: variables.$gray-700;
+      font-size: variables.$text-sm;
+    }
+  }
+}
+
+// Estilos para el modal de resultados de recompensas
+:global(.rewards-result-modal) {
+  .p-dialog-header {
+    background: linear-gradient(135deg, variables.$orbyt-lavender 0%, variables.$primary-purple 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+
+    .p-dialog-title {
+      font-weight: variables.$font-semibold;
+      font-size: variables.$text-lg;
+    }
+
+    .p-dialog-header-icon {
+      color: white;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 0;
+  }
+
+  .p-dialog-footer {
+    padding: var(--space-4, 1rem) var(--space-6, 1.5rem);
+    background: rgba(variables.$gray-50, 0.5);
+    border-radius: 0 0 12px 12px;
+    justify-content: center;
+  }
+}
+
+.rewards-result {
+  padding: var(--space-6, 1.5rem);
+
+  .celebration-section {
+    text-align: center;
+    margin-bottom: var(--space-6, 1.5rem);
+
+    .celebration-icon {
+      margin-bottom: var(--space-4, 1rem);
+
+      i {
+        color: #f59e0b; // amber-500
+        filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.3));
+      }
+    }
+
+    h3 {
+      margin: 0 0 var(--space-2, 0.5rem) 0;
+      font-family: variables.$font-family;
+      font-size: variables.$text-xl;
+      font-weight: variables.$font-bold;
+      color: variables.$gray-800;
+    }
+
+    p {
+      color: variables.$gray-600;
+      font-size: variables.$text-base;
+      margin: 0;
+    }
+  }
+
+  .rewards-summary {
+    .reward-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4, 1rem);
+      margin-bottom: var(--space-6, 1.5rem);
+
+      .stat-item {
+        background: linear-gradient(135deg, rgba(variables.$primary-blue, 0.05) 0%, rgba(variables.$orbyt-lavender, 0.03) 100%);
+        border: 1px solid rgba(variables.$primary-blue, 0.1);
+        border-radius: var(--radius-lg, 0.75rem);
+        padding: var(--space-4, 1rem);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3, 0.75rem);
+
+        .stat-icon {
+          width: 48px;
+          height: 48px;
+          background: variables.$primary-blue;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: variables.$text-lg;
+          flex-shrink: 0;
+        }
+
+        .stat-content {
+          display: flex;
+          flex-direction: column;
+
+          .stat-value {
+            font-size: variables.$text-2xl;
+            font-weight: variables.$font-bold;
+            color: variables.$primary-blue;
+            line-height: 1;
+          }
+
+          .stat-label {
+            font-size: variables.$text-sm;
+            color: variables.$gray-600;
+            font-weight: variables.$font-medium;
+          }
+        }
+      }
+    }
+
+    .updated-rewards {
+      h4 {
+        margin: 0 0 var(--space-4, 1rem) 0;
+        font-family: variables.$font-family;
+        font-size: variables.$text-lg;
+        font-weight: variables.$font-semibold;
+        color: variables.$gray-800;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2, 0.5rem);
+
+        i {
+          color: variables.$orbyt-lavender;
+        }
+      }
+
+      .reward-list {
+        display: grid;
+        gap: var(--space-3, 0.75rem);
+
+        .reward-update {
+          background: white;
+          border: 1px solid rgba(variables.$orbyt-lavender, 0.1);
+          border-radius: var(--radius-md, 0.5rem);
+          padding: var(--space-4, 1rem);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+          .reward-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3, 0.75rem);
+
+            .reward-name {
+              font-weight: variables.$font-semibold;
+              color: variables.$gray-800;
+              font-size: variables.$text-base;
+            }
+          }
+
+          .progress-container {
+            margin-bottom: var(--space-2, 0.5rem);
+
+            .progress-info {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: var(--space-2, 0.5rem);
+
+              .progress-text {
+                font-size: variables.$text-sm;
+                font-weight: variables.$font-medium;
+                color: variables.$gray-700;
+              }
+
+              .progress-percentage {
+                font-size: variables.$text-xs;
+                color: variables.$gray-500;
+                background: rgba(variables.$gray-100, 0.5);
+                padding: 2px 6px;
+                border-radius: var(--radius-sm, 0.25rem);
+              }
+            }
+          }
+
+          .reward-value {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1, 0.25rem);
+            color: variables.$orbyt-lavender;
+            font-size: variables.$text-sm;
+            font-weight: variables.$font-medium;
+
+            i {
+              font-size: variables.$text-xs;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Estilos para las barras de progreso de recompensas
+:global(.reward-progress) {
+  .p-progressbar-value {
+    background: linear-gradient(90deg, variables.$orbyt-lavender 0%, variables.$primary-purple 100%);
+    border-radius: var(--radius-sm, 0.25rem);
+  }
+
+  .p-progressbar {
+    background: rgba(variables.$gray-200, 0.5);
+    border-radius: var(--radius-sm, 0.25rem);
+    height: 8px;
+  }
+}
+
+// Responsive adjustments for rewards sections
+@media (max-width: 768px) {
+  .rewards-preview {
+    .rewards-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .reward-item .reward-info .reward-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2, 0.5rem);
+    }
+  }
+
+  .rewards-result {
+    .reward-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-item {
+      flex-direction: column;
+      text-align: center;
+      gap: var(--space-2, 0.5rem);
+
+      .stat-content {
+        align-items: center;
+      }
+    }
+  }
+}

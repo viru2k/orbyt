@@ -1,6 +1,6 @@
 /* Dashboard Container */
 .dashboard {
-  padding: 1.5rem;
+
   max-width: 1600px;
   margin: 0 auto;
   background: #f8fafc;
@@ -9,7 +9,7 @@
 
 @media (max-width: 768px) {
   .dashboard {
-    padding: 1rem;
+    
   }
 }
 
@@ -36,7 +36,7 @@
 
 .header-content .dashboard-title {
   margin: 0 0 0.5rem 0;
-  font-size: 2rem;
+  font-size: 22px;
   font-weight: 700;
   display: flex;
   align-items: center;

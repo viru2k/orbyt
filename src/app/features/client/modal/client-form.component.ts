@@ -7,7 +7,7 @@ import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFo
 
 // Store y DTOs
 import { ClientStore } from '@orb-stores';
-import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '../../../api/model/models';
+import { ClientResponseDto, CreateClientDto, UpdateClientDto } from '../../../api/models';
 import { FileUploadResponseDto } from '../../../api/models/file-upload-response-dto';
 import { AvatarEntity } from '../../../shared/models/entity-avatar.interfaces';
 
@@ -82,7 +82,7 @@ export class ClientFormComponent implements OnInit {
 
     if (this.isEditMode && this.client) {
       this.form.patchValue(this.client);
-      this.currentClientEntity = { ...this.client };
+      this.currentClientEntity = { ...this.client, isActive: this.client.isActive ?? true };
     } else {
       // Para modo creación, crear una entidad temporal
       this.currentClientEntity = {
@@ -96,6 +96,7 @@ export class ClientFormComponent implements OnInit {
         birthDate: '',
         gender: undefined,
         status: 'ACTIVE',
+        isActive: true, // Nuevo campo requerido
         notes: '',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()

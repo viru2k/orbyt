@@ -349,7 +349,7 @@ export interface InvoiceItemSelection {
           label="Cancelar"
           icon="pi pi-times"
           (clicked)="onCancel()"
-          variant="secondary">
+          variant="text">
         </orb-button>
       </ng-template>
     </p-dialog>
@@ -376,9 +376,9 @@ export class ItemSelectorModalComponent implements OnInit, OnChanges {
 
   // Search and filters
   productSearch = '';
-  selectedProductStatus: string | null = null;
+  selectedProductStatus: string | null = 'ACTIVE';
   serviceSearch = '';
-  selectedServiceStatus: string | null = null;
+  selectedServiceStatus: string | null = 'ACTIVE';
 
   // Manual item form
   manualItem: InvoiceItemSelection = {

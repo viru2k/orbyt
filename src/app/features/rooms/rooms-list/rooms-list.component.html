@@ -1,13 +1,10 @@
 <div class="rooms-container">
-  <!-- Breadcrumb superior -->
-  <orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
-
-  <orb-toolbar>
-    <div body></div>
-    <div footer>
-      <orb-button label="Nueva Sala" (click)="onCreateRoom()" />
-    </div>
-  </orb-toolbar>
+  <!-- Header unificado como dashboard -->
+  <orb-main-header
+    title="Gestión de Salas"
+    icon="fa fa-door-open"
+    subtitle="Administra y configura las salas disponibles">
+  </orb-main-header>
 
   <orb-card>
     <div class="grid" orbBody>
@@ -23,6 +20,7 @@
         [tableFeatures]="tableFeaturesConfig"
         [globalFilterFields]="['name', 'description', 'location']"
         [rowActions]="roomRowActions"
+        [tableHeaderActions]="roomTableHeaderActions"
         dataKey="id"
         paginatorPosition="bottom"
         [rowsPerPageOptions]="[15, 30, 50]"

@@ -6,14 +6,19 @@ import { CommonModule } from '@angular/common';
 import { ToastModule } from 'primeng/toast';
 import { DividerModule } from 'primeng/divider';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { TagModule } from 'primeng/tag';
 
 // Orb Components
 import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent } from '@orb-components';
 
 // Services and Models
 import { InvoicesService } from '../../../api/services/invoices.service';
+import { RewardsService } from '../../../api/services/rewards.service';
 import { InvoiceResponseDto } from '../../../api/models/invoice-response-dto';
 import { ProcessPaymentDto } from '../../../api/models/process-payment-dto';
+import { TriggerPurchaseCompletedDto, CustomerRewardResponseDto, PurchaseCompletedResponseDto } from '../../../api/models';
 import { MessageService } from 'primeng/api';
 import { FormButtonAction } from '@orb-models';
 
@@ -26,12 +31,16 @@ import { FormButtonAction } from '@orb-models';
     ToastModule,
     DividerModule,
     InputNumberModule,
+    DialogModule,
+    ProgressBarModule,
+    TagModule,
     OrbTextInputComponent,
     OrbFormFieldComponent,
     OrbFormFooterComponent,
     OrbSelectComponent,
     OrbDatepickerComponent,
     OrbTextAreaComponent,
+    OrbButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -153,6 +162,48 @@ import { FormButtonAction } from '@orb-models';
           </div>
         </div>
 
+        <!-- Rewards Preview Section -->
+        <div class="rewards-preview" *ngIf="clientRewards().length > 0">
+          <h4><i class="fa fa-star"></i> Recompensas del Cliente</h4>
+          <p class="rewards-subtitle">Progreso actual hacia recompensas disponibles</p>
+          <div class="rewards-grid">
+            <div class="reward-item" *ngFor="let reward of clientRewards()">
+              <div class="reward-info">
+                <div class="reward-header">
+                  <span class="reward-name">{{ reward.rewardProgram?.name }}</span>
+                  <p-tag
+                    [value]="getRewardStatusLabel(reward.status)"
+                    [severity]="getRewardStatusSeverity(reward.status)">
+                  </p-tag>
+                </div>
+                <p class="reward-description">{{ reward.rewardProgram?.description }}</p>
+                <div class="progress-container">
+                  <div class="progress-info">
+                    <span class="progress-text">
+                      {{ reward.currentProgress || 0 }} / {{ reward.targetValue || 0 }}
+                    </span>
+                    <span class="progress-percentage">
+                      {{ getProgressPercentage(reward) }}%
+                    </span>
+                  </div>
+                  <p-progressBar
+                    [value]="getProgressPercentage(reward)"
+                    styleClass="reward-progress">
+                  </p-progressBar>
+                </div>
+                <div class="reward-value" *ngIf="reward.rewardProgram">
+                  <i class="fa fa-gift"></i>
+                  <span>{{ getRewardValueDisplay(reward) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="rewards-note" *ngIf="getEstimatedPointsFromPayment() > 0">
+            <i class="fa fa-info-circle"></i>
+            <span>Este pago podría otorgar aproximadamente <strong>{{ getEstimatedPointsFromPayment() }} puntos</strong> adicionales</span>
+          </div>
+        </div>
+
         <!-- Form Footer -->
         <orb-form-footer 
           [buttons]="footerActions"
@@ -163,6 +214,92 @@ import { FormButtonAction } from '@orb-models';
     </div>
 
     <p-toast></p-toast>
+
+    <!-- Rewards Result Modal -->
+    <p-dialog
+      [(visible)]="showRewardsResult"
+      header="¡Recompensas Obtenidas!"
+      [modal]="true"
+      [closable]="true"
+      [resizable]="false"
+      [draggable]="false"
+      styleClass="rewards-result-modal"
+      [style]="{width: '550px', minHeight: '400px'}">
+
+      <div class="rewards-result" *ngIf="lastRewardResponse()">
+        <div class="celebration-section">
+          <div class="celebration-icon">
+            <i class="fa fa-trophy fa-3x text-warning"></i>
+          </div>
+          <h3>¡Felicitaciones!</h3>
+          <p>El pago ha sido procesado exitosamente y se han otorgado recompensas</p>
+        </div>
+
+        <div class="rewards-summary">
+          <div class="reward-stats">
+            <div class="stat-item" *ngIf="lastRewardResponse()!.pointsEarned > 0">
+              <div class="stat-icon">
+                <i class="fa fa-coins"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ lastRewardResponse()!.pointsEarned }}</span>
+                <span class="stat-label">Puntos Ganados</span>
+              </div>
+            </div>
+
+            <div class="stat-item" *ngIf="lastRewardResponse()!.rewardsUnlocked > 0">
+              <div class="stat-icon">
+                <i class="fa fa-gift"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ lastRewardResponse()!.rewardsUnlocked }}</span>
+                <span class="stat-label">Recompensas Desbloqueadas</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="updated-rewards" *ngIf="updatedClientRewards().length > 0">
+            <h4><i class="fa fa-star"></i> Estado Actual de Recompensas</h4>
+            <div class="reward-list">
+              <div class="reward-update" *ngFor="let reward of updatedClientRewards()">
+                <div class="reward-header">
+                  <span class="reward-name">{{ reward.rewardProgram?.name }}</span>
+                  <p-tag
+                    [value]="getRewardStatusLabel(reward.status)"
+                    [severity]="getRewardStatusSeverity(reward.status)">
+                  </p-tag>
+                </div>
+                <div class="progress-container">
+                  <div class="progress-info">
+                    <span class="progress-text">
+                      {{ reward.currentProgress || 0 }} / {{ reward.targetValue || 0 }}
+                    </span>
+                    <span class="progress-percentage">{{ getProgressPercentage(reward) }}%</span>
+                  </div>
+                  <p-progressBar
+                    [value]="getProgressPercentage(reward)"
+                    styleClass="reward-progress">
+                  </p-progressBar>
+                </div>
+                <div class="reward-value" *ngIf="reward.rewardProgram">
+                  <i class="fa fa-gift"></i>
+                  <span>{{ getRewardValueDisplay(reward) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <orb-button
+          label="Continuar"
+          (clicked)="closeRewardsResult()"
+          variant="primary"
+          icon="fa fa-check">
+        </orb-button>
+      </ng-template>
+    </p-dialog>
   `,
   styleUrls: ['./payment-form.component.scss']
 })
@@ -173,11 +310,18 @@ export class PaymentFormComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private invoicesService = inject(InvoicesService);
+  private rewardsService = inject(RewardsService);
   private messageService = inject(MessageService);
 
   paymentForm!: FormGroup;
   loading = signal(false);
   today = new Date();
+
+  // Nuevas propiedades para recompensas
+  clientRewards = signal<CustomerRewardResponseDto[]>([]);
+  updatedClientRewards = signal<CustomerRewardResponseDto[]>([]);
+  showRewardsResult = signal(false);
+  lastRewardResponse = signal<PurchaseCompletedResponseDto | null>(null);
 
   paymentMethodOptions = [
     { label: 'Efectivo', value: 'cash' },
@@ -194,6 +338,7 @@ export class PaymentFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.loadClientRewards();
   }
 
   private initForm(): void {
@@ -263,21 +408,19 @@ export class PaymentFormComponent implements OnInit {
       paymentNotes: formValue.paymentNotes || undefined
     };
 
-    this.invoicesService.invoiceControllerProcessPayment({ 
-      id: this.invoice.id, 
-      body: paymentData 
+    this.invoicesService.invoiceControllerProcessPayment({
+      id: this.invoice.id,
+      body: paymentData
     }).subscribe({
       next: (response) => {
         const isFullyPaid = response.remainingAmount <= 0;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Pago Procesado',
-          detail: isFullyPaid 
-            ? 'El pago ha sido procesado exitosamente. La factura está completamente pagada.'
-            : `El pago ha sido procesado exitosamente. Monto pendiente: ${response.remainingAmount.toFixed(2)}€`
-        });
-        this.saved.emit();
-        this.loading.set(false);
+
+        // Si la factura está completamente pagada, procesar recompensas automáticamente
+        if (isFullyPaid && (response.client as any)?.id) {
+          this.processRewardsForPaidInvoice(response);
+        } else {
+          this.showPaymentSuccessMessage(response);
+        }
       },
       error: (error) => {
         console.error('Error processing payment:', error);
@@ -319,5 +462,155 @@ export class PaymentFormComponent implements OnInit {
   // Helper method for client data
   getClientName(invoice: InvoiceResponseDto): string {
     return (invoice.client as any)?.name || 'Cliente no encontrado';
+  }
+
+  /**
+   * Procesa automáticamente las recompensas cuando una factura se paga completamente
+   */
+  processRewardsForPaidInvoice(paidInvoice: InvoiceResponseDto): void {
+    const clientId = (paidInvoice.client as any)?.id;
+    if (!clientId) {
+      this.showPaymentSuccessMessage(paidInvoice);
+      return;
+    }
+
+    // Preparar datos para trigger de recompensas
+    const rewardsData: TriggerPurchaseCompletedDto = {
+      clientId: clientId,
+      invoiceId: paidInvoice.id,
+      purchaseAmount: paidInvoice.total,
+      paymentMethod: this.paymentForm.value.paymentMethod,
+      paymentDate: this.paymentForm.value.paymentDate?.toISOString() || new Date().toISOString(),
+      items: paidInvoice.items?.map(item => ({
+        serviceId: (item as any).productId || (item as any).serviceId || item.itemId || 1,
+        quantity: item.quantity || 1,
+        amount: item.total || item.unitPrice || 0
+      })) || []
+    };
+
+    // Procesar recompensas automáticamente
+    this.rewardsService.rewardsControllerTriggerPurchaseCompleted({ body: rewardsData }).subscribe({
+      next: (rewardResponse) => {
+        // Guardar respuesta para mostrar en el modal
+        this.lastRewardResponse.set(rewardResponse);
+
+        // Recargar recompensas actualizadas del cliente
+        this.loadClientRewards().then(() => {
+          // Actualizar la lista de recompensas para el modal
+          this.updatedClientRewards.set(this.clientRewards());
+
+          // Mostrar modal de resultados
+          this.showRewardsResult.set(true);
+
+          this.saved.emit();
+          this.loading.set(false);
+        });
+      },
+      error: (rewardError) => {
+        console.error('Error processing rewards:', rewardError);
+
+        // Mostrar mensaje de éxito del pago pero advertencia sobre recompensas
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Pago Procesado - Error en Recompensas',
+          detail: 'El pago fue procesado exitosamente, pero hubo un problema al procesar las recompensas. Puedes aplicarlas manualmente.'
+        });
+
+        this.saved.emit();
+        this.loading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Muestra mensaje de éxito para pagos que no activan recompensas
+   */
+  showPaymentSuccessMessage(response: InvoiceResponseDto): void {
+    const isFullyPaid = response.remainingAmount <= 0;
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Pago Procesado',
+      detail: isFullyPaid
+        ? 'El pago ha sido procesado exitosamente. La factura está completamente pagada.'
+        : `El pago ha sido procesado exitosamente. Monto pendiente: ${response.remainingAmount.toFixed(2)}€`
+    });
+
+    this.saved.emit();
+    this.loading.set(false);
+  }
+
+  // Nuevos métodos para el sistema de recompensas
+
+  private async loadClientRewards(): Promise<void> {
+    const clientId = (this.invoice?.client as any)?.id;
+    if (!clientId) {
+      return;
+    }
+
+    try {
+      const rewards = await this.rewardsService.rewardsControllerGetClientActiveRewards({ clientId }).toPromise();
+      this.clientRewards.set(rewards || []);
+    } catch (error) {
+      console.error('Error loading client rewards:', error);
+      this.clientRewards.set([]);
+    }
+  }
+
+  getProgressPercentage(reward: CustomerRewardResponseDto): number {
+    if (!reward.currentProgress || !reward.targetValue) return 0;
+    return Math.min(100, (Number(reward.currentProgress) / Number(reward.targetValue)) * 100);
+  }
+
+  getRewardStatusLabel(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'IN_PROGRESS': 'En Progreso',
+      'EARNED': 'Ganada',
+      'REDEEMED': 'Canjeada',
+      'EXPIRED': 'Expirada'
+    };
+    return statusMap[status] || status;
+  }
+
+  getRewardStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
+    const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
+      'IN_PROGRESS': 'info',
+      'EARNED': 'success',
+      'REDEEMED': 'info',
+      'EXPIRED': 'danger'
+    };
+    return severityMap[status] || 'info';
+  }
+
+  getRewardValueDisplay(reward: CustomerRewardResponseDto): string {
+    if (!reward.rewardProgram?.rewardValue) return '';
+
+    const value = reward.rewardProgram.rewardValue;
+    const type = reward.rewardProgram.rewardType;
+
+    switch (type) {
+      case 'DISCOUNT_PERCENTAGE':
+        return `${value}% descuento`;
+      case 'DISCOUNT_AMOUNT':
+        return `${value}€ descuento`;
+      case 'FREE_SERVICE':
+        return 'Servicio gratis';
+      case 'POINTS':
+        return `${value} puntos`;
+      default:
+        return value.toString();
+    }
+  }
+
+  getEstimatedPointsFromPayment(): number {
+    // Estimación simple: 1 punto por cada euro
+    // En un sistema real, esto vendría de la configuración del programa de recompensas
+    const paymentAmount = this.paymentForm.get('amount')?.value || 0;
+    return Math.floor(paymentAmount);
+  }
+
+  closeRewardsResult(): void {
+    this.showRewardsResult.set(false);
+    this.lastRewardResponse.set(null);
   }
 }

@@ -21,7 +21,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
 
 // Orb Components
-import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTableComponent, OrbCardComponent, OrbToolbarComponent, OrbBreadcrumbComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbSelectComponent } from '@orb-components';
+import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTableComponent, OrbCardComponent, OrbMainHeaderComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbSelectComponent } from '@orb-components';
 import { TableColumn, OrbTableFeatures, OrbActionItem } from '@orb-models';
 
 // Store and DTOs
@@ -53,8 +53,7 @@ import { RoomResponseDto, CreateRoomDto, UpdateRoomDto } from '../../../api/mode
     OrbTextInputComponent,
     OrbTableComponent,
     OrbCardComponent,
-    OrbToolbarComponent,
-    OrbBreadcrumbComponent,
+    OrbMainHeaderComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
     OrbSelectComponent
@@ -117,11 +116,14 @@ export class RoomsListComponent implements OnInit {
     }
   ];
 
-  breadcrumbItems: MenuItem[] = [
-    { label: 'Inicio', icon: 'fas fa-home', routerLink: '/dashboard' },
-    { label: 'Gestión', icon: 'fas fa-cogs' },
-    { label: 'Salas', icon: 'fas fa-door-open' }
+  roomTableHeaderActions: OrbActionItem[] = [
+    {
+      label: 'Nueva Sala',
+      icon: 'pi pi-plus',
+      action: () => this.onCreateRoom()
+    }
   ];
+
 
   ngOnInit(): void {
     this.initializeForm();

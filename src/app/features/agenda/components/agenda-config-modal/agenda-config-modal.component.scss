@@ -1,93 +1,86 @@
+// Variables
+$primary-color: #3b82f6;
+$border-color: #e5e7eb;
+$text-color: #374151;
+$bg-white: #ffffff;
+$shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+// Mixins
+@mixin card-base {
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  box-shadow: $shadow;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+
+  &:hover { box-shadow: $shadow-hover; }
+}
+
+@mixin section-header {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: $text-color;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i { font-size: 14px; }
+}
+
 .agenda-config-modal {
   .config-form {
-    // Ensure form doesn't interfere with flex layout
     display: block;
     width: 100%;
-  //  max-width: 1400px;
-    
-    // Test Section: Two blocks in a row
+
     .test-section {
       margin-bottom: 2rem;
-      display: block;
-      width: 100%;
-      
+
       .section-title {
         margin-bottom: 1.5rem;
-        
         h3 {
           margin: 0;
           font-size: 18px;
           font-weight: 600;
-          color: #374151;
+          color: $text-color;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          
-          i {
-            font-size: 16px;
-          }
+          i { font-size: 16px; }
         }
       }
-      
+
       .two-blocks-row {
-        display: flex !important;
-        flex-direction: row !important;
+        display: flex;
         gap: 1.5rem;
         width: 100%;
-        justify-content: space-between;
-        align-items: flex-start;
-        
+
         @media (max-width: 768px) {
-          flex-direction: column !important;
+          flex-direction: column;
           gap: 1rem;
         }
-        
+
         .config-block {
-          flex: 1 1 45%;
+          flex: 1;
           min-width: 300px;
-          max-width: calc(50% - 0.75rem);
-          background: white;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
-          transition: box-shadow 0.2s ease;
-          display: block;
-          
-          &:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-          
+          @include card-base;
+
           .block-header {
-            background: #ffffff;
+            background: $bg-white;
             padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-            
-            h4 {
-              margin: 0;
-              font-size: 16px;
-              font-weight: 600;
-              color: #374151;
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-              
-              i {
-                font-size: 14px;
-              }
-            }
+            border-bottom: 1px solid $border-color;
+            h4 { @include section-header; }
           }
-          
+
           .block-content {
             padding: 1.5rem;
-            
+
             .input-group {
               margin-bottom: 1.5rem;
-              
-              &:last-child {
-                margin-bottom: 0;
-              }
-              
+              &:last-child { margin-bottom: 0; }
+
               .help-text {
                 display: block;
                 margin-top: 0.5rem;
@@ -96,523 +89,165 @@
                 margin-left: 4px;
               }
             }
-            
-            .checkbox-group {
-              .checkbox-item {
-                margin-bottom: 1rem;
-                padding-bottom: 1rem;
-                
-                &:last-child {
-                  margin-bottom: 0;
-                }
-                
-                .help-text {
-                  margin-left: 4px !important;
-                }
-              }
-            }
           }
         }
       }
     }
-    
-    // New main configuration layout with consistent 8px gaps
-    .main-config-row {
-      @media (max-width: 768px) {
-        flex-direction: column !important;
-        gap: 8px !important;
-      }
-      
-      .left-config-column,
-      .right-config-column {
-        @media (max-width: 768px) {
-          flex: none !important;
-          width: 100% !important;
-          gap: 8px !important;
-        }
-      }
-    }
-    
-    // Global orb-card styling - consistent with design system
-    orb-card {
-      display: block;
-      width: 100%;
-      
-      // Header styling for consistent look
-      h4 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #374151;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        
-        i {
-          font-size: 14px;
-        }
-      }
-    }
-    
-    // Main grid layout for the new structure
+
     .row {
       display: grid;
       grid-template-columns: 1fr 400px;
       gap: 2rem;
       margin-bottom: 2rem;
-      
+
       @media (max-width: 1024px) {
         grid-template-columns: 1fr;
         gap: 1.5rem;
       }
     }
-    
-    // Left column with settings cards
+
     .settings-column {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
     }
-    
-    // Right column with working days
-    .working-days-column {
+
+    .config-card {
+      @include card-base;
+
+      .card-header {
+        background: $bg-white;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid $border-color;
+        h4 { @include section-header; }
+      }
+
+      .card-content { padding: 1.5rem; }
+    }
+
+    .working-days {
       display: flex;
       flex-direction: column;
-    }
-    
-    .config-card {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: box-shadow 0.2s ease;
-      
-      &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      gap: 0.75rem;
+
+      .working-days-row {
+        display: flex;
+        gap: 2rem;
+        &:last-child { justify-content: center; }
       }
-      
-      .card-header {
-        background: #ffffff;
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #e5e7eb;
-        
-        h4 {
+
+      .day-checkbox {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border: 2px solid $border-color;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          border-color: $primary-color;
+          background-color: #f8fafc;
+        }
+
+        &:has(.day-input:checked) {
+          background-color: #eff6ff;
+          border-color: $primary-color;
+        }
+
+        .day-input {
+          margin: 0 0.5rem 0 0;
+          accent-color: $primary-color;
+        }
+
+        .day-label {
           margin: 0;
-          font-size: 16px;
-          font-weight: 600;
-          color: #1f2937;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-      }
-      
-      .card-content {
-        padding: 1.5rem;
-      }
-    }
-    
-    // Bottom holidays card (full width)
-    .holidays-card {
-      width: 100%;
-      margin-top: 1rem;
-      
-      .holidays-management {
-        .add-holiday-header {
-          margin-bottom: 1rem;
-          display: flex;
-          justify-content: flex-start;
-        }
-        
-        .holidays-table-container {
-          margin-top: 1rem;
-          
-          .holiday-date-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            color: #374151;
-            
-            i {
-              color: #3b82f6;
-            }
-          }
-          
-          .holiday-description {
-            color: #6b7280;
-            font-size: 14px;
-            line-height: 1.4;
-          }
-          
-          .empty-state {
-            text-align: center;
-            padding: 2rem;
-            
-            i {
-              display: block;
-              margin-bottom: 0.75rem;
-            }
-            
-            p {
-              margin-bottom: 0.25rem;
-              font-weight: 500;
-            }
-            
-            small {
-              color: #9ca3af;
-            }
-          }
-        }
-        
-        .add-holiday-form {
-          margin-top: 1rem;
-          padding: 1.5rem;
-          background-color: #ffffff;
-          border-radius: 8px;
-          border: 1px solid #e5e7eb;
-          
-          .holiday-form-inline {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            
-            .input-group {
-              flex: 1;
-              min-width: 200px;
-            }
-            
-            .form-actions {
-              width: 100%;
-              display: flex;
-              justify-content: flex-end;
-              gap: 0.5rem;
-              margin-top: 1rem;
-            }
-            
-            @media (max-width: 768px) {
-              flex-direction: column;
-            }
-          }
-        }
-      }
-    }
-      
-      .time-inputs {
-        display: flex;
-        gap: 1rem;
-        
-        .input-group {
-          flex: 1;
-        }
-        
-        @media (max-width: 768px) {
-          flex-direction: column;
-        }
-      }
-      
-      .input-group {
-        margin-bottom: 1rem;
-        
-        .help-text {
-          display: block;
-          margin-top: 0.25rem;
-          font-size: 12px;
-          color: #6b7280;
-        }
-      }
-      
-      .working-days {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        
-        .working-days-row {
-          display: flex;
-          gap: 2rem;
-          justify-content: flex-start;
-          
-          &:last-child {
-            justify-content: center;
-          }
-        }
-        
-        .day-checkbox {
-          display: flex;
-          align-items: center;
-          padding: 0.75rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 8px;
-          transition: all 0.2s ease;
+          font-size: 14px;
+          font-weight: 500;
+          color: $text-color;
           cursor: pointer;
-          
-          &:hover {
-            border-color: #3b82f6;
-            background-color: #f8fafc;
-          }
-          
-          .day-input {
-            margin: 0;
-            margin-right: 0.5rem;
-            accent-color: #3b82f6;
-            
-            &:checked + .day-label {
-              font-weight: 600;
-              color: #3b82f6;
-            }
-          }
-          
-          .day-label {
-            margin: 0;
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
-            cursor: pointer;
-            transition: color 0.2s ease;
-          }
-          
-          &:has(.day-input:checked) {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-          }
-        }
-      }
-      
-      .checkbox-group {
-        .checkbox-item {
-          margin-bottom: 1.5rem;
-          padding: 1rem;
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          
-          .config-checkbox {
-            margin: 0;
-            margin-right: 0.75rem;
-            accent-color: #3b82f6;
-          }
-          
-          .checkbox-label {
-            font-weight: 500;
-            color: #374151;
-            cursor: pointer;
-            margin: 0;
-            display: inline-block;
-            margin-bottom: 0.25rem;
-          }
-          
-          .help-text {
-            display: block;
-            margin-left: 1.5rem;
-            font-size: 12px;
-            color: #6b7280;
-            line-height: 1.4;
-          }
         }
       }
     }
-    
+
+    .checkbox-group .checkbox-item {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+
+      .config-checkbox {
+        margin: 0 0.75rem 0 0;
+        accent-color: $primary-color;
+      }
+
+      .checkbox-label {
+        font-weight: 500;
+        color: $text-color;
+        cursor: pointer;
+        margin: 0 0 0.25rem 0;
+        display: inline-block;
+      }
+
+      .help-text {
+        display: block;
+        margin-left: 1.5rem;
+        font-size: 12px;
+        color: #6b7280;
+        line-height: 1.4;
+      }
+    }
+  }
+
   .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
     padding: 1.5rem 0;
-    margin: 0;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid $border-color;
   }
 }
 
-// Global overrides for this modal
-:host ::ng-deep {
-  .agenda-config-modal {
-    .p-dialog {
-      min-width: 800px;
-      max-width: 95vw;
-      width: 1200px;
-    }
-    
-    .p-dialog-header {
-      background: var(--gradient-primary) !important;
+// Dialog overrides
+:host ::ng-deep .agenda-config-modal {
+  .p-dialog {
+    min-width: 800px;
+    max-width: 95vw;
+    width: 1200px;
+  }
+
+  .p-dialog-header {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+    padding: 1.25rem 1.5rem !important;
+
+    .p-dialog-title {
       color: white !important;
-      border: none !important;
-      padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) !important;
-      
-      .p-dialog-title {
-        color: white !important;
-        font-weight: var(--font-semibold, 600) !important;
-        font-size: var(--text-xl, 1.25rem) !important;
-      }
-      
-      .p-dialog-header-close {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: none !important;
-        color: white !important;
-        border-radius: var(--radius-md, 0.5rem) !important;
-        width: 32px !important;
-        height: 32px !important;
-        
-        &:hover {
-          background: rgba(255, 255, 255, 0.3) !important;
-        }
-      }
-      
-      h3 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: white !important;
-      }
+      font-weight: 600 !important;
+      font-size: 1.25rem !important;
     }
-    
-    .p-dialog-content {
-      padding: 1.5rem;
-    }
-    
-    .p-dialog-footer {
-      background: var(--background-primary) !important;
+
+    .p-dialog-header-close {
+      background: rgba(255, 255, 255, 0.2) !important;
       border: none !important;
-      padding: var(--space-4, 1rem) var(--space-6, 1.5rem) !important;
-      display: flex !important;
-      justify-content: flex-end !important;
-      gap: var(--space-3, 0.75rem) !important;
-      
-      .p-button {
-        &.p-button-secondary {
-          background: white !important;
-          border: 1px solid var(--surface-border) !important;
-          color: var(--text-color) !important;
-          
-          &:hover {
-            background: var(--surface-hover) !important;
-          }
-        }
-        
-        &.p-button-primary {
-          background: var(--primary-color) !important;
-          border: 1px solid var(--primary-color) !important;
-          
-          &:hover {
-            background: var(--primary-color-dark) !important;
-          }
-        }
-        
-        &.p-button-danger {
-          background: var(--red-500) !important;
-          border: 1px solid var(--red-500) !important;
-          
-          &:hover {
-            background: var(--red-600) !important;
-          }
-        }
-      }
+      color: white !important;
+      border-radius: 0.5rem !important;
+      width: 32px !important;
+      height: 32px !important;
+
+      &:hover { background: rgba(255, 255, 255, 0.3) !important; }
     }
   }
-  
-  // PrimeNG Table styling for holidays
-  .holidays-table-container {
-    .p-datatable {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      overflow: hidden;
-      
-      .p-datatable-header {
-        background: #f8fafc;
-        padding: 1rem;
-        border-bottom: 1px solid #e5e7eb;
-      }
-      
-      .p-datatable-thead > tr > th {
-        background: #f1f5f9;
-        color: #374151;
-        font-weight: 600;
-        padding: 0.75rem;
-        border-bottom: 2px solid #e5e7eb;
-        font-size: 14px;
-      }
-      
-      .p-datatable-tbody > tr > td {
-        padding: 0.75rem;
-        border-bottom: 1px solid #f1f5f9;
-        vertical-align: middle;
-      }
-      
-      .p-datatable-tbody > tr:hover {
-        background: #f8fafc;
-      }
-      
-      .p-paginator {
-        background: #f8fafc;
-        border: none;
-        padding: 0.75rem;
-        border-top: 1px solid #e5e7eb;
-        
-        .p-paginator-current {
-          color: #6b7280;
-          font-size: 13px;
-        }
-        
-        .p-paginator-pages .p-paginator-page {
-          border-radius: 6px;
-          margin: 0 2px;
-          
-          &.p-highlight {
-            background: #3b82f6;
-            border-color: #3b82f6;
-          }
-        }
-      }
-    }
-  }
-}
 
-// Estilos para la nueva sección de gestión de fechas especiales
-.special-dates-tabs {
-  ::ng-deep {
-    .p-tabview {
-      .p-tabview-nav {
-        background: transparent;
-        border-bottom: 2px solid var(--surface-200, #dee2e6);
-        
-        .p-tabview-nav-link {
-          background: transparent;
-          border: none;
-          border-bottom: 2px solid transparent;
-          color: var(--text-color-secondary, #6c757d);
-          font-weight: 500;
-          padding: 1rem 1.5rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          transition: all 0.2s ease-in-out;
+  .p-dialog-content { padding: 1.5rem; }
 
-          &:hover {
-            background: var(--surface-50, #f8f9fa);
-            color: var(--text-color, #212529);
-          }
-
-          .p-menuitem-icon {
-            margin-right: 0;
-          }
-        }
-
-        .p-tabview-nav-link.p-highlight {
-          background: transparent;
-          border-bottom-color: var(--primary-color, #007bff);
-          color: var(--primary-color, #007bff);
-          font-weight: 600;
-        }
-      }
-
-      .p-tabview-panels {
-        background: transparent;
-        padding: 1.5rem 0 0 0;
-        border: none;
-
-        .p-tabview-panel {
-          background: transparent;
-          padding: 0;
-        }
-      }
-    }
+  .p-dialog-footer {
+    background: var(--background-primary) !important;
+    border: none !important;
+    padding: 1rem 1.5rem !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 0.75rem !important;
   }
 }

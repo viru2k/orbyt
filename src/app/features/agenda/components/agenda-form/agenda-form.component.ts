@@ -154,6 +154,7 @@ export class AgendaFormComponent implements OnChanges {
           email: '', // No disponible en AppointmentClientResponseDto
           phone: '', // No disponible en AppointmentClientResponseDto
           status: 'ACTIVE' as const, // Valor por defecto
+          isActive: true, // Nuevo campo requerido
           createdAt: '', // No disponible
           updatedAt: '' // No disponible
         };

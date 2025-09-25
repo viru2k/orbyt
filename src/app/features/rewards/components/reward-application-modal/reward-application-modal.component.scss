@@ -1,0 +1,229 @@
+.reward-application-modal {
+  .modal-content {
+    padding: 0;
+
+    .client-info {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #3b82f6;
+
+      h4 {
+        margin: 0 0 0.5rem 0;
+        color: #1f2937;
+        font-size: 16px;
+        font-weight: 600;
+
+        i {
+          margin-right: 0.5rem;
+          color: #3b82f6;
+        }
+      }
+
+      p {
+        margin: 0.25rem 0;
+
+        &.text-muted {
+          color: #6b7280;
+          font-size: 14px;
+
+          i {
+            margin-right: 0.5rem;
+            width: 16px;
+          }
+        }
+      }
+    }
+
+    .loading-center {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7280;
+
+      p {
+        margin-top: 1rem;
+        margin-bottom: 0;
+      }
+    }
+
+    .reward-form {
+      .form-fields {
+        .field {
+          margin-bottom: 1.5rem;
+
+          label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+          }
+
+          .field-help {
+            display: block;
+            margin-top: 0.25rem;
+            color: #6b7280;
+            font-size: 12px;
+          }
+
+          .field-error {
+            display: block;
+            margin-top: 0.25rem;
+            color: #dc2626;
+            font-size: 12px;
+          }
+
+          .checkbox-label {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-weight: normal;
+          }
+
+          input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+
+            &:focus {
+              outline: none;
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+
+            &.ng-invalid.ng-touched {
+              border-color: #dc2626;
+            }
+          }
+
+          textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+
+            &:focus {
+              outline: none;
+              border-color: #3b82f6;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+
+            &.ng-invalid.ng-touched {
+              border-color: #dc2626;
+            }
+          }
+        }
+
+        .program-info {
+          background: #eff6ff;
+          border: 1px solid #dbeafe;
+          border-radius: 8px;
+          padding: 1rem;
+          margin-bottom: 1.5rem;
+
+          h5 {
+            margin: 0 0 0.5rem 0;
+            color: #1e40af;
+            font-size: 14px;
+            font-weight: 600;
+
+            i {
+              margin-right: 0.5rem;
+            }
+          }
+
+          .program-description {
+            color: #374151;
+            font-size: 14px;
+            margin: 0.5rem 0;
+          }
+
+          .program-details {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+
+            .detail-item {
+              display: flex;
+              align-items: center;
+              color: #6b7280;
+              font-size: 13px;
+
+              i {
+                margin-right: 0.25rem;
+                color: #3b82f6;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 1rem;
+    }
+  }
+}
+
+// PrimeNG Dialog customizations
+:host ::ng-deep {
+  .reward-application-modal {
+    .p-dialog-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+
+      .p-dialog-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .p-dialog-header-icon {
+        color: white;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+    }
+
+    .p-dialog-content {
+      padding: 1.5rem;
+    }
+
+    .p-dialog-footer {
+      padding: 1rem 1.5rem;
+      background: #f8f9fa;
+      border-radius: 0 0 12px 12px;
+    }
+
+    .p-dropdown {
+      &.ng-invalid.ng-touched {
+        border-color: #dc2626;
+      }
+    }
+
+    .p-checkbox {
+      .p-checkbox-box {
+        &.p-highlight {
+          background: #3b82f6;
+          border-color: #3b82f6;
+        }
+      }
+    }
+
+    .p-message {
+      margin-bottom: 1rem;
+    }
+  }
+}

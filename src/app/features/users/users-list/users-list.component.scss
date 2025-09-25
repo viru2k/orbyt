@@ -1,70 +1,74 @@
-@use '../../../../styles/variables';
-@use '../../../../styles/mixins';
+@import '../../../../styles/_design-system.scss';
 
 :host {
   display: block;
-  padding: var(--space-6, 1.5rem);
+  padding: var(--space-6);
 }
 
 /* Enhanced table expansion styles */
 .user-details-expansion {
-  padding: var(--space-6, 1.5rem);
-  background: linear-gradient(135deg, 
-    rgba(variables.$orbyt-cream, 0.3) 0%, 
-    rgba(variables.$orbyt-lavender, 0.2) 100%
-  );
-  border-radius: var(--radius-lg, 0.75rem);
-  margin: var(--space-4, 1rem) 0;
+  padding: var(--space-6);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-lg);
+  margin: var(--space-4) 0;
+  border: 1px solid var(--color-gray-200);
 }
 
 .detail-section {
-  margin-bottom: var(--space-6, 1.5rem);
-  
+  margin-bottom: var(--space-6);
+
   &:last-child {
     margin-bottom: 0;
   }
-  
+
   h3 {
-    color: var(--text-primary);
-    font-size: var(--text-lg, 1.125rem);
-    font-weight: var(--font-semibold, 600);
-    margin-bottom: var(--space-4, 1rem);
+    color: var(--color-gray-900);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-4);
     display: flex;
     align-items: center;
-    gap: var(--space-2, 0.5rem);
-    
+    gap: var(--space-2);
+
     &::before {
       content: '';
       width: 4px;
       height: 20px;
-      background: var(--gradient-primary);
-      border-radius: var(--radius-full, 9999px);
+      background: var(--color-primary-600);
+      border-radius: var(--border-radius-full);
     }
   }
-  
+
   h4 {
-    color: var(--orbyt-rose);
-    font-size: var(--text-base, 1rem);
-    font-weight: var(--font-medium, 500);
-    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--color-gray-700);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-3);
   }
 }
 
 .roles-container {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2, 0.5rem);
-  
+  gap: var(--space-2);
+
   ::ng-deep p-tag {
     .p-tag {
-      background: var(--gradient-wellness) !important;
+      background: var(--color-primary-600) !important;
       border: none !important;
-      color: white !important;
-      padding: var(--space-2, 0.5rem) var(--space-4, 1rem) !important;
-      border-radius: var(--radius-full, 9999px) !important;
-      font-weight: var(--font-medium, 500) !important;
-      font-size: var(--text-sm, 0.875rem) !important;
+      color: var(--color-white) !important;
+      padding: var(--space-2) var(--space-4) !important;
+      border-radius: var(--border-radius-full) !important;
+      font-weight: var(--font-weight-medium) !important;
+      font-size: var(--text-sm) !important;
       box-shadow: var(--shadow-sm) !important;
+      transition: var(--transition-base) !important;
+
+      &:hover {
+        background: var(--color-primary-700) !important;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md) !important;
+      }
     }
   }
 }
@@ -84,9 +88,9 @@
   
   ::ng-deep p-chip {
     .p-chip {
-      background: rgba(variables.$orbyt-rose, 0.1) !important;
-      color: var(--orbyt-rose) !important;
-      border: 1px solid rgba(variables.$orbyt-rose, 0.2) !important;
+      background: var(--color-rose-50) !important;
+      color: var(--color-rose-700) !important;
+      border: 1px solid var(--color-rose-200) !important;
       padding: var(--space-1, 0.25rem) var(--space-3, 0.75rem) !important;
       border-radius: var(--radius-md, 0.5rem) !important;
       font-size: var(--text-xs, 0.75rem) !important;
@@ -99,7 +103,10 @@
 /* Enhanced card styling */
 ::ng-deep orb-card {
   .card-content {
-    @include mixins.orbyt-card(lg);
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-gray-200);
   }
 }
 
@@ -172,25 +179,49 @@
 
 /* Table styling removed to match default orb-table styling */
 
-/* Status styling to match clients */
+/* Status styling using Alpino design system */
 ::ng-deep .status-active {
-  background: rgba(34, 197, 94, 0.1) !important;
-  color: rgb(34, 197, 94) !important;
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 0.5rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
+  background: var(--color-success-50) !important;
+  color: var(--color-success-700) !important;
+  border: 1px solid var(--color-success-200) !important;
+  padding: var(--space-1) var(--space-3) !important;
+  border-radius: var(--border-radius-full) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: var(--font-weight-medium) !important;
   text-transform: capitalize !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--space-1) !important;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--color-success-500);
+    border-radius: var(--border-radius-full);
+  }
 }
 
 ::ng-deep .status-inactive {
-  background: rgba(239, 68, 68, 0.1) !important;
-  color: rgb(239, 68, 68) !important;
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 0.5rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
+  background: var(--color-danger-50) !important;
+  color: var(--color-danger-700) !important;
+  border: 1px solid var(--color-danger-200) !important;
+  padding: var(--space-1) var(--space-3) !important;
+  border-radius: var(--border-radius-full) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: var(--font-weight-medium) !important;
   text-transform: capitalize !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--space-1) !important;
+
+  &::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--color-danger-500);
+    border-radius: var(--border-radius-full);
+  }
 }
 
 /* Enhanced dialog styling */
@@ -280,9 +311,9 @@
     margin-bottom: var(--space-4, 1rem) !important;
     
     &.p-message-error {
-      background: rgba(variables.$error, 0.1) !important;
-      border: 1px solid rgba(variables.$error, 0.2) !important;
-      color: var(--error) !important;
+      background: var(--color-danger-50) !important;
+      border: 1px solid var(--color-danger-200) !important;
+      color: var(--color-danger-700) !important;
     }
   }
 }
@@ -304,21 +335,32 @@
 }
 
 /* Mobile responsiveness */
-@include mixins.mobile {
+@media (max-width: 768px) {
   :host {
-    padding: var(--space-4, 1rem);
+    padding: var(--space-4);
   }
-  
+
   .user-details-expansion {
-    padding: var(--space-4, 1rem);
+    padding: var(--space-4);
   }
-  
+
   .detail-section {
-    margin-bottom: var(--space-4, 1rem);
+    margin-bottom: var(--space-4);
   }
-  
+
   .roles-container,
   .permissions-container {
-    gap: var(--space-1, 0.25rem);
+    gap: var(--space-1);
+  }
+
+  /* Make table more mobile-friendly */
+  ::ng-deep orb-table {
+    .orb-table__container {
+      overflow-x: auto;
+    }
+
+    .p-datatable-table {
+      min-width: 600px;
+    }
   }
 }

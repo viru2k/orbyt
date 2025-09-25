@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG Components
@@ -20,7 +20,7 @@ import {
 } from '@orb-components';
 
 // Services and Models
-import { EmailManagementService } from '../../services/email-management.service';
+import { EmailManagementStore } from '../../../../store/email-management/email-management.store';
 import { 
   EmailMetrics, 
   EmailStatus,
@@ -33,6 +33,7 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
   standalone: true,
   imports: [
     CommonModule,
+    AsyncPipe,
     FormsModule,
     CardModule,
     ChartModule,
@@ -81,7 +82,7 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 <i class="fa fa-envelope"></i>
               </div>
               <div class="metric-details">
-                <h3>{{ metrics()?.totalSent || 0 }}</h3>
+                <h3>{{ (metrics | async)?.totalSent || 0 }}</h3>
                 <span>Emails Enviados</span>
               </div>
             </div>
@@ -95,9 +96,9 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 <i class="fa fa-check-circle"></i>
               </div>
               <div class="metric-details">
-                <h3>{{ metrics()?.totalDelivered || 0 }}</h3>
+                <h3>{{ ((metrics | async)?.totalSent || 0) - ((metrics | async)?.totalFailed || 0) }}</h3>
                 <span>Entregados</span>
-                <small>{{ metrics()?.deliveryRate || 0 }}% tasa</small>
+                <small>{{ (metrics | async)?.successRate || 0 }}% tasa</small>
               </div>
             </div>
           </div>
@@ -110,9 +111,9 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 <i class="fa fa-times-circle"></i>
               </div>
               <div class="metric-details">
-                <h3>{{ metrics()?.totalFailed || 0 }}</h3>
+                <h3>{{ (metrics | async)?.totalFailed || 0 }}</h3>
                 <span>Fallidos</span>
-                <small>{{ metrics()?.bounceRate || 0 }}% rebote</small>
+                <small>{{ (100 - ((metrics | async)?.successRate || 0)) }}% rebote</small>
               </div>
             </div>
           </div>
@@ -125,9 +126,9 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 <i class="fa fa-eye"></i>
               </div>
               <div class="metric-details">
-                <h3>{{ metrics()?.totalOpened || 0 }}</h3>
-                <span>Abiertos</span>
-                <small>{{ metrics()?.openRate || 0 }}% tasa</small>
+                <h3>{{ (metrics | async)?.totalPending || 0 }}</h3>
+                <span>Pendientes</span>
+                <small>En cola</small>
               </div>
             </div>
           </div>
@@ -191,14 +192,14 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
         <p-tabPanel header="Emails Recientes" leftIcon="pi pi-clock">
           <orb-card>
             <div orbBody>
-              <div *ngIf="loading()" class="loading-center">
+              <div *ngIf="loading | async" class="loading-center">
                 <i class="fa fa-spinner fa-spin"></i>
                 <p>Cargando emails recientes...</p>
               </div>
 
               <p-table 
-                *ngIf="!loading()"
-                [value]="recentEmails()" 
+*ngIf="!(loading | async)"
+[value]="(recentEmails | async) || []" 
                 [paginator]="true" 
                 [rows]="10"
                 [rowsPerPageOptions]="[10, 25, 50]"
@@ -264,7 +265,7 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
           <orb-card>
             <div orbBody>
               <p-table 
-                [value]="failedEmails()" 
+[value]="(failedEmails | async) || []" 
                 [paginator]="true" 
                 [rows]="10"
                 [sortField]="'sentAt'" 
@@ -316,32 +317,32 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
             <div orbBody>
               <div class="system-status">
                 <div class="status-item">
-                  <div class="status-indicator" [class.active]="emailSystemStatus().smtpConnected">
-                    <i [class]="emailSystemStatus().smtpConnected ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+                  <div class="status-indicator" [class.active]="(emailSystemStatus | async)?.smtpConnected">
+                    <i [class]="(emailSystemStatus | async)?.smtpConnected ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
                   </div>
                   <div class="status-details">
                     <h4>Conexión SMTP</h4>
-                    <p>{{ emailSystemStatus().smtpConnected ? 'Conectado' : 'Desconectado' }}</p>
+                    <p>{{ (emailSystemStatus | async)?.smtpConnected ? 'Conectado' : 'Desconectado' }}</p>
                   </div>
                 </div>
 
                 <div class="status-item">
-                  <div class="status-indicator" [class.active]="emailSystemStatus().templatesLoaded">
-                    <i [class]="emailSystemStatus().templatesLoaded ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+                  <div class="status-indicator" [class.active]="(emailSystemStatus | async)?.templatesLoaded">
+                    <i [class]="(emailSystemStatus | async)?.templatesLoaded ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
                   </div>
                   <div class="status-details">
                     <h4>Plantillas</h4>
-                    <p>{{ emailSystemStatus().templatesCount }} plantillas cargadas</p>
+                    <p>{{ (emailSystemStatus | async)?.templatesCount }} plantillas cargadas</p>
                   </div>
                 </div>
 
                 <div class="status-item">
-                  <div class="status-indicator" [class.active]="emailSystemStatus().queueHealthy">
-                    <i [class]="emailSystemStatus().queueHealthy ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+                  <div class="status-indicator" [class.active]="(emailSystemStatus | async)?.queueHealthy">
+                    <i [class]="(emailSystemStatus | async)?.queueHealthy ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
                   </div>
                   <div class="status-details">
                     <h4>Cola de Emails</h4>
-                    <p>{{ emailSystemStatus().pendingInQueue }} pendientes en cola</p>
+                    <p>{{ (emailSystemStatus | async)?.pendingInQueue }} pendientes en cola</p>
                   </div>
                 </div>
               </div>
@@ -354,20 +355,14 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
   styleUrls: ['./email-dashboard.component.scss']
 })
 export class EmailDashboardComponent implements OnInit {
-  private emailService = inject(EmailManagementService);
+  private emailStore = inject(EmailManagementStore);
 
-  // State signals
-  loading = signal(false);
-  metrics = signal<EmailMetrics | null>(null);
-  recentEmails = signal<EmailLogResponseDto[]>([]);
-  failedEmails = signal<EmailLogResponseDto[]>([]);
-  emailSystemStatus = signal({
-    smtpConnected: true,
-    templatesLoaded: true,
-    templatesCount: 5,
-    queueHealthy: true,
-    pendingInQueue: 0
-  });
+  // Store selectors
+  loading = this.emailStore.loading$;
+  metrics = this.emailStore.metrics$;
+  recentEmails = this.emailStore.recentEmails$;
+  failedEmails = this.emailStore.failedEmails$;
+  emailSystemStatus = this.emailStore.systemStatus$;
 
   // Date filter
   dateRange: Date[] = [];
@@ -386,6 +381,7 @@ export class EmailDashboardComponent implements OnInit {
     this.initializeChartOptions();
     this.setDefaultDateRange();
     this.loadDashboardData();
+    this.updateChartData();
   }
 
   private setDefaultDateRange(): void {
@@ -453,160 +449,81 @@ export class EmailDashboardComponent implements OnInit {
   }
 
   refreshData(): void {
-    this.loadDashboardData();
-    this.emailService.refreshMetrics();
+    this.emailStore.refreshDashboard();
   }
 
-  private async loadDashboardData(): Promise<void> {
-    this.loading.set(true);
+  private loadDashboardData(): void {
+    const dateFilter = this.dateRange?.length === 2 ? {
+      from: this.dateRange[0].toISOString(),
+      to: this.dateRange[1].toISOString()
+    } : undefined;
 
-    try {
-      // Load metrics
-      const dateFilter = this.dateRange?.length === 2 ? {
-        from: this.dateRange[0].toISOString(),
-        to: this.dateRange[1].toISOString()
-      } : undefined;
+    this.emailStore.loadEmailMetrics(dateFilter || {});
+    this.emailStore.loadEmailLogs({ page: 1, limit: 50 });
+  }
 
-      const apiMetrics = await this.emailService.getEmailMetrics().toPromise();
-      if (apiMetrics) {
-        // Convert API response to frontend model
-        const metrics = {
-          totalSent: apiMetrics.totalSent || 0,
-          totalDelivered: apiMetrics.totalSent || 0,
-          totalFailed: apiMetrics.totalFailed || 0,
-          totalOpened: 0,
-          totalClicked: 0,
-          deliveryRate: apiMetrics.successRate || 0,
-          openRate: 0,
-          clickRate: 0,
-          bounceRate: 0
+  private updateChartData(): void {
+    // Chart data will be handled by subscribing to store metrics
+    this.metrics.subscribe(metrics => {
+      if (metrics) {
+        // Status chart data
+        this.statusChartData = {
+          labels: ['Entregados', 'Fallidos', 'Pendientes'],
+          datasets: [{
+            data: [
+              (metrics.totalSent || 0) - (metrics.totalFailed || 0),
+              metrics.totalFailed || 0,
+              metrics.totalPending || 0
+            ],
+            backgroundColor: [
+              '#10b981', // green
+              '#ef4444', // red
+              '#f59e0b'  // amber
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
         };
-        this.metrics.set(metrics);
-        this.updateChartData(metrics);
+
+        // Types chart data - mock data for now
+        this.typesChartData = {
+          labels: ['Bienvenida', 'Reset Password', 'Seguridad', 'Prueba'],
+          datasets: [{
+            label: 'Emails por Tipo',
+            data: [45, 30, 15, 25],
+            backgroundColor: '#3b82f6',
+            borderColor: '#1d4ed8',
+            borderWidth: 2
+          }]
+        };
+
+        // Timeline chart data - mock data for now
+        this.timelineChartData = {
+          labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab', 'Dom'],
+          datasets: [
+            {
+              label: 'Enviados',
+              data: [12, 19, 15, 25, 22, 8, 5],
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.4
+            },
+            {
+              label: 'Entregados',
+              data: [11, 18, 14, 23, 21, 7, 4],
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              tension: 0.4
+            }
+          ]
+        };
       }
-
-      // Load recent emails
-      const emailLogs = await this.emailService.getEmailLogs({ page: 1, limit: 50 }).toPromise();
-      if (emailLogs) {
-        this.recentEmails.set(emailLogs || []);
-        this.failedEmails.set((emailLogs || []).filter(email => email.status === 'failed'));
-      }
-
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      // Load mock data for development
-      this.loadMockData();
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  private updateChartData(metrics: EmailMetrics): void {
-    // Status chart data
-    this.statusChartData = {
-      labels: ['Entregados', 'Fallidos', 'Pendientes', 'Abiertos'],
-      datasets: [{
-        data: [
-          metrics.totalDelivered,
-          metrics.totalFailed,
-          metrics.totalSent - metrics.totalDelivered - metrics.totalFailed,
-          metrics.totalOpened
-        ],
-        backgroundColor: [
-          '#10b981', // green
-          '#ef4444', // red
-          '#f59e0b', // amber
-          '#3b82f6'  // blue
-        ],
-        borderWidth: 2,
-        borderColor: '#ffffff'
-      }]
-    };
-
-    // Types chart data - mock data for now
-    this.typesChartData = {
-      labels: ['Bienvenida', 'Reset Password', 'Seguridad', 'Prueba'],
-      datasets: [{
-        label: 'Emails por Tipo',
-        data: [45, 30, 15, 25],
-        backgroundColor: '#3b82f6',
-        borderColor: '#1d4ed8',
-        borderWidth: 2
-      }]
-    };
-
-    // Timeline chart data - mock data for now
-    this.timelineChartData = {
-      labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab', 'Dom'],
-      datasets: [
-        {
-          label: 'Enviados',
-          data: [12, 19, 15, 25, 22, 8, 5],
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.4
-        },
-        {
-          label: 'Entregados',
-          data: [11, 18, 14, 23, 21, 7, 4],
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          tension: 0.4
-        }
-      ]
-    };
+    });
   }
 
   private loadMockData(): void {
-    // Mock metrics
-    this.metrics.set({
-      totalSent: 1247,
-      totalDelivered: 1189,
-      totalFailed: 42,
-      totalOpened: 856,
-      totalClicked: 234,
-      deliveryRate: 95.4,
-      openRate: 72.0,
-      clickRate: 19.7,
-      bounceRate: 3.4
-    });
-
-    // Mock recent emails
-    const mockEmails: EmailLogResponseDto[] = [
-      {
-        id: '1',
-        to: ['usuario@example.com'],
-        subject: 'Bienvenido a Orbyt',
-        templateUsed: 'welcome',
-        status: 'sent',
-        sentAt: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: '2',
-        to: ['test@example.com'],
-        subject: 'Restablece tu contraseña',
-        templateUsed: 'password_reset',
-        status: 'sent',
-        sentAt: new Date(Date.now() - 3600000).toISOString(),
-        createdAt: new Date(Date.now() - 3600000).toISOString()
-      },
-      {
-        id: '3',
-        to: ['error@example.com'],
-        subject: 'Alerta de seguridad',
-        templateUsed: 'security_alert',
-        status: 'failed',
-        errorMessage: 'Mailbox does not exist',
-        sentAt: new Date(Date.now() - 7200000).toISOString(),
-        createdAt: new Date(Date.now() - 7200000).toISOString()
-      }
-    ];
-
-    this.recentEmails.set(mockEmails);
-    this.failedEmails.set(mockEmails.filter(email => email.status === 'failed'));
-
-    this.updateChartData(this.metrics()!);
+    // Mock data loading is now handled by the store
+    // This method is kept for compatibility but doesn't do anything
   }
 
   // Helper methods
@@ -660,16 +577,9 @@ export class EmailDashboardComponent implements OnInit {
     });
   }
 
-  async retryEmail(email: EmailLogResponseDto): Promise<void> {
-    try {
-      const response = await this.emailService.retryFailedEmail(email.id?.toString() || '').toPromise();
-      
-      if (response?.success) {
-        // Refresh the data
-        this.loadDashboardData();
-      }
-    } catch (error) {
-      console.error('Error retrying email:', error);
+  retryEmail(email: EmailLogResponseDto): void {
+    if (email.id) {
+      this.emailStore.retryFailedEmail(email.id);
     }
   }
 }

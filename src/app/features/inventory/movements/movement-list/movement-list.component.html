@@ -1,42 +1,37 @@
-<!-- Breadcrumb superior -->
-<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
+<!-- Header unificado como dashboard -->
+<orb-main-header
+  title="Gestión de Movimientos"
+  icon="fa fa-exchange-alt"
+  subtitle="Registro y seguimiento de movimientos de stock">
+</orb-main-header>
 
-<orb-toolbar>
-  <div body>
-    <div class="flex align-items-center gap-3">
-      <span class="font-semibold">Producto seleccionado:</span>
-      @if (selectedProduct()) {
-        <div class="flex align-items-center gap-2 p-2 bg-blue-50 border border-blue-200 border-radius">
-          <i class="pi pi-box text-blue-600"></i>
-          <span class="font-medium text-blue-800">{{ selectedProduct()!.name }}</span>
-          <span class="text-sm text-gray-500">(ID: {{ selectedProduct()!.id }})</span>
-          <orb-button
-            icon="pi pi-times"
-            severity="secondary"
-            size="small"
-            (click)="onProductChange(null)"
-            pTooltip="Limpiar selección"
-          />
-        </div>
-      } @else {
+<!-- Sección de selección de producto -->
+<div class="product-selection-section mb-3 p-3 bg-gray-50 border-round">
+  <div class="flex align-items-center gap-3">
+    <span class="font-semibold">Producto seleccionado:</span>
+    @if (selectedProduct()) {
+      <div class="flex align-items-center gap-2 p-2 bg-blue-50 border border-blue-200 border-radius">
+        <i class="pi pi-box text-blue-600"></i>
+        <span class="font-medium text-blue-800">{{ selectedProduct()!.name }}</span>
+        <span class="text-sm text-gray-500">(ID: {{ selectedProduct()!.id }})</span>
         <orb-button
-          label="Seleccionar Producto"
-          icon="pi pi-search"
+          icon="pi pi-times"
           severity="secondary"
-          (click)="openProductModal()"
+          size="small"
+          (click)="onProductChange(null)"
+          pTooltip="Limpiar selección"
         />
-      }
-    </div>
+      </div>
+    } @else {
+      <orb-button
+        label="Seleccionar Producto"
+        icon="pi pi-search"
+        severity="secondary"
+        (click)="openProductModal()"
+      />
+    }
   </div>
-  <div footer>
-    <orb-button 
-      label="Nuevo Movimiento" 
-      icon="pi pi-plus"
-      (click)="showMovementForm()" 
-      [disabled]="!selectedProduct()"
-    />
-  </div>
-</orb-toolbar>
+</div>
 
 <orb-card>
   <div class="grid" orbBody>

@@ -1,12 +1,9 @@
-<!-- Breadcrumb superior -->
-<orb-breadcrumb [items]="breadcrumbItems"></orb-breadcrumb>
-
-<orb-toolbar>
-  <div body></div>
-  <div footer>
-    <orb-button label="Nuevo Usuario" (click)="openUserEditModal()" />
-  </div>
-</orb-toolbar>
+<!-- Header unificado como dashboard -->
+<orb-main-header
+  title="Gestión de Usuarios"
+  icon="fa fa-user"
+  subtitle="Administra usuarios, roles y permisos del sistema">
+</orb-main-header>
 
 <orb-card>
   <div class="grid" orbBody>

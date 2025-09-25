@@ -10,36 +10,48 @@ export const AdminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const notificationService = inject(NotificationService);
 
-  // Determinar qué permiso se requiere basado en la ruta
-  const path = route.routeConfig?.path || '';
-  let requiredPermission$ = authStore.canManageUsers$; // default
-  let permissionName = 'canManageUsers';
-
-  if (path.includes('users')) {
-    requiredPermission$ = authStore.canManageUsers$;
-    permissionName = 'canManageUsers';
-  } else if (path.includes('client')) {
-    requiredPermission$ = authStore.canManageClients$;
-    permissionName = 'canManageClients';
-  } else if (path.includes('product')) {
-    requiredPermission$ = authStore.canManageProducts$;
-    permissionName = 'canManageProducts';
-  } else if (path.includes('agenda')) {
-    requiredPermission$ = authStore.canManageAgenda$;
-    permissionName = 'canManageAgenda';
-  }
-  
-
-  return requiredPermission$.pipe(
+  return authStore.user$.pipe(
     take(1),
-    map(hasPermission => {      
-      
+    map(user => {
+      if (!user) {
+        router.navigate(['/login']);
+        return false;
+      }
+
+      // Si el usuario es administrador (tiene rol de admin), permitir acceso a todo
+      const isAdmin = user.roles?.some(role => role.name.toLowerCase() === 'admin' || role.name.toLowerCase() === 'administrator');
+      if (isAdmin) {
+        return true;
+      }
+
+      // Para usuarios no admin, verificar permisos específicos
+      const path = route.routeConfig?.path || '';
+      let hasPermission = false;
+      let sectionName = '';
+
+      if (path.includes('users')) {
+        hasPermission = user.canManageUsers ?? false;
+        sectionName = 'usuarios';
+      } else if (path.includes('client')) {
+        hasPermission = user.canManageClients ?? false;
+        sectionName = 'clientes';
+      } else if (path.includes('product')) {
+        hasPermission = user.canManageProducts ?? false;
+        sectionName = 'productos';
+      } else if (path.includes('agenda')) {
+        hasPermission = user.canManageAgenda ?? false;
+        sectionName = 'agenda';
+      } else {
+        // Default: permitir acceso si no es una sección específica
+        hasPermission = true;
+      }
+
       if (hasPermission) {
         return true;
-      } else {        
+      } else {
         notificationService.show(
-          NotificationSeverity.Warn, 
-          'No tienes permisos para acceder a esta sección'
+          NotificationSeverity.Warn,
+          `No tienes permisos para acceder a la sección de ${sectionName}`
         );
         router.navigate(['/dashboard']);
         return false;

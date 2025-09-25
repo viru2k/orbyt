@@ -5,7 +5,7 @@ import { ProductStore } from '../../../../store/stock/product.store';
 import { StockMovementResponseDto, ProductResponseDto } from '../../../../api/models';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbToolbarComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbBreadcrumbComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbMainHeaderComponent, OrbButtonComponent, OrbActionsPopoverComponent } from '@orb-components';
 import { MovementFormComponent } from '../movement-form/movement-form.component';
 import { NotificationService } from '@orb-services';
 import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } from '@orb-models';
@@ -23,8 +23,7 @@ import { FormsModule } from '@angular/forms';
     MovementFormComponent,
     OrbButtonComponent,
     OrbCardComponent,
-    OrbBreadcrumbComponent,
-    OrbToolbarComponent,
+    OrbMainHeaderComponent,
     OrbDialogComponent,
     ConfirmDialogModule,
     ProductSearchModalComponent
@@ -38,10 +37,6 @@ export class MovementListComponent implements OnInit {
   private productStore = inject(ProductStore);
   private notificationService = inject(NotificationService);
 
-  breadcrumbItems = [
-    { label: 'Gestión' },
-    { label: 'Movimientos' }
-  ];
 
   displayMovementModal = signal(false);
   displayProductModal = signal(false);
@@ -73,7 +68,8 @@ export class MovementListComponent implements OnInit {
     {
       label: 'Nuevo Movimiento',
       icon: 'pi pi-plus',
-      action: () => this.openMovementModal()
+      action: () => this.openMovementModal(),
+      disabled: () => !this.selectedProduct()
     }
   ];
 

@@ -15,7 +15,8 @@ import { DropdownModule } from 'primeng/dropdown';
 // Orb Components
 import { 
   OrbCardComponent, 
-  OrbButtonComponent 
+  OrbButtonComponent, 
+  OrbMainHeaderComponent
 } from '@orb-components';
 
 // Services and Models
@@ -37,16 +38,18 @@ import { RewardMetrics, RewardActivity, TopRewardProgram } from '../../models/re
     CalendarModule,
     DropdownModule,
     OrbCardComponent,
-    OrbButtonComponent
+    OrbButtonComponent,
+    OrbMainHeaderComponent
   ],
   template: `
-    <div class="rewards-dashboard-container">
+ 
       <!-- Dashboard Header -->
-      <div class="dashboard-header">
-        <div class="header-info">
-          <h1><i class="fa fa-chart-line"></i> Dashboard de Recompensas</h1>
-          <p>Análisis y métricas del sistema de fidelización</p>
-        </div>
+                <orb-main-header
+  title="Dashboard de Recompensas"
+  icon="fa fa-chart-line"
+  subtitle="Análisis y métricas del sistema de fidelización">
+</orb-main-header>
+  
 
         <div class="header-actions">
           <p-calendar 
@@ -64,7 +67,7 @@ import { RewardMetrics, RewardActivity, TopRewardProgram } from '../../models/re
             (clicked)="refreshData()">
           </orb-button>
         </div>
-      </div>
+      
 
       <!-- Metrics Cards -->
       <div class="metrics-grid" *ngIf="metrics()">
@@ -279,7 +282,7 @@ import { RewardMetrics, RewardActivity, TopRewardProgram } from '../../models/re
           </orb-card>
         </div>
       </div>
-    </div>
+
   `,
   styleUrls: ['./rewards-dashboard.component.scss']
 })

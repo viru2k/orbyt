@@ -1,5 +1,5 @@
 import { AuthStore } from '@orb-stores';
-import { DashboardService } from '../../api/services/dashboard.service';
+import { DashboardStore } from '../../store/dashboard/dashboard.store';
 import { DashboardMetricsDto, AppointmentMetricsDto, ConsultationMetricsDto, ClientMetricsDto, RevenueMetricsDto } from '../../api/models';
 
 import { Component, OnInit, signal, computed, inject, effect, ViewChildren, QueryList } from '@angular/core';
@@ -13,7 +13,8 @@ import {
   OrbChartComponent, 
   OrbProgressBarComponent, 
   OrbTagComponent,
-  OrbTableComponent
+  OrbTableComponent,
+  OrbMainHeaderComponent
 } from '@orb-components';
 
 import { TableColumn } from '@orb-models';
@@ -28,18 +29,43 @@ import { TableColumn } from '@orb-models';
     OrbChartComponent,
     OrbProgressBarComponent,
     OrbTagComponent,
-    OrbTableComponent
+    OrbTableComponent,
+    OrbMainHeaderComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   @ViewChildren(OrbChartComponent) charts!: QueryList<OrbChartComponent>;
-  // Signals for reactive data
+
+  // Inject stores first
+  private readonly dashboardStore = inject(DashboardStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly notificationService = inject(NotificationService);
+  private readonly webSocketNotificationService = inject(WebSocketNotificationService);
+  private readonly webSocketService = inject(WebSocketService);
+
+  // Store observables
+  readonly metrics$ = this.dashboardStore.metrics$;
+  readonly quickStats$ = this.dashboardStore.quickStats$;
+  readonly recentActivities$ = this.dashboardStore.recentActivities$;
+  readonly loading$ = this.dashboardStore.loading$;
+  readonly currentPeriod$ = this.dashboardStore.currentPeriod$;
+
+  // Derived observables from store
+  readonly totalRevenue$ = this.dashboardStore.totalRevenue$;
+  readonly todayRevenue$ = this.dashboardStore.todayRevenue$;
+  readonly thisWeekRevenue$ = this.dashboardStore.thisWeekRevenue$;
+  readonly thisMonthRevenue$ = this.dashboardStore.thisMonthRevenue$;
+  readonly totalConsultations$ = this.dashboardStore.totalConsultations$;
+  readonly todayConsultations$ = this.dashboardStore.todayConsultations$;
+  readonly pendingAppointments$ = this.dashboardStore.pendingAppointments$;
+  readonly todayAppointments$ = this.dashboardStore.todayAppointments$;
+  readonly activeClients$ = this.dashboardStore.activeClients$;
+
+  // Local signals for UI state
   currentPeriod = signal('current'); // current, 6months, 1year
   isLoading = signal(false);
-  
-  // Dashboard data signals
   dashboardMetrics = signal<DashboardMetricsDto | null>(null);
   quickStats = signal<any>(null);
   recentActivity = signal<any[]>([]);
@@ -55,7 +81,7 @@ export class DashboardComponent implements OnInit {
   doughnutOptions: any = {};
   barOptions: any = {};
   
-  // Computed statistics from API data
+  // Computed statistics from local signals (for compatibility)
   totalRevenue = computed(() => this.dashboardMetrics()?.revenue?.totalRevenue || 0);
   totalConsultations = computed(() => this.dashboardMetrics()?.consultations?.total || 0);
   pendingAppointments = computed(() => this.dashboardMetrics()?.appointments?.pending || 0);
@@ -135,22 +161,38 @@ export class DashboardComponent implements OnInit {
     { field: 'status', header: 'Estado', sortable: false }
   ];
 
-  private readonly dashboardService = inject(DashboardService);
-  private readonly authStore = inject(AuthStore);
-  private readonly notificationService = inject(NotificationService);
-  private readonly webSocketNotificationService = inject(WebSocketNotificationService);
-  private readonly webSocketService = inject(WebSocketService);
-
   constructor() {
-    // Effect to update charts when dashboard metrics change
+    // Subscribe to store changes and update local signals for compatibility
     effect(() => {
-      const metrics = this.dashboardMetrics();
-      if (metrics) {
-        // Trigger chart data update
-        setTimeout(() => this.updateChartComponents(), 0);
-      }
+      this.metrics$.pipe(take(1)).subscribe(metrics => {
+        if (metrics) {
+          this.dashboardMetrics.set(metrics);
+          setTimeout(() => this.updateChartComponents(), 0);
+        }
+      });
     });
-    
+
+    effect(() => {
+      this.quickStats$.pipe(take(1)).subscribe(stats => {
+        if (stats) {
+          this.quickStats.set(stats);
+        }
+      });
+    });
+
+    effect(() => {
+      this.recentActivities$.pipe(take(1)).subscribe(activities => {
+        this.recentActivity.set(activities || []);
+      });
+    });
+
+    // Sync store loading state with local signal
+    effect(() => {
+      this.loading$.pipe(take(1)).subscribe(loading => {
+        this.isLoading.set(loading);
+      });
+    });
+
     // Effect to update charts when period changes
     effect(() => {
       const period = this.currentPeriod();
@@ -169,43 +211,8 @@ export class DashboardComponent implements OnInit {
   }
 
   private loadDashboardData(): void {
-    this.isLoading.set(true);
-    
-    // Load complete dashboard metrics
-    this.dashboardService.dashboardControllerGetMetrics().pipe(
-      catchError(error => {
-        console.error('Error loading dashboard metrics:', error);
-        return of(null);
-      })
-    ).subscribe(metrics => {
-      if (metrics) {
-        this.dashboardMetrics.set(metrics);
-        this.updateChartData();
-      }
-    });
-    
-    // Load quick stats
-    this.dashboardService.dashboardControllerGetQuickStats().pipe(
-      catchError(error => {
-        console.error('Error loading quick stats:', error);
-        return of(null);
-      })
-    ).subscribe(stats => {
-      if (stats) {
-        this.quickStats.set(stats);
-      }
-    });
-    
-    // Load recent activity
-    this.dashboardService.dashboardControllerGetRecentActivity().pipe(
-      catchError(error => {
-        console.error('Error loading recent activity:', error);
-        return of([]);
-      })
-    ).subscribe(activities => {
-      this.recentActivity.set(activities || []);
-      this.isLoading.set(false);
-    });
+    // Use store to load all dashboard data
+    this.dashboardStore.refreshDashboard();
   }
 
   private initializeCharts(): void {
@@ -553,7 +560,7 @@ export class DashboardComponent implements OnInit {
   }
 
   refreshData(): void {
-    this.loadDashboardData();
+    this.dashboardStore.refreshDashboard();
   }
 
   private updateChartComponents(): void {
