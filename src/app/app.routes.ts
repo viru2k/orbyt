@@ -81,7 +81,6 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'management/users', // Nueva ruta para usuarios
-        canActivate: [AdminGuard],
         loadComponent: () =>
           import('./features/users/users-list/users-list.component').then(
             (m) => m.UsersListComponent
@@ -89,10 +88,16 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'management/rooms', // Nueva ruta para gestión de salas
-        canActivate: [AdminGuard],
         loadComponent: () =>
           import('./features/rooms/rooms-list/rooms-list.component').then(
             (m) => m.RoomsListComponent
+          ),
+      },
+      {
+        path: 'management/access', // Nueva ruta para gestión de accesos a módulos
+        loadComponent: () =>
+          import('./features/access-management/components/module-access-management.component').then(
+            (m) => m.ModuleAccessManagementComponent
           ),
       },
       {

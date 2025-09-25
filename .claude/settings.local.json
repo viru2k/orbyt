@@ -51,7 +51,8 @@
       "Bash(npx -p @ionic/cli ionic start:*)",
       "Read(//c/c/repositories/**)",
       "Bash(xargs kill:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(tasklist)"
     ],
     "deny": [],
     "additionalDirectories": [

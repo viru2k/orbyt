@@ -19,7 +19,7 @@ import Lara from '@primeng/themes/lara';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
-import { DatePipe, registerLocaleData } from '@angular/common';
+import { DatePipe, registerLocaleData, DOCUMENT } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { environment } from '../environments/environment';
 
@@ -105,7 +105,8 @@ export const appConfig: ApplicationConfig = {
       provide: DateAdapter,
       useFactory: adapterFactory,
     },
-    { provide: LOCALE_ID, useValue: 'es' }
+    { provide: LOCALE_ID, useValue: 'es' },
+    { provide: DOCUMENT, useFactory: () => document }
   ],
 
 };
