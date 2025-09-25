@@ -13,6 +13,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { ClientResponseDto } from '../models/client-response-dto';
 import { CustomerRewardResponseDto } from '../models/customer-reward-response-dto';
+import { PurchaseCompletedResponseDto } from '../models/purchase-completed-response-dto';
 import { RewardProgramResponseDto } from '../models/reward-program-response-dto';
 import { rewardsControllerCleanupExpiredRewards } from '../fn/rewards/rewards-controller-cleanup-expired-rewards';
 import { RewardsControllerCleanupExpiredRewards$Params } from '../fn/rewards/rewards-controller-cleanup-expired-rewards';
@@ -48,6 +49,8 @@ import { rewardsControllerTriggerConsultationCompleted } from '../fn/rewards/rew
 import { RewardsControllerTriggerConsultationCompleted$Params } from '../fn/rewards/rewards-controller-trigger-consultation-completed';
 import { rewardsControllerTriggerPurchaseCompleted } from '../fn/rewards/rewards-controller-trigger-purchase-completed';
 import { RewardsControllerTriggerPurchaseCompleted$Params } from '../fn/rewards/rewards-controller-trigger-purchase-completed';
+import { rewardsControllerTriggerPurchaseCompletedLegacy } from '../fn/rewards/rewards-controller-trigger-purchase-completed-legacy';
+import { RewardsControllerTriggerPurchaseCompletedLegacy$Params } from '../fn/rewards/rewards-controller-trigger-purchase-completed-legacy';
 import { rewardsControllerTriggerServiceCompleted } from '../fn/rewards/rewards-controller-trigger-service-completed';
 import { RewardsControllerTriggerServiceCompleted$Params } from '../fn/rewards/rewards-controller-trigger-service-completed';
 import { rewardsControllerUpdateRewardProgram } from '../fn/rewards/rewards-controller-update-reward-program';
@@ -550,26 +553,67 @@ export class RewardsService extends BaseService {
   }
 
   /** Path part for operation `rewardsControllerTriggerPurchaseCompleted()` */
-  static readonly RewardsControllerTriggerPurchaseCompletedPath = '/rewards/trigger/purchase-completed/{clientId}';
+  static readonly RewardsControllerTriggerPurchaseCompletedPath = '/rewards/trigger/purchase-completed';
 
   /**
+   * Trigger de recompensas por compra completada con datos detallados.
+   *
+   *
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `rewardsControllerTriggerPurchaseCompleted()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  rewardsControllerTriggerPurchaseCompleted$Response(params: RewardsControllerTriggerPurchaseCompleted$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  rewardsControllerTriggerPurchaseCompleted$Response(params: RewardsControllerTriggerPurchaseCompleted$Params, context?: HttpContext): Observable<StrictHttpResponse<PurchaseCompletedResponseDto>> {
     return rewardsControllerTriggerPurchaseCompleted(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Trigger de recompensas por compra completada con datos detallados.
+   *
+   *
+   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `rewardsControllerTriggerPurchaseCompleted$Response()` instead.
    *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  rewardsControllerTriggerPurchaseCompleted(params: RewardsControllerTriggerPurchaseCompleted$Params, context?: HttpContext): Observable<PurchaseCompletedResponseDto> {
+    return this.rewardsControllerTriggerPurchaseCompleted$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PurchaseCompletedResponseDto>): PurchaseCompletedResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `rewardsControllerTriggerPurchaseCompletedLegacy()` */
+  static readonly RewardsControllerTriggerPurchaseCompletedLegacyPath = '/rewards/trigger/purchase-completed/{clientId}';
+
+  /**
+   * Trigger de recompensas por compra completada (legacy).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `rewardsControllerTriggerPurchaseCompletedLegacy()` instead.
+   *
    * This method doesn't expect any request body.
    */
-  rewardsControllerTriggerPurchaseCompleted(params: RewardsControllerTriggerPurchaseCompleted$Params, context?: HttpContext): Observable<void> {
-    return this.rewardsControllerTriggerPurchaseCompleted$Response(params, context).pipe(
+  rewardsControllerTriggerPurchaseCompletedLegacy$Response(params: RewardsControllerTriggerPurchaseCompletedLegacy$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return rewardsControllerTriggerPurchaseCompletedLegacy(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Trigger de recompensas por compra completada (legacy).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `rewardsControllerTriggerPurchaseCompletedLegacy$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  rewardsControllerTriggerPurchaseCompletedLegacy(params: RewardsControllerTriggerPurchaseCompletedLegacy$Params, context?: HttpContext): Observable<void> {
+    return this.rewardsControllerTriggerPurchaseCompletedLegacy$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }

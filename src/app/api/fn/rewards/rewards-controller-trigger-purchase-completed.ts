@@ -8,25 +8,27 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { PurchaseCompletedResponseDto } from '../../models/purchase-completed-response-dto';
+import { TriggerPurchaseCompletedDto } from '../../models/trigger-purchase-completed-dto';
 
 export interface RewardsControllerTriggerPurchaseCompleted$Params {
-  clientId: number;
+      body: TriggerPurchaseCompletedDto
 }
 
-export function rewardsControllerTriggerPurchaseCompleted(http: HttpClient, rootUrl: string, params: RewardsControllerTriggerPurchaseCompleted$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function rewardsControllerTriggerPurchaseCompleted(http: HttpClient, rootUrl: string, params: RewardsControllerTriggerPurchaseCompleted$Params, context?: HttpContext): Observable<StrictHttpResponse<PurchaseCompletedResponseDto>> {
   const rb = new RequestBuilder(rootUrl, rewardsControllerTriggerPurchaseCompleted.PATH, 'post');
   if (params) {
-    rb.path('clientId', params.clientId, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<PurchaseCompletedResponseDto>;
     })
   );
 }
 
-rewardsControllerTriggerPurchaseCompleted.PATH = '/rewards/trigger/purchase-completed/{clientId}';
+rewardsControllerTriggerPurchaseCompleted.PATH = '/rewards/trigger/purchase-completed';

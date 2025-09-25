@@ -4,12 +4,42 @@
 
 export interface ClientResponseDto {
   address?: string;
+
+  /**
+   * Avatar URL or null if no image
+   */
+  avatarUrl?: string;
   birthDate?: string;
   createdAt: string;
+
+  /**
+   * Date when client was deactivated
+   */
+  deactivatedAt?: string;
+
+  /**
+   * Reason for deactivation
+   */
+  deactivationReason?: string;
+
+  /**
+   * Número de documento de identidad
+   */
+  dniNumber?: string;
+
+  /**
+   * Tipo de documento de identidad
+   */
+  dniType?: 'DNI' | 'NIE' | 'PASAPORTE';
   email?: string;
   fullname: string;
   gender?: 'male' | 'female' | 'other';
   id: number;
+
+  /**
+   * Indicates if client is active (soft delete)
+   */
+  isActive: boolean;
   lastName: string;
   membershipNumber?: string;
   name: string;

@@ -22,6 +22,8 @@ import { uploadControllerGetMyFiles } from '../fn/upload/upload-controller-get-m
 import { UploadControllerGetMyFiles$Params } from '../fn/upload/upload-controller-get-my-files';
 import { uploadControllerGetThumbnail } from '../fn/upload/upload-controller-get-thumbnail';
 import { UploadControllerGetThumbnail$Params } from '../fn/upload/upload-controller-get-thumbnail';
+import { uploadControllerUpdateFileEntity } from '../fn/upload/upload-controller-update-file-entity';
+import { UploadControllerUpdateFileEntity$Params } from '../fn/upload/upload-controller-update-file-entity';
 import { uploadControllerUploadFile } from '../fn/upload/upload-controller-upload-file';
 import { UploadControllerUploadFile$Params } from '../fn/upload/upload-controller-upload-file';
 
@@ -60,6 +62,39 @@ export class UploadService extends BaseService {
    */
   uploadControllerUploadFile(params: UploadControllerUploadFile$Params, context?: HttpContext): Observable<FileUploadResponseDto> {
     return this.uploadControllerUploadFile$Response(params, context).pipe(
+      map((r: StrictHttpResponse<FileUploadResponseDto>): FileUploadResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `uploadControllerUpdateFileEntity()` */
+  static readonly UploadControllerUpdateFileEntityPath = '/upload/{id}/entity';
+
+  /**
+   * Asociar archivo a una entidad.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `uploadControllerUpdateFileEntity()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  uploadControllerUpdateFileEntity$Response(params: UploadControllerUpdateFileEntity$Params, context?: HttpContext): Observable<StrictHttpResponse<FileUploadResponseDto>> {
+    return uploadControllerUpdateFileEntity(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Asociar archivo a una entidad.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `uploadControllerUpdateFileEntity$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  uploadControllerUpdateFileEntity(params: UploadControllerUpdateFileEntity$Params, context?: HttpContext): Observable<FileUploadResponseDto> {
+    return this.uploadControllerUpdateFileEntity$Response(params, context).pipe(
       map((r: StrictHttpResponse<FileUploadResponseDto>): FileUploadResponseDto => r.body)
     );
   }

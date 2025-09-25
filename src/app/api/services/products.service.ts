@@ -19,11 +19,14 @@ import { productControllerFindOne } from '../fn/products/product-controller-find
 import { ProductControllerFindOne$Params } from '../fn/products/product-controller-find-one';
 import { productControllerRemove } from '../fn/products/product-controller-remove';
 import { ProductControllerRemove$Params } from '../fn/products/product-controller-remove';
+import { productControllerSearchProducts } from '../fn/products/product-controller-search-products';
+import { ProductControllerSearchProducts$Params } from '../fn/products/product-controller-search-products';
 import { productControllerToggle } from '../fn/products/product-controller-toggle';
 import { ProductControllerToggle$Params } from '../fn/products/product-controller-toggle';
 import { productControllerUpdate } from '../fn/products/product-controller-update';
 import { ProductControllerUpdate$Params } from '../fn/products/product-controller-update';
 import { ProductResponseDto } from '../models/product-response-dto';
+import { ProductSearchResponseDto } from '../models/product-search-response-dto';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService extends BaseService {
@@ -94,6 +97,39 @@ export class ProductsService extends BaseService {
   productControllerCreate(params: ProductControllerCreate$Params, context?: HttpContext): Observable<ProductResponseDto> {
     return this.productControllerCreate$Response(params, context).pipe(
       map((r: StrictHttpResponse<ProductResponseDto>): ProductResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `productControllerSearchProducts()` */
+  static readonly ProductControllerSearchProductsPath = '/products/search';
+
+  /**
+   * Buscar productos con filtros y paginación.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `productControllerSearchProducts()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  productControllerSearchProducts$Response(params?: ProductControllerSearchProducts$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductSearchResponseDto>> {
+    return productControllerSearchProducts(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Buscar productos con filtros y paginación.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `productControllerSearchProducts$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  productControllerSearchProducts(params?: ProductControllerSearchProducts$Params, context?: HttpContext): Observable<ProductSearchResponseDto> {
+    return this.productControllerSearchProducts$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ProductSearchResponseDto>): ProductSearchResponseDto => r.body)
     );
   }
 

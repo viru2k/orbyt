@@ -4,6 +4,11 @@
 
 import { ProductOwnerResponseDto } from '../models/product-owner-response-dto';
 export interface ProductResponseDto {
+
+  /**
+   * Avatar URL or null if no image
+   */
+  avatarUrl?: string;
   createdAt: string;
   currentPrice: number;
   description?: string;

@@ -8,6 +8,11 @@ import { ProductOwnerResponseDto } from '../models/product-owner-response-dto';
 import { ProductPackagingDto } from '../models/product-packaging-dto';
 export interface ExtendedProductResponseDto {
   availableStock: number;
+
+  /**
+   * Avatar URL or null if no image
+   */
+  avatarUrl?: string;
   createdAt: string;
   currentPrice: number;
   daysUntilStockout?: number;

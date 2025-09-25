@@ -23,6 +23,7 @@ import { ClientsService } from './services/clients.service';
 import { SubscriptionPlanService } from './services/subscription-plan.service';
 import { PermissionsService } from './services/permissions.service';
 import { UploadService } from './services/upload.service';
+import { TestUploadService } from './services/test-upload.service';
 import { ConsultationsService } from './services/consultations.service';
 import { PublicConsultationService } from './services/public-consultation.service';
 import { InvoicesService } from './services/invoices.service';
@@ -57,6 +58,7 @@ import { RoomsService } from './services/rooms.service';
     SubscriptionPlanService,
     PermissionsService,
     UploadService,
+    TestUploadService,
     ConsultationsService,
     PublicConsultationService,
     InvoicesService,

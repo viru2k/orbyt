@@ -10,24 +10,18 @@ import { RequestBuilder } from '../../request-builder';
 
 import { ClientResponseDto } from '../../models/client-response-dto';
 
-export interface ClientControllerFindAll$Params {
+export interface ClientControllerFindActiveClients$Params {
 
 /**
- * Admin: ID del usuario cuyos clientes se quieren ver
+ * Admin: ID del usuario cuyos clientes activos se quieren ver
  */
   userId?: number;
-
-/**
- * Include deactivated clients in the response
- */
-  includeInactive?: boolean;
 }
 
-export function clientControllerFindAll(http: HttpClient, rootUrl: string, params?: ClientControllerFindAll$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ClientResponseDto>>> {
-  const rb = new RequestBuilder(rootUrl, clientControllerFindAll.PATH, 'get');
+export function clientControllerFindActiveClients(http: HttpClient, rootUrl: string, params?: ClientControllerFindActiveClients$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ClientResponseDto>>> {
+  const rb = new RequestBuilder(rootUrl, clientControllerFindActiveClients.PATH, 'get');
   if (params) {
     rb.query('userId', params.userId, {});
-    rb.query('includeInactive', params.includeInactive, {});
   }
 
   return http.request(
@@ -40,4 +34,4 @@ export function clientControllerFindAll(http: HttpClient, rootUrl: string, param
   );
 }
 
-clientControllerFindAll.PATH = '/clients';
+clientControllerFindActiveClients.PATH = '/clients/active-only';

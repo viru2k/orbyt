@@ -5,6 +5,8 @@
 export interface CreateClientDto {
   address?: string;
   birthDate?: string;
+  dniNumber?: string;
+  dniType?: 'DNI' | 'NIE' | 'PASAPORTE';
   email?: string;
   fullname: string;
   gender?: 'male' | 'female' | 'other';

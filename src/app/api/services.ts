@@ -19,6 +19,7 @@ export { ClientsService } from './services/clients.service';
 export { SubscriptionPlanService } from './services/subscription-plan.service';
 export { PermissionsService } from './services/permissions.service';
 export { UploadService } from './services/upload.service';
+export { TestUploadService } from './services/test-upload.service';
 export { ConsultationsService } from './services/consultations.service';
 export { PublicConsultationService } from './services/public-consultation.service';
 export { InvoicesService } from './services/invoices.service';

@@ -13,12 +13,18 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { clientControllerCreate } from '../fn/clients/client-controller-create';
 import { ClientControllerCreate$Params } from '../fn/clients/client-controller-create';
+import { clientControllerDeactivate } from '../fn/clients/client-controller-deactivate';
+import { ClientControllerDeactivate$Params } from '../fn/clients/client-controller-deactivate';
+import { clientControllerFindActiveClients } from '../fn/clients/client-controller-find-active-clients';
+import { ClientControllerFindActiveClients$Params } from '../fn/clients/client-controller-find-active-clients';
 import { clientControllerFindAll } from '../fn/clients/client-controller-find-all';
 import { ClientControllerFindAll$Params } from '../fn/clients/client-controller-find-all';
 import { clientControllerFindGroupClients } from '../fn/clients/client-controller-find-group-clients';
 import { ClientControllerFindGroupClients$Params } from '../fn/clients/client-controller-find-group-clients';
 import { clientControllerFindOne } from '../fn/clients/client-controller-find-one';
 import { ClientControllerFindOne$Params } from '../fn/clients/client-controller-find-one';
+import { clientControllerReactivate } from '../fn/clients/client-controller-reactivate';
+import { ClientControllerReactivate$Params } from '../fn/clients/client-controller-reactivate';
 import { clientControllerRemove } from '../fn/clients/client-controller-remove';
 import { ClientControllerRemove$Params } from '../fn/clients/client-controller-remove';
 import { clientControllerUpdate } from '../fn/clients/client-controller-update';
@@ -130,6 +136,39 @@ export class ClientsService extends BaseService {
     );
   }
 
+  /** Path part for operation `clientControllerFindActiveClients()` */
+  static readonly ClientControllerFindActiveClientsPath = '/clients/active-only';
+
+  /**
+   * Obtener solo clientes activos (para uso en citas y servicios).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `clientControllerFindActiveClients()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerFindActiveClients$Response(params?: ClientControllerFindActiveClients$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ClientResponseDto>>> {
+    return clientControllerFindActiveClients(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtener solo clientes activos (para uso en citas y servicios).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `clientControllerFindActiveClients$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerFindActiveClients(params?: ClientControllerFindActiveClients$Params, context?: HttpContext): Observable<Array<ClientResponseDto>> {
+    return this.clientControllerFindActiveClients$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<ClientResponseDto>>): Array<ClientResponseDto> => r.body)
+    );
+  }
+
   /** Path part for operation `clientControllerFindOne()` */
   static readonly ClientControllerFindOnePath = '/clients/{id}';
 
@@ -167,7 +206,7 @@ export class ClientsService extends BaseService {
   static readonly ClientControllerRemovePath = '/clients/{id}';
 
   /**
-   * Eliminar un cliente.
+   * Eliminar un cliente permanentemente (no recomendado).
    *
    *
    *
@@ -181,7 +220,7 @@ export class ClientsService extends BaseService {
   }
 
   /**
-   * Eliminar un cliente.
+   * Eliminar un cliente permanentemente (no recomendado).
    *
    *
    *
@@ -225,6 +264,72 @@ export class ClientsService extends BaseService {
    */
   clientControllerUpdate(params: ClientControllerUpdate$Params, context?: HttpContext): Observable<ClientResponseDto> {
     return this.clientControllerUpdate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ClientResponseDto>): ClientResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `clientControllerDeactivate()` */
+  static readonly ClientControllerDeactivatePath = '/clients/{id}/deactivate';
+
+  /**
+   * Desactivar un cliente (soft delete).
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `clientControllerDeactivate()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  clientControllerDeactivate$Response(params: ClientControllerDeactivate$Params, context?: HttpContext): Observable<StrictHttpResponse<ClientResponseDto>> {
+    return clientControllerDeactivate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Desactivar un cliente (soft delete).
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `clientControllerDeactivate$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  clientControllerDeactivate(params: ClientControllerDeactivate$Params, context?: HttpContext): Observable<ClientResponseDto> {
+    return this.clientControllerDeactivate$Response(params, context).pipe(
+      map((r: StrictHttpResponse<ClientResponseDto>): ClientResponseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `clientControllerReactivate()` */
+  static readonly ClientControllerReactivatePath = '/clients/{id}/reactivate';
+
+  /**
+   * Reactivar un cliente desactivado.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `clientControllerReactivate()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerReactivate$Response(params: ClientControllerReactivate$Params, context?: HttpContext): Observable<StrictHttpResponse<ClientResponseDto>> {
+    return clientControllerReactivate(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Reactivar un cliente desactivado.
+   *
+   *
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `clientControllerReactivate$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  clientControllerReactivate(params: ClientControllerReactivate$Params, context?: HttpContext): Observable<ClientResponseDto> {
+    return this.clientControllerReactivate$Response(params, context).pipe(
       map((r: StrictHttpResponse<ClientResponseDto>): ClientResponseDto => r.body)
     );
   }

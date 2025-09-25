@@ -53,6 +53,7 @@ export type { CustomerRewardResponseDto } from './models/customer-reward-respons
 export type { DailyActivityDto } from './models/daily-activity-dto';
 export type { DashboardMetricsDto } from './models/dashboard-metrics-dto';
 export type { DayOverrideDto } from './models/day-override-dto';
+export type { DeactivateClientDto } from './models/deactivate-client-dto';
 export type { EmailAttachmentDto } from './models/email-attachment-dto';
 export type { EmailLogResponseDto } from './models/email-log-response-dto';
 export type { EmailLogsPaginatedResponseDto } from './models/email-logs-paginated-response-dto';
@@ -88,7 +89,10 @@ export type { ProductInventoryConfigDto } from './models/product-inventory-confi
 export type { ProductOwnerResponseDto } from './models/product-owner-response-dto';
 export type { ProductPackagingDto } from './models/product-packaging-dto';
 export type { ProductResponseDto } from './models/product-response-dto';
+export type { ProductSearchResponseDto } from './models/product-search-response-dto';
 export type { ProfileResponseDto } from './models/profile-response-dto';
+export type { PurchaseCompletedResponseDto } from './models/purchase-completed-response-dto';
+export type { PurchaseItemDto } from './models/purchase-item-dto';
 export type { RecentMovementsDto } from './models/recent-movements-dto';
 export type { RegisterProductsUsedDto } from './models/register-products-used-dto';
 export type { RegisterUserDto } from './models/register-user-dto';
@@ -117,6 +121,7 @@ export type { TestConnectionResponseDto } from './models/test-connection-respons
 export type { TopMoversDto } from './models/top-movers-dto';
 export type { TrendDto } from './models/trend-dto';
 export type { TrendsDto } from './models/trends-dto';
+export type { TriggerPurchaseCompletedDto } from './models/trigger-purchase-completed-dto';
 export type { UpdateAgendaConfigDto } from './models/update-agenda-config-dto';
 export type { UpdateAppointmentDto } from './models/update-appointment-dto';
 export type { UpdateBusinessTypeDto } from './models/update-business-type-dto';
@@ -125,6 +130,7 @@ export type { UpdateConsultationDto } from './models/update-consultation-dto';
 export type { UpdateConsultationTypeDto } from './models/update-consultation-type-dto';
 export type { UpdateEmailSettingsDto } from './models/update-email-settings-dto';
 export type { UpdateEmailTemplateDto } from './models/update-email-template-dto';
+export type { UpdateFileEntityDto } from './models/update-file-entity-dto';
 export type { UpdateInvoiceDto } from './models/update-invoice-dto';
 export type { UpdateProductDimensionsDto } from './models/update-product-dimensions-dto';
 export type { UpdateProductDto } from './models/update-product-dto';
