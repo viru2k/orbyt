@@ -6,11 +6,15 @@ import { UserResponseDto } from '../../api/models/user-response-dto';
 import { ClientResponseDto } from '../../api/models/client-response-dto';
 import { ProductResponseDto } from '../../api/models/product-response-dto';
 import { FileUploadResponseDto } from '../../api/models/file-upload-response-dto';
-import { 
-  AvatarEntity, 
-  EntityWithAvatar 
+import { AvatarDto } from '../../api/models/avatar-dto';
+import {
+  AvatarEntity,
+  EntityWithAvatar
 } from '../models/entity-avatar.interfaces';
 import { ImageUploadService } from './image-upload.service';
+
+// Type union for avatar data
+type AvatarData = FileUploadResponseDto | AvatarDto;
 
 @Injectable({
   providedIn: 'root'
@@ -71,22 +75,43 @@ export class AvatarUtilsService {
 
   /**
    * Obtener URL del avatar de una entidad
+   * @param entity - Entidad con avatar
+   * @param avatar - Avatar opcional para priorizar
+   * @param context - Contexto de uso ('table', 'modal', 'profile', 'card')
+   * @returns URL optimizada según el contexto
    */
-  getAvatarUrl(entity: AvatarEntity, avatar?: FileUploadResponseDto): string | null {
+  getAvatarUrl(entity: AvatarEntity, avatar?: AvatarData, context?: 'table' | 'modal' | 'profile' | 'card'): string | null {
     // Priorizar avatar pasado como parámetro
     if (avatar) {
-      const url = avatar.thumbnailUrl || avatar.url;
+      const url = this.selectAvatarUrlByContext(avatar, context);
       return this.processAvatarUrl(url);
     }
-    
+
     // Si no hay avatar como parámetro, buscar en las propiedades de la entidad
-    // TODO: Add avatar support when backend provides image URLs
-    // UserResponseDto and ProductResponseDto don't have image properties yet
-    
-    // Los clientes actualmente no tienen campo avatarUrl en el DTO
-    // Esto se puede agregar en el futuro si se implementa
-    
+    // Ahora el backend proporciona el objeto avatar en la entidad
+    const entityAvatar = (entity as any).avatar;
+    if (entityAvatar) {
+      const url = this.selectAvatarUrlByContext(entityAvatar, context);
+      return this.processAvatarUrl(url);
+    }
+
     return null;
+  }
+
+  /**
+   * Seleccionar URL apropiada según el contexto
+   * - Para tablas/listas: usar thumbnail (optimizado ~10KB, 300x300px)
+   * - Para modales/perfiles: usar imagen completa (alta calidad ~50KB)
+   */
+  private selectAvatarUrlByContext(avatar: AvatarData, context?: 'table' | 'modal' | 'profile' | 'card'): string {
+    const useThumbnail = context === 'table' || context === 'card';
+
+    if (useThumbnail && avatar.thumbnailUrl) {
+      return avatar.thumbnailUrl;
+    }
+
+    // Para modales, perfiles o cuando no hay thumbnail, usar imagen completa
+    return avatar.url;
   }
 
   /**
@@ -142,10 +167,10 @@ export class AvatarUtilsService {
   /**
    * Obtener avatar completo con datos de la entidad
    */
-  getEntityWithAvatar(entity: AvatarEntity, avatar?: FileUploadResponseDto): EntityWithAvatar {
+  getEntityWithAvatar(entity: AvatarEntity, avatar?: AvatarData): EntityWithAvatar {
     return {
       id: entity.id,
-      avatar,
+      avatar: avatar as FileUploadResponseDto,
       displayName: this.getEntityDisplayName(entity),
       initials: this.getEntityInitials(entity)
     };

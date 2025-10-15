@@ -21,11 +21,14 @@ import { TabViewModule } from 'primeng/tabview';
 import { DividerModule } from 'primeng/divider';
 
 // Orb Components
-import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent } from '@orb-components';
+import { OrbButtonComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent, OrbTextAreaComponent, OrbSelectComponent } from '@orb-components';
 
 // Models and Services
 import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
 import { ServiceItemsService } from '../../../api/services/service-items.service';
+import { ServicesService } from '../../../api/services/services.service';
+import { CreateServiceDto } from '../../../api/models/create-service-dto';
+import { ServiceResponseDto } from '../../../api/models/service-response-dto';
 
 export interface ServiceSearchFilters {
   query: string;
@@ -45,6 +48,7 @@ export interface RecentService {
   name: string;
   basePrice?: number;
   price?: number; // Para compatibilidad
+  duration?: number; // Duración en minutos
   lastUsed: Date;
   usageCount: number;
 }
@@ -73,7 +77,9 @@ export interface RecentService {
     OrbButtonComponent,
     OrbFormFieldComponent,
     OrbTextInputComponent,
-    OrbCurrencyInputComponent
+    OrbCurrencyInputComponent,
+    OrbTextAreaComponent,
+    OrbSelectComponent
   ],
   templateUrl: './service-search-modal.component.html',
   styleUrls: ['./service-search-modal.component.scss']
@@ -90,14 +96,17 @@ export class ServiceSearchModalComponent {
 
   private fb = inject(FormBuilder);
   private serviceItemsService = inject(ServiceItemsService);
+  private servicesService = inject(ServicesService);
 
   // Signals para estado reactivo
   private searchSubject = new Subject<string>();
   isLoading = signal(false);
+  isCreatingService = signal(false);
   searchResults = signal<ServiceSearchResult[]>([]);
   recentServices = signal<RecentService[]>([]);
   activeTab = signal(0); // 0: Buscar, 1: Crear Nuevo
   viewMode = signal<'grid' | 'list'>('list');
+  canCreateServiceSignal = signal(false);
   
   // Formularios
   filtersForm!: FormGroup;
@@ -119,11 +128,11 @@ export class ServiceSearchModalComponent {
   hasRecentServices = computed(() => this.recentServices().length > 0);
   hasFilters = computed(() => {
     const form = this.filtersForm?.value;
-    return form?.category || 
-           form?.priceMin || 
+    return form?.category ||
+           form?.priceMin ||
            form?.priceMax;
   });
-  canCreateService = computed(() => this.newServiceForm?.valid);
+  canCreateService = computed(() => this.canCreateServiceSignal());
 
   ngOnInit() {
     this.initializeForms();
@@ -161,6 +170,14 @@ export class ServiceSearchModalComponent {
     this.filtersForm.get('category')?.valueChanges.subscribe(() => {
       this.performSearch();
     });
+
+    // Escuchar cambios en el formulario de nuevo servicio
+    this.newServiceForm.valueChanges.subscribe(() => {
+      this.updateCanCreateService();
+    });
+
+    // Inicializar estado del botón
+    this.updateCanCreateService();
   }
 
   private setupSearch(): void {
@@ -285,6 +302,28 @@ export class ServiceSearchModalComponent {
     };
   }
 
+  private updateCanCreateService(): void {
+    if (!this.newServiceForm) {
+      this.canCreateServiceSignal.set(false);
+      return;
+    }
+
+    const nameControl = this.newServiceForm.get('name');
+    const nameValue = nameControl?.value;
+    const isNameValid = nameValue && nameValue.trim().length >= 2;
+
+    console.log('📝 SERVICE FORM - Validating:', {
+      nameValue,
+      isNameValid,
+      formValid: this.newServiceForm.valid,
+      formStatus: this.newServiceForm.status,
+      formErrors: this.newServiceForm.errors,
+      nameErrors: nameControl?.errors
+    });
+
+    this.canCreateServiceSignal.set(isNameValid);
+  }
+
   // Event handlers para búsqueda
   onSearch(event: Event): void {
     const query = (event.target as HTMLInputElement).value;
@@ -329,20 +368,72 @@ export class ServiceSearchModalComponent {
 
   // Event handlers para crear servicio
   onCreateService(): void {
-    if (this.newServiceForm.valid) {
-      const formValue = this.newServiceForm.value;
-      const newService: ItemSelectorResponseDto = {
-        id: 0, // Temporary ID for new service
-        name: formValue.name,
-        price: formValue.basePrice || 0,
-        type: 'service',
-        status: 'ACTIVE',
-        description: formValue.description || ''
-      };
+    console.log('🚀 CREATE SERVICE - Attempting to create service');
+    console.log('📋 Form Status:', {
+      valid: this.newServiceForm.valid,
+      canCreate: this.canCreateService(),
+      formValue: this.newServiceForm.value,
+      formErrors: this.newServiceForm.errors
+    });
 
-      this.serviceSelected.emit(newService);
-      this.close();
+    if (!this.newServiceForm.valid) {
+      console.warn('❌ CREATE SERVICE - Form is invalid');
+      // Marcar todos los campos como touched para mostrar errores
+      this.newServiceForm.markAllAsTouched();
+      return;
     }
+
+    const formValue = this.newServiceForm.value;
+    const createServiceDto: CreateServiceDto = {
+      name: formValue.name?.trim(),
+      basePrice: formValue.basePrice || 0,
+      description: formValue.description?.trim() || '',
+      duration: formValue.duration || 30,
+      category: formValue.category || 'otro',
+      status: 'ACTIVE'
+    };
+
+    console.log('📤 CREATE SERVICE - Sending to backend:', createServiceDto);
+    this.isCreatingService.set(true);
+
+    this.servicesService.serviceControllerCreate({ body: createServiceDto }).subscribe({
+      next: (createdService: ServiceResponseDto) => {
+        console.log('✅ CREATE SERVICE - Service created successfully:', createdService);
+
+        // Convertir ServiceResponseDto a ItemSelectorResponseDto para compatibilidad
+        const serviceForSelection: ItemSelectorResponseDto = {
+          id: createdService.id!,
+          name: createdService.name!,
+          price: createdService.basePrice!,
+          type: 'service',
+          status: createdService.status!,
+          description: createdService.description || ''
+        };
+
+        this.serviceSelected.emit(serviceForSelection);
+        this.isCreatingService.set(false);
+        this.close();
+      },
+      error: (error) => {
+        console.error('❌ CREATE SERVICE - Error creating service:', error);
+        this.isCreatingService.set(false);
+
+        // TODO: Mostrar mensaje de error al usuario
+        // Por ahora, mantenemos la funcionalidad anterior como fallback
+        const fallbackService: ItemSelectorResponseDto = {
+          id: Date.now(),
+          name: formValue.name?.trim(),
+          price: formValue.basePrice || 0,
+          type: 'service',
+          status: 'ACTIVE',
+          description: formValue.description?.trim() || ''
+        };
+
+        console.log('🔄 CREATE SERVICE - Using fallback service:', fallbackService);
+        this.serviceSelected.emit(fallbackService);
+        this.close();
+      }
+    });
   }
 
   onResetNewService(): void {

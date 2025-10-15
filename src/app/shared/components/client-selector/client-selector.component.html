@@ -1,0 +1,78 @@
+@if (selectedClient) {
+  <div class="client-card">
+    <div class="client-header">
+      <h4>{{ title }}</h4>
+      @if (showActions) {
+        <div class="client-actions">
+          <orb-button
+            label="Cambiar"
+            severity="secondary"
+            [outlined]="true"
+            size="sm"
+            (clicked)="onChangeClient()"
+          >
+            <i class="fas fa-exchange-alt"></i>
+          </orb-button>
+          <orb-button
+            label="Limpiar"
+            severity="danger"
+            [outlined]="true"
+            size="sm"
+            (clicked)="onClearClient()"
+          >
+            <i class="fas fa-times"></i>
+          </orb-button>
+        </div>
+      }
+    </div>
+    <div class="client-info-display">
+      <div class="client-avatar">
+        <p-avatar
+          [image]="selectedClient.avatar?.url || undefined"
+          [label]="!selectedClient.avatar?.url ? getClientInitial() : undefined"
+          size="large"
+          shape="circle"
+        ></p-avatar>
+      </div>
+      <div class="client-details">
+        <h3 class="client-name">{{ getClientName() }}</h3>
+        <div class="client-meta">
+          @if (selectedClient.email) {
+            <span class="client-email">
+              <i class="fas fa-envelope"></i>
+              {{ selectedClient.email }}
+            </span>
+          }
+          @if (selectedClient.phone) {
+            <span class="client-phone">
+              <i class="fas fa-phone"></i>
+              {{ selectedClient.phone }}
+            </span>
+          }
+          @if (selectedClient.birthDate) {
+            <span class="client-age">
+              <i class="fas fa-birthday-cake"></i>
+              {{ getPatientAge(selectedClient.birthDate) }} años
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  @if (showSearchButton) {
+    <div class="client-search-section">
+      <h4>Buscar Cliente</h4>
+      <div class="client-search-button">
+        <orb-button
+          [label]="searchButtonLabel"
+          severity="info"
+          [outlined]="true"
+          (clicked)="onSelectClient()"
+        >
+          <i class="fas fa-search"></i>
+        </orb-button>
+      </div>
+    </div>
+  }
+}

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit, signal, computed, forwardRef, ViewChild, inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError, of } from 'rxjs';
@@ -28,7 +28,7 @@ interface CalendarDayEvent {
   imports: [
     CommonModule,
     FormsModule,
-    CalendarModule,
+    DatePickerModule,
     TooltipModule,
     ButtonModule
   ],
@@ -41,7 +41,7 @@ interface CalendarDayEvent {
   ],
   template: `
     <div class="orb-date-range-picker" [class]="getContainerClassString()">
-      <p-calendar
+      <p-datePicker
         #calendar
         [ngModel]="tempSelectedRange || selectedRange"
         (ngModelChange)="onDateSelect($event)"
@@ -113,7 +113,7 @@ interface CalendarDayEvent {
         </ng-template>
         
         
-      </p-calendar>
+      </p-datePicker>
 
 
       <!-- Note: Custom date templates will be implemented in future versions -->

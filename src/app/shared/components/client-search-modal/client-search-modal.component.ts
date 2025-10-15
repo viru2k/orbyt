@@ -19,7 +19,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { AvatarModule } from 'primeng/avatar';
 
 // Orb Components
-import { OrbButtonComponent, OrbDialogComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbButtonComponent, OrbCheckboxComponent, OrbDialogComponent, OrbEntityAvatarComponent, OrbSelectComponent } from '@orb-components';
 
 // Models and Services
 import { ClientResponseDto } from '../../../api/models';
@@ -60,17 +60,32 @@ export interface ClientSearchResult extends ClientResponseDto {
     AvatarModule,
     OrbButtonComponent,
     OrbEntityAvatarComponent,
-    OrbDialogComponent
+    OrbDialogComponent,
+    OrbSelectComponent,
+    OrbCheckboxComponent
   ],
   templateUrl: './client-search-modal.component.html',
   styleUrls: ['./client-search-modal.component.scss']
 })
 export class ClientSearchModalComponent implements OnDestroy {
-  @Input() visible = false;
+  private _visible = false;
+
+  @Input()
+  set visible(value: boolean) {
+    this._visible = value;
+    if (value) {
+      // Limpiar búsqueda cada vez que se abre el modal
+      this.resetModalState();
+    }
+  }
+  get visible(): boolean {
+    return this._visible;
+  }
+
   @Input() title = 'Buscar Cliente';
   @Input() professionalId?: number;
   @Input() preSelectedClient?: ClientResponseDto;
-  
+
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() clientSelected = new EventEmitter<ClientResponseDto>();
   @Output() cancel = new EventEmitter<void>();
@@ -328,6 +343,19 @@ export class ClientSearchModalComponent implements OnDestroy {
       query: ''
     });
     this.isLoading.set(false);
+  }
+
+  private resetModalState(): void {
+    // Limpiar formulario completo
+    this.filtersForm?.patchValue({
+      query: '',
+      status: null,
+      hasEmail: false,
+      hasPhone: false
+    });
+
+    // Recargar clientes iniciales
+    this.loadInitialClients();
   }
 
   performSearch(): void {

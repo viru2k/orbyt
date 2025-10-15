@@ -80,9 +80,8 @@ export class ImageUploadService {
    * Subir imagen principal de producto
    */
   private uploadProductImage(file: File, productId: number): Observable<FileUploadResponseDto> {
-    // TODO: Implement when backend supports product image upload
-    console.warn('Product image upload not implemented in backend');
-    return throwError(() => new Error('Product image upload not implemented'));
+    // Usar el método genérico para productos
+    return this.uploadGenericImage(file, 'product', productId, { fileType: 'avatar' });
   }
 
   /**

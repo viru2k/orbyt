@@ -19,7 +19,7 @@ import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 
 // Orb Components
-import { OrbButtonComponent } from '@orb-components';
+import { OrbButtonComponent, OrbCheckboxComponent, OrbSelectComponent } from '@orb-components';
 
 // Models and Services
 import { ProductResponseDto } from '../../../api/models';
@@ -63,7 +63,9 @@ export interface ProductSearchResult extends ProductResponseDto {
     TooltipModule,
     CardModule,
     CheckboxModule,
-    OrbButtonComponent
+    OrbButtonComponent,
+    OrbSelectComponent,
+    OrbCheckboxComponent
   ],
   templateUrl: './product-search-modal.component.html',
   styleUrls: ['./product-search-modal.component.scss']

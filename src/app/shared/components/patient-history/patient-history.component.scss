@@ -1,0 +1,476 @@
+.patient-history-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+}
+
+// Patient Header
+.patient-header {
+  .patient-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    .patient-avatar {
+      flex-shrink: 0;
+    }
+
+    .patient-details {
+      flex: 1;
+
+      .patient-name {
+        margin: 0 0 0.5rem 0;
+        color: #2c3e50;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .patient-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        span {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #6c757d;
+          font-size: 0.875rem;
+
+          i {
+            color: #007bff;
+          }
+        }
+      }
+    }
+
+    .patient-stats {
+      display: flex;
+      gap: 1.5rem;
+
+      .stat-item {
+        text-align: center;
+        padding: 0.75rem;
+        border-radius: 8px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+
+        .stat-number {
+          display: block;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #007bff;
+        }
+
+        .stat-label {
+          display: block;
+          font-size: 0.75rem;
+          color: #6c757d;
+          margin-top: 0.25rem;
+        }
+      }
+    }
+  }
+}
+
+// Loading State
+.loading-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+
+  .loading-spinner {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+  }
+}
+
+// Empty State
+.empty-state {
+  .empty-content {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+
+    i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #dee2e6;
+    }
+
+    h3 {
+      margin: 0 0 0.5rem 0;
+      color: #495057;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+}
+
+// History Content
+.history-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+// Timeline Navigation
+.timeline-navigation {
+  .nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      h4 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #2c3e50;
+
+        i {
+          color: #007bff;
+        }
+      }
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .nav-counter {
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-weight: 500;
+        padding: 0 0.75rem;
+      }
+    }
+  }
+
+  .timeline-list {
+    .timeline-scroller {
+      width: 100%;
+      height: 100px;
+    }
+
+    .timeline-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.75rem;
+      margin: 0 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 120px;
+      border: 2px solid transparent;
+
+      &:hover {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+      }
+
+      &.active {
+        background: #e3f2fd;
+        border-color: #007bff;
+
+        .timeline-dot {
+          background: #007bff;
+          color: white;
+          transform: scale(1.1);
+        }
+      }
+
+      .timeline-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s ease;
+
+        i {
+          font-size: 1rem;
+          color: #6c757d;
+        }
+      }
+
+      .timeline-content {
+        text-align: center;
+
+        .timeline-date {
+          font-size: 0.75rem;
+          color: #495057;
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+
+        .timeline-status {
+          ::ng-deep .p-tag {
+            font-size: 0.6rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Consultation Detail
+.consultation-detail {
+  .consultation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+
+    .consultation-title {
+      h3 {
+        margin: 0 0 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #2c3e50;
+
+        i {
+          color: #007bff;
+        }
+      }
+
+      .consultation-meta {
+        display: flex;
+        gap: 1rem;
+
+        .consultation-date {
+          color: #6c757d;
+          font-weight: 500;
+        }
+
+        .consultation-time {
+          color: #28a745;
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  .consultation-content {
+    .info-section {
+      margin-bottom: 2rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h4 {
+        margin: 0 0 1rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #495057;
+        font-size: 1.1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+
+        i {
+          color: #007bff;
+        }
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+
+        .info-item {
+          &.full-width {
+            grid-column: 1 / -1;
+          }
+
+          label {
+            display: block;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+          }
+
+          p {
+            margin: 0;
+            color: #6c757d;
+            line-height: 1.5;
+          }
+
+          ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #6c757d;
+
+            li {
+              margin-bottom: 0.25rem;
+            }
+          }
+
+          .follow-up-date {
+            color: #28a745;
+            font-weight: 500;
+            margin-left: 0.5rem;
+          }
+        }
+      }
+
+      .vitals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+
+        .vital-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem;
+          border-radius: 8px;
+          background: #f8f9fa;
+          border: 1px solid #e9ecef;
+
+          .vital-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+
+            &.temperature { background: #ff6b6b; }
+            &.pressure { background: #4ecdc4; }
+            &.heart { background: #ff8a80; }
+            &.weight { background: #a29bfe; }
+            &.height { background: #6c5ce7; }
+          }
+
+          .vital-info {
+            .vital-value {
+              display: block;
+              font-size: 1.25rem;
+              font-weight: 700;
+              color: #2c3e50;
+            }
+
+            .vital-label {
+              display: block;
+              font-size: 0.75rem;
+              color: #6c757d;
+              margin-top: 0.25rem;
+            }
+          }
+        }
+      }
+
+      .notes-content {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+
+        p {
+          margin: 0;
+          color: #495057;
+          line-height: 1.6;
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .patient-header {
+    .patient-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      .patient-stats {
+        align-self: stretch;
+        justify-content: space-around;
+
+        .stat-item {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  .timeline-navigation {
+    .nav-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .timeline-list {
+      .timeline-item {
+        min-width: 100px;
+      }
+    }
+  }
+
+  .consultation-detail {
+    .consultation-header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .consultation-content {
+      .info-section {
+        .info-grid {
+          grid-template-columns: 1fr;
+
+          .info-item.full-width {
+            grid-column: 1;
+          }
+        }
+
+        .vitals-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}
+
+// Custom Scrollbar
+.patient-history-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.patient-history-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.patient-history-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+
+  &:hover {
+    background: #a8a8a8;
+  }
+}

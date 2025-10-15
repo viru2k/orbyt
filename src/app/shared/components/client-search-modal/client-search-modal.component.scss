@@ -207,20 +207,22 @@
   
   .client-card {
     position: relative;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--surface-border);
     border-radius: 12px;
-    background: white;
+    background: var(--surface-100);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
-    
+
     &:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      border-color: #667eea;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary-color);
+      background: var(--surface-50);
     }
     
     .client-avatar {
@@ -300,17 +302,18 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    border: 1px solid transparent;
-    border-bottom: 1px solid #e9ecef;
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    background: var(--surface-100);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: all 0.2s ease;
-    
+    margin-bottom: 0.5rem;
+
     &:hover {
-      background: #f8f9fa;
-      border-color: #667eea;
-      border-radius: 8px;
-      margin: 0 -4px;
-      padding: 1rem 1.25rem;
+      background: var(--surface-50);
+      border-color: var(--primary-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     
     &:last-child {

@@ -1,0 +1,376 @@
+<div class="patient-history-container" [style.max-height]="maxHeight">
+  <!-- Patient Info Header -->
+  @if (showPatientInfo && patient) {
+    <div class="patient-header">
+      <orb-card>
+        <div orbBody>
+          <div class="patient-info">
+            <div class="patient-avatar">
+              <p-avatar
+                [image]="patient.avatar?.url || undefined"
+                [label]="!patient.avatar?.url ? (patient.name ? patient.name.charAt(0) : 'P') : undefined"
+                size="large"
+                shape="circle"
+              ></p-avatar>
+            </div>
+            <div class="patient-details">
+              <h3 class="patient-name">{{ patient.name || patient.fullname || 'Paciente' }}</h3>
+              <div class="patient-meta">
+                @if (patient.email) {
+                  <span class="patient-email">
+                    <i class="fas fa-envelope"></i>
+                    {{ patient.email }}
+                  </span>
+                }
+                @if (patient.phone) {
+                  <span class="patient-phone">
+                    <i class="fas fa-phone"></i>
+                    {{ patient.phone }}
+                  </span>
+                }
+                @if (getPatientAge()) {
+                  <span class="patient-age">
+                    <i class="fas fa-birthday-cake"></i>
+                    {{ getPatientAge() }} años
+                  </span>
+                }
+              </div>
+            </div>
+            <div class="patient-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ consultationStats().total }}</span>
+                <span class="stat-label">Consultas</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ consultationStats().completed }}</span>
+                <span class="stat-label">Completadas</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ consultationStats().pending }}</span>
+                <span class="stat-label">Pendientes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </orb-card>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-state">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </div>
+      <p>Cargando historia clínica...</p>
+    </div>
+  }
+
+  <!-- No Consultations State -->
+  @if (!loading && !hasConsultations()) {
+    <div class="empty-state">
+      <orb-card>
+        <div orbBody>
+          <div class="empty-content">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>Sin consultas registradas</h3>
+            <p>Este paciente aún no tiene consultas en su historia clínica.</p>
+          </div>
+        </div>
+      </orb-card>
+    </div>
+  }
+
+  <!-- History Content -->
+  @if (!loading && hasConsultations()) {
+    <div class="history-content">
+      <!-- Timeline Navigation -->
+      <div class="timeline-navigation">
+        <orb-card>
+          <div orbBody>
+            <div class="nav-header">
+              <div class="header-left">
+                <h4>
+                  <i class="fas fa-history"></i>
+                  Historia
+                </h4>
+                <orb-button
+                  label="Nueva Consulta"
+                  icon="fas fa-plus"
+                  severity="success"
+                  [outlined]="true"
+                  size="sm"
+                  (clicked)="onNewConsultation()"
+                ></orb-button>
+              </div>
+              <div class="nav-controls">
+                <orb-button
+                  label=""
+                  [iconOnly]="true"
+                  severity="info"
+                  [outlined]="true"
+                  size="sm"
+                  [disabled]="selectedConsultationIndex() === 0"
+                  (clicked)="navigateConsultation('prev')"
+                >
+                  <i class="fas fa-chevron-left"></i>
+                </orb-button>
+                <span class="nav-counter">
+                  {{ selectedConsultationIndex() + 1 }} de {{ consultationsSignal().length }}
+                </span>
+                <orb-button
+                  label=""
+                  [iconOnly]="true"
+                  severity="info"
+                  [outlined]="true"
+                  size="sm"
+                  [disabled]="selectedConsultationIndex() === consultationsSignal().length - 1"
+                  (clicked)="navigateConsultation('next')"
+                >
+                  <i class="fas fa-chevron-right"></i>
+                </orb-button>
+              </div>
+            </div>
+
+            <!-- Timeline List -->
+            <div class="timeline-list">
+              <p-scroller
+                [items]="consultationsSignal()"
+                [itemSize]="80"
+                [orientation]="'horizontal'"
+                class="timeline-scroller"
+              >
+                <ng-template pTemplate="item" let-consultation let-index="index">
+                  <div
+                    class="timeline-item"
+                    [class.active]="selectedConsultationIndex() === index"
+                    (click)="selectConsultation(index)"
+                  >
+                    <div class="timeline-dot">
+                      <i [class]="getConsultationTypeIcon(consultation)"></i>
+                    </div>
+                    <div class="timeline-content">
+                      <div class="timeline-date">{{ formatDate(consultation.createdAt) }}</div>
+                      <div class="timeline-status">
+                        <orb-tag
+                          [value]="getStatusLabel(consultation.status)"
+                          [severity]="getStatusSeverity(consultation.status)"
+                          size="small"
+                        ></orb-tag>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </p-scroller>
+            </div>
+          </div>
+        </orb-card>
+      </div>
+
+      <!-- Consultation Detail -->
+      @if (selectedConsultation()) {
+        <div class="consultation-detail">
+          <orb-card>
+            <div orbBody>
+              <div class="consultation-header">
+                <div class="consultation-title">
+                  <h3>
+                    <i [class]="getConsultationTypeIcon(selectedConsultation()!)"></i>
+                    Consulta {{ selectedConsultation()!.consultationNumber || selectedConsultationIndex() + 1 }}
+                  </h3>
+                  <div class="consultation-meta">
+                    <span class="consultation-date">{{ formatDate(selectedConsultation()!.createdAt) }}</span>
+                    @if (selectedConsultation()!.startTime) {
+                      <span class="consultation-time">
+                        {{ formatTime(selectedConsultation()!.startTime!) }}
+                        @if (selectedConsultation()!.endTime) {
+                          - {{ formatTime(selectedConsultation()!.endTime!) }}
+                        }
+                      </span>
+                    }
+                  </div>
+                </div>
+                <div class="consultation-status">
+                  <orb-tag
+                    [value]="getStatusLabel(selectedConsultation()!.status)"
+                    [severity]="getStatusSeverity(selectedConsultation()!.status)"
+                  ></orb-tag>
+                </div>
+              </div>
+
+              <div class="consultation-content">
+                <!-- Basic Information -->
+                <div class="info-section">
+                  <h4><i class="fas fa-info-circle"></i> Información General</h4>
+                  <div class="info-grid">
+                    @if (hasField(selectedConsultation()!, 'symptoms')) {
+                      <div class="info-item full-width">
+                        <label>Síntomas:</label>
+                        <p>{{ selectedConsultation()!.symptoms }}</p>
+                      </div>
+                    }
+                    @if (hasField(selectedConsultation()!, 'diagnosis')) {
+                      <div class="info-item full-width">
+                        <label>Diagnóstico:</label>
+                        <p>{{ selectedConsultation()!.diagnosis }}</p>
+                      </div>
+                    }
+                    @if (hasField(selectedConsultation()!, 'treatment')) {
+                      <div class="info-item full-width">
+                        <label>Tratamiento:</label>
+                        <p>{{ selectedConsultation()!.treatment }}</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Vital Signs (for medical consultations) -->
+                @if (hasField(selectedConsultation()!, 'temperature') ||
+                     hasField(selectedConsultation()!, 'bloodPressure') ||
+                     hasField(selectedConsultation()!, 'heartRate') ||
+                     hasField(selectedConsultation()!, 'weight') ||
+                     hasField(selectedConsultation()!, 'height')) {
+                  <div class="info-section">
+                    <h4><i class="fas fa-heartbeat"></i> Signos Vitales</h4>
+                    <div class="vitals-grid">
+                      @if (hasField(selectedConsultation()!, 'temperature')) {
+                        <div class="vital-item">
+                          <div class="vital-icon temperature">
+                            <i class="fas fa-thermometer-half"></i>
+                          </div>
+                          <div class="vital-info">
+                            <span class="vital-value">{{ formatFieldValue(selectedConsultation()!.temperature, 'temperature') }}</span>
+                            <span class="vital-label">Temperatura</span>
+                          </div>
+                        </div>
+                      }
+                      @if (hasField(selectedConsultation()!, 'bloodPressure')) {
+                        <div class="vital-item">
+                          <div class="vital-icon pressure">
+                            <i class="fas fa-tint"></i>
+                          </div>
+                          <div class="vital-info">
+                            <span class="vital-value">{{ formatFieldValue(selectedConsultation()!.bloodPressure, 'bloodPressure') }}</span>
+                            <span class="vital-label">Presión Arterial</span>
+                          </div>
+                        </div>
+                      }
+                      @if (hasField(selectedConsultation()!, 'heartRate')) {
+                        <div class="vital-item">
+                          <div class="vital-icon heart">
+                            <i class="fas fa-heartbeat"></i>
+                          </div>
+                          <div class="vital-info">
+                            <span class="vital-value">{{ formatFieldValue(selectedConsultation()!.heartRate, 'heartRate') }}</span>
+                            <span class="vital-label">Frecuencia Cardíaca</span>
+                          </div>
+                        </div>
+                      }
+                      @if (hasField(selectedConsultation()!, 'weight')) {
+                        <div class="vital-item">
+                          <div class="vital-icon weight">
+                            <i class="fas fa-weight"></i>
+                          </div>
+                          <div class="vital-info">
+                            <span class="vital-value">{{ formatFieldValue(selectedConsultation()!.weight, 'weight') }}</span>
+                            <span class="vital-label">Peso</span>
+                          </div>
+                        </div>
+                      }
+                      @if (hasField(selectedConsultation()!, 'height')) {
+                        <div class="vital-item">
+                          <div class="vital-icon height">
+                            <i class="fas fa-ruler-vertical"></i>
+                          </div>
+                          <div class="vital-info">
+                            <span class="vital-value">{{ formatFieldValue(selectedConsultation()!.height, 'height') }}</span>
+                            <span class="vital-label">Altura</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Medications & Allergies -->
+                @if (hasField(selectedConsultation()!, 'medications') || hasField(selectedConsultation()!, 'allergies')) {
+                  <div class="info-section">
+                    <h4><i class="fas fa-pills"></i> Medicamentos y Alergias</h4>
+                    <div class="info-grid">
+                      @if (hasField(selectedConsultation()!, 'medications')) {
+                        <div class="info-item">
+                          <label>Medicamentos:</label>
+                          @if (Array.isArray(selectedConsultation()!.medications)) {
+                            <ul>
+                              @for (medication of selectedConsultation()!.medications; track medication) {
+                                <li>{{ medication }}</li>
+                              }
+                            </ul>
+                          } @else {
+                            <p>{{ selectedConsultation()!.medications }}</p>
+                          }
+                        </div>
+                      }
+                      @if (hasField(selectedConsultation()!, 'allergies')) {
+                        <div class="info-item">
+                          <label>Alergias:</label>
+                          @if (Array.isArray(selectedConsultation()!.allergies)) {
+                            <ul>
+                              @for (allergy of selectedConsultation()!.allergies; track allergy) {
+                                <li>{{ allergy }}</li>
+                              }
+                            </ul>
+                          } @else {
+                            <p>{{ selectedConsultation()!.allergies }}</p>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Recommendations & Follow-up -->
+                @if (hasField(selectedConsultation()!, 'recommendations') || selectedConsultation()!.followUpRequired) {
+                  <div class="info-section">
+                    <h4><i class="fas fa-clipboard-check"></i> Recomendaciones y Seguimiento</h4>
+                    <div class="info-grid">
+                      @if (hasField(selectedConsultation()!, 'recommendations')) {
+                        <div class="info-item full-width">
+                          <label>Recomendaciones:</label>
+                          <p>{{ selectedConsultation()!.recommendations }}</p>
+                        </div>
+                      }
+                      @if (selectedConsultation()!.followUpRequired) {
+                        <div class="info-item">
+                          <label>Seguimiento requerido:</label>
+                          <p>
+                            <orb-tag value="Sí" severity="info"></orb-tag>
+                            @if (selectedConsultation()!.followUpDate) {
+                              <span class="follow-up-date">
+                                - {{ formatDate(selectedConsultation()!.followUpDate!) }}
+                              </span>
+                            }
+                          </p>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Notes -->
+                @if (hasField(selectedConsultation()!, 'notes')) {
+                  <div class="info-section">
+                    <h4><i class="fas fa-sticky-note"></i> Notas Adicionales</h4>
+                    <div class="notes-content">
+                      <p>{{ selectedConsultation()!.notes }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </orb-card>
+        </div>
+      }
+    </div>
+  }
+</div>
