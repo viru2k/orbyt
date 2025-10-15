@@ -43,3 +43,8 @@ Thumbs.db
 .nx/workspace-data
 
 .angular
+
+# Documentation and Claude Code
+docs/
+*.claude.json
+.claude*.json
