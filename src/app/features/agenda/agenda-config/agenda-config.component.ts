@@ -57,7 +57,7 @@ export class AgendaConfigComponent implements OnInit, OnDestroy {
   currentConfig$ = this.agendaStore.agendaConfig$;
 
   professionals$ = combineLatest([
-    this.usersStore.users$,
+    this.usersStore.groupUsers$,
     this.canManageAgenda$
   ]).pipe(
     map(([users, canManage]) => {
@@ -79,7 +79,7 @@ export class AgendaConfigComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.usersStore.loadUsers();
+    this.usersStore.loadSubUsers();
     
     // Listen to professional selection changes
     this.configForm.get('selectedProfessional')?.valueChanges

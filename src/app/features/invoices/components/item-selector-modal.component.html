@@ -1,0 +1,332 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Seleccionar Item para Factura"
+  styleClass="item-selector-modal"
+  [style]="{ width: '90vw', maxWidth: '1200px', height: '80vh' }"
+  (onHide)="onHide()"
+>
+  <div class="modal-content">
+    <!-- Tabs para diferentes tipos de items -->
+    <p-tabView (onChange)="onTabChange($event)">
+      <!-- Tab de Productos -->
+      <p-tabPanel header="Productos" leftIcon="pi pi-box">
+        <div class="tab-content">
+          <!-- Filtros y búsqueda -->
+          <div class="filters-section">
+            <div class="search-container">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input
+                  type="text"
+                  pInputText
+                  [(ngModel)]="productSearch"
+                  (input)="filterProducts()"
+                  placeholder="Buscar productos..."
+                  class="search-input"
+                />
+              </span>
+            </div>
+
+            <div class="filter-controls">
+              <orb-select
+                [(ngModel)]="selectedProductStatus"
+                [options]="statusOptions"
+                (selectionChange)="filterProducts()"
+                placeholder="Estado"
+                [showClear]="true"
+                optionLabel="label"
+                optionValue="value"
+              >
+              </orb-select>
+            </div>
+          </div>
+
+          <!-- Tabla de productos -->
+          <div class="items-table">
+            <p-table
+              [value]="filteredProducts()"
+              [paginator]="true"
+              [rows]="10"
+              [loading]="loading()"
+              [globalFilterFields]="['name', 'description']"
+              responsiveLayout="stack"
+              [scrollable]="true"
+              scrollHeight="400px"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th [width]="'32px'">Estado</th>
+                  <th [width]="'32px'"></th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-product>
+                <tr>
+                  <td>
+                    <div class="item-info">
+                      <orb-entity-avatar
+                        [entity]="product"
+                        [avatar]="product.avatar || null"
+                        entityType="product"
+                        size="normal"
+                        shape="square"
+                        [showTooltip]="false"
+                        context="table"
+                        [autoLoad]="false"
+                      ></orb-entity-avatar>
+                      <div class="item-details">
+                        <div class="item-name">{{ product.name }}</div>
+                        <div class="item-description" *ngIf="product.description">
+                          {{ product.description }}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="item-price">
+                      {{ product.currentPrice | currency : 'EUR' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+                  <td>
+                    <span [ngClass]="getStatusClass(product.status)">
+                      {{ getStatusLabel(product.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="select-action">
+                      <orb-button
+                        [iconOnly]="true"
+                        (clicked)="selectProduct(product)"
+                        size="small"
+                        severity="info"
+                        variant="outlined"
+                        styleClass="rounded-button select-button"
+                        [title]="'Seleccionar ' + product.name"
+                      >
+                        <i class="fas fa-arrow-right"></i>
+                      </orb-button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="4" class="text-center">
+                    <div class="empty-state">
+                      <i class="pi pi-search"></i>
+                      <p>No se encontraron productos</p>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+
+      <!-- Tab de Servicios -->
+      <p-tabPanel header="Servicios" leftIcon="pi pi-cog">
+        <div class="tab-content">
+          <!-- Filtros y búsqueda -->
+          <div class="filters-section">
+            <div class="search-container">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input
+                  type="text"
+                  pInputText
+                  [(ngModel)]="serviceSearch"
+                  (input)="filterServices()"
+                  placeholder="Buscar servicios..."
+                  class="search-input"
+                />
+              </span>
+            </div>
+
+            <div class="filter-controls">
+              <orb-select
+                [(ngModel)]="selectedServiceStatus"
+                [options]="statusOptions"
+                (selectionChange)="filterServices()"
+                placeholder="Estado"
+                [showClear]="true"
+                optionLabel="label"
+                optionValue="value"
+              >
+              </orb-select>
+            </div>
+          </div>
+
+          <!-- Tabla de servicios -->
+          <div class="items-table">
+            <p-table
+              [value]="filteredServices()"
+              [paginator]="true"
+              [rows]="10"
+              [loading]="loading()"
+              [globalFilterFields]="['name', 'description']"
+              responsiveLayout="stack"
+              [scrollable]="true"
+              scrollHeight="400px"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Servicio</th>
+                  <th>Precio</th>
+                  <th>Duración</th>
+                  <th  [width]="'32px'">Estado </th>
+                  <th  [width]="'32px'"></th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-service>
+                <tr>
+                  <td>
+                    <div class="item-info">
+                      <div class="item-name">{{ service.name }}</div>
+                      <div class="item-description" *ngIf="service.description">
+                        {{ service.description }}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="item-price">
+                      {{
+                        service.price || service.defaultPrice
+                          | currency : 'EUR' : 'symbol' : '1.2-2'
+                      }}
+                    </div>
+                  </td>
+                  <td>
+                    <div class="service-duration">
+                      <span *ngIf="service.duration || service.defaultDuration"
+                        >{{ service.duration || service.defaultDuration }} min</span
+                      >
+                      <span
+                        *ngIf="!service.duration && !service.defaultDuration"
+                        class="text-muted"
+                        >-</span
+                      >
+                    </div>
+                  </td>
+                  <td>
+                    <span [ngClass]="getServiceStatusClass(service)">
+                      {{ getServiceStatusLabel(service) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="select-action">
+                      <orb-button
+                        [iconOnly]="true"
+                        (clicked)="selectService(service)"
+                        size="small"
+                        severity="info"
+                        variant="outlined"
+                        styleClass="rounded-button select-button"
+                        [title]="'Seleccionar ' + service.name"
+                      >
+                        <i class="fas fa-arrow-right"></i>
+                      </orb-button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="5" class="text-center">
+                    <div class="empty-state">
+                      <i class="pi pi-search"></i>
+                      <p>No se encontraron servicios</p>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </p-tabPanel>
+
+      <!-- Tab de entrada manual -->
+      <p-tabPanel header="Manual" leftIcon="pi pi-pencil">
+        <div class="tab-content">
+          <orb-card styleClass="manual-item-card">
+            <div orbHeader>
+              <div class="manual-header">
+                <div class="header-icon">
+                  <i class="pi pi-pencil"></i>
+                </div>
+                <div class="header-text">
+                  <h4>Agregar Item Personalizado</h4>
+                  <p>Crea un item único que no está en tu catálogo</p>
+                </div>
+              </div>
+            </div>
+
+            <div orbBody>
+              <div class="form-grid">
+                <orb-form-field label="Descripción" [required]="true">
+                  <orb-text-input
+                    [(ngModel)]="manualItem.name"
+                    placeholder="Ej: Consulta personalizada, Tratamiento especial..."
+                  ></orb-text-input>
+                </orb-form-field>
+
+                <orb-form-field label="Precio Unitario" [required]="true">
+                  <orb-input-number
+                    [(ngModel)]="manualItem.basePrice"
+                    [min]="0"
+                    [step]="0.01"
+                    suffix=" €"
+                    placeholder="0.00"
+                  >
+                  </orb-input-number>
+                </orb-form-field>
+
+                <orb-form-field label="Categoría">
+                  <orb-text-input
+                    [(ngModel)]="manualItem.category"
+                    placeholder="Ej: Consultoría, Tratamiento, Otro..."
+                  ></orb-text-input>
+                </orb-form-field>
+
+                <orb-form-field label="Notas adicionales">
+                  <orb-text-input
+                    [(ngModel)]="manualItem.description"
+                    placeholder="Información adicional del item..."
+                  ></orb-text-input>
+                </orb-form-field>
+              </div>
+
+              <div class="manual-actions">
+                <orb-button
+                  label="Agregar Item"
+                  (clicked)="selectManualItem()"
+                  [disabled]="!manualItem.name || !manualItem.basePrice"
+                  severity="info"
+                  variant="outlined"
+                  size="normal"
+                >
+                  <i class="pi pi-plus"></i>
+                </orb-button>
+              </div>
+            </div>
+          </orb-card>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <orb-button label="Cancelar" severity="secondary"  (clicked)="onCancel()" variant="outlined">
+      <i class="pi pi-times"></i>
+    </orb-button>
+  </ng-template>
+</p-dialog>

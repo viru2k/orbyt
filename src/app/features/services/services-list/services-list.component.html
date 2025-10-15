@@ -1,0 +1,97 @@
+<orb-main-header
+  title="Gestión de Servicios"
+  icon="fa fa-cog"
+  subtitle="Administra y configura los servicios disponibles">
+</orb-main-header>
+
+<orb-card>
+  <div class="grid" orbBody>
+    <orb-table
+      [value]="services()"
+      [columns]="tableColumns"
+      [loading]="isLoading()"
+      [totalRecords]="services().length"
+      [rows]="tableRows()"
+      [first]="tableFirst()"
+      [tableFeatures]="tableFeaturesConfig"
+      [globalFilterFields]="['name', 'description', 'location']"
+      [rowActions]="serviceRowActions"
+      [tableHeaderActions]="serviceTableHeaderActions"
+      dataKey="id"
+      paginatorPosition="both"
+      [rowsPerPageOptions]="[15, 30, 50]"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} servicios">
+        
+        <ng-template pTemplate="body" let-service let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns">
+              <ng-container [ngSwitch]="col.field">
+                
+                <!-- Caso para la columna de servicio: información -->
+                <ng-container *ngSwitchCase="'service'">
+                  <div class="flex align-items-center gap-3">
+                    <div class="service-info">
+                      <div class="service-name font-medium text-900">{{ service.name }}</div>
+                      <div class="service-description text-600 text-sm">{{ service.description || 'Sin descripción' }}</div>
+                    </div>
+                  </div>
+                </ng-container>
+                
+                <!-- Caso para la columna de ubicación -->
+                <ng-container *ngSwitchCase="'location'">
+                  {{ service.location || '-' }}
+                </ng-container>
+                
+                <!-- Caso para la columna de capacidad -->
+                <ng-container *ngSwitchCase="'capacity'">
+                  <span *ngIf="service.capacity">{{ service.capacity }}</span>
+                  <span *ngIf="!service.capacity" class="text-muted">-</span>
+                </ng-container>
+                
+                <!-- Caso para la columna de estado -->
+                <ng-container *ngSwitchCase="'statusText'">
+                  <span [ngClass]="service.isActive ? 'status-active' : 'status-inactive'">
+                    {{ service.isActive ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </ng-container>
+                
+                <!-- Caso para la columna de fecha: mostramos el valor formateado -->
+              
+
+                <!-- Caso para la columna de acciones: dibujamos los botones -->
+                <ng-container *ngSwitchCase="'actions'">
+                  <orb-actions-popover
+                    [actions]="serviceRowActions"
+                    [itemData]="service">
+                  </orb-actions-popover>
+                </ng-container>
+
+                <ng-container *ngSwitchDefault>
+                  {{ service[col.field] }}
+                </ng-container>
+                
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+    </orb-table>
+  </div>
+</orb-card>
+
+<orb-dialog
+  [visible]="displayServiceModal()"
+  [header]="isEditMode() ? 'Editar Servicio' : 'Nuevo Servicio'"
+  size="lg"
+  (onHide)="onCancelForm()">
+
+  <orb-service-form
+    [service]="serviceToEdit()"
+    (saved)="onServiceSaved()"
+    (cancel)="onCancelForm()">
+  </orb-service-form>
+
+</orb-dialog>
+
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+  

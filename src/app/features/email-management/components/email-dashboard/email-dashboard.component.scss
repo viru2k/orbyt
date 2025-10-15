@@ -86,104 +86,10 @@
   }
 }
 
-// Metrics Grid
+// Metrics Grid - Using global styles from design-system.scss
+// Custom overrides only if needed
 .metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-6, 1.5rem);
-  margin-bottom: var(--space-8, 2rem);
-
-  .metric-card {
-    border: 2px solid transparent;
-    transition: all variables.$transition-fast;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-
-    &.total {
-      border-color: variables.$primary-blue;
-      background: linear-gradient(135deg, rgba(variables.$primary-blue, 0.05) 0%, rgba(variables.$primary-purple, 0.02) 100%);
-
-      .metric-icon {
-        background: variables.$primary-blue;
-      }
-    }
-
-    &.delivered {
-      border-color: #10b981;
-      background: linear-gradient(135deg, rgba(#10b981, 0.05) 0%, rgba(#059669, 0.02) 100%);
-
-      .metric-icon {
-        background: #10b981;
-      }
-    }
-
-    &.failed {
-      border-color: #ef4444;
-      background: linear-gradient(135deg, rgba(#ef4444, 0.05) 0%, rgba(#dc2626, 0.02) 100%);
-
-      .metric-icon {
-        background: #ef4444;
-      }
-    }
-
-    &.opened {
-      border-color: #3b82f6;
-      background: linear-gradient(135deg, rgba(#3b82f6, 0.05) 0%, rgba(#2563eb, 0.02) 100%);
-
-      .metric-icon {
-        background: #3b82f6;
-      }
-    }
-
-    .metric-content {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4, 1rem);
-      padding: var(--space-4, 1rem);
-
-      .metric-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: variables.$text-xl;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .metric-details {
-        flex: 1;
-
-        h3 {
-          margin: 0;
-          font-size: variables.$text-2xl;
-          font-weight: variables.$font-bold;
-          color: variables.$gray-800;
-          line-height: 1;
-        }
-
-        span {
-          display: block;
-          margin-top: var(--space-1, 0.25rem);
-          color: variables.$gray-600;
-          font-size: variables.$text-sm;
-          font-weight: variables.$font-medium;
-        }
-
-        small {
-          display: block;
-          margin-top: var(--space-1, 0.25rem);
-          color: variables.$gray-500;
-          font-size: variables.$text-xs;
-        }
-      }
-    }
-  }
+  // All base styles are now in _design-system.scss
 }
 
 // Charts Section
@@ -368,19 +274,10 @@
 }
 
 // Responsive Design
-@media (max-width: 1024px) {
-  .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+// Note: metrics-grid responsive styles are now in _design-system.scss
 @media (max-width: 768px) {
   .email-dashboard-container {
     padding: var(--space-4, 1rem);
-  }
-
-  .metrics-grid {
-    grid-template-columns: 1fr;
   }
 
   .dashboard-header {
@@ -413,25 +310,7 @@
   }
 }
 
-// Animation for metrics
-@keyframes countUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.metric-card {
-  animation: countUp 0.6s ease-out;
-
-  &:nth-child(2) { animation-delay: 0.1s; }
-  &:nth-child(3) { animation-delay: 0.2s; }
-  &:nth-child(4) { animation-delay: 0.3s; }
-}
+// Animation for metrics - Now in _design-system.scss
 
 // Print Styles
 @media print {

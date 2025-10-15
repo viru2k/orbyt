@@ -1,440 +1,272 @@
 @use '../../../styles/variables';
 @use '../../../styles/mixins';
 
-.header-actions {
-  display: flex;
-  gap: var(--space-2, 0.5rem);
-  flex-wrap: wrap;
+// Search Section
+.search-section {
+  text-align: center;
+  padding: 2rem 1rem;
+  transition: all 0.3s ease;
 
-  @media (max-width: 768px) {
-    justify-content: center;
-  }
-}
-
-.stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-4, 1rem);
-  margin-bottom: var(--space-6, 1.5rem);
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+  // Cuando hay paciente seleccionado, reducir padding
+  &.has-patient {
+    padding: 1rem;
   }
 
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.stat-card {
-  background: white;
-  border-radius: var(--radius-lg, 0.75rem);
-  padding: var(--space-4, 1rem);
-  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
-  transition: all variables.$transition-fast;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  }
-
-  .stat-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3, 0.75rem);
-  }
-
-  .stat-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, variables.$primary-blue 0%, variables.$primary-purple 100%);
-    color: white;
-    font-size: variables.$text-lg;
-
-    &.pending {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    }
-
-    &.completed {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    }
-
-    &.today {
-      background: linear-gradient(135deg, variables.$orbyt-coral 0%, #dc2626 100%);
-    }
-  }
-
-  .stat-details {
-    flex: 1;
+  .search-header {
+    margin-bottom: 2rem;
 
     h3 {
-      margin: 0;
-      font-size: variables.$text-xl;
-      font-weight: variables.$font-bold;
-      color: variables.$gray-900;
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: #2c3e50;
+      font-size: 1.5rem;
+
+      i {
+        color: var(--primary-color, #007bff);
+      }
     }
 
     p {
       margin: 0;
-      font-size: variables.$text-sm;
-      color: variables.$gray-600;
-      font-weight: variables.$font-medium;
+      color: #6c757d;
+      font-size: 1rem;
     }
   }
-}
 
-.filters-section {
-  margin-bottom: var(--space-6, 1.5rem);
-  padding: var(--space-4, 1rem);
-  background: rgba(variables.$gray-50, 0.5);
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
-}
-
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-4, 1rem);
-  align-items: end;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2, 0.5rem);
-
-  label {
-    font-weight: variables.$font-medium;
-    color: variables.$gray-700;
-    font-size: variables.$text-sm;
+  .search-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  // Eliminado search-container ya no es necesario
-  
-  // Arreglar padding en p-select
-  p-select {
-    :global(.p-select) {
-      height: var(--project-input-height, 32px) !important;
-      
-      .p-select-label {
-        display: flex !important;
-        align-items: center !important;
-        padding: 0.25rem 0.5rem !important; // Nuestro padding controlado
-        line-height: normal !important;
-        height: 100% !important;
-        
-        // Remover el padding problemático de PrimeNG
-        &.p-placeholder {
-          padding: 0.25rem 0.5rem !important; // Override del padding de PrimeNG
+  // Contenedor compacto para paciente seleccionado
+  .selected-patient-card {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .selected-patient-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--primary-color, #007bff);
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+    }
+
+    .patient-details {
+      flex: 1;
+      text-align: left;
+
+      h4 {
+        margin: 0 0 0.5rem 0;
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &::before {
+          content: '\f007';
+          font-family: 'Font Awesome 5 Free';
+          font-weight: 900;
+          color: var(--primary-color, #007bff);
+          font-size: 1.2rem;
+        }
+      }
+
+      p {
+        margin: 0.25rem 0;
+        color: #6c757d;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        i {
+          color: var(--primary-color, #007bff);
+          width: 16px;
         }
       }
     }
-  }
-}
 
-// Table content styling
-.client-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1, 0.25rem);
-
-  strong {
-    color: variables.$gray-900;
-    font-weight: variables.$font-semibold;
+    .patient-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
   }
 
-  small {
-    color: variables.$gray-500;
-    font-size: variables.$text-xs;
-  }
 }
 
-.date-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1, 0.25rem);
-
-  small {
-    color: variables.$gray-500;
-    font-size: variables.$text-xs;
-    font-weight: variables.$font-medium;
-  }
-}
-
-.symptoms-preview {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: variables.$gray-700;
-  font-size: variables.$text-sm;
-}
-
-// Statistics Modal
+// Statistics Modal Styles
 .stats-modal-content {
-  padding: var(--space-4, 1rem);
-}
+  .stats-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
 
-.stats-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-4, 1rem);
-  margin-bottom: var(--space-8, 2rem);
+    .summary-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
 
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+      .summary-icon {
+        font-size: 2rem;
+      }
 
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
-}
+      .summary-details {
+        h3 {
+          margin: 0;
+          font-size: 1.5rem;
+          color: var(--primary-color, #007bff);
+          font-weight: 700;
+        }
 
-.summary-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3, 0.75rem);
-  padding: var(--space-4, 1rem);
-  background: white;
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
-  transition: all variables.$transition-fast;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  .summary-icon {
-    font-size: 2rem;
-  }
-
-  .summary-details {
-    flex: 1;
-
-    h3 {
-      margin: 0;
-      font-size: variables.$text-lg;
-      font-weight: variables.$font-bold;
-      color: variables.$gray-900;
-    }
-
-    p {
-      margin: 0;
-      font-size: variables.$text-sm;
-      color: variables.$gray-600;
-      font-weight: variables.$font-medium;
+        p {
+          margin: 0.25rem 0 0 0;
+          color: #6c757d;
+          font-size: 0.875rem;
+        }
+      }
     }
   }
-}
 
-.charts-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--space-6, 1.5rem);
-  margin-bottom: var(--space-8, 2rem);
+  .charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    .chart-container {
+      padding: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+      text-align: center;
+
+      h4 {
+        margin: 0 0 1rem 0;
+        color: #2c3e50;
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .additional-stats {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e9ecef;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-weight: 500;
+      }
+
+      .stat-value {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+    }
   }
 }
 
-.chart-container {
-  background: white;
-  padding: var(--space-6, 1.5rem);
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
-
-  h4 {
-    margin: 0 0 var(--space-4, 1rem) 0;
-    font-family: variables.$font-family;
-    font-size: variables.$text-base;
-    font-weight: variables.$font-semibold;
-    color: variables.$gray-800;
-    text-align: center;
-  }
-}
-
-.additional-stats {
-  background: white;
-  padding: var(--space-6, 1.5rem);
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid rgba(variables.$orbyt-lavender, 0.2);
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-3, 0.75rem) 0;
-  border-bottom: 1px solid rgba(variables.$orbyt-lavender, 0.1);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  .stat-label {
-    font-weight: variables.$font-medium;
-    color: variables.$gray-600;
-    font-size: variables.$text-sm;
-  }
-
-  .stat-value {
-    font-weight: variables.$font-semibold;
-    color: variables.$gray-900;
-    font-size: variables.$text-base;
-  }
-}
-
-// Component specific overrides if needed
-
-:global(.p-input-icon-left) {
-  width: 100%;
-
-  input {
-    padding-left: var(--space-8, 2rem);
-  }
-
-  i {
-    color: variables.$gray-400;
-    left: var(--space-3, 0.75rem);
-  }
-}
-
-// Responsive table adjustments
-@media (max-width: 1024px) {
-  .symptoms-preview {
-    max-width: 150px;
-  }
-}
-
+// Responsive Design
 @media (max-width: 768px) {
-  .client-info,
-  .date-info {
-    small {
-      display: none;
-    }
-  }
+  .search-section {
+    padding: 1.5rem 0.5rem;
 
-  .symptoms-preview {
-    max-width: 100px;
-  }
-}
+    .selected-patient-info {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
 
-// Print styles
-@media print {
-  .header-actions,
-  .filters-section {
-    display: none;
-  }
-
-  .stats-cards {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .stat-card {
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-}
-
-// Loading state
-:global(.p-datatable .p-datatable-loading-overlay) {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(2px);
-}
-
-// Tag customization
-:global(.p-tag) {
-  font-size: variables.$text-xs;
-  font-weight: variables.$font-medium;
-  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-  border-radius: var(--radius-md, 0.5rem);
-}
-
-/* Enhanced dialog styling */
-::ng-deep orb-dialog {
-  .p-dialog {
-    border-radius: var(--radius-xl, 1rem) !important;
-    box-shadow: var(--shadow-xl) !important;
-    overflow: hidden !important;
-    
-    .p-dialog-header {
-      background: var(--gradient-primary) !important;
-      color: white !important;
-      border: none !important;
-      padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) !important;
-      
-      .p-dialog-title {
-        color: white !important;
-        font-weight: var(--font-semibold, 600) !important;
-        font-size: var(--text-xl, 1.25rem) !important;
+      .patient-details {
+        text-align: center;
       }
-      
-      .p-dialog-header-close {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: none !important;
-        color: white !important;
-        border-radius: var(--radius-md, 0.5rem) !important;
-        width: 32px !important;
-        height: 32px !important;
-        
-        &:hover {
-          background: rgba(255, 255, 255, 0.3) !important;
-        }
+
+      .patient-actions {
+        justify-content: center;
       }
     }
-    
-    .p-dialog-content {
-      background: var(--background-primary) !important;
-      border: none !important;
-      padding: var(--space-6, 1.5rem) !important;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stats-modal-content {
+    .stats-summary-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    .p-dialog-footer {
-      background: var(--background-primary) !important;
-      border: none !important;
-      padding: var(--space-4, 1rem) var(--space-6, 1.5rem) !important;
-      display: flex !important;
-      justify-content: flex-end !important;
-      gap: var(--space-3, 0.75rem) !important;
-      
-      .p-button {
-        &.p-button-secondary {
-          background: white !important;
-          border: 1px solid var(--surface-border) !important;
-          color: var(--text-color) !important;
-          
-          &:hover {
-            background: var(--surface-hover) !important;
-          }
-        }
-        
-        &.p-button-primary {
-          background: var(--primary-color) !important;
-          border: 1px solid var(--primary-color) !important;
-          
-          &:hover {
-            background: var(--primary-color-dark) !important;
-          }
-        }
-        
-        &.p-button-danger {
-          background: var(--red-500) !important;
-          border: 1px solid var(--red-500) !important;
-          
-          &:hover {
-            background: var(--red-600) !important;
-          }
-        }
+    .charts-section {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .search-section {
+    .selected-patient-info {
+      .patient-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
+  }
+
+  .stats-modal-content {
+    .stats-summary-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Patient History Integration
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  ::ng-deep {
+    orb-patient-history {
+      .patient-history-container {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        overflow: hidden;
       }
     }
   }

@@ -1,11 +1,27 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject, signal, computed } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, FormsModule } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+  signal,
+  computed,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormArray,
+  FormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 // PrimeNG Components
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TableModule } from 'primeng/table';
+import { OrbTableComponent } from '@orb-shared-components/orb-table/orb-table.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
@@ -17,7 +33,22 @@ import { MessageModule } from 'primeng/message';
 import { CheckboxModule } from 'primeng/checkbox';
 
 // Orb Components
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent } from '@orb-components';
+import {
+  OrbButtonComponent,
+  OrbTextInputComponent,
+  OrbFormFieldComponent,
+  OrbFormFooterComponent,
+  OrbSelectComponent,
+  OrbDatepickerComponent,
+  OrbTextAreaComponent,
+  OrbCheckboxComponent,
+  OrbCardComponent,
+  OrbTagComponent,
+} from '@orb-components';
+import { OrbCurrencyInputComponent } from '@orb-shared-components/orb-currency-input/orb-currency-input.component';
+import { OrbNumberInputComponent } from '@orb-shared-components/orb-number-input/orb-number-input.component';
+import { ClientSelectorComponent } from '../../../shared/components/client-selector/client-selector.component';
+import { ClientSearchModalComponent } from '../../../shared/components/client-search-modal/client-search-modal.component';
 
 // Services and Models
 import { InvoicesService } from '../../../api/services/invoices.service';
@@ -30,15 +61,18 @@ import { UpdateInvoiceDto } from '../../../api/models/update-invoice-dto';
 import { CreateInvoiceItemDto } from '../../../api/models/create-invoice-item-dto';
 import { ClientResponseDto } from '../../../api/models/client-response-dto';
 import { ProductResponseDto } from '../../../api/models/product-response-dto';
-import { CustomerRewardResponseDto, TriggerPurchaseCompletedDto, PurchaseCompletedResponseDto } from '../../../api/models';
+import {
+  CustomerRewardResponseDto,
+  TriggerPurchaseCompletedDto,
+  PurchaseCompletedResponseDto,
+} from '../../../api/models';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { FormButtonAction } from '@orb-models';
-import { FloatLabelModule } from 'primeng/floatlabel';
+import { FormButtonAction, TableColumn, OrbTableFeatures } from '@orb-models';
 import { ItemSelectorModalComponent, InvoiceItemSelection } from './item-selector-modal.component';
 
 interface InvoiceItem {
   itemId?: number | null;
-  itemType?: 'service' | 'product' | 'manual';
+  itemType: 'service' | 'product' | 'manual';
   type?: 'reward' | 'service' | 'product' | 'manual';
   description: string;
   quantity: number;
@@ -59,7 +93,7 @@ interface InvoiceItem {
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    TableModule,
+    OrbTableComponent,
     ToastModule,
     ConfirmDialogModule,
     DialogModule,
@@ -76,523 +110,18 @@ interface InvoiceItem {
     OrbDatepickerComponent,
     OrbTextAreaComponent,
     OrbButtonComponent,
-    FloatLabelModule,
-    ItemSelectorModalComponent
+    OrbCurrencyInputComponent,
+    OrbNumberInputComponent,
+    ItemSelectorModalComponent,
+    OrbCheckboxComponent,
+    OrbCardComponent,
+    OrbTagComponent,
+    ClientSelectorComponent,
+    ClientSearchModalComponent
   ],
   providers: [MessageService, ConfirmationService],
-  template: `
-    <div class="invoice-form-container">
-      <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
-        <!-- Basic Information -->
-        <div class="form-section">
-          <h3><i class="fa fa-info-circle"></i> Información Básica</h3>
-
-          <!-- Header Row: Cliente, Fecha, Tipo de Comprobante -->
-          <div class="header-row">
-            <orb-form-field label="Cliente" [required]="true" class="header-client">
-              <orb-select
-                formControlName="clientId"
-                [options]="clientOptions()"
-                optionLabel="fullname"
-                optionValue="id"
-                [showClear]="true"
-                [filter]="true"
-                filterBy="fullname,email">
-              </orb-select>
-            </orb-form-field>
-
-            <orb-form-field label="Fecha de Vencimiento" class="header-date">
-              <p-floatlabel variant="on">
-                <orb-datepicker
-                  formControlName="dueDate"
-                  [showIcon]="true"
-                  dateFormat="dd/mm/yy">
-                </orb-datepicker>
-              </p-floatlabel>
-            </orb-form-field>
-
-            <orb-form-field label="Estado" class="header-status">
-              <orb-select
-                formControlName="status"
-                [options]="statusOptions"
-                optionLabel="label"
-                optionValue="value">
-              </orb-select>
-            </orb-form-field>
-          </div>
-
-          <!-- Additional Fields Row -->
-          <div class="form-grid">
-            <orb-form-field label="Método de Pago">
-              <orb-select
-                formControlName="paymentMethod"
-                [options]="paymentMethodOptions"
-                optionLabel="label"
-                optionValue="value">
-              </orb-select>
-            </orb-form-field>
-          </div>
-        </div>
-
-        <!-- Available Rewards Table -->
-        <div class="form-section" *ngIf="selectedClient() && availableRewards().length > 0">
-          <h3>
-            <i class="fa fa-star"></i> Descuentos y Recompensas Disponibles
-          </h3>
-
-          <p-table [value]="availableRewards()" styleClass="rewards-table">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Recompensa</th>
-                <th>Tipo</th>
-                <th>Valor</th>
-                <th>Puntos</th>
-                <th style="width: 80px;">Aplicar</th>
-              </tr>
-            </ng-template>
-
-            <ng-template pTemplate="body" let-reward>
-              <tr [class.applied-reward]="appliedRewards().includes(reward.id!)">
-                <td>
-                  <div class="reward-info">
-                    <strong>{{ reward.rewardProgram?.name || 'Recompensa' }}</strong>
-                    <br>
-                    <small class="text-muted">{{ reward.rewardProgram?.description }}</small>
-                  </div>
-                </td>
-                <td>
-                  <p-tag
-                    [value]="getRewardTypeLabel(reward.rewardProgram?.rewardType)"
-                    [severity]="getRewardTypeSeverity(reward.rewardProgram?.rewardType)">
-                  </p-tag>
-                </td>
-                <td>
-                  <span class="reward-value">{{ getRewardValueDisplay(reward) }}</span>
-                </td>
-                <td>
-                  <span class="points-display" *ngIf="reward.rewardProgram?.rewardType === 'POINTS'">
-                    {{ reward.currentProgress || 0 }} pts
-                  </span>
-                  <span *ngIf="reward.rewardProgram?.rewardType !== 'POINTS'" class="text-muted">-</span>
-                </td>
-                <td class="text-center">
-                  <p-checkbox
-                    [ngModel]="appliedRewards().includes(reward.id!)"
-                    (ngModelChange)="toggleRewardApplication(reward, $event)"
-                    [disabled]="reward.status !== 'EARNED'"
-                    binary="true">
-                  </p-checkbox>
-                </td>
-              </tr>
-            </ng-template>
-
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="5" class="text-center text-muted py-3">
-                  No hay recompensas disponibles para aplicar
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
-
-        <!-- Items Section -->
-        <div class="form-section">
-          <h3>
-            <i class="fa fa-list"></i> Items de la Factura
-            <div class="item-actions">
-              <orb-button
-                label="Seleccionar Item"
-                icon="fa fa-search"
-                (clicked)="showItemSelector()"
-                variant="primary"
-                size="small">
-              </orb-button>
-              <orb-button
-                label="Agregar Manual"
-                icon="fa fa-plus"
-                (clicked)="addManualItem()"
-                variant="secondary"
-                size="small">
-              </orb-button>
-            </div>
-          </h3>
-
-          <div class="items-table" *ngIf="items.length > 0">
-            <p-table [value]="items" [scrollable]="true" scrollHeight="300px">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Tipo</th>
-                  <th>Descripción</th>
-                  <th>Cantidad</th>
-                  <th>Precio Unit.</th>
-                  <th>Descuento</th>
-                  <th>Total</th>
-                  <th></th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-item let-i="rowIndex">
-                <tr>
-                  <td>
-                    <span class="item-type-badge" [ngClass]="'type-' + item.itemType">
-                      {{ getItemTypeLabel(item.itemType) }}
-                    </span>
-                    <div class="item-category" *ngIf="item.category">
-                      <small>{{ item.category }}</small>
-                    </div>
-                  </td>
-                  <td>
-                    <orb-text-input
-                      [(ngModel)]="item.description"
-                      [ngModelOptions]="{standalone: true}"
-                      (ngModelChange)="updateItemTotal(i)"
-                      >
-                    </orb-text-input>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      class="orb-input"
-                      [(ngModel)]="item.quantity"
-                      [ngModelOptions]="{standalone: true}"
-                      (ngModelChange)="updateItemTotal(i)"
-                      min="1"
-                      step="1"
-                      placeholder="1">
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      class="orb-input"
-                      [(ngModel)]="item.unitPrice"
-                      [ngModelOptions]="{standalone: true}"
-                      (ngModelChange)="updateItemTotal(i)"
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00">
-                  </td>
-                  <td>
-                    <div class="discount-container">
-                      <input
-                        type="number"
-                        class="orb-input"
-                        [(ngModel)]="item.discount"
-                        [ngModelOptions]="{standalone: true}"
-                        (ngModelChange)="updateItemTotal(i)"
-                        min="0"
-                        step="0.01"
-                        placeholder="0">
-                      <orb-select
-                        [(ngModel)]="item.discountType"
-                        [ngModelOptions]="{standalone: true}"
-                        [options]="discountTypeOptions"
-                        (ngModelChange)="updateItemTotal(i)"
-                        optionLabel="label"
-                        optionValue="value">
-                      </orb-select>
-                    </div>
-                  </td>
-                  <td>
-                    <strong>{{ item.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
-                  </td>
-                  <td>
-                    <orb-button
-                      icon="fa fa-trash"
-                      (clicked)="removeItem(i)"
-                      variant="danger"
-                      size="small">
-                    </orb-button>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-
-          <div class="empty-items" *ngIf="items.length === 0">
-            <i class="fa fa-inbox"></i>
-            <p>No hay items en la factura. Haz clic en "Agregar Item" para comenzar.</p>
-          </div>
-        </div>
-
-        <!-- Summary Section -->
-        <div class="form-section">
-          <h3><i class="fa fa-calculator"></i> Resumen</h3>
-          
-          <div class="summary-grid">
-            <div class="summary-left">
-              <orb-form-field label="Descuento General">
-                <div class="discount-container">
-                  <input
-                    type="number"
-                    class="orb-input"
-                    formControlName="discount"
-                    min="0"
-                    step="0.01"
-                    placeholder="0"
-                    (input)="calculateTotals()">
-                  <orb-select
-                    formControlName="discountType"
-                    [options]="discountTypeOptions"
-                    (selectionChange)="calculateTotals()"
-                    optionLabel="label"
-                    optionValue="value">
-                  </orb-select>
-                </div>
-              </orb-form-field>
-
-              <orb-form-field label="Tasa de Impuestos (%)">
-                                <div class="discount-container">
-  <input
-                    type="number"
-                    class="orb-input"
-                    formControlName="taxRate"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    placeholder="21"
-                    (input)="calculateTotals()">
-                                </div>
-              
-
-              </orb-form-field>
-            </div>
-
-            <div class="summary-right">
-              <div class="summary-totals">
-                <div class="summary-row">
-                  <span>Subtotal:</span>
-                  <span>{{ subtotal | currency:'EUR':'symbol':'1.2-2' }}</span>
-                </div>
-                <div class="summary-row" *ngIf="generalDiscount > 0">
-                  <span>Descuento:</span>
-                  <span>-{{ generalDiscount | currency:'EUR':'symbol':'1.2-2' }}</span>
-                </div>
-                <div class="summary-row" *ngIf="taxAmount > 0">
-                  <span>Impuestos:</span>
-                  <span>{{ taxAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
-                </div>
-                <div class="summary-row" *ngIf="pointsDiscountAmount > 0">
-                  <span>Descuento con puntos:</span>
-                  <span>-{{ pointsDiscountAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
-                </div>
-                <div class="summary-row total">
-                  <span><strong>Total:</strong></span>
-                  <span><strong>{{ total | currency:'EUR':'symbol':'1.2-2' }}</strong></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Rewards Section -->
-        <div class="form-section" *ngIf="showRewardsPreview()">
-          <h3><i class="fa fa-star"></i> Recompensas del Cliente</h3>
-
-          <p-card styleClass="rewards-card">
-            <ng-template pTemplate="header">
-              <div class="rewards-header">
-                <div class="client-info" *ngIf="selectedClient()">
-                  <h4>{{ selectedClient()?.name }} {{ selectedClient()?.lastName }}</h4>
-                  <p *ngIf="selectedClient()?.email" class="client-email">
-                    <i class="fa fa-envelope"></i> {{ selectedClient()?.email }}
-                  </p>
-                </div>
-              </div>
-            </ng-template>
-
-            <div class="rewards-content">
-              <!-- Available Points -->
-              <div class="points-section">
-                <div class="points-header">
-                  <h5><i class="fa fa-coins"></i> Puntos Disponibles</h5>
-                  <div class="points-badge">
-                    <span class="points-count">{{ availablePoints() }}</span>
-                    <span class="points-label">puntos</span>
-                  </div>
-                </div>
-
-                <div class="points-value">
-                  <small>Valor: {{ (availablePoints() * 0.01) | currency:'EUR':'symbol':'1.2-2' }}</small>
-                </div>
-
-                <!-- Points Application -->
-                <div class="points-application" *ngIf="availablePoints() > 0">
-                  <div class="apply-points-container">
-                    <label for="pointsInput">Aplicar puntos como descuento:</label>
-                    <div class="points-input-group">
-                      <input
-                        id="pointsInput"
-                        type="number"
-                        class="orb-input points-input"
-                        [value]="pointsToApply()"
-                        (input)="applyPoints(+$any($event).target.value)"
-                        [min]="0"
-                        [max]="getMaxApplicablePoints()"
-                        placeholder="0">
-                      <span class="points-suffix">pts</span>
-                      <orb-button
-                        label="Aplicar Todo"
-                        size="small"
-                        variant="secondary"
-                        (clicked)="applyPoints(getMaxApplicablePoints())">
-                      </orb-button>
-                      <orb-button
-                        label="Limpiar"
-                        size="small"
-                        variant="danger"
-                        (clicked)="clearAppliedPoints()"
-                        *ngIf="pointsToApply() > 0">
-                      </orb-button>
-                    </div>
-                    <small class="points-help">
-                      Máximo aplicable: {{ getMaxApplicablePoints() }} pts
-                      ({{ (getMaxApplicablePoints() * 0.01) | currency:'EUR':'symbol':'1.2-2' }})
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <p-divider></p-divider>
-
-              <!-- Active Rewards Preview -->
-              <div class="rewards-preview">
-                <h5><i class="fa fa-gift"></i> Recompensas Activas</h5>
-                <div class="rewards-list">
-                  <div class="reward-item" *ngFor="let reward of clientRewards()">
-                    <div class="reward-info">
-                      <span class="reward-name">{{ reward.rewardProgram?.name }}</span>
-                      <p-tag
-                        [value]="getRewardStatusLabel(reward.status)"
-                        [severity]="getRewardStatusSeverity(reward.status)"
-                        size="small">
-                      </p-tag>
-                    </div>
-                    <div class="reward-progress" *ngIf="reward.status === 'IN_PROGRESS'">
-                      <p-progressBar
-                        [value]="(reward.currentProgress || 0) / (reward.targetValue || 1) * 100"
-                        [style]="{height: '0.5rem'}">
-                      </p-progressBar>
-                      <small>{{ reward.currentProgress || 0 }} / {{ reward.targetValue || 0 }}</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </p-card>
-        </div>
-
-        <!-- Additional Information -->
-        <div class="form-section">
-          <h3><i class="fa fa-sticky-note"></i> Información Adicional</h3>
-          
-          <div class="form-grid">
-            <orb-form-field label="Notas de la Factura">
-              <orb-text-area
-                formControlName="notes"
-                [rows]="3">
-              </orb-text-area>
-            </orb-form-field>
-
-            <orb-form-field label="Referencia de Pago">
-              <orb-text-input
-                formControlName="paymentReference"
-                >
-              </orb-text-input>
-            </orb-form-field>
-
-            <orb-form-field label="Notas de Pago">
-              <orb-text-area
-                formControlName="paymentNotes"                
-                [rows]="3">
-              </orb-text-area>
-            </orb-form-field>
-          </div>
-        </div>
-
-        <!-- Form Footer -->
-        <orb-form-footer 
-          [buttons]="footerActions"
-          alignment="right"
-          (actionClicked)="onActionClicked($event)">
-        </orb-form-footer>
-      </form>
-    </div>
-
-    <p-toast></p-toast>
-    <p-confirmDialog></p-confirmDialog>
-
-    <!-- Item Selector Modal -->
-    <app-item-selector-modal
-      [(visible)]="showItemSelectorModal"
-      (itemSelected)="onItemSelected($event)"
-      (cancel)="onItemSelectorCancel()">
-    </app-item-selector-modal>
-
-    <!-- Rewards Generation Modal -->
-    <p-dialog
-      [visible]="showRewardsModal()"
-      [modal]="true"
-      [closable]="true"
-      [resizable]="false"
-      [draggable]="false"
-      styleClass="rewards-modal"
-      header="¡Recompensas Generadas!"
-      [style]="{width: '500px'}"
-      (onHide)="onRewardsModalClose()">
-
-      <div class="rewards-modal-content" *ngIf="rewardsToGenerate()">
-        <!-- Client Info -->
-        <div class="modal-client-info" *ngIf="selectedClient()">
-          <h4><i class="fa fa-user"></i> {{ selectedClient()?.name }} {{ selectedClient()?.lastName }}</h4>
-          <p *ngIf="selectedClient()?.email">
-            <i class="fa fa-envelope"></i> {{ selectedClient()?.email }}
-          </p>
-        </div>
-
-        <p-divider></p-divider>
-
-        <!-- Rewards Summary -->
-        <div class="rewards-summary">
-          <div class="summary-item points-earned">
-            <div class="summary-icon">
-              <i class="fa fa-coins fa-2x"></i>
-            </div>
-            <div class="summary-content">
-              <h3>{{ rewardsToGenerate()?.pointsEarned || 0 }}</h3>
-              <p>Puntos Ganados</p>
-              <small>Valor: {{ ((rewardsToGenerate()?.pointsEarned || 0) * 0.01) | currency:'EUR':'symbol':'1.2-2' }}</small>
-            </div>
-          </div>
-
-          <div class="summary-item rewards-unlocked" *ngIf="(rewardsToGenerate()?.rewardsUnlocked || 0) > 0">
-            <div class="summary-icon">
-              <i class="fa fa-gift fa-2x"></i>
-            </div>
-            <div class="summary-content">
-              <h3>{{ rewardsToGenerate()?.rewardsUnlocked || 0 }}</h3>
-              <p>Recompensas Desbloqueadas</p>
-              <small>¡Nuevas recompensas disponibles!</small>
-            </div>
-          </div>
-        </div>
-
-        <!-- Success Message -->
-        <div class="success-message">
-          <i class="fa fa-check-circle"></i>
-          <p>Las recompensas se han aplicado exitosamente a la cuenta del cliente.</p>
-        </div>
-      </div>
-
-      <ng-template pTemplate="footer">
-        <orb-button
-          label="Continuar"
-          variant="primary"
-          (clicked)="onRewardsModalClose()">
-        </orb-button>
-      </ng-template>
-    </p-dialog>
-  `,
-  styleUrls: ['./invoice-form.component.scss']
+  templateUrl: './invoice-form.component.html',
+  styleUrls: ['./invoice-form.component.scss'],
 })
 export class InvoiceFormComponent implements OnInit {
   @Input() invoice?: InvoiceResponseDto;
@@ -620,9 +149,37 @@ export class InvoiceFormComponent implements OnInit {
   availablePoints = signal(0);
   showRewardsPreview = signal(false);
   showRewardsModal = signal(false);
+  showClientSearchModal = signal(false);
   rewardsToGenerate = signal<PurchaseCompletedResponseDto | null>(null);
   pointsToApply = signal(0);
   appliedRewards = signal<number[]>([]);
+
+  // Table columns and features
+  rewardsColumns: TableColumn[] = [
+    { field: 'reward', header: 'Recompensa' },
+    { field: 'type', header: 'Tipo' },
+    { field: 'value', header: 'Valor' },
+    { field: 'points', header: 'Puntos' },
+    { field: 'apply', header: 'Aplicar' },
+  ];
+
+  itemsColumns: TableColumn[] = [
+    { field: 'type', header: 'Tipo' },
+    { field: 'description', header: 'Descripción' },
+    { field: 'quantity', header: 'Cantidad' },
+    { field: 'unitPrice', header: 'Precio Unit.' },
+    { field: 'discount', header: 'Descuento' },
+    { field: 'total', header: 'Total' },
+    { field: 'actions', header: '', width: '60px' },
+  ];
+
+  rewardsTableFeatures: OrbTableFeatures = {
+    showGlobalSearch: false,
+  };
+
+  itemsTableFeatures: OrbTableFeatures = {
+    showGlobalSearch: false,
+  };
 
   // Invoice items
   items: InvoiceItem[] = [];
@@ -641,7 +198,7 @@ export class InvoiceFormComponent implements OnInit {
     { label: 'Borrador', value: 'draft' },
     { label: 'Pendiente', value: 'pending' },
     { label: 'Pagada', value: 'paid' },
-    { label: 'Cancelada', value: 'cancelled' }
+    { label: 'Cancelada', value: 'cancelled' },
   ];
 
   paymentMethodOptions = [
@@ -649,17 +206,17 @@ export class InvoiceFormComponent implements OnInit {
     { label: 'Tarjeta', value: 'card' },
     { label: 'Transferencia', value: 'transfer' },
     { label: 'Cheque', value: 'check' },
-    { label: 'Otro', value: 'other' }
+    { label: 'Otro', value: 'other' },
   ];
 
   discountTypeOptions = [
     { label: '%', value: 'percentage' },
-    { label: '€', value: 'fixed' }
+    { label: '€', value: 'fixed' },
   ];
 
   footerActions: FormButtonAction[] = [
-    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text', severity: 'secondary' },
-    { label: 'Guardar', action: 'save', styleType: 'p-button-success', buttonType: 'submit', severity: 'info' }
+    { label: 'Cancelar', action: 'cancel', severity: 'secondary', styleType: 'text' },
+    { label: 'Guardar', action: 'save', severity: 'success', buttonType: 'submit', outlined: true },
   ];
 
   ngOnInit(): void {
@@ -687,7 +244,7 @@ export class InvoiceFormComponent implements OnInit {
       notes: [''],
       discount: [0],
       discountType: ['percentage'],
-      taxRate: [21] // Default IVA rate
+      taxRate: [21], // Default IVA rate
     });
 
     // Subscribe to changes for real-time calculation
@@ -699,7 +256,7 @@ export class InvoiceFormComponent implements OnInit {
     this.invoiceForm.get('clientId')?.valueChanges.subscribe((clientId) => {
       if (clientId) {
         this.loadClientRewards(clientId);
-        const client = this.clientOptions().find(c => c.id === clientId);
+        const client = this.clientOptions().find((c) => c.id === clientId);
         this.selectedClient.set(client || null);
       } else {
         this.clearRewardsData();
@@ -717,9 +274,9 @@ export class InvoiceFormComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error al cargar la lista de clientes'
+          detail: 'Error al cargar la lista de clientes',
         });
-      }
+      },
     });
   }
 
@@ -730,7 +287,7 @@ export class InvoiceFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading products:', error);
-      }
+      },
     });
   }
 
@@ -748,11 +305,11 @@ export class InvoiceFormComponent implements OnInit {
       notes: this.invoice.notes,
       discount: this.invoice.discount,
       discountType: this.invoice.discountType,
-      taxRate: this.invoice.taxRate
+      taxRate: this.invoice.taxRate,
     });
 
     // Populate items
-    this.items = this.invoice.items.map(item => ({
+    this.items = this.invoice.items.map((item) => ({
       itemId: item.itemId,
       itemType: item.itemType,
       description: item.description,
@@ -761,7 +318,7 @@ export class InvoiceFormComponent implements OnInit {
       discount: item.discount,
       discountType: item.discountType,
       total: 0, // Will be recalculated
-      notes: item.notes
+      notes: item.notes,
     }));
 
     // Recalculate totals for all items
@@ -787,7 +344,7 @@ export class InvoiceFormComponent implements OnInit {
       discountType: 'percentage',
       total: 0, // Will be calculated by updateItemTotal
       category: selection.category,
-      duration: selection.duration
+      duration: selection.duration,
     });
 
     // Recalculate the total for the new item
@@ -805,12 +362,13 @@ export class InvoiceFormComponent implements OnInit {
     this.items.push({
       itemId: null,
       itemType: 'manual',
-      description: '',
+      description: 'Item manual',
       quantity: 1,
       unitPrice: 0,
       discount: 0,
       discountType: 'percentage',
-      total: 0
+      total: 0,
+      category: 'Manual',
     });
 
     // Calculate total for the new manual item
@@ -819,10 +377,27 @@ export class InvoiceFormComponent implements OnInit {
 
   getItemTypeLabel(type: string): string {
     switch (type) {
-      case 'product': return 'Producto';
-      case 'service': return 'Servicio';
-      case 'manual': return 'Manual';
-      default: return type;
+      case 'product':
+        return 'Producto';
+      case 'service':
+        return 'Servicio';
+      case 'manual':
+        return 'Manual';
+      default:
+        return type;
+    }
+  }
+
+  getItemTypeSeverity(type: string): 'success' | 'info' | 'warning' | 'danger' | 'secondary' {
+    switch (type) {
+      case 'product':
+        return 'info';
+      case 'service':
+        return 'success';
+      case 'manual':
+        return 'warning';
+      default:
+        return 'secondary';
     }
   }
 
@@ -836,12 +411,12 @@ export class InvoiceFormComponent implements OnInit {
     if (!item) return;
 
     let itemTotal = item.quantity * item.unitPrice;
-    
+
     if ((item.discount || 0) > 0) {
       if (item.discountType === 'percentage') {
-        itemTotal -= (itemTotal * (item.discount || 0) / 100);
+        itemTotal -= (itemTotal * (item.discount || 0)) / 100;
       } else {
-        itemTotal -= (item.discount || 0);
+        itemTotal -= item.discount || 0;
       }
     }
 
@@ -858,7 +433,7 @@ export class InvoiceFormComponent implements OnInit {
     const discountType = this.invoiceForm.get('discountType')?.value || 'percentage';
 
     if (discountType === 'percentage') {
-      this.generalDiscount = this.subtotal * discountValue / 100;
+      this.generalDiscount = (this.subtotal * discountValue) / 100;
     } else {
       this.generalDiscount = discountValue;
     }
@@ -869,7 +444,7 @@ export class InvoiceFormComponent implements OnInit {
     // Calculate tax
     const taxRate = this.invoiceForm.get('taxRate')?.value || 0;
     const taxableAmount = this.subtotal - this.generalDiscount - this.pointsDiscountAmount;
-    this.taxAmount = Math.max(0, taxableAmount) * taxRate / 100;
+    this.taxAmount = (Math.max(0, taxableAmount) * taxRate) / 100;
 
     // Calculate total
     this.total = Math.max(0, taxableAmount + this.taxAmount);
@@ -881,7 +456,7 @@ export class InvoiceFormComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
-        detail: 'Por favor, completa todos los campos requeridos y agrega al menos un item'
+        detail: 'Por favor, completa todos los campos requeridos y agrega al menos un item',
       });
       return;
     }
@@ -889,49 +464,63 @@ export class InvoiceFormComponent implements OnInit {
     this.loading.set(true);
 
     const formValue = this.invoiceForm.value;
-    const invoiceItems: CreateInvoiceItemDto[] = this.items.map(item => ({
-      itemId: item.itemId || 0, // Use 0 for manual items
-      itemType: (item.itemType === 'manual' ? 'service' : item.itemType) as 'service' | 'product', // Convert manual to service for backend
-      description: item.description,
-      quantity: item.quantity,
-      unitPrice: item.unitPrice,
-      discount: item.discount || 0,
-      discountType: item.discountType || 'percentage',
-      notes: item.notes
-    }));
+    const invoiceItems: CreateInvoiceItemDto[] = this.items.map((item) => {
+      const baseItem: CreateInvoiceItemDto = {
+        itemType: item.itemType || 'manual',
+        description: item.description,
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+        discount: Number(item.discount) || 0,
+        discountType: item.discountType || 'percentage',
+        notes: item.notes,
+      };
+
+      // Only include itemId for products and services (not for manual items)
+      if (item.itemType !== 'manual' && item.itemId) {
+        baseItem.itemId = item.itemId;
+      }
+
+      return baseItem;
+    });
 
     if (this.isEditMode && this.invoice) {
       const updateData: UpdateInvoiceDto = {
         ...formValue,
         items: invoiceItems,
-        dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined
+        dueDate: formValue.dueDate
+          ? (formValue.dueDate instanceof Date ? formValue.dueDate.toISOString() : new Date(formValue.dueDate).toISOString())
+          : undefined,
       };
 
-      this.invoicesService.invoiceControllerUpdate({ id: this.invoice.id, body: updateData }).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'Factura actualizada exitosamente'
-          });
-          this.saved.emit();
-          this.loading.set(false);
-        },
-        error: (error) => {
-          console.error('Error updating invoice:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al actualizar la factura'
-          });
-          this.loading.set(false);
-        }
-      });
+      this.invoicesService
+        .invoiceControllerUpdate({ id: this.invoice.id, body: updateData })
+        .subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Factura actualizada exitosamente',
+            });
+            this.saved.emit();
+            this.loading.set(false);
+          },
+          error: (error) => {
+            console.error('Error updating invoice:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al actualizar la factura',
+            });
+            this.loading.set(false);
+          },
+        });
     } else {
       const createData: CreateInvoiceDto = {
         ...formValue,
         items: invoiceItems,
-        dueDate: formValue.dueDate ? formValue.dueDate.toISOString() : undefined
+        dueDate: formValue.dueDate
+          ? (formValue.dueDate instanceof Date ? formValue.dueDate.toISOString() : new Date(formValue.dueDate).toISOString())
+          : undefined,
       };
 
       this.invoicesService.invoiceControllerCreate({ body: createData }).subscribe({
@@ -939,7 +528,7 @@ export class InvoiceFormComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Éxito',
-            detail: 'Factura creada exitosamente'
+            detail: 'Factura creada exitosamente',
           });
 
           // Process rewards for the new invoice
@@ -953,10 +542,10 @@ export class InvoiceFormComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Error al crear la factura'
+            detail: 'Error al crear la factura',
           });
           this.loading.set(false);
-        }
+        },
       });
     }
   }
@@ -987,20 +576,22 @@ export class InvoiceFormComponent implements OnInit {
         this.showRewardsPreview.set(rewards.length > 0);
 
         // Check for redeemable rewards and show notification
-        const hasRedeemableRewards = rewards.some(reward => reward.status === 'EARNED');
+        const hasRedeemableRewards = rewards.some((reward) => reward.status === 'EARNED');
         if (hasRedeemableRewards) {
           this.messageService.add({
             severity: 'warn',
             summary: '⭐ Recompensas Disponibles',
-            detail: `El cliente tiene ${rewards.filter(r => r.status === 'EARNED').length} recompensa(s) disponible(s) para canjear`,
-            life: 6000
+            detail: `El cliente tiene ${
+              rewards.filter((r) => r.status === 'EARNED').length
+            } recompensa(s) disponible(s) para canjear`,
+            life: 6000,
           });
         }
       },
       error: (error) => {
         console.error('Error loading client rewards:', error);
         this.clearRewardsData();
-      }
+      },
     });
   }
 
@@ -1032,20 +623,20 @@ export class InvoiceFormComponent implements OnInit {
 
   getRewardStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'IN_PROGRESS': 'En Progreso',
-      'EARNED': 'Ganada',
-      'REDEEMED': 'Canjeada',
-      'EXPIRED': 'Expirada'
+      IN_PROGRESS: 'En Progreso',
+      EARNED: 'Ganada',
+      REDEEMED: 'Canjeada',
+      EXPIRED: 'Expirada',
     };
     return statusMap[status] || status;
   }
 
   getRewardStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'IN_PROGRESS': 'info',
-      'EARNED': 'success',
-      'REDEEMED': 'info',
-      'EXPIRED': 'danger'
+      IN_PROGRESS: 'info',
+      EARNED: 'success',
+      REDEEMED: 'info',
+      EXPIRED: 'danger',
     };
     return severityMap[status] || 'info';
   }
@@ -1064,11 +655,11 @@ export class InvoiceFormComponent implements OnInit {
       purchaseAmount: this.total,
       paymentMethod: this.invoiceForm.get('paymentMethod')?.value || 'other',
       paymentDate: new Date().toISOString(),
-      items: this.items.map(item => ({
+      items: this.items.map((item) => ({
         serviceId: item.itemId || 1,
         quantity: item.quantity,
-        amount: item.total
-      }))
+        amount: item.total,
+      })),
     };
 
     this.rewardsService.rewardsControllerTriggerPurchaseCompleted({ body: rewardsData }).subscribe({
@@ -1083,7 +674,7 @@ export class InvoiceFormComponent implements OnInit {
         console.error('Error processing rewards:', error);
         // Don't show error to user as the invoice was created successfully
         // Just log the error for debugging
-      }
+      },
     });
   }
 
@@ -1100,12 +691,13 @@ export class InvoiceFormComponent implements OnInit {
     // Add reward as an invoice item
     const rewardValue = this.getRewardDiscountValue(reward);
     const newItem: InvoiceItem = {
+      itemType: 'manual',
       type: 'reward',
       description: `Recompensa: ${reward.rewardProgram?.name || 'Descuento'}`,
       quantity: 1,
       unitPrice: -rewardValue, // Negative value for discount
       total: -rewardValue,
-      rewardId: reward.id
+      rewardId: reward.id,
     };
 
     this.items.push(newItem);
@@ -1120,7 +712,7 @@ export class InvoiceFormComponent implements OnInit {
       severity: 'success',
       summary: 'Recompensa Aplicada',
       detail: `Se aplicó la recompensa como descuento de ${this.getRewardValueDisplay(reward)}`,
-      life: 3000
+      life: 3000,
     });
   }
 
@@ -1134,11 +726,11 @@ export class InvoiceFormComponent implements OnInit {
     }
 
     // Remove reward from items
-    this.items = this.items.filter(item => item.rewardId !== reward.id);
+    this.items = this.items.filter((item) => item.rewardId !== reward.id);
 
     // Remove from applied rewards
     const currentApplied = this.appliedRewards();
-    this.appliedRewards.set(currentApplied.filter(id => id !== reward.id));
+    this.appliedRewards.set(currentApplied.filter((id) => id !== reward.id));
 
     this.calculateTotals();
 
@@ -1146,10 +738,9 @@ export class InvoiceFormComponent implements OnInit {
       severity: 'info',
       summary: 'Recompensa Cancelada',
       detail: 'Se removió la recompensa de la factura',
-      life: 3000
+      life: 3000,
     });
   }
-
 
   private getRewardDiscountValue(reward: CustomerRewardResponseDto): number {
     if (!reward.rewardProgram) return 0;
@@ -1173,10 +764,10 @@ export class InvoiceFormComponent implements OnInit {
     if (!type) return 'Descuento';
 
     const typeMap: { [key: string]: string } = {
-      'DISCOUNT_PERCENTAGE': 'Descuento %',
-      'DISCOUNT_AMOUNT': 'Descuento €',
-      'FREE_SERVICE': 'Servicio Gratis',
-      'POINTS': 'Puntos'
+      DISCOUNT_PERCENTAGE: 'Descuento %',
+      DISCOUNT_AMOUNT: 'Descuento €',
+      FREE_SERVICE: 'Servicio Gratis',
+      POINTS: 'Puntos',
     };
     return typeMap[type] || 'Descuento';
   }
@@ -1201,10 +792,10 @@ export class InvoiceFormComponent implements OnInit {
 
   getRewardSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'IN_PROGRESS': 'info',
-      'EARNED': 'success',
-      'REDEEMED': 'info',
-      'EXPIRED': 'danger'
+      IN_PROGRESS: 'info',
+      EARNED: 'success',
+      REDEEMED: 'info',
+      EXPIRED: 'danger',
     };
     return severityMap[status] || 'info';
   }
@@ -1214,16 +805,18 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   // Métodos para PrimeNG Message
-  getRewardMessageSeverity(reward: CustomerRewardResponseDto): 'success' | 'info' | 'warn' | 'error' {
+  getRewardMessageSeverity(
+    reward: CustomerRewardResponseDto,
+  ): 'success' | 'info' | 'warn' | 'error' {
     switch (reward.status) {
       case 'EARNED':
-        return 'success';  // Verde para recompensas listas para canjear
+        return 'success'; // Verde para recompensas listas para canjear
       case 'IN_PROGRESS':
-        return 'info';     // Azul para recompensas en progreso
+        return 'info'; // Azul para recompensas en progreso
       case 'REDEEMED':
-        return 'warn';     // Amarillo para recompensas ya canjeadas
+        return 'warn'; // Amarillo para recompensas ya canjeadas
       case 'EXPIRED':
-        return 'error';    // Rojo para recompensas expiradas
+        return 'error'; // Rojo para recompensas expiradas
       default:
         return 'info';
     }
@@ -1257,20 +850,23 @@ export class InvoiceFormComponent implements OnInit {
 
   // Nueva función para obtener solo recompensas disponibles (EARNED y con descuentos/puntos)
   availableRewards = computed(() => {
-    return this.clientRewards().filter(reward =>
-      reward.status === 'EARNED' &&
-      reward.rewardProgram?.rewardType &&
-      ['DISCOUNT_PERCENTAGE', 'DISCOUNT_AMOUNT', 'POINTS'].includes(reward.rewardProgram.rewardType)
+    return this.clientRewards().filter(
+      (reward) =>
+        reward.status === 'EARNED' &&
+        reward.rewardProgram?.rewardType &&
+        ['DISCOUNT_PERCENTAGE', 'DISCOUNT_AMOUNT', 'POINTS'].includes(
+          reward.rewardProgram.rewardType,
+        ),
     );
   });
 
   // Nueva función para severity de tipos de reward
   getRewardTypeSeverity(type?: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'DISCOUNT_PERCENTAGE': 'success',
-      'DISCOUNT_AMOUNT': 'info',
-      'POINTS': 'warning',
-      'FREE_SERVICE': 'info'
+      DISCOUNT_PERCENTAGE: 'success',
+      DISCOUNT_AMOUNT: 'info',
+      POINTS: 'warning',
+      FREE_SERVICE: 'info',
     };
     return severityMap[type || ''] || 'info';
   }
@@ -1286,5 +882,35 @@ export class InvoiceFormComponent implements OnInit {
     } else {
       this.cancelRewardApplication(reward);
     }
+  }
+
+  // Client Search Modal Methods
+  openClientSearchModal(): void {
+    this.showClientSearchModal.set(true);
+  }
+
+  onClientSelected(client: ClientResponseDto): void {
+    this.selectedClient.set(client);
+    this.invoiceForm.patchValue({
+      clientId: client.id,
+    });
+    this.showClientSearchModal.set(false);
+
+    // Load client rewards if client is selected
+    if (client.id) {
+      this.loadClientRewards(client.id);
+    }
+  }
+
+  onClientSearchModalClose(): void {
+    this.showClientSearchModal.set(false);
+  }
+
+  clearSelectedClient(): void {
+    this.selectedClient.set(null);
+    this.invoiceForm.patchValue({
+      clientId: null,
+    });
+    this.clearRewardsData();
   }
 }

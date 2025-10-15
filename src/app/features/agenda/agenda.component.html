@@ -2,17 +2,13 @@
 <orb-main-header
   title="Agenda"
   icon="fa fa-calendar"
-  subtitle="Gestión de citas y calendario de profesionales">
+  subtitle="Gestión de citas y calendario de profesionales"
+>
 </orb-main-header>
 
 <!-- Card de filtros horizontal compacto -->
 <orb-card class="compact-card">
-  <div orbHeader>
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h3 class="compact-title">Filtros</h3>
-    </div>
-  </div>
-  
+
   <div orbBody>
     <div class="compact-filters-container">
       <!-- Fila única con todos los filtros -->
@@ -20,7 +16,7 @@
         <!-- Filtro de Profesionales -->
         <div class="filter-item">
           <label class="compact-label">Profesionales</label>
-          <orb-multiselect            
+          <orb-multiselect
             [options]="(usersStore.users$ | async) || []"
             optionLabel="fullName"
             [ngModel]="selectedUsers"
@@ -29,6 +25,7 @@
             display="chip"
             [maxSelectedLabels]="1"
             [selectedItemsLabel]="'{0} sel.'"
+            appendTo="body"
           ></orb-multiselect>
         </div>
 
@@ -46,6 +43,7 @@
             display="chip"
             [maxSelectedLabels]="1"
             [selectedItemsLabel]="'{0} sel.'"
+            appendTo="body"
           ></orb-multiselect>
         </div>
 
@@ -63,28 +61,31 @@
         <div class="filter-item">
           <label class="compact-label">Fecha específica</label>
           <orb-datepicker
-            mode="datetime"            
+            mode="datetime"
             [ngModel]="selectedDateFrom"
             (ngModelChange)="onDateFromChange($event)"
             styleClass="compact-datepicker"
+            appendTo="body"
           ></orb-datepicker>
         </div>
 
         <!-- Botones de acción -->
         <div class="filter-actions">
           <orb-button
-            icon="pi pi-search"
+            icon="fa fa-search"
             label="Buscar"
             (click)="performSearch()"
             size="small"
-            styleClass="compact-btn"
+            [variant]="'outlined'"
+            severity="info"
           ></orb-button>
           <orb-button
-            icon="pi pi-plus"
+            icon="fa fa-plus"
             label="Crear Turno"
             severity="success"
             (click)="openNewAppointmentDialog()"
             size="small"
+            [variant]="'outlined'"
             styleClass="compact-btn"
           ></orb-button>
         </div>
@@ -94,20 +95,24 @@
 </orb-card>
 
 <!-- Card del calendario/tabla con estados -->
-<orb-card style="margin-top: 1rem;">
-  <div orbHeader>
-    <h3>Agenda</h3>
-  </div>
-  
+<orb-card style="margin-top: 8px">
+
   <div orbBody>
     <!-- Fila con estados y botones de vista -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      "
+    >
       <!-- Estados del resumen -->
-      <div class="summary-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <ng-container *ngIf="(agendaStore.summary$ | async) as summary">
+      <div class="summary-tags" style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+        <ng-container *ngIf="agendaStore.summary$ | async as summary">
           <div *ngFor="let item of summary | keyvalue">
             <ng-container *ngIf="item.key !== 'total' && item.key !== 'byDate'">
-              <orb-tag 
+              <orb-tag
                 [value]="getTranslatedStatus(getKeyAsString(item.key)) + ': ' + item.value"
                 [severity]="getStatusSeverity(SUMMARY_KEY_MAP[getKeyAsString(item.key)])"
               ></orb-tag>
@@ -115,41 +120,43 @@
           </div>
         </ng-container>
       </div>
-      
-      <!-- ButtonGroup para vista -->
-      <p-buttonGroup>
-        <p-button 
-          icon="pi pi-calendar"
-          [severity]="currentView === 'calendar' ? 'primary' : 'secondary'"
-          (onClick)="toggleView('calendar')"
+
+      <!-- Botones para vista -->
+      <div style="display: flex; gap: 0.25rem">
+        <orb-button
+          [severity]="currentView === 'calendar' ? 'info' : 'secondary'"
+          (click)="toggleView('calendar')"
           size="small"
-          [outlined]="currentView !== 'calendar'"
-          pTooltip="Vista Calendario"
-        ></p-button>
-        <p-button 
-          icon="pi pi-table"
-          [severity]="currentView === 'table' ? 'primary' : 'secondary'"
-          (onClick)="toggleView('table')"
+          [variant]="currentView !== 'calendar' ? 'outlined' : 'text'"
+        >
+          <i class="fa-solid fa-calendar"></i
+        ></orb-button>
+        <orb-button
+          [severity]="currentView === 'table' ? 'info' : 'secondary'"
+          (click)="toggleView('table')"
           size="small"
-          [outlined]="currentView !== 'table'"
-          pTooltip="Vista Tabla"
-        ></p-button>
-      </p-buttonGroup>
+          [variant]="currentView !== 'table' ? 'outlined' : 'text'"
+        >
+          <i class="fa-solid fa-border-all"></i
+        ></orb-button>
+      </div>
     </div>
-    
+
     <!-- Vista Calendario -->
     <div *ngIf="currentView === 'calendar'">
       <orb-modern-calendar
         [events]="(agendaStore.calendarEvents$ | async) || []"
         [slotDuration]="(agendaStore.agendaConfig$ | async)?.slotDurationMinutes || 30"
         [view]="CalendarView.Day"
+        [viewDate]="calendarViewDate"
+        (viewDateChange)="onCalendarViewDateChange($event)"
         (datesSetRange)="handleDatesSet($event)"
         (eventClick)="handleEventClick($event)"
         (dateSelect)="handleDateSelect($event)"
         (eventDrop)="handleEventDrop($event)"
       ></orb-modern-calendar>
     </div>
-    
+
     <!-- Vista Tabla -->
     <div *ngIf="currentView === 'table'">
       <orb-table
@@ -165,27 +172,30 @@
             <td *ngFor="let col of columns">
               <ng-container [ngSwitch]="col.field">
                 <span *ngSwitchCase="'startDateTime'">
-                  {{ appointment.start | date:'dd/MM/yyyy HH:mm' }}
+                  {{ appointment.start | date : 'dd/MM/yyyy HH:mm' }}
                 </span>
                 <span *ngSwitchCase="'clientName'">{{ appointment.client?.name || '-' }}</span>
-                <span *ngSwitchCase="'professionalName'">{{ appointment.professional?.name || '-' }}</span>
+                <span *ngSwitchCase="'professionalName'">{{
+                  appointment.professional?.name || '-'
+                }}</span>
                 <span *ngSwitchCase="'status'">
-                  <orb-tag 
-                    [value]="getTranslatedStatus(appointment.status)"
-                    [severity]="getStatusSeverity(appointment.status)"
-                    size="small"
+                  <orb-tag
+                    [value]="getSpanishStatusText(appointment.status || 'pending')"
+                    [severity]="getStatusSeverity(appointment.status || 'pending')"
+                    [outlined]="true"
                   ></orb-tag>
                 </span>
                 <span *ngSwitchCase="'duration'">{{ getDuration(appointment) }} min</span>
                 <span *ngSwitchCase="'title'">{{ appointment.title }}</span>
-                <div *ngSwitchCase="'actions'" style="display: flex; gap: 0.5rem;">
+                <div *ngSwitchCase="'actions'" style="display: flex; gap: 0.5rem">
                   <orb-button
-                    icon="pi pi-pencil"
                     title="Editar"
                     size="small"
-                    severity="info"
+                    severity="secondary"
+                    [variant]="'outlined'"
                     (click)="editAppointment(appointment)"
-                  ></orb-button>
+                  >
+                <i class="fa-solid fa-pen"></i></orb-button>
                 </div>
                 <span *ngSwitchDefault>{{ appointment[col.field] }}</span>
               </ng-container>
@@ -197,7 +207,11 @@
   </div>
 </orb-card>
 
-<orb-dialog [(visible)]="displayAgendaForm" (onHide)="onFormClose()" [header]="selectedAppointment ? 'Editar Turno' : 'Nuevo Turno'">
+<orb-dialog
+  [(visible)]="displayAgendaForm"
+  (onHide)="onFormClose()"
+  [header]="selectedAppointment ? 'Editar Turno' : 'Nuevo Turno'"
+>
   <app-agenda-form
     *ngIf="displayAgendaForm"
     [appointment]="selectedAppointment"
@@ -210,4 +224,3 @@
 <!-- PrimeNG Components -->
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast>
-

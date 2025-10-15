@@ -28,7 +28,6 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { ButtonGroupModule } from 'primeng/buttongroup';
 import { TooltipModule } from 'primeng/tooltip';
 import { STATUS_TRANSLATION } from './constants/status-translation.map';
 import { SUMMARY_KEY_MAP } from './constants/summary-key.map';
@@ -61,7 +60,6 @@ import { BrowserModule } from '@angular/platform-browser';
     ConfirmDialogModule,
     ToastModule,
     ButtonModule,
-    ButtonGroupModule,
     TooltipModule,
   ],
   providers: [
@@ -80,16 +78,24 @@ export class AgendaComponent implements OnInit {
   statusColors = STATUS_COLORS;
   SUMMARY_KEY_MAP = SUMMARY_KEY_MAP;
 
+  // Alias for template compatibility
+  get agendaStore() {
+    return this.appointmentsStore;
+  }
+
 
   // Make CalendarView available in template
   CalendarView = CalendarView;
 
   // Vista actual (calendario o tabla)
   currentView: 'calendar' | 'table' = 'calendar';
-  
+
   // Filtros de fecha
   selectedDateFrom: Date = new Date();
   selectedDateTo: Date = new Date();
+
+  // Current view date for the calendar (to maintain selected day after creating appointment)
+  calendarViewDate: Date = new Date();
   
   // Configuración para DateRangePicker
   dateRangePickerConfig: DateRangePickerConfig = {
@@ -143,7 +149,14 @@ export class AgendaComponent implements OnInit {
       if (user && user.id) {       
         
         // Cargar configuración de agenda del usuario actual
-        this.appointmentsStore.loadAvailabilitySlots();
+        const today = new Date();
+        const nextWeek = new Date(today);
+        nextWeek.setDate(today.getDate() + 7);
+
+        this.appointmentsStore.loadAvailabilitySlots({
+          from: today.toISOString().split('T')[0],
+          to: nextWeek.toISOString().split('T')[0]
+        });
         
         // Usar el usuario actual directamente, sin necesidad de buscarlo en la lista de usuarios
         // Crear un objeto compatible con selectedUsers que use el ProfileResponseDto
@@ -169,7 +182,7 @@ export class AgendaComponent implements OnInit {
     });
 
     // Subscribe to appointment updates to show notification dialog
-    this.appointmentsStore.appointmentUpdated$.subscribe(({ appointment, wasDragDrop }) => {
+    this.appointmentsStore.appointmentUpdated$.subscribe(({ appointment, wasDragDrop }: { appointment: AppointmentResponseDto; wasDragDrop?: boolean }) => {
       if (wasDragDrop && appointment.client) {
         this.showClientNotificationDialog(appointment);
       }
@@ -290,11 +303,15 @@ export class AgendaComponent implements OnInit {
     // Try both extendedProps and the nested structure
     const extendedProps = eventClickInfo.event.extendedProps || {};
     const originalAppointment = extendedProps['originalAppointment'] || extendedProps.originalAppointment;
-    
+
+    console.log('Event click info:', eventClickInfo);
+    console.log('Extended props:', extendedProps);
+    console.log('Original appointment:', originalAppointment);
+
     if (originalAppointment) {
       // Verificar si el usuario tiene permisos de edición de agenda
       const canEditAgenda = this.canUserEditAgenda();
-      
+
       if (canEditAgenda) {
         // Si tiene permisos, mostrar el formulario de agenda
         this.selectedAppointment = originalAppointment;
@@ -304,6 +321,8 @@ export class AgendaComponent implements OnInit {
         // Si no tiene permisos de edición, preguntar si quiere crear consulta
         this.showConsultationDialog(originalAppointment);
       }
+    } else {
+      console.warn('No original appointment found in event click info');
     }
   }
 
@@ -343,7 +362,10 @@ export class AgendaComponent implements OnInit {
   handleDateSelect(dateSelectInfo: DateSelectInfo): void {
     const selectedDate = new Date(dateSelectInfo.startStr);
     const dayOfWeek = selectedDate.getDay(); // 0 = domingo, 1 = lunes, etc.
-    
+
+    // Update calendar view date to maintain selected day after creating appointment
+    this.calendarViewDate = selectedDate;
+
     // Por ahora permitir cualquier día (configuración de agenda pendiente de implementar)
     this.openAppointmentForm(dateSelectInfo);
   }
@@ -389,12 +411,12 @@ export class AgendaComponent implements OnInit {
         startDateTime: newStart.toISOString(),
         endDateTime: newEnd.toISOString(),
       };
-      this.appointmentsStore.updateAppointment({ id: event.id.toString(), updateData: updateDto });
+      this.appointmentsStore.updateAppointment({ id: Number(event.id), appointmentData: updateDto });
     }
   }
 
   handleDelete(appointmentId: string): void {
-    this.appointmentsStore.deleteAppointment({ id: appointmentId });
+    this.appointmentsStore.deleteAppointment(Number(appointmentId));
     this.onFormClose();
   }
 
@@ -402,41 +424,110 @@ export class AgendaComponent implements OnInit {
     this.displayAgendaForm = false;
     this.selectedAppointment = null;
     this.dialogInitialDate = null;
+    // Note: We DON'T reset calendarViewDate here to maintain the selected day
+  }
+
+  onCalendarViewDateChange(date: Date): void {
+    // Update the calendar view date when user navigates
+    this.calendarViewDate = date;
   }
 
   getKeyAsString(key: unknown): string {
     return key as string;
   }
 
-  getColor(statusKey: string): string {
-    const status = SUMMARY_KEY_MAP[statusKey];
-    return this.statusColors[status as keyof typeof this.statusColors].primary;
-  }
+
 
   getTranslatedStatus(statusKey: string): string {
+    // Validación defensiva para claves vacías o undefined
+    if (!statusKey || statusKey.trim() === '') {
+      return 'Estado no definido';
+    }
+
+    // Intentar primero mapear usando SUMMARY_KEY_MAP
     const status = SUMMARY_KEY_MAP[statusKey];
-    const translationKey = STATUS_TRANSLATION[status as keyof typeof STATUS_TRANSLATION];
-    const translation = this.translate.instant(translationKey);
-    // Si la traducción no se encontró, devolver la clave sin el prefijo
-    return translation === translationKey ? status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : translation;
+    if (status) {
+      return this.getSpanishStatusText(status);
+    }
+
+    // Si no está en SUMMARY_KEY_MAP, usar directamente el statusKey
+    return this.getSpanishStatusText(statusKey);
   }
 
   toggleView(view: 'calendar' | 'table'): void {
     this.currentView = view;
   }
 
-  getStatusSeverity(status: string): any {
-    const severityMap: { [key: string]: any } = {
+  getStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show' | 'rescheduled' {
+    const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'pending' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show' | 'rescheduled' } = {
+      // Handle both uppercase and lowercase formats
+      'PENDING': 'pending',
       'pending': 'pending',
-      'confirmed': 'confirmed', 
-      'checked_in': 'info',
+      'CONFIRMED': 'confirmed',
+      'confirmed': 'confirmed',
+      'CHECKED_IN': 'confirmed',
+      'checked_in': 'confirmed',
+      'IN_PROGRESS': 'in-progress',
       'in_progress': 'in-progress',
+      'COMPLETED': 'completed',
       'completed': 'completed',
+      'CANCELLED': 'cancelled',
       'cancelled': 'cancelled',
+      'NO_SHOW': 'no-show',
       'no_show': 'no-show',
+      'RESCHEDULED': 'rescheduled',
       'rescheduled': 'rescheduled'
     };
-    return severityMap[status] || 'secondary';
+    return severityMap[status] || 'pending';
+  }
+
+  getStatusCssClass(status: string): string {
+    const cssClassMap: { [key: string]: string } = {
+      // Handle both uppercase and lowercase formats
+      'PENDING': 'status-pending',
+      'pending': 'status-pending',
+      'CONFIRMED': 'status-confirmed',
+      'confirmed': 'status-confirmed',
+      'CHECKED_IN': 'status-checked-in',
+      'checked_in': 'status-checked-in',
+      'IN_PROGRESS': 'status-in-progress',
+      'in_progress': 'status-in-progress',
+      'COMPLETED': 'status-completed',
+      'completed': 'status-completed',
+      'CANCELLED': 'status-cancelled',
+      'cancelled': 'status-cancelled',
+      'NO_SHOW': 'status-no-show',
+      'no_show': 'status-no-show',
+      'RESCHEDULED': 'status-rescheduled',
+      'rescheduled': 'status-rescheduled'
+    };
+    return cssClassMap[status] || 'status-pending';
+  }
+
+  /**
+   * Traducciones en español para los estados de agenda
+   */
+  getSpanishStatusText(status: string): string {
+    const spanishMap: { [key: string]: string } = {
+      // Handle both uppercase and lowercase formats
+      'PENDING': 'Pendiente',
+      'pending': 'Pendiente',
+      'CONFIRMED': 'Confirmado',
+      'confirmed': 'Confirmado',
+      'CHECKED_IN': 'Llegó',
+      'checked_in': 'Llegó',
+      'IN_PROGRESS': 'En Progreso',
+      'in_progress': 'En Progreso',
+      'COMPLETED': 'Completado',
+      'completed': 'Completado',
+      'CANCELLED': 'Cancelado',
+      'cancelled': 'Cancelado',
+      'NO_SHOW': 'No Asistió',
+      'no_show': 'No Asistió',
+      'RESCHEDULED': 'Reprogramado',
+      'rescheduled': 'Reprogramado'
+    };
+    return spanishMap[status] || status || 'Pendiente';
   }
 
   editAppointment(appointment: AppointmentResponseDto): void {

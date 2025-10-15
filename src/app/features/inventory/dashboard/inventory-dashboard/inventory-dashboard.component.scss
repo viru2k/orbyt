@@ -1,196 +1,5 @@
-/* Dashboard Container */
-.dashboard {
-
-  max-width: 1600px;
-  margin: 0 auto;
-  background: #f8fafc;
-  min-height: 100vh;
-}
-
-@media (max-width: 768px) {
-  .dashboard {
-    
-  }
-}
-
-/* Header Section */
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  border-radius: 16px;
-  color: white;
-  box-shadow: 0 10px 25px rgba(5, 150, 105, 0.3);
-}
-
-@media (max-width: 768px) {
-  .dashboard-header {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-}
-
-.header-content .dashboard-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 22px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-@media (max-width: 768px) {
-  .header-content .dashboard-title {
-    font-size: 1.5rem;
-    justify-content: center;
-  }
-}
-
-.header-content .dashboard-title i {
-  font-size: 1.75rem;
-}
-
-.header-content .dashboard-subtitle {
-  margin: 0;
-  font-size: 1.1rem;
-  opacity: 0.9;
-  font-weight: 400;
-}
-
-.header-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-@media (max-width: 768px) {
-  .header-actions {
-    flex-direction: column;
-    width: 100%;
-  }
-}
-
-/* KPI Cards Grid */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-@media (max-width: 768px) {
-  .kpi-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
-
-.kpi-card {
-  position: relative;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-}
-
-.kpi-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.kpi-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  border-radius: 12px 12px 0 0;
-}
-
-.kpi-card.products::before {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-}
-
-.kpi-card.low-stock::before {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
-.kpi-card.inventory-value::before {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.kpi-card.movements::before {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-}
-
-.kpi-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.kpi-icon i {
-  font-size: 1.75rem;
-  color: white;
-}
-
-.kpi-icon.products {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-}
-
-.kpi-icon.low-stock {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
-.kpi-icon.inventory-value {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.kpi-icon.movements {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-}
-
-.kpi-content .kpi-value {
-  font-size: 2.25rem;
-  font-weight: 800;
-  margin: 0 0 0.5rem 0;
-  color: #1e293b;
-}
-
-.kpi-content .kpi-label {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin: 0 0 0.5rem 0;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.kpi-trend {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.kpi-trend.positive {
-  color: #10b981;
-}
-
-.kpi-trend.negative {
-  color: #ef4444;
-}
-
-.kpi-trend i {
-  font-size: 0.75rem;
-}
+// Inventory Dashboard Styles
+// Metric cards now use global styles from _design-system.scss
 
 /* Charts Section */
 .charts-grid {
@@ -208,15 +17,25 @@
 }
 
 .chart-card {
-  border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
 }
 
 .chart-card:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
-.chart-card .chart-container {
+[orbHeader] h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.125rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-container {
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -229,8 +48,8 @@
 }
 
 .chart-period .active {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
 }
 
 .chart-legend {
@@ -246,6 +65,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
+  color: #475569;
 }
 
 .legend-color {
@@ -270,12 +90,12 @@
 }
 
 .activity-card {
-  border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
 }
 
 .activity-card:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Low Stock Products */
@@ -420,12 +240,12 @@
 
 /* Quick Actions Panel */
 .quick-actions-panel {
-  border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
 }
 
 .quick-actions-panel:hover {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .quick-actions-grid {

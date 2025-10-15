@@ -1,11 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { BehaviorSubject, Observable, of, map, catchError } from 'rxjs';
 import { RewardsService } from '../../../api/services/rewards.service';
-import { 
-  RewardProgram, 
-  ClientReward, 
-  RewardMetrics, 
-  CreateRewardProgramDto, 
+import { RewardProgramResponseDto } from '../../../api/models/reward-program-response-dto';
+import {
+  ClientReward,
+  RewardMetrics,
+  CreateRewardProgramDto,
   UpdateRewardProgramDto,
   RewardActivity,
   TopRewardProgram
@@ -18,7 +18,7 @@ export class RewardsManagementService {
   private rewardsService = inject(RewardsService);
 
   // State management
-  private _rewardPrograms$ = new BehaviorSubject<RewardProgram[]>([]);
+  private _rewardPrograms$ = new BehaviorSubject<RewardProgramResponseDto[]>([]);
   private _metrics$ = new BehaviorSubject<RewardMetrics | null>(null);
   private _loading$ = new BehaviorSubject<boolean>(false);
 
@@ -37,111 +37,33 @@ export class RewardsManagementService {
   }
 
   // Reward Programs Management
-  loadRewardPrograms(): Observable<RewardProgram[]> {
+  loadRewardPrograms(): Observable<RewardProgramResponseDto[]> {
     this.loading.set(true);
     this._loading$.next(true);
 
     return this.rewardsService.rewardsControllerGetAllRewardPrograms().pipe(
-      map((response: any) => {
-        // Try to parse the response - backend should now return actual data
-        if (response && Array.isArray(response)) {
-          const convertedPrograms: RewardProgram[] = response.map(program => ({
-            id: program.id || 0,
-            name: program.name || '',
-            description: program.description || '',
-            businessTypeId: program.businessTypeId || 1,
-            rewardType: program.rewardType as any || 'POINTS',
-            triggerType: program.triggerType as any || 'VISIT_COUNT',
-            triggerValue: program.triggerValue || 0,
-            rewardValue: program.rewardValue || 0,
-            pointsRequired: program.pointsRequired || 0,
-            maxRedemptions: program.maxRedemptions,
-            validityDays: program.validityDays || 30,
-            startDate: program.startDate || new Date().toISOString(),
-            endDate: program.endDate,
-            isActive: program.isActive ?? true,
-            terms: program.terms,
-            eligibleClientTypes: program.eligibleClientTypes || [],
-            minimumSpend: program.minimumSpend,
-            stackable: program.stackable ?? false,
-            autoApply: program.autoApply ?? false,
-            createdAt: program.createdAt || new Date().toISOString(),
-            updatedAt: program.updatedAt || new Date().toISOString(),
-            createdBy: program.createdBy || '',
-            currentRedemptions: program.currentRedemptions || 0,
-            usageCount: program.usageCount || 0,
-            lastUsed: program.lastUsed
-          }));
-          
-          this._rewardPrograms$.next(convertedPrograms);
-          this.loading.set(false);
-          this._loading$.next(false);
-          
-          return convertedPrograms;
-        } else {
-          // If no data or void response, fall back to mock
-          throw new Error('No data returned from API');
-        }
+      map((response: RewardProgramResponseDto[]) => {
+        this._rewardPrograms$.next(response);
+        this.loading.set(false);
+        this._loading$.next(false);
+        return response;
       }),
       catchError(error => {
         console.error('Error loading reward programs:', error);
-        console.log('Falling back to mock data');
-        this.error.set('Using mock data (API not ready)');
+        this.error.set('Error loading reward programs');
         this.loading.set(false);
         this._loading$.next(false);
-        
-        // Fallback to mock data
-        const mockPrograms: RewardProgram[] = [
-          {
-            id: 1,
-            name: 'Loyalty Points',
-            description: 'Earn points for every consultation',
-            businessTypeId: 1,
-            isActive: true,
-            pointsRequired: 100,
-            rewardType: 'discount_percentage' as any,
-            rewardValue: 10,
-            maxRedemptions: 1000,
-            startDate: '2024-01-01',
-            endDate: '2024-12-31',
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z'
-          },
-          {
-            id: 2,
-            name: 'VIP Member Benefits',
-            description: 'Exclusive benefits for VIP members',
-            businessTypeId: 1,
-            isActive: true,
-            pointsRequired: 500,
-            rewardType: 'free_service' as any,
-            rewardValue: 0,
-            maxRedemptions: 100,
-            startDate: '2024-01-01',
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z'
-          }
-        ];
 
-        this._rewardPrograms$.next(mockPrograms);
-        return of(mockPrograms);
+        this._rewardPrograms$.next([]);
+        return of([]);
       })
     );
   }
 
-  createRewardProgram(program: CreateRewardProgramDto): Observable<RewardProgram> {
+  createRewardProgram(program: CreateRewardProgramDto): Observable<RewardProgramResponseDto> {
     this.loading.set(true);
-    
-    // Mock implementation - replace with actual API call
-    const newProgram: RewardProgram = {
-      id: Date.now(),
-      ...program,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
 
-    return of(newProgram).pipe(
+    return this.rewardsService.rewardsControllerCreateRewardProgram({ body: program as any }).pipe(
       map(created => {
         const currentPrograms = this._rewardPrograms$.value;
         this._rewardPrograms$.next([...currentPrograms, created]);
@@ -156,20 +78,13 @@ export class RewardsManagementService {
     );
   }
 
-  updateRewardProgram(id: number, updates: UpdateRewardProgramDto): Observable<RewardProgram> {
+  updateRewardProgram(id: number, updates: UpdateRewardProgramDto): Observable<void> {
     this.loading.set(true);
 
-    return of(updates).pipe(
-      map(updateData => {
-        const currentPrograms = this._rewardPrograms$.value;
-        const updatedPrograms = currentPrograms.map(program => 
-          program.id === id 
-            ? { ...program, ...updateData, updatedAt: new Date().toISOString() }
-            : program
-        );
-        this._rewardPrograms$.next(updatedPrograms);
+    return this.rewardsService.rewardsControllerUpdateRewardProgram({ id, body: updates as any }).pipe(
+      map(() => {
+        this.loadRewardPrograms().subscribe();
         this.loading.set(false);
-        return updatedPrograms.find(p => p.id === id)!;
       }),
       catchError(error => {
         this.error.set('Error updating reward program');
@@ -179,17 +94,23 @@ export class RewardsManagementService {
     );
   }
 
-  deleteRewardProgram(id: number): Observable<void> {
+  deleteRewardProgram(id: number): Observable<RewardProgramResponseDto> {
     this.loading.set(true);
 
-    return of(void 0).pipe(
-      map(() => {
+    return this.rewardsService.rewardsControllerDeleteRewardProgram({ id }).pipe(
+      map((deletedProgram) => {
+        // Update local state after successful soft delete
+        // Replace the program with its updated version (now INACTIVE)
         const currentPrograms = this._rewardPrograms$.value;
-        const filteredPrograms = currentPrograms.filter(program => program.id !== id);
-        this._rewardPrograms$.next(filteredPrograms);
+        const updatedPrograms = currentPrograms.map(program =>
+          program.id === id ? deletedProgram : program
+        );
+        this._rewardPrograms$.next(updatedPrograms);
         this.loading.set(false);
+        return deletedProgram;
       }),
       catchError(error => {
+        console.error('Error deleting reward program:', error);
         this.error.set('Error deleting reward program');
         this.loading.set(false);
         throw error;

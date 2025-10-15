@@ -9,47 +9,40 @@
   styleClass="agenda-config-modal"
   (onHide)="onHide()"
 >
-
-
   <div slot="content">
-    
     <form [formGroup]="configForm" class="config-form">
-      
       <!-- Main configuration layout: Two main columns -->
-      <div class="main-config-row" style="display: flex; gap: 8px;">
-        
+      <div class="main-config-row" style="display: flex; gap: 8px">
         <!-- Left column: Time and Schedule Settings -->
-        <div class="left-config-column" style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+        <div
+          class="left-config-column"
+          style="flex: 1; display: flex; flex-direction: column; gap: 8px"
+        >
           <!-- Card: Horario de trabajo -->
           <orb-card>
             <div orbHeader>
-              <h4><i class="pi pi-clock" style="color: #3b82f6;"></i> Horario de Trabajo</h4>
+              <h4><i class="pi pi-clock" style="color: #3b82f6"></i> Horario de Trabajo</h4>
             </div>
             <div orbBody>
               <div class="time-inputs gap-1">
-                <div class="input-group " style="padding-bottom: 8px;" >
-                  <p-floatLabel>
-                    <input 
-                      pInputText 
-                      id="startTime"
-                      type="time" 
-                      formControlName="startTime"
-                      class="w-full"
-                    />                   
-                  </p-floatLabel>
+                <div class="input-group" style="padding-bottom: 8px">
+                  <input
+                    pInputText
+                    id="startTime"
+                    type="time"
+                    formControlName="startTime"
+                    class="w-full"
+                  />
                 </div>
-                
-                <div class="input-group">
-                  <p-floatLabel>
-                    <input 
-                      pInputText 
-                      id="endTime"
-                      type="time" 
-                      formControlName="endTime"
-                      class="w-full"
-                    />
 
-                  </p-floatLabel>
+                <div class="input-group">
+                  <input
+                    pInputText
+                    id="endTime"
+                    type="time"
+                    formControlName="endTime"
+                    class="w-full"
+                  />
                 </div>
               </div>
             </div>
@@ -58,21 +51,22 @@
           <!-- Card: Configuración de turnos -->
           <orb-card>
             <div orbHeader>
-              <h4><i class="pi pi-stopwatch" style="color: #10b981;"></i> Configuración de Turnos</h4>
+              <h4>
+                <i class="pi pi-stopwatch" style="color: #10b981"></i> Configuración de Turnos
+              </h4>
             </div>
             <div orbBody>
               <div class="input-group">
-                <p-floatLabel>
-                  <p-inputNumber 
-                    id="slotDuration"
-                    formControlName="slotDuration"
-                    [min]="15"
-                    [max]="120"
-                    suffix=" min"
-                    styleClass="w-full"
-                  />
-                  <label for="slotDuration">Duración de cada turno</label>
-                </p-floatLabel>
+                <p-inputNumber
+                  id="slotDuration"
+                  formControlName="slotDuration"
+                  [min]="15"
+                  [max]="120"
+                  suffix=" min"
+                  styleClass="w-full"
+                />
+                <label for="slotDuration">Duración de cada turno</label>
+
                 <small class="help-text">Entre 15 y 120 minutos</small>
               </div>
             </div>
@@ -81,28 +75,32 @@
           <!-- Card: Configuraciones adicionales -->
           <orb-card>
             <div orbHeader>
-              <h4><i class="pi pi-cog" style="color: #f59e0b;"></i> Configuraciones Adicionales</h4>
+              <h4><i class="pi pi-cog" style="color: #f59e0b"></i> Configuraciones Adicionales</h4>
             </div>
             <div orbBody>
               <div class="checkbox-group">
-                <div class="checkbox-item" style="padding-bottom:4px">
-                  <p-checkbox
+                <div class="checkbox-item" style="padding-bottom: 4px">
+                  <orb-checkbox
                     inputId="overbooking"
                     formControlName="overbookingAllowed"
                     label="Permitir sobrebooking"
                     [binary]="true"
                   />
-                  <small class="help-text" style="margin-left: 4px;">Permitir más citas de las que el horario normalmente permite</small>
+                  <small class="help-text" style="margin-left: 4px"
+                    >Permitir más citas de las que el horario normalmente permite</small
+                  >
                 </div>
-                
+
                 <div class="checkbox-item">
-                  <p-checkbox
+                  <orb-checkbox
                     inputId="blockedDays"
                     formControlName="allowBookingOnBlockedDays"
                     label="Permitir reservas en días bloqueados"
                     [binary]="true"
                   />
-                  <small class="help-text" style="margin-left: 4px;">Los clientes pueden reservar en días marcados como feriados</small>
+                  <small class="help-text" style="margin-left: 4px"
+                    >Los clientes pueden reservar en días marcados como feriados</small
+                  >
                 </div>
               </div>
             </div>
@@ -110,82 +108,104 @@
         </div>
 
         <!-- Right column: Working Days -->
-        <div class="right-config-column" style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+        <div
+          class="right-config-column"
+          style="flex: 1; display: flex; flex-direction: column; gap: 8px"
+        >
           <!-- Card: Working Days -->
           <orb-card>
             <div orbHeader>
-              <h4><i class="pi pi-calendar" style="color: #8b5cf6;"></i> Días Laborales</h4>
+              <h4><i class="pi pi-calendar" style="color: #8b5cf6"></i> Días Laborales</h4>
             </div>
             <div orbBody>
               <div class="working-days">
                 <!-- Row 1: Monday and Tuesday -->
                 <div class="working-days-row">
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[0].label }}" [formControl]="workingDaysControls[0]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[0].label }}"
+                      [formControl]="workingDaysControls[0]"
+                    ></orb-switch>
                   </div>
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[1].label }}" [formControl]="workingDaysControls[1]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[1].label }}"
+                      [formControl]="workingDaysControls[1]"
+                    ></orb-switch>
                   </div>
                 </div>
-                
+
                 <!-- Row 2: Wednesday and Thursday -->
                 <div class="working-days-row">
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[2].label }}" [formControl]="workingDaysControls[2]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[2].label }}"
+                      [formControl]="workingDaysControls[2]"
+                    ></orb-switch>
                   </div>
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[3].label }}" [formControl]="workingDaysControls[3]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[3].label }}"
+                      [formControl]="workingDaysControls[3]"
+                    ></orb-switch>
                   </div>
                 </div>
-                
+
                 <!-- Row 3: Friday and Saturday -->
                 <div class="working-days-row">
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[4].label }}" [formControl]="workingDaysControls[4]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[4].label }}"
+                      [formControl]="workingDaysControls[4]"
+                    ></orb-switch>
                   </div>
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[5].label }}" [formControl]="workingDaysControls[5]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[5].label }}"
+                      [formControl]="workingDaysControls[5]"
+                    ></orb-switch>
                   </div>
                 </div>
-                
+
                 <!-- Row 4: Sunday centered -->
                 <div class="working-days-row">
                   <div class="day-checkbox">
-                    <orb-switch label="     {{ weekDays[6].label }}" [formControl]="workingDaysControls[6]"></orb-switch>
+                    <orb-switch
+                      label="     {{ weekDays[6].label }}"
+                      [formControl]="workingDaysControls[6]"
+                    ></orb-switch>
                   </div>
                 </div>
               </div>
             </div>
           </orb-card>
-
         </div>
       </div>
 
       <!-- Full width section: Holidays card -->
-      <div style="margin-top: 8px;">
+      <div style="margin-top: 8px">
         <orb-card>
           <div orbHeader>
-            <h4><i class="pi pi-sun" style="color: #ef4444;"></i> Días Festivos y Vacaciones</h4>
+            <h4><i class="pi pi-sun" style="color: #ef4444"></i> Días Festivos y Vacaciones</h4>
           </div>
           <div orbBody>
-          <div class="holidays-management">
-            <!-- Add Holiday Button with spacing -->
-            <div class="add-holiday-header" style="margin-bottom: 2rem;">
-              <orb-button
-                label="Agregar Día Festivo"
-                icon="pi pi-plus"
-                severity="info"
-                size="small"
-                (click)="showAddHolidayForm = !showAddHolidayForm"
-              />
-            </div>
+            <div class="holidays-management">
+              <!-- Add Holiday Button with spacing -->
+              <div class="add-holiday-header" style="margin-bottom: 2rem">
+                <orb-button
+                  label="Agregar Día Festivo"
+                  icon="pi pi-plus"
+                  severity="info"
+                  size="small"
+                  (click)="showAddHolidayForm = !showAddHolidayForm"
+                />
+              </div>
 
-            <!-- Add Holiday Form -->
-            <div *ngIf="showAddHolidayForm" class="add-holiday-form" style="margin-bottom: 2rem;">
-              <form [formGroup]="holidayForm" class="holiday-form-inline">
-                <div class="input-group">
-                  <p-floatLabel>
-                    <p-calendar 
+              <!-- Add Holiday Form -->
+              <div *ngIf="showAddHolidayForm" class="add-holiday-form" style="margin-bottom: 2rem">
+                <form [formGroup]="holidayForm" class="holiday-form-inline">
+                  <div class="input-group">
+                    <p-datePicker
                       id="holidayDate"
                       formControlName="date"
                       dateFormat="dd/mm/yy"
@@ -194,143 +214,145 @@
                       placeholder=" "
                     />
                     <label for="holidayDate">Fecha</label>
-                  </p-floatLabel>
-                </div>
-                
-                <div class="input-group">
-                  <p-floatLabel>
-                    <input 
-                      pInputText 
+                  </div>
+
+                  <div class="input-group">
+                    <input
+                      pInputText
                       id="holidayReason"
                       formControlName="reason"
                       class="w-full"
                       placeholder=" "
                     />
                     <label for="holidayReason">Descripción (opcional)</label>
-                  </p-floatLabel>
-                </div>
+                  </div>
 
-                <div class="form-actions">
-                  <orb-button
-                    label="Cancelar"
-                    severity="secondary"
-                    size="small"
-                    (click)="onCancelAddHoliday()"
-                  />
-                  <orb-button
-                    label="Agregar"
-                    severity="success"
-                    icon="pi pi-plus"
-                    size="small"
-                    (click)="onAddHoliday()"
-                    [loading]="!!(agendaStore.holidaysLoading$ | async)"
-                    [disabled]="holidayForm.invalid"
-                  />
-                </div>
-              </form>
-            </div>
+                  <div class="form-actions">
+                    <orb-button
+                      label="Cancelar"
+                      severity="secondary"
+                      size="small"
+                      (click)="onCancelAddHoliday()"
+                    />
+                    <orb-button
+                      label="Agregar"
+                      severity="success"
+                      icon="pi pi-plus"
+                      size="small"
+                      (click)="onAddHoliday()"
+                      [loading]="!!(agendaStore.holidaysLoading$ | async)"
+                      [disabled]="holidayForm.invalid"
+                    />
+                  </div>
+                </form>
+              </div>
 
-            <!-- Holidays Table with proper spacing -->
-            <div class="holidays-table-container" style="margin-top: 1.5rem; border-top: 1px solid #e5e7eb; padding-top: 1.5rem;">
-              <p-table 
-                [value]="(agendaStore.agendaHolydays$ | async) || []" 
-                [loading]="!!(agendaStore.holidaysLoading$ | async)"
-                [paginator]="true"
-                [rows]="5"
-                [showCurrentPageReport]="true"
-                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} feriados"
-                responsiveLayout="scroll"
-                styleClass="p-datatable-striped p-datatable-sm"
+              <!-- Holidays Table with proper spacing -->
+              <div
+                class="holidays-table-container"
+                style="margin-top: 1.5rem; border-top: 1px solid #e5e7eb; padding-top: 1.5rem"
               >
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th style="width: 30%">Fecha</th>
-                    <th style="width: 50%">Descripción</th>
-                    <th style="width: 10%"></th>
-                  </tr>
-                </ng-template>
-                
-                <ng-template pTemplate="body" let-holiday>
-                  <tr>
-                    <td>
-                      <div class="holiday-date-cell">
-                        <i class="fas fa-calendar-alt"></i>
-                        {{ formatDisplayDate(holiday.date) }}
-                      </div>
-                    </td>
-                    <td>
-                      <span class="holiday-description">
-                        {{ holiday.description || 'Sin descripción' }}
-                      </span>
-                    </td>
-                    <td>
-                      <orb-button
-                        icon="pi pi-trash"
-                        severity="danger"
-                        size="small"
-                        pTooltip="Eliminar día festivo"
-                        (click)="onDeleteHoliday(holiday)"
-                      />
-                    </td>
-                  </tr>
-                </ng-template>
+                <p-table
+                  [value]="(agendaStore.agendaHolydays$ | async) || []"
+                  [loading]="!!(agendaStore.holidaysLoading$ | async)"
+                  [paginator]="true"
+                  [rows]="5"
+                  [showCurrentPageReport]="true"
+                  currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} feriados"
+                  responsiveLayout="scroll"
+                  styleClass="p-datatable-striped p-datatable-sm"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width: 30%">Fecha</th>
+                      <th style="width: 50%">Descripción</th>
+                      <th style="width: 10%"></th>
+                    </tr>
+                  </ng-template>
 
-                <ng-template pTemplate="emptymessage">
-                  <tr>
-                    <td colspan="3" class="text-center p-4">
-                      <div class="empty-state">
-                        <i class="fas fa-calendar-times text-4xl text-gray-400 mb-3"></i>
-                        <p class="text-gray-600 mb-0">No hay días festivos configurados</p>
-                        <small class="text-gray-500">
-                          Usa el botón "Agregar Día Festivo" para crear uno nuevo
-                        </small>
-                      </div>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
+                  <ng-template pTemplate="body" let-holiday>
+                    <tr>
+                      <td>
+                        <div class="holiday-date-cell">
+                          <i class="fas fa-calendar-alt"></i>
+                          {{ formatDisplayDate(holiday.date) }}
+                        </div>
+                      </td>
+                      <td>
+                        <span class="holiday-description">
+                          {{ holiday.description || 'Sin descripción' }}
+                        </span>
+                      </td>
+                      <td>
+                        <orb-button
+                          icon="pi pi-trash"
+                          severity="danger"
+                          size="small"
+                          pTooltip="Eliminar día festivo"
+                          (click)="onDeleteHoliday(holiday)"
+                        />
+                      </td>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="3" class="text-center p-4">
+                        <div class="empty-state">
+                          <i class="fas fa-calendar-times text-4xl text-gray-400 mb-3"></i>
+                          <p class="text-gray-600 mb-0">No hay días festivos configurados</p>
+                          <small class="text-gray-500">
+                            Usa el botón "Agregar Día Festivo" para crear uno nuevo
+                          </small>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
             </div>
-          </div>
           </div>
         </orb-card>
       </div>
 
       <!-- Nueva sección: Gestión de Fechas Especiales -->
-      <div style="margin-top: 8px;">
+      <div style="margin-top: 8px">
         <orb-card>
           <div orbHeader>
-            <h4><i class="pi pi-ban" style="color: #e74c3c;"></i> Gestión de Fechas Especiales</h4>
+            <h4><i class="pi pi-ban" style="color: #e74c3c"></i> Gestión de Fechas Especiales</h4>
           </div>
           <div orbBody>
             <p-tabView styleClass="special-dates-tabs">
               <p-tabPanel header="Bloquear Fechas" leftIcon="pi pi-ban">
                 <app-blocking-management
                   [professionalId]="professionalId"
-                  (operationCompleted)="onBlockingOperationCompleted($event)">
+                  (operationCompleted)="onBlockingOperationCompleted($event)"
+                >
                 </app-blocking-management>
               </p-tabPanel>
-              
+
               <p-tabPanel header="Horarios Especiales" leftIcon="pi pi-clock">
                 <app-special-schedule
                   [professionalId]="professionalId"
-                  (operationCompleted)="onScheduleOperationCompleted($event)">
+                  (operationCompleted)="onScheduleOperationCompleted($event)"
+                >
                 </app-special-schedule>
               </p-tabPanel>
             </p-tabView>
           </div>
         </orb-card>
       </div>
-
     </form>
   </div>
-  
+
   <div slot="footer">
-    <orb-form-footer 
-      [buttons]="footerButtons" 
+    <orb-form-footer
+      [buttons]="footerButtons"
       alignment="right"
-      (actionClicked)="handleFooterAction($event)">
+      (actionClicked)="handleFooterAction($event)"
+    >
     </orb-form-footer>
   </div>
 </orb-dialog>
 
-<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

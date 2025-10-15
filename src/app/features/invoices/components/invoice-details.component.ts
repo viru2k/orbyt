@@ -38,10 +38,11 @@ import { MessageService } from 'primeng/api';
             <i class="fa fa-file-invoice"></i>
             {{ invoice.invoiceNumber }}
           </h2>
-          <p-tag 
-            [value]="getStatusLabel(invoice.status)" 
+          <p-tag
+            [value]="getStatusLabel(invoice.status)"
             [severity]="getStatusSeverity(invoice.status)"
-            [rounded]="true">
+            [rounded]="true"
+          >
           </p-tag>
         </div>
         <div class="header-actions">
@@ -50,20 +51,26 @@ import { MessageService } from 'primeng/api';
             label="Editar"
             icon="fa fa-edit"
             (clicked)="onEdit()"
-            variant="secondary">
+            severity="secondary"
+            variant="outlined"
+          >
           </orb-button>
           <orb-button
             *ngIf="!invoice.isPaid"
             label="Procesar Pago"
             icon="fa fa-credit-card"
             (clicked)="onProcessPayment()"
-            variant="success">
+            severity="success"
+            variant="outlined"
+          >
           </orb-button>
           <orb-button
             label="Descargar PDF"
             icon="fa fa-download"
             (clicked)="onDownloadPDF()"
-            variant="info">
+            severity="info"
+            variant="outlined"
+          >
           </orb-button>
         </div>
       </div>
@@ -101,7 +108,9 @@ import { MessageService } from 'primeng/api';
             </div>
             <div class="info-row" *ngIf="invoice.dueDate">
               <span class="label">Fecha de Vencimiento:</span>
-              <span class="value" [class.overdue]="isOverdue(invoice)">{{ formatDate(invoice.dueDate) }}</span>
+              <span class="value" [class.overdue]="isOverdue(invoice)">{{
+                formatDate(invoice.dueDate)
+              }}</span>
             </div>
             <div class="info-row" *ngIf="invoice.paymentDate">
               <span class="label">Fecha de Pago:</span>
@@ -142,21 +151,24 @@ import { MessageService } from 'primeng/api';
                 </div>
               </td>
               <td>
-                <p-tag 
-                  [value]="getItemTypeLabel(item.itemType)" 
+                <p-tag
+                  [value]="getItemTypeLabel(item.itemType)"
                   [severity]="item.itemType === 'service' ? 'info' : 'success'"
-                  [rounded]="true">
+                  [rounded]="true"
+                >
                 </p-tag>
               </td>
               <td>{{ item.quantity }}</td>
-              <td>{{ item.unitPrice | currency:'EUR':'symbol':'1.2-2' }}</td>
+              <td>{{ item.unitPrice | currency : 'EUR' : 'symbol' : '1.2-2' }}</td>
               <td>
                 <span *ngIf="item.discount > 0">
                   {{ item.discount }}{{ item.discountType === 'percentage' ? '%' : '€' }}
                 </span>
                 <span *ngIf="item.discount === 0">-</span>
               </td>
-              <td><strong>{{ item.total | currency:'EUR':'symbol':'1.2-2' }}</strong></td>
+              <td>
+                <strong>{{ item.total | currency : 'EUR' : 'symbol' : '1.2-2' }}</strong>
+              </td>
             </tr>
           </ng-template>
         </p-table>
@@ -167,22 +179,29 @@ import { MessageService } from 'primeng/api';
         <div class="totals-card">
           <div class="total-row">
             <span class="label">Subtotal:</span>
-            <span class="value">{{ invoice.subtotal | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="value">{{
+              invoice.subtotal | currency : 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
           </div>
           <div class="total-row" *ngIf="invoice.discount > 0">
             <span class="label">
-              Descuento ({{ invoice.discount }}{{ invoice.discountType === 'percentage' ? '%' : '€' }}):
+              Descuento ({{ invoice.discount
+              }}{{ invoice.discountType === 'percentage' ? '%' : '€' }}):
             </span>
-            <span class="value discount">-{{ getDiscountAmount() | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="value discount"
+              >-{{ getDiscountAmount() | currency : 'EUR' : 'symbol' : '1.2-2' }}</span
+            >
           </div>
           <div class="total-row" *ngIf="invoice.tax > 0">
             <span class="label">IVA ({{ invoice.taxRate }}%):</span>
-            <span class="value">{{ invoice.tax | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="value">{{ invoice.tax | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
           </div>
           <p-divider></p-divider>
           <div class="total-row final-total">
             <span class="label"><strong>Total:</strong></span>
-            <span class="value"><strong>{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</strong></span>
+            <span class="value"
+              ><strong>{{ invoice.total | currency : 'EUR' : 'symbol' : '1.2-2' }}</strong></span
+            >
           </div>
         </div>
       </div>
@@ -194,11 +213,15 @@ import { MessageService } from 'primeng/api';
           <div class="payment-grid">
             <div class="payment-item">
               <span class="payment-label">Monto Pagado:</span>
-              <span class="payment-value paid">{{ invoice.paidAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
+              <span class="payment-value paid">{{
+                invoice.paidAmount | currency : 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
             </div>
             <div class="payment-item">
               <span class="payment-label">Monto Pendiente:</span>
-              <span class="payment-value pending">{{ invoice.remainingAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
+              <span class="payment-value pending">{{
+                invoice.remainingAmount | currency : 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
             </div>
             <div class="payment-item" *ngIf="invoice.paymentDate">
               <span class="payment-label">Fecha de Pago:</span>
@@ -229,7 +252,7 @@ import { MessageService } from 'primeng/api';
 
     <p-toast></p-toast>
   `,
-  styleUrls: ['./invoice-details.component.scss']
+  styleUrls: ['./invoice-details.component.scss'],
 })
 export class InvoiceDetailsComponent {
   @Input() invoice?: InvoiceResponseDto;
@@ -243,7 +266,7 @@ export class InvoiceDetailsComponent {
     return new Date(dateString).toLocaleDateString('es-ES', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   }
 
@@ -254,33 +277,33 @@ export class InvoiceDetailsComponent {
 
   getStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'draft': 'Borrador',
-      'pending': 'Pendiente',
-      'paid': 'Pagada',
-      'cancelled': 'Cancelada',
-      'overdue': 'Vencida'
+      draft: 'Borrador',
+      pending: 'Pendiente',
+      paid: 'Pagada',
+      cancelled: 'Cancelada',
+      overdue: 'Vencida',
     };
     return statusMap[status] || status;
   }
 
   getStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'draft': 'info',
-      'pending': 'warning',
-      'paid': 'success',
-      'cancelled': 'danger',
-      'overdue': 'danger'
+      draft: 'info',
+      pending: 'warning',
+      paid: 'success',
+      cancelled: 'danger',
+      overdue: 'danger',
     };
     return severityMap[status] || 'info';
   }
 
   getPaymentMethodLabel(method: string): string {
     const methodMap: { [key: string]: string } = {
-      'cash': 'Efectivo',
-      'card': 'Tarjeta',
-      'transfer': 'Transferencia',
-      'check': 'Cheque',
-      'other': 'Otro'
+      cash: 'Efectivo',
+      card: 'Tarjeta',
+      transfer: 'Transferencia',
+      check: 'Cheque',
+      other: 'Otro',
     };
     return methodMap[method] || method;
   }
@@ -291,9 +314,9 @@ export class InvoiceDetailsComponent {
 
   getDiscountAmount(): number {
     if (!this.invoice) return 0;
-    
+
     if (this.invoice.discountType === 'percentage') {
-      return this.invoice.subtotal * this.invoice.discount / 100;
+      return (this.invoice.subtotal * this.invoice.discount) / 100;
     } else {
       return this.invoice.discount;
     }
@@ -317,7 +340,7 @@ export class InvoiceDetailsComponent {
       this.messageService.add({
         severity: 'info',
         summary: 'Descarga',
-        detail: `Descargando PDF de factura ${this.invoice.invoiceNumber}...`
+        detail: `Descargando PDF de factura ${this.invoice.invoiceNumber}...`,
       });
     }
   }

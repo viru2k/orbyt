@@ -1,6 +1,22 @@
-import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, signal, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  signal,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 // PrimeNG Components
 import { DialogModule } from 'primeng/dialog';
@@ -17,7 +33,11 @@ import { OrbFormFooterComponent } from '@orb-components';
 
 // Services and Models
 import { RewardsService } from '../../../../api/services/rewards.service';
-import { ClientResponseDto, RewardProgramResponseDto, TriggerPurchaseCompletedDto } from '../../../../api/models';
+import {
+  ClientResponseDto,
+  RewardProgramResponseDto,
+  TriggerPurchaseCompletedDto,
+} from '../../../../api/models';
 import { FormButtonAction } from '@orb-models';
 
 export interface ManualRewardApplication {
@@ -43,7 +63,7 @@ export interface ManualRewardApplication {
     ProgressSpinnerModule,
     MessageModule,
     ToastModule,
-    OrbFormFooterComponent
+    OrbFormFooterComponent,
   ],
   providers: [MessageService],
   template: `
@@ -55,37 +75,40 @@ export interface ManualRewardApplication {
       [draggable]="false"
       styleClass="reward-application-modal"
       header="Aplicar Recompensa Manual"
-      [style]="{width: '600px', minHeight: '400px'}"
-      (onHide)="onCancel()">
-
+      [style]="{ width: '600px', minHeight: '400px' }"
+      (onHide)="onCancel()"
+    >
       <div class="modal-content">
         <!-- Client Info -->
         <div class="client-info" *ngIf="client">
           <h4><i class="fa fa-user"></i> Cliente Seleccionado</h4>
-          <p><strong>{{ client.name }} {{ client.lastName }}</strong></p>
-          <p *ngIf="client.email" class="text-muted"><i class="fa fa-envelope"></i> {{ client.email }}</p>
-          <p *ngIf="client.phone" class="text-muted"><i class="fa fa-phone"></i> {{ client.phone }}</p>
+          <p>
+            <strong>{{ client.name }} {{ client.lastName }}</strong>
+          </p>
+          <p *ngIf="client.email" class="text-muted">
+            <i class="fa fa-envelope"></i> {{ client.email }}
+          </p>
+          <p *ngIf="client.phone" class="text-muted">
+            <i class="fa fa-phone"></i> {{ client.phone }}
+          </p>
         </div>
 
         <!-- Form -->
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="reward-form">
-
           <!-- Loading State -->
           <div *ngIf="loadingPrograms()" class="loading-center">
-            <p-progressSpinner strokeWidth="3" [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
+            <p-progressSpinner
+              strokeWidth="3"
+              [style]="{ width: '30px', height: '30px' }"
+            ></p-progressSpinner>
             <p>Cargando programas de recompensas...</p>
           </div>
 
           <!-- Error State -->
-          <p-message
-            *ngIf="errorMessage()"
-            severity="error"
-            [text]="errorMessage()">
-          </p-message>
+          <p-message *ngIf="errorMessage()" severity="error" [text]="errorMessage()"> </p-message>
 
           <!-- Form Fields -->
           <div *ngIf="!loadingPrograms() && !errorMessage()" class="form-fields">
-
             <!-- Program Selection -->
             <div class="field">
               <label for="programId">Programa de Recompensa *</label>
@@ -96,11 +119,14 @@ export interface ManualRewardApplication {
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Selecciona un programa"
-                [style]="{width: '100%'}"
-                (onChange)="onProgramChange($event)">
+                [style]="{ width: '100%' }"
+                (onChange)="onProgramChange($event)"
+              >
               </p-dropdown>
-              <small *ngIf="form.get('programId')?.invalid && form.get('programId')?.touched"
-                     class="field-error">
+              <small
+                *ngIf="form.get('programId')?.invalid && form.get('programId')?.touched"
+                class="field-error"
+              >
                 Selecciona un programa de recompensa
               </small>
             </div>
@@ -108,7 +134,9 @@ export interface ManualRewardApplication {
             <!-- Selected Program Info -->
             <div *ngIf="selectedProgram()" class="program-info">
               <h5><i class="fa fa-info-circle"></i> Información del Programa</h5>
-              <p><strong>{{ selectedProgram()?.name }}</strong></p>
+              <p>
+                <strong>{{ selectedProgram()?.name }}</strong>
+              </p>
               <p class="program-description">{{ selectedProgram()?.description }}</p>
               <div class="program-details">
                 <span class="detail-item">
@@ -132,12 +160,15 @@ export interface ManualRewardApplication {
                 class="p-inputtext p-component"
                 placeholder="Ej: 150.00"
                 min="0"
-                step="0.01">
+                step="0.01"
+              />
               <small class="field-help">
                 Monto de compra ficticio para calcular puntos y recompensas
               </small>
-              <small *ngIf="form.get('simulatedAmount')?.invalid && form.get('simulatedAmount')?.touched"
-                     class="field-error">
+              <small
+                *ngIf="form.get('simulatedAmount')?.invalid && form.get('simulatedAmount')?.touched"
+                class="field-error"
+              >
                 Ingresa un monto válido mayor a 0
               </small>
             </div>
@@ -150,20 +181,20 @@ export interface ManualRewardApplication {
                 formControlName="reason"
                 rows="3"
                 class="p-inputtextarea p-component"
-                placeholder="Describe el motivo para aplicar esta recompensa manualmente...">
+                placeholder="Describe el motivo para aplicar esta recompensa manualmente..."
+              >
               </textarea>
-              <small *ngIf="form.get('reason')?.invalid && form.get('reason')?.touched"
-                     class="field-error">
+              <small
+                *ngIf="form.get('reason')?.invalid && form.get('reason')?.touched"
+                class="field-error"
+              >
                 El motivo es requerido
               </small>
             </div>
 
             <!-- Notify Client -->
             <div class="field">
-              <p-checkbox
-                formControlName="notifyClient"
-                binary="true"
-                inputId="notifyClient">
+              <p-checkbox formControlName="notifyClient" binary="true" inputId="notifyClient">
               </p-checkbox>
               <label for="notifyClient" class="checkbox-label">
                 Notificar al cliente por email
@@ -171,7 +202,11 @@ export interface ManualRewardApplication {
             </div>
 
             <!-- Debug Info (temporal) -->
-            <div *ngIf="form.invalid" class="debug-info" style="background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px;">
+            <div
+              *ngIf="form.invalid"
+              class="debug-info"
+              style="background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 4px;"
+            >
               <h5>Debug - Form Status:</h5>
               <p><strong>Form Valid:</strong> {{ form.valid }}</p>
               <p><strong>Form Errors:</strong></p>
@@ -183,12 +218,11 @@ export interface ManualRewardApplication {
                   <strong>simulatedAmount:</strong> {{ form.get('simulatedAmount')?.errors | json }}
                 </li>
                 <li *ngIf="form.get('reason')?.invalid">
-                  <strong>reason:</strong> {{ form.get('reason')?.errors | json }}
-                  (longitud: {{ form.get('reason')?.value?.length || 0 }})
+                  <strong>reason:</strong> {{ form.get('reason')?.errors | json }} (longitud:
+                  {{ form.get('reason')?.value?.length || 0 }})
                 </li>
               </ul>
             </div>
-
           </div>
         </form>
       </div>
@@ -198,12 +232,13 @@ export interface ManualRewardApplication {
         <orb-form-footer
           [buttons]="footerActions"
           alignment="right"
-          (actionClicked)="handleFooterAction($event)">
+          (actionClicked)="handleFooterAction($event)"
+        >
         </orb-form-footer>
       </ng-template>
     </p-dialog>
   `,
-  styleUrls: ['./reward-application-modal.component.scss']
+  styleUrls: ['./reward-application-modal.component.scss'],
 })
 export class RewardApplicationModalComponent implements OnInit, OnChanges {
   @Input() visible = false;
@@ -223,7 +258,7 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
   errorMessage = signal('');
   availablePrograms = signal<RewardProgramResponseDto[]>([]);
   selectedProgram = signal<RewardProgramResponseDto | null>(null);
-  programOptions = signal<{label: string, value: number}[]>([]);
+  programOptions = signal<{ label: string; value: number }[]>([]);
 
   // Footer actions configuration
   get footerActions(): FormButtonAction[] {
@@ -236,26 +271,26 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
       {
         label: 'Cancelar',
         action: 'cancel',
-        styleType: 'p-button-text',
         severity: 'secondary',
-        disabled: this.applying()
+        variant: 'outlined',
+        disabled: this.applying(),
       },
       {
         label: this.applying() ? 'Aplicando...' : 'Aplicar Recompensa',
         action: 'save',
-        styleType: 'p-button-success',
-        buttonType: 'submit',
         severity: 'info',
+        variant: 'outlined',
+        buttonType: 'submit',
         disabled: this.form?.invalid || this.applying(),
-        loading: this.applying()
-      }
+        loading: this.applying(),
+      },
     ];
   }
 
   // Función temporal para debug
   private getFormErrors(): any {
     const errors: any = {};
-    Object.keys(this.form.controls).forEach(key => {
+    Object.keys(this.form.controls).forEach((key) => {
       const control = this.form.get(key);
       if (control && control.invalid) {
         errors[key] = control.errors;
@@ -279,7 +314,7 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
       programId: [null, [Validators.required]],
       simulatedAmount: [100, [Validators.required, Validators.min(0.01)]],
       reason: ['', [Validators.required, Validators.minLength(10)]],
-      notifyClient: [true]
+      notifyClient: [true],
     });
   }
 
@@ -292,13 +327,15 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
     this.rewardsService.rewardsControllerGetAllRewardPrograms().subscribe({
       next: (programs) => {
         // Filter only active programs
-        const activePrograms = programs.filter(p => p.status === 'ACTIVE');
+        const activePrograms = programs.filter((p) => p.status === 'ACTIVE');
         this.availablePrograms.set(activePrograms);
 
         // Create dropdown options
-        const options = activePrograms.map(program => ({
-          label: `${program.name} - ${this.getRewardTypeLabel(program.rewardType)} ${program.rewardValue}`,
-          value: program.id
+        const options = activePrograms.map((program) => ({
+          label: `${program.name} - ${this.getRewardTypeLabel(program.rewardType)} ${
+            program.rewardValue
+          }`,
+          value: program.id,
         }));
         this.programOptions.set(options);
 
@@ -308,13 +345,13 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
         console.error('Error loading reward programs:', error);
         this.errorMessage.set('Error al cargar programas de recompensas. Inténtalo nuevamente.');
         this.loadingPrograms.set(false);
-      }
+      },
     });
   }
 
   onProgramChange(event: any): void {
     const programId = event.value;
-    const program = this.availablePrograms().find(p => p.id === programId);
+    const program = this.availablePrograms().find((p) => p.id === programId);
     this.selectedProgram.set(program || null);
   }
 
@@ -330,11 +367,13 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
       purchaseAmount: formValue.simulatedAmount,
       paymentMethod: 'other',
       paymentDate: new Date().toISOString(),
-      items: [{
-        serviceId: 1, // Default service for manual application
-        quantity: 1,
-        amount: formValue.simulatedAmount
-      }]
+      items: [
+        {
+          serviceId: 1, // Default service for manual application
+          quantity: 1,
+          amount: formValue.simulatedAmount,
+        },
+      ],
     };
 
     this.rewardsService.rewardsControllerTriggerPurchaseCompleted({ body: requestData }).subscribe({
@@ -342,7 +381,7 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
         this.messageService.add({
           severity: 'success',
           summary: 'Recompensa Aplicada',
-          detail: `Se otorgaron ${response.pointsEarned} puntos al cliente. ${response.rewardsUnlocked} recompensas desbloqueadas.`
+          detail: `Se otorgaron ${response.pointsEarned} puntos al cliente. ${response.rewardsUnlocked} recompensas desbloqueadas.`,
         });
 
         this.applying.set(false);
@@ -354,10 +393,10 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo aplicar la recompensa. Inténtalo nuevamente.'
+          detail: 'No se pudo aplicar la recompensa. Inténtalo nuevamente.',
         });
         this.applying.set(false);
-      }
+      },
     });
   }
 
@@ -371,7 +410,7 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
       programId: null,
       simulatedAmount: 100,
       reason: '',
-      notifyClient: true
+      notifyClient: true,
     });
     this.selectedProgram.set(null);
     this.applying.set(false);
@@ -380,11 +419,11 @@ export class RewardApplicationModalComponent implements OnInit, OnChanges {
 
   getRewardTypeLabel(type: string | undefined): string {
     const labels: Record<string, string> = {
-      'DISCOUNT_PERCENTAGE': '% Descuento',
-      'DISCOUNT_FIXED': '$ Descuento',
-      'FREE_SERVICE': 'Servicio Gratis',
-      'GIFT_CARD': 'Tarjeta Regalo',
-      'CASHBACK': 'Cashback'
+      DISCOUNT_PERCENTAGE: '% Descuento',
+      DISCOUNT_FIXED: '$ Descuento',
+      FREE_SERVICE: 'Servicio Gratis',
+      GIFT_CARD: 'Tarjeta Regalo',
+      CASHBACK: 'Cashback',
     };
     return labels[type || ''] || type || '';
   }

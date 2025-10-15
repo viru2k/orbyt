@@ -1,0 +1,561 @@
+<div class="invoice-form-container">
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+    <!-- Basic Information -->
+    <div class="form-section">
+      <h3>Información Básica</h3>
+
+      <!-- Header Row: Cliente, Fecha, Estado, Método de Pago -->
+      <div class="header-row">
+        <div class="header-client">
+          <orb-client-selector
+            [selectedClient]="selectedClient()"
+            title="Información del Cliente"
+            [showActions]="true"
+            [showSearchButton]="true"
+            searchButtonLabel="Seleccionar Cliente"
+            [required]="true"
+            (searchClick)="openClientSearchModal()"
+            (clientClear)="clearSelectedClient()"
+          ></orb-client-selector>
+          <!-- Hidden input for form control -->
+          <input type="hidden" formControlName="clientId" />
+        </div>
+
+        <div class="header-fields">
+          <div class="flex gap-3">
+            <orb-form-field label="Fecha de Vencimiento" class="header-date">
+              <orb-datepicker
+                formControlName="dueDate"
+                [showIcon]="true"
+                dateFormat="dd/mm/yy"
+                appendTo="body">
+              </orb-datepicker>
+            </orb-form-field>
+
+            <orb-form-field label="Estado" class="header-status">
+              <orb-select
+                formControlName="status"
+                [options]="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                appendTo="body"
+              >
+              </orb-select>
+            </orb-form-field>
+          </div>
+
+          <div class="mt-3">
+            <orb-form-field label="Método de Pago" class="header-payment">
+              <orb-select
+                formControlName="paymentMethod"
+                [options]="paymentMethodOptions"
+                optionLabel="label"
+                optionValue="value"
+                appendTo="body"
+              >
+              </orb-select>
+            </orb-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Rewards Table -->
+    <div class="form-section" *ngIf="selectedClient() && availableRewards().length > 0">
+      <h3><i class="fa fa-star"></i> Descuentos y Recompensas Disponibles</h3>
+
+      <orb-table
+        [value]="availableRewards()"
+        [columns]="rewardsColumns"
+        [tableFeatures]="rewardsTableFeatures"
+        [paginator]="false"
+        dataKey="id"
+      >
+        <ng-template pTemplate="body" let-reward let-columns="columns">
+          <tr [class.applied-reward]="appliedRewards().includes(reward.id!)">
+            <td *ngFor="let col of columns">
+              <ng-container [ngSwitch]="col.field">
+                <ng-container *ngSwitchCase="'reward'">
+                  <div class="reward-info">
+                    <strong>{{ reward.rewardProgram?.name || 'Recompensa' }}</strong>
+                    <br />
+                    <small class="text-muted">{{ reward.rewardProgram?.description }}</small>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'type'">
+                  <orb-tag
+                    [value]="getRewardTypeLabel(reward.rewardProgram?.rewardType)"
+                    [severity]="getRewardTypeSeverity(reward.rewardProgram?.rewardType)"
+                    size="small"
+                  >
+                  </orb-tag>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'value'">
+                  <span class="reward-value">{{ getRewardValueDisplay(reward) }}</span>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'points'">
+                  <span
+                    class="points-display"
+                    *ngIf="reward.rewardProgram?.rewardType === 'POINTS'"
+                  >
+                    {{ reward.currentProgress || 0 }} pts
+                  </span>
+                  <span *ngIf="reward.rewardProgram?.rewardType !== 'POINTS'" class="text-muted"
+                    >-</span
+                  >
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'apply'">
+                  <div class="text-center">
+                    <orb-checkbox
+                      [ngModel]="appliedRewards().includes(reward.id!)"
+                      (ngModelChange)="toggleRewardApplication(reward, $event)"
+                      [disabled]="reward.status !== 'EARNED'"
+                      [binary]="true"
+                    >
+                    </orb-checkbox>
+                  </div>
+                </ng-container>
+
+                <ng-container *ngSwitchDefault>
+                  {{ reward[col.field] }}
+                </ng-container>
+              </ng-container>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center text-muted py-3">
+              No hay recompensas disponibles para aplicar
+            </td>
+          </tr>
+        </ng-template>
+      </orb-table>
+    </div>
+
+    <!-- Items Section -->
+    <div class="form-section">
+      <h3>
+         Items de la Factura
+        <div class="item-actions">
+          <orb-button
+            label="Seleccionar Item"
+            (clicked)="showItemSelector()"
+            severity="info"
+            variant="outlined"
+            size="small"
+          >
+            <i class="fa fa-search"> </i>
+          </orb-button>
+        </div>
+      </h3>
+
+      <div class="items-table" *ngIf="items.length > 0">
+        <orb-table
+          [value]="items"
+          [columns]="itemsColumns"
+          [tableFeatures]="itemsTableFeatures"
+          [paginator]="false"
+          dataKey="description"
+        >
+          <ng-template pTemplate="body" let-item let-i="rowIndex" let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                <ng-container [ngSwitch]="col.field">
+                  <ng-container *ngSwitchCase="'type'">
+                    <orb-tag
+                      [value]="getItemTypeLabel(item.itemType)"
+                      [severity]="getItemTypeSeverity(item.itemType)"
+                      size="small"
+                    ></orb-tag>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'description'">
+                    <orb-text-input
+                      [(ngModel)]="item.description"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="updateItemTotal(i)"
+                    >
+                    </orb-text-input>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'quantity'">
+                    <orb-number-input
+                      [(ngModel)]="item.quantity"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="updateItemTotal(i)"
+                      [min]="1"
+                      [step]="1"
+                      [allowDecimals]="false"
+                      placeholder="1"
+                    ></orb-number-input>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'unitPrice'">
+                    <orb-currency-input
+                      [(ngModel)]="item.unitPrice"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="updateItemTotal(i)"
+                      currency="EUR"
+                    ></orb-currency-input>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'discount'">
+                    <div class="discount-container">
+                      <orb-number-input
+                        [(ngModel)]="item.discount"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="updateItemTotal(i)"
+                        [min]="0"
+                        [step]="0.01"
+                        [allowDecimals]="true"
+                        placeholder="0"
+                      ></orb-number-input>
+                      <orb-select
+                        [(ngModel)]="item.discountType"
+                        [ngModelOptions]="{ standalone: true }"
+                        [options]="discountTypeOptions"
+                        (ngModelChange)="updateItemTotal(i)"
+                        optionLabel="label"
+                        optionValue="value"
+                        appendTo="body"
+                      >
+                      </orb-select>
+                    </div>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'total'">
+                    <strong>{{ item.total | currency : 'EUR' : 'symbol' : '1.2-2' }}</strong>
+                  </ng-container>
+
+                  <ng-container *ngSwitchCase="'actions'">
+                    <orb-button
+                      icon="fa fa-trash"
+                      (clicked)="removeItem(i)"
+                      severity="danger"
+                      variant="outlined"
+                      size="small"
+                    >
+                    </orb-button>
+                  </ng-container>
+
+                  <ng-container *ngSwitchDefault>
+                    {{ item[col.field] }}
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+        </orb-table>
+      </div>
+
+      <div class="table-spacing"></div>
+
+      <div class="empty-items" *ngIf="items.length === 0">
+        <i class="fa fa-inbox"></i>
+        <p>No hay items en la factura. Haz clic en "Seleccionar Item" para comenzar.</p>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="form-section">
+      <h3>Resumen</h3>
+
+      <div class="summary-container">
+        <div class="summary-content">
+          <div class="summary-left">
+            <orb-form-field label="Descuento General">
+              <div class="discount-container">
+                <orb-number-input
+                  formControlName="discount"
+                  [min]="0"
+                  [step]="0.01"
+                  [allowDecimals]="true"
+                  placeholder="0"
+                  (ngModelChange)="calculateTotals()"
+                ></orb-number-input>
+                <orb-select
+                  formControlName="discountType"
+                  [options]="discountTypeOptions"
+                  (selectionChange)="calculateTotals()"
+                  optionLabel="label"
+                  optionValue="value"
+                  appendTo="body"
+                >
+                </orb-select>
+              </div>
+            </orb-form-field>
+
+            <orb-form-field label="Tasa de Impuestos (%)">
+              <orb-number-input
+                formControlName="taxRate"
+                [min]="0"
+                [max]="100"
+                [step]="0.1"
+                [allowDecimals]="true"
+                placeholder="21"
+                (ngModelChange)="calculateTotals()"
+              ></orb-number-input>
+            </orb-form-field>
+          </div>
+
+          <div class="summary-right">
+            <div class="summary-totals">
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>{{ subtotal | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+              </div>
+              <div class="summary-row" *ngIf="generalDiscount > 0">
+                <span>Descuento:</span>
+                <span>-{{ generalDiscount | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+              </div>
+              <div class="summary-row" *ngIf="taxAmount > 0">
+                <span>Impuestos:</span>
+                <span>{{ taxAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+              </div>
+              <div class="summary-row" *ngIf="pointsDiscountAmount > 0">
+                <span>Descuento con puntos:</span>
+                <span>-{{ pointsDiscountAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}</span>
+              </div>
+              <div class="summary-row total">
+                <span><strong>Total:</strong></span>
+                <span
+                  ><strong>{{ total | currency : 'EUR' : 'symbol' : '1.2-2' }}</strong></span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rewards Section -->
+    <div class="form-section" *ngIf="showRewardsPreview()">
+      <h3><i class="fa fa-star"></i> Recompensas del Cliente</h3>
+
+      <orb-card styleClass="rewards-card">
+        <div orbBody class="rewards-content">
+          <!-- Available Points -->
+          <div class="points-section">
+            <div class="points-header">
+              <h5>Puntos Disponibles</h5>
+              <div class="points-badge">
+                <span class="points-count">{{ availablePoints() }}</span>
+                <span class="points-label">puntos</span>
+              </div>
+            </div>
+
+            <div class="points-value">
+              <small
+                >Valor:
+                {{ availablePoints() * 0.01 | currency : 'EUR' : 'symbol' : '1.2-2' }}</small
+              >
+            </div>
+
+            <!-- Points Application -->
+            <div class="points-application" *ngIf="availablePoints() > 0">
+              <div class="apply-points-container">
+                <label for="pointsInput">Aplicar puntos como descuento:</label>
+                <div class="points-input-group">
+                  <orb-number-input
+                    inputId="pointsInput"
+                    [ngModel]="pointsToApply()"
+                    (ngModelChange)="applyPoints($event)"
+                    [min]="0"
+                    [max]="getMaxApplicablePoints()"
+                    [allowDecimals]="false"
+                    placeholder="0"
+                  ></orb-number-input>
+                  <span class="points-suffix">pts</span>
+                  <orb-button
+                    label="Aplicar Todo"
+                    size="small"
+                    severity="success"
+                    variant="outlined"
+                    (clicked)="applyPoints(getMaxApplicablePoints())"
+                  >
+                  </orb-button>
+                  <orb-button
+                    label="Limpiar"
+                    size="small"
+                    severity="danger"
+                    variant="outlined"
+                    (clicked)="clearAppliedPoints()"
+                    *ngIf="pointsToApply() > 0"
+                  >
+                  </orb-button>
+                </div>
+                <small class="points-help">
+                  Máximo aplicable: {{ getMaxApplicablePoints() }} pts ({{
+                    getMaxApplicablePoints() * 0.01 | currency : 'EUR' : 'symbol' : '1.2-2'
+                  }})
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <p-divider></p-divider>
+
+          <!-- Active Rewards Preview -->
+          <div class="rewards-preview">
+            <h5>Recompensas Activas</h5>
+            <div class="rewards-list">
+              <div class="reward-item" *ngFor="let reward of clientRewards()">
+                <div class="reward-info">
+                  <span class="reward-name">{{ reward.rewardProgram.name }}</span>
+                  <span style="margin-left: 8px;">
+                    <orb-tag
+                      [value]="getRewardStatusLabel(reward.status)"
+                      [severity]="getRewardStatusSeverity(reward.status)"
+                      size="small"
+                    >
+                    </orb-tag>
+                  </span>
+                </div>
+                <div class="reward-progress" *ngIf="reward.status === 'IN_PROGRESS'">
+                  <p-progressBar
+                    [value]="((reward.currentProgress || 0) / (reward.targetValue || 1)) * 100"
+                    [style]="{ height: '0.5rem' }"
+                    [showValue]="false"
+                  >
+                  </p-progressBar>
+                  <small
+                    >{{ reward.currentProgress || 0 }} / {{ reward.targetValue || 0 }}</small
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </orb-card>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="form-section">
+      <h3>Información Adicional</h3>
+
+      <div class="form-grid">
+        <orb-form-field label="Notas de la Factura">
+          <orb-text-area formControlName="notes" [rows]="3"> </orb-text-area>
+        </orb-form-field>
+
+        <orb-form-field label="Referencia de Pago">
+          <orb-text-input formControlName="paymentReference"> </orb-text-input>
+        </orb-form-field>
+
+        <orb-form-field label="Notas de Pago">
+          <orb-text-area formControlName="paymentNotes" [rows]="3"> </orb-text-area>
+        </orb-form-field>
+      </div>
+    </div>
+
+    <!-- Form Footer -->
+    <orb-form-footer
+      [buttons]="footerActions"
+      alignment="right"
+      (actionClicked)="onActionClicked($event)"
+    >
+    </orb-form-footer>
+  </form>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<!-- Client Search Modal -->
+<orb-client-search-modal
+  [(visible)]="showClientSearchModal"
+  (clientSelected)="onClientSelected($event)"
+  (cancel)="onClientSearchModalClose()"
+>
+</orb-client-search-modal>
+
+<!-- Item Selector Modal -->
+<app-item-selector-modal
+  [(visible)]="showItemSelectorModal"
+  (itemSelected)="onItemSelected($event)"
+  (cancel)="onItemSelectorCancel()"
+>
+</app-item-selector-modal>
+
+<!-- Rewards Generation Modal -->
+<p-dialog
+  [visible]="showRewardsModal()"
+  [modal]="true"
+  [closable]="true"
+  [resizable]="false"
+  [draggable]="false"
+  styleClass="rewards-modal"
+  header="¡Recompensas Generadas!"
+  [style]="{ width: '500px' }"
+  (onHide)="onRewardsModalClose()"
+>
+  <div class="rewards-modal-content" *ngIf="rewardsToGenerate()">
+    <!-- Client Info -->
+    <div class="modal-client-info" *ngIf="selectedClient()">
+      <h4>
+        <i class="fa fa-user"></i> {{ selectedClient()?.name }} {{ selectedClient()?.lastName }}
+      </h4>
+      <p *ngIf="selectedClient()?.email">
+        <i class="fa fa-envelope"></i> {{ selectedClient()?.email }}
+      </p>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Rewards Summary -->
+    <div class="rewards-summary">
+      <div class="summary-item points-earned">
+        <div class="summary-icon">
+          <i class="fa fa-coins fa-2x"></i>
+        </div>
+        <div class="summary-content">
+          <h3>{{ rewardsToGenerate()?.pointsEarned || 0 }}</h3>
+          <p>Puntos Ganados</p>
+          <small
+            >Valor:
+            {{
+              (rewardsToGenerate()?.pointsEarned || 0) * 0.01
+                | currency : 'EUR' : 'symbol' : '1.2-2'
+            }}</small
+          >
+        </div>
+      </div>
+
+      <div
+        class="summary-item rewards-unlocked"
+        *ngIf="(rewardsToGenerate()?.rewardsUnlocked || 0) > 0"
+      >
+        <div class="summary-icon">
+          <i class="fa fa-gift fa-2x"></i>
+        </div>
+        <div class="summary-content">
+          <h3>{{ rewardsToGenerate()?.rewardsUnlocked || 0 }}</h3>
+          <p>Recompensas Desbloqueadas</p>
+          <small>¡Nuevas recompensas disponibles!</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message">
+      <i class="fa fa-check-circle"></i>
+      <p>Las recompensas se han aplicado exitosamente a la cuenta del cliente.</p>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <orb-button
+      label="Continuar"
+      severity="info"
+      variant="outlined"
+      (clicked)="onRewardsModalClose()"
+    >
+    </orb-button>
+  </ng-template>
+</p-dialog>

@@ -10,28 +10,28 @@
 
     <!-- Loading State -->
     <div *ngIf="loading$()" class="loading-container">
-      <p-card>
-        <div class="flex flex-column align-items-center gap-3 p-4">
+      <orb-card>
+        <div orbBody class="flex flex-column align-items-center gap-3 p-4">
           <p-progressSpinner></p-progressSpinner>
           <h3 class="m-0">Validando token de acceso...</h3>
           <p class="text-gray-600 m-0">Por favor espere mientras verificamos su token</p>
         </div>
-      </p-card>
+      </orb-card>
     </div>
 
     <!-- Valid Token - Consultation Data -->
     <div *ngIf="consultationData$() && accessGranted" class="consultation-content">
-      <p-card>
-        <ng-template pTemplate="header">
+      <orb-card>
+        <div orbHeader>
           <div class="card-header">
             <div class="flex align-items-center gap-2">
               <i class="pi pi-user text-blue-600"></i>
-              <h2 class="m-0">Información de Consulta</h2>
+              <h2 class="m-0">Informaciï¿½n de Consulta</h2>
             </div>
           </div>
-        </ng-template>
+        </div>
 
-        <div class="consultation-info">
+        <div orbBody class="consultation-info">
           <div class="info-grid">
             <div class="info-item">
               <label>Cliente:</label>
@@ -54,18 +54,18 @@
             </div>
           </div>
         </div>
-      </p-card>
+      </orb-card>
     </div>
 
     <!-- Footer -->
     <div class="consultation-footer">
       <div class="footer-content">
         <p class="text-sm text-gray-500 m-0">
-          © 2025 Orbyt. Portal seguro de consultas médicas.
+          ï¿½ 2025 Orbyt. Portal seguro de consultas mï¿½dicas.
         </p>
         <div class="security-info">
           <i class="pi pi-shield text-green-600"></i>
-          <span class="text-sm text-gray-600">Conexión segura</span>
+          <span class="text-sm text-gray-600">Conexiï¿½n segura</span>
         </div>
       </div>
     </div>

@@ -11,14 +11,26 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 
 // Orb Components
-import { OrbButtonComponent, OrbTextInputComponent, OrbFormFieldComponent, OrbFormFooterComponent, OrbSelectComponent, OrbDatepickerComponent, OrbTextAreaComponent } from '@orb-components';
+import {
+  OrbButtonComponent,
+  OrbTextInputComponent,
+  OrbFormFieldComponent,
+  OrbFormFooterComponent,
+  OrbSelectComponent,
+  OrbDatepickerComponent,
+  OrbTextAreaComponent,
+} from '@orb-components';
 
 // Services and Models
 import { InvoicesService } from '../../../api/services/invoices.service';
 import { RewardsService } from '../../../api/services/rewards.service';
 import { InvoiceResponseDto } from '../../../api/models/invoice-response-dto';
 import { ProcessPaymentDto } from '../../../api/models/process-payment-dto';
-import { TriggerPurchaseCompletedDto, CustomerRewardResponseDto, PurchaseCompletedResponseDto } from '../../../api/models';
+import {
+  TriggerPurchaseCompletedDto,
+  CustomerRewardResponseDto,
+  PurchaseCompletedResponseDto,
+} from '../../../api/models';
 import { MessageService } from 'primeng/api';
 import { FormButtonAction } from '@orb-models';
 
@@ -59,15 +71,21 @@ import { FormButtonAction } from '@orb-models';
           </div>
           <div class="summary-item">
             <span class="label">Total de la Factura:</span>
-            <span class="value amount">{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="value amount">{{
+              invoice.total | currency : 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
           </div>
           <div class="summary-item">
             <span class="label">Monto Pagado:</span>
-            <span class="value paid">{{ invoice.paidAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="value paid">{{
+              invoice.paidAmount | currency : 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
           </div>
           <div class="summary-item">
             <span class="label">Monto Pendiente:</span>
-            <span class="value pending">{{ invoice.remainingAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
+            <span class="value pending">{{
+              invoice.remainingAmount | currency : 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
           </div>
         </div>
       </div>
@@ -78,7 +96,7 @@ import { FormButtonAction } from '@orb-models';
       <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
         <div class="form-section">
           <h3><i class="fa fa-credit-card"></i> Información del Pago</h3>
-          
+
           <div class="form-grid">
             <orb-form-field label="Monto a Pagar" [required]="true">
               <p-inputNumber
@@ -94,9 +112,10 @@ import { FormButtonAction } from '@orb-models';
                 incrementButtonIcon="pi pi-plus"
                 decrementButtonIcon="pi pi-minus"
                 styleClass="w-full"
-                />
+              />
               <small class="help-text">
-                Máximo disponible: {{ invoice.remainingAmount | currency:'EUR':'symbol':'1.2-2' }}
+                Máximo disponible:
+                {{ invoice.remainingAmount | currency : 'EUR' : 'symbol' : '1.2-2' }}
               </small>
             </orb-form-field>
 
@@ -104,36 +123,29 @@ import { FormButtonAction } from '@orb-models';
               <orb-select
                 formControlName="paymentMethod"
                 [options]="paymentMethodOptions"
-                
                 optionLabel="label"
-                optionValue="value">
+                optionValue="value"
+              >
               </orb-select>
             </orb-form-field>
 
             <orb-form-field label="Fecha de Pago">
               <orb-datepicker
                 formControlName="paymentDate"
-                
                 [showIcon]="true"
                 dateFormat="dd/mm/yy"
-                [maxDate]="today">
+                [maxDate]="today"
+              >
               </orb-datepicker>
             </orb-form-field>
 
             <orb-form-field label="Referencia de Pago">
-              <orb-text-input
-                formControlName="paymentReference"
-                >
-              </orb-text-input>
+              <orb-text-input formControlName="paymentReference"> </orb-text-input>
             </orb-form-field>
           </div>
 
           <orb-form-field label="Notas del Pago">
-            <orb-text-area
-              formControlName="paymentNotes"
-              
-              [rows]="3">
-            </orb-text-area>
+            <orb-text-area formControlName="paymentNotes" [rows]="3"> </orb-text-area>
           </orb-form-field>
         </div>
 
@@ -143,15 +155,23 @@ import { FormButtonAction } from '@orb-models';
           <div class="preview-grid">
             <div class="preview-item">
               <span class="label">Monto a Pagar:</span>
-              <span class="value amount">{{ paymentForm.get('amount')?.value || 0 | currency:'EUR':'symbol':'1.2-2' }}</span>
+              <span class="value amount">{{
+                paymentForm.get('amount')?.value || 0 | currency : 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
             </div>
             <div class="preview-item">
               <span class="label">Nuevo Monto Pagado:</span>
-              <span class="value">{{ (invoice.paidAmount + (paymentForm.get('amount')?.value || 0)) | currency:'EUR':'symbol':'1.2-2' }}</span>
+              <span class="value">{{
+                invoice.paidAmount + (paymentForm.get('amount')?.value || 0)
+                  | currency : 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
             </div>
             <div class="preview-item">
               <span class="label">Nuevo Monto Pendiente:</span>
-              <span class="value">{{ (invoice.remainingAmount - (paymentForm.get('amount')?.value || 0)) | currency:'EUR':'symbol':'1.2-2' }}</span>
+              <span class="value">{{
+                invoice.remainingAmount - (paymentForm.get('amount')?.value || 0)
+                  | currency : 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
             </div>
             <div class="preview-item status">
               <span class="label">Estado Resultante:</span>
@@ -170,25 +190,25 @@ import { FormButtonAction } from '@orb-models';
             <div class="reward-item" *ngFor="let reward of clientRewards()">
               <div class="reward-info">
                 <div class="reward-header">
-                  <span class="reward-name">{{ reward.rewardProgram?.name }}</span>
+                  <span class="reward-name">{{ reward.rewardProgram.name }}</span>
                   <p-tag
                     [value]="getRewardStatusLabel(reward.status)"
-                    [severity]="getRewardStatusSeverity(reward.status)">
+                    [severity]="getRewardStatusSeverity(reward.status)"
+                  >
                   </p-tag>
                 </div>
-                <p class="reward-description">{{ reward.rewardProgram?.description }}</p>
+                <p class="reward-description">{{ reward.rewardProgram.description }}</p>
                 <div class="progress-container">
                   <div class="progress-info">
                     <span class="progress-text">
                       {{ reward.currentProgress || 0 }} / {{ reward.targetValue || 0 }}
                     </span>
-                    <span class="progress-percentage">
-                      {{ getProgressPercentage(reward) }}%
-                    </span>
+                    <span class="progress-percentage"> {{ getProgressPercentage(reward) }}% </span>
                   </div>
                   <p-progressBar
                     [value]="getProgressPercentage(reward)"
-                    styleClass="reward-progress">
+                    styleClass="reward-progress"
+                  >
                   </p-progressBar>
                 </div>
                 <div class="reward-value" *ngIf="reward.rewardProgram">
@@ -200,15 +220,19 @@ import { FormButtonAction } from '@orb-models';
           </div>
           <div class="rewards-note" *ngIf="getEstimatedPointsFromPayment() > 0">
             <i class="fa fa-info-circle"></i>
-            <span>Este pago podría otorgar aproximadamente <strong>{{ getEstimatedPointsFromPayment() }} puntos</strong> adicionales</span>
+            <span
+              >Este pago podría otorgar aproximadamente
+              <strong>{{ getEstimatedPointsFromPayment() }} puntos</strong> adicionales</span
+            >
           </div>
         </div>
 
         <!-- Form Footer -->
-        <orb-form-footer 
+        <orb-form-footer
           [buttons]="footerActions"
           alignment="right"
-          (actionClicked)="onActionClicked($event)">
+          (actionClicked)="onActionClicked($event)"
+        >
         </orb-form-footer>
       </form>
     </div>
@@ -224,8 +248,8 @@ import { FormButtonAction } from '@orb-models';
       [resizable]="false"
       [draggable]="false"
       styleClass="rewards-result-modal"
-      [style]="{width: '550px', minHeight: '400px'}">
-
+      [style]="{ width: '550px', minHeight: '400px' }"
+    >
       <div class="rewards-result" *ngIf="lastRewardResponse()">
         <div class="celebration-section">
           <div class="celebration-icon">
@@ -263,10 +287,11 @@ import { FormButtonAction } from '@orb-models';
             <div class="reward-list">
               <div class="reward-update" *ngFor="let reward of updatedClientRewards()">
                 <div class="reward-header">
-                  <span class="reward-name">{{ reward.rewardProgram?.name }}</span>
+                  <span class="reward-name">{{ reward.rewardProgram.name }}</span>
                   <p-tag
                     [value]="getRewardStatusLabel(reward.status)"
-                    [severity]="getRewardStatusSeverity(reward.status)">
+                    [severity]="getRewardStatusSeverity(reward.status)"
+                  >
                   </p-tag>
                 </div>
                 <div class="progress-container">
@@ -278,7 +303,8 @@ import { FormButtonAction } from '@orb-models';
                   </div>
                   <p-progressBar
                     [value]="getProgressPercentage(reward)"
-                    styleClass="reward-progress">
+                    styleClass="reward-progress"
+                  >
                   </p-progressBar>
                 </div>
                 <div class="reward-value" *ngIf="reward.rewardProgram">
@@ -295,13 +321,15 @@ import { FormButtonAction } from '@orb-models';
         <orb-button
           label="Continuar"
           (clicked)="closeRewardsResult()"
-          variant="primary"
-          icon="fa fa-check">
+          severity="info"
+          variant="outlined"
+          icon="fa fa-check"
+        >
         </orb-button>
       </ng-template>
     </p-dialog>
   `,
-  styleUrls: ['./payment-form.component.scss']
+  styleUrls: ['./payment-form.component.scss'],
 })
 export class PaymentFormComponent implements OnInit {
   @Input() invoice?: InvoiceResponseDto;
@@ -328,12 +356,18 @@ export class PaymentFormComponent implements OnInit {
     { label: 'Tarjeta', value: 'card' },
     { label: 'Transferencia', value: 'transfer' },
     { label: 'Cheque', value: 'check' },
-    { label: 'Otro', value: 'other' }
+    { label: 'Otro', value: 'other' },
   ];
 
   footerActions: FormButtonAction[] = [
-    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text', severity: 'secondary' },
-    { label: 'Procesar Pago', action: 'save', styleType: 'p-button-success', buttonType: 'submit', severity: 'info' }
+    { label: 'Cancelar', action: 'cancel', severity: 'secondary', styleType: 'text' },
+    {
+      label: 'Procesar Pago',
+      action: 'save',
+      severity: 'success',
+      buttonType: 'submit',
+      outlined: true,
+    },
   ];
 
   ngOnInit(): void {
@@ -343,23 +377,24 @@ export class PaymentFormComponent implements OnInit {
 
   private initForm(): void {
     const remainingAmount = this.invoice?.remainingAmount || 0;
-    
+
     this.paymentForm = this.fb.group({
-      amount: [remainingAmount, [Validators.required, Validators.min(0.01), Validators.max(remainingAmount)]],
+      amount: [
+        remainingAmount,
+        [Validators.required, Validators.min(0.01), Validators.max(remainingAmount)],
+      ],
       paymentMethod: ['', Validators.required],
       paymentDate: [this.today],
       paymentReference: [''],
-      paymentNotes: ['']
+      paymentNotes: [''],
     });
 
     // Update validators when amount changes
-    this.paymentForm.get('amount')?.valueChanges.subscribe(value => {
+    this.paymentForm.get('amount')?.valueChanges.subscribe((value) => {
       const maxAmount = this.invoice?.remainingAmount || 0;
-      this.paymentForm.get('amount')?.setValidators([
-        Validators.required,
-        Validators.min(0.01),
-        Validators.max(maxAmount)
-      ]);
+      this.paymentForm
+        .get('amount')
+        ?.setValidators([Validators.required, Validators.min(0.01), Validators.max(maxAmount)]);
       this.paymentForm.get('amount')?.updateValueAndValidity({ emitEvent: false });
     });
   }
@@ -367,7 +402,7 @@ export class PaymentFormComponent implements OnInit {
   getResultingStatusLabel(): string {
     const paymentAmount = this.paymentForm.get('amount')?.value || 0;
     const remainingAfterPayment = (this.invoice?.remainingAmount || 0) - paymentAmount;
-    
+
     if (remainingAfterPayment <= 0) {
       return 'Pagada Completamente';
     } else {
@@ -378,7 +413,7 @@ export class PaymentFormComponent implements OnInit {
   getResultingStatusClass(): string {
     const paymentAmount = this.paymentForm.get('amount')?.value || 0;
     const remainingAfterPayment = (this.invoice?.remainingAmount || 0) - paymentAmount;
-    
+
     if (remainingAfterPayment <= 0) {
       return 'status-paid';
     } else {
@@ -392,7 +427,7 @@ export class PaymentFormComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Formulario incompleto',
-        detail: 'Por favor, completa todos los campos requeridos'
+        detail: 'Por favor, completa todos los campos requeridos',
       });
       return;
     }
@@ -405,33 +440,35 @@ export class PaymentFormComponent implements OnInit {
       paymentMethod: formValue.paymentMethod,
       paymentDate: formValue.paymentDate ? formValue.paymentDate.toISOString() : undefined,
       paymentReference: formValue.paymentReference || undefined,
-      paymentNotes: formValue.paymentNotes || undefined
+      paymentNotes: formValue.paymentNotes || undefined,
     };
 
-    this.invoicesService.invoiceControllerProcessPayment({
-      id: this.invoice.id,
-      body: paymentData
-    }).subscribe({
-      next: (response) => {
-        const isFullyPaid = response.remainingAmount <= 0;
+    this.invoicesService
+      .invoiceControllerProcessPayment({
+        id: this.invoice.id,
+        body: paymentData,
+      })
+      .subscribe({
+        next: (response) => {
+          const isFullyPaid = response.remainingAmount <= 0;
 
-        // Si la factura está completamente pagada, procesar recompensas automáticamente
-        if (isFullyPaid && (response.client as any)?.id) {
-          this.processRewardsForPaidInvoice(response);
-        } else {
-          this.showPaymentSuccessMessage(response);
-        }
-      },
-      error: (error) => {
-        console.error('Error processing payment:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al procesar el pago. Por favor, intenta nuevamente.'
-        });
-        this.loading.set(false);
-      }
-    });
+          // Si la factura está completamente pagada, procesar recompensas automáticamente
+          if (isFullyPaid && (response.client as any)?.id) {
+            this.processRewardsForPaidInvoice(response);
+          } else {
+            this.showPaymentSuccessMessage(response);
+          }
+        },
+        error: (error) => {
+          console.error('Error processing payment:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al procesar el pago. Por favor, intenta nuevamente.',
+          });
+          this.loading.set(false);
+        },
+      });
   }
 
   onActionClicked(action: string): void {
@@ -446,7 +483,7 @@ export class PaymentFormComponent implements OnInit {
   setFullAmount(): void {
     if (this.invoice) {
       this.paymentForm.patchValue({
-        amount: this.invoice.remainingAmount
+        amount: this.invoice.remainingAmount,
       });
     }
   }
@@ -454,7 +491,7 @@ export class PaymentFormComponent implements OnInit {
   setHalfAmount(): void {
     if (this.invoice) {
       this.paymentForm.patchValue({
-        amount: this.invoice.remainingAmount / 2
+        amount: this.invoice.remainingAmount / 2,
       });
     }
   }
@@ -481,11 +518,12 @@ export class PaymentFormComponent implements OnInit {
       purchaseAmount: paidInvoice.total,
       paymentMethod: this.paymentForm.value.paymentMethod,
       paymentDate: this.paymentForm.value.paymentDate?.toISOString() || new Date().toISOString(),
-      items: paidInvoice.items?.map(item => ({
-        serviceId: (item as any).productId || (item as any).serviceId || item.itemId || 1,
-        quantity: item.quantity || 1,
-        amount: item.total || item.unitPrice || 0
-      })) || []
+      items:
+        paidInvoice.items?.map((item) => ({
+          serviceId: (item as any).productId || (item as any).serviceId || item.itemId || 1,
+          quantity: item.quantity || 1,
+          amount: item.total || item.unitPrice || 0,
+        })) || [],
     };
 
     // Procesar recompensas automáticamente
@@ -513,12 +551,13 @@ export class PaymentFormComponent implements OnInit {
         this.messageService.add({
           severity: 'warn',
           summary: 'Pago Procesado - Error en Recompensas',
-          detail: 'El pago fue procesado exitosamente, pero hubo un problema al procesar las recompensas. Puedes aplicarlas manualmente.'
+          detail:
+            'El pago fue procesado exitosamente, pero hubo un problema al procesar las recompensas. Puedes aplicarlas manualmente.',
         });
 
         this.saved.emit();
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -533,7 +572,9 @@ export class PaymentFormComponent implements OnInit {
       summary: 'Pago Procesado',
       detail: isFullyPaid
         ? 'El pago ha sido procesado exitosamente. La factura está completamente pagada.'
-        : `El pago ha sido procesado exitosamente. Monto pendiente: ${response.remainingAmount.toFixed(2)}€`
+        : `El pago ha sido procesado exitosamente. Monto pendiente: ${response.remainingAmount.toFixed(
+            2,
+          )}€`,
     });
 
     this.saved.emit();
@@ -549,7 +590,9 @@ export class PaymentFormComponent implements OnInit {
     }
 
     try {
-      const rewards = await this.rewardsService.rewardsControllerGetClientActiveRewards({ clientId }).toPromise();
+      const rewards = await this.rewardsService
+        .rewardsControllerGetClientActiveRewards({ clientId })
+        .toPromise();
       this.clientRewards.set(rewards || []);
     } catch (error) {
       console.error('Error loading client rewards:', error);
@@ -564,20 +607,20 @@ export class PaymentFormComponent implements OnInit {
 
   getRewardStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'IN_PROGRESS': 'En Progreso',
-      'EARNED': 'Ganada',
-      'REDEEMED': 'Canjeada',
-      'EXPIRED': 'Expirada'
+      IN_PROGRESS: 'En Progreso',
+      EARNED: 'Ganada',
+      REDEEMED: 'Canjeada',
+      EXPIRED: 'Expirada',
     };
     return statusMap[status] || status;
   }
 
   getRewardStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'IN_PROGRESS': 'info',
-      'EARNED': 'success',
-      'REDEEMED': 'info',
-      'EXPIRED': 'danger'
+      IN_PROGRESS: 'info',
+      EARNED: 'success',
+      REDEEMED: 'info',
+      EXPIRED: 'danger',
     };
     return severityMap[status] || 'info';
   }

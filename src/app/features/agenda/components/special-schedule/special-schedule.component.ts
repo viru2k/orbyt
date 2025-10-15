@@ -17,8 +17,6 @@ import { OrbButtonComponent } from '@orb-shared-components/orb-button/orb-button
 import { OrbDatepickerComponent } from '@orb-shared-components/orb-datepicker/orb-datepicker.component';
 import { OrbSelectComponent } from '@orb-shared-components/orb-select/orb-select.component';
 import { OrbTextInputComponent } from '@orb-shared-components/orb-text-input/orb-text-input.component';
-import { OrbTableComponent } from '@orb-shared-components/orb-table/orb-table.component';
-import { OrbTagComponent } from '@orb-shared-components/orb-tag/orb-tag.component';
 
 import { AgendaBlockingStore } from '../../store/agenda-blocking.store';
 import { 
@@ -26,6 +24,7 @@ import {
   BlockingOperationResult,
   DateBlockingUtils 
 } from '../../models/agenda-blocking.models';
+import { OrbCheckboxComponent } from '@orb-components';
 
 interface TimeSlot {
   label: string;
@@ -48,7 +47,8 @@ interface TimeSlot {
     OrbButtonComponent,
     OrbDatepickerComponent,
     OrbSelectComponent,
-    OrbTextInputComponent
+    OrbTextInputComponent,
+    OrbCheckboxComponent
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './special-schedule.component.html',

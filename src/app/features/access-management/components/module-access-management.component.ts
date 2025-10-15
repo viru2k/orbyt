@@ -25,7 +25,7 @@ import {
   OrbButtonComponent,
   OrbBreadcrumbComponent,
   OrbToolbarComponent,
-  OrbCardComponent
+  OrbCardComponent,
 } from '@orb-components';
 
 // Models and Services
@@ -37,7 +37,7 @@ import {
   ModuleAction,
   AccessSource,
   ModuleAccessSummary,
-  ModulePermission
+  ModulePermission,
 } from '../models/module-access.models';
 import { ModuleAccessService } from '../services/module-access.service';
 import { UserResponseDto, RoleResponseDto } from '../../../api/models';
@@ -73,7 +73,7 @@ interface PermissionControl {
     OrbButtonComponent,
     OrbBreadcrumbComponent,
     OrbToolbarComponent,
-    OrbCardComponent
+    OrbCardComponent,
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -81,7 +81,8 @@ interface PermissionControl {
       <!-- Header -->
       <orb-breadcrumb
         [items]="breadcrumbItems"
-        [home]="{ icon: 'fa fa-home', routerLink: '/dashboard' }">
+        [home]="{ icon: 'fa fa-home', routerLink: '/dashboard' }"
+      >
       </orb-breadcrumb>
 
       <orb-toolbar>
@@ -112,7 +113,8 @@ interface PermissionControl {
                     filterBy="fullName,email"
                     [showClear]="true"
                     (onChange)="onUserSelected($event.value)"
-                    styleClass="w-full">
+                    styleClass="w-full"
+                  >
                     <ng-template pTemplate="selectedItem" let-user>
                       <div class="user-item" *ngIf="user">
                         <i class="fa fa-user"></i>
@@ -125,7 +127,12 @@ interface PermissionControl {
                         <i class="fa fa-user"></i>
                         {{ user.fullName }}
                         <small class="user-email">{{ user.email }}</small>
-                        <p-tag *ngIf="user.isAdmin" value="Admin" severity="danger" class="ml-2"></p-tag>
+                        <p-tag
+                          *ngIf="user.isAdmin"
+                          value="Admin"
+                          severity="danger"
+                          class="ml-2"
+                        ></p-tag>
                       </div>
                     </ng-template>
                   </p-dropdown>
@@ -145,20 +152,25 @@ interface PermissionControl {
                       icon="fa fa-save"
                       (clicked)="saveUserAccess()"
                       [disabled]="saving()"
-                      variant="primary">
+                      severity="info"
+                      variant="outlined"
+                    >
                     </orb-button>
                   </div>
 
                   <div class="modules-grid">
                     <p-accordion [multiple]="true" [activeIndex]="[0, 1, 2, 3, 4, 5]">
-                      <p-accordionTab *ngFor="let category of moduleCategories" [header]="getCategoryLabel(category)">
+                      <p-accordionTab
+                        *ngFor="let category of moduleCategories"
+                        [header]="getCategoryLabel(category)"
+                      >
                         <div class="category-modules">
                           <div
                             *ngFor="let module of getModulesByCategory(category)"
                             class="module-card"
                             [class.system-module]="module.isSystem"
-                            [class.admin-required]="module.requiresAdmin">
-
+                            [class.admin-required]="module.requiresAdmin"
+                          >
                             <div class="module-header">
                               <div class="module-info">
                                 <i [class]="module.icon"></i>
@@ -168,10 +180,19 @@ interface PermissionControl {
                                   <div class="module-meta">
                                     <p-tag
                                       [value]="getCategoryLabel(module.category)"
-                                      [severity]="getCategorySeverity(module.category)">
+                                      [severity]="getCategorySeverity(module.category)"
+                                    >
                                     </p-tag>
-                                    <p-tag *ngIf="module.isSystem" value="Sistema" severity="info"></p-tag>
-                                    <p-tag *ngIf="module.requiresAdmin" value="Solo Admin" severity="danger"></p-tag>
+                                    <p-tag
+                                      *ngIf="module.isSystem"
+                                      value="Sistema"
+                                      severity="info"
+                                    ></p-tag>
+                                    <p-tag
+                                      *ngIf="module.requiresAdmin"
+                                      value="Solo Admin"
+                                      severity="danger"
+                                    ></p-tag>
                                   </div>
                                 </div>
                               </div>
@@ -179,27 +200,44 @@ interface PermissionControl {
                               <div class="module-access-toggle">
                                 <p-checkbox
                                   [(ngModel)]="getModuleAccess(module.id).hasAccess"
-                                  [disabled]="module.isSystem || (module.requiresAdmin && !isSelectedUserAdmin())"
+                                  [disabled]="
+                                    module.isSystem ||
+                                    (module.requiresAdmin && !isSelectedUserAdmin())
+                                  "
                                   binary="true"
-                                  (onChange)="onModuleAccessChanged(module.id, $event.checked)">
+                                  (onChange)="onModuleAccessChanged(module.id, $event.checked)"
+                                >
                                 </p-checkbox>
                                 <label>Acceso</label>
                               </div>
                             </div>
 
                             <!-- Permissions -->
-                            <div class="module-permissions" *ngIf="getModuleAccess(module.id).hasAccess">
+                            <div
+                              class="module-permissions"
+                              *ngIf="getModuleAccess(module.id).hasAccess"
+                            >
                               <p-divider></p-divider>
                               <h5><i class="fa fa-cog"></i> Permisos</h5>
                               <div class="permissions-grid">
                                 <div
-                                  *ngFor="let permission of getAvailablePermissions(module.category)"
-                                  class="permission-item">
+                                  *ngFor="
+                                    let permission of getAvailablePermissions(module.category)
+                                  "
+                                  class="permission-item"
+                                >
                                   <p-checkbox
                                     [ngModel]="getPermissionState(module.id, permission.action)"
                                     [disabled]="!getModuleAccess(module.id).hasAccess"
                                     binary="true"
-                                    (onChange)="onPermissionChanged(module.id, permission.action, $event.checked)">
+                                    (onChange)="
+                                      onPermissionChanged(
+                                        module.id,
+                                        permission.action,
+                                        $event.checked
+                                      )
+                                    "
+                                  >
                                   </p-checkbox>
                                   <div class="permission-info">
                                     <label>{{ permission.label }}</label>
@@ -213,7 +251,8 @@ interface PermissionControl {
                             <div class="access-source" *ngIf="getModuleAccess(module.id).hasAccess">
                               <small>
                                 <i class="fa fa-info-circle"></i>
-                                Fuente: {{ getAccessSourceLabel(getModuleAccess(module.id).source) }}
+                                Fuente:
+                                {{ getAccessSourceLabel(getModuleAccess(module.id).source) }}
                               </small>
                             </div>
                           </div>
@@ -243,7 +282,8 @@ interface PermissionControl {
                     filterBy="name,description"
                     [showClear]="true"
                     (onChange)="onRoleSelected($event.value)"
-                    styleClass="w-full">
+                    styleClass="w-full"
+                  >
                     <ng-template pTemplate="selectedItem" let-role>
                       <div class="role-item" *ngIf="role">
                         <i class="fa fa-user-tag"></i>
@@ -276,21 +316,26 @@ interface PermissionControl {
                       icon="fa fa-save"
                       (clicked)="saveRoleAccess()"
                       [disabled]="saving()"
-                      variant="primary">
+                      severity="info"
+                      variant="outlined"
+                    >
                     </orb-button>
                   </div>
 
                   <!-- Same module grid as users but for roles -->
                   <div class="modules-grid">
                     <p-accordion [multiple]="true" [activeIndex]="[0, 1, 2, 3, 4, 5]">
-                      <p-accordionTab *ngFor="let category of moduleCategories" [header]="getCategoryLabel(category)">
+                      <p-accordionTab
+                        *ngFor="let category of moduleCategories"
+                        [header]="getCategoryLabel(category)"
+                      >
                         <div class="category-modules">
                           <div
                             *ngFor="let module of getModulesByCategory(category)"
                             class="module-card"
                             [class.system-module]="module.isSystem"
-                            [class.admin-required]="module.requiresAdmin">
-
+                            [class.admin-required]="module.requiresAdmin"
+                          >
                             <div class="module-header">
                               <div class="module-info">
                                 <i [class]="module.icon"></i>
@@ -300,10 +345,19 @@ interface PermissionControl {
                                   <div class="module-meta">
                                     <p-tag
                                       [value]="getCategoryLabel(module.category)"
-                                      [severity]="getCategorySeverity(module.category)">
+                                      [severity]="getCategorySeverity(module.category)"
+                                    >
                                     </p-tag>
-                                    <p-tag *ngIf="module.isSystem" value="Sistema" severity="info"></p-tag>
-                                    <p-tag *ngIf="module.requiresAdmin" value="Solo Admin" severity="danger"></p-tag>
+                                    <p-tag
+                                      *ngIf="module.isSystem"
+                                      value="Sistema"
+                                      severity="info"
+                                    ></p-tag>
+                                    <p-tag
+                                      *ngIf="module.requiresAdmin"
+                                      value="Solo Admin"
+                                      severity="danger"
+                                    ></p-tag>
                                   </div>
                                 </div>
                               </div>
@@ -313,25 +367,39 @@ interface PermissionControl {
                                   [(ngModel)]="getRoleModuleAccess(module.id).hasAccess"
                                   [disabled]="module.isSystem"
                                   binary="true"
-                                  (onChange)="onRoleModuleAccessChanged(module.id, $event.checked)">
+                                  (onChange)="onRoleModuleAccessChanged(module.id, $event.checked)"
+                                >
                                 </p-checkbox>
                                 <label>Acceso</label>
                               </div>
                             </div>
 
                             <!-- Permissions for roles -->
-                            <div class="module-permissions" *ngIf="getRoleModuleAccess(module.id).hasAccess">
+                            <div
+                              class="module-permissions"
+                              *ngIf="getRoleModuleAccess(module.id).hasAccess"
+                            >
                               <p-divider></p-divider>
                               <h5><i class="fa fa-cog"></i> Permisos</h5>
                               <div class="permissions-grid">
                                 <div
-                                  *ngFor="let permission of getAvailablePermissions(module.category)"
-                                  class="permission-item">
+                                  *ngFor="
+                                    let permission of getAvailablePermissions(module.category)
+                                  "
+                                  class="permission-item"
+                                >
                                   <p-checkbox
                                     [ngModel]="getRolePermissionState(module.id, permission.action)"
                                     [disabled]="!getRoleModuleAccess(module.id).hasAccess"
                                     binary="true"
-                                    (onChange)="onRolePermissionChanged(module.id, permission.action, $event.checked)">
+                                    (onChange)="
+                                      onRolePermissionChanged(
+                                        module.id,
+                                        permission.action,
+                                        $event.checked
+                                      )
+                                    "
+                                  >
                                   </p-checkbox>
                                   <div class="permission-info">
                                     <label>{{ permission.label }}</label>
@@ -359,7 +427,10 @@ interface PermissionControl {
 
                 <div class="modules-overview">
                   <p-accordion [multiple]="true" [activeIndex]="[0, 1, 2, 3, 4, 5]">
-                    <p-accordionTab *ngFor="let category of moduleCategories" [header]="getCategoryLabel(category)">
+                    <p-accordionTab
+                      *ngFor="let category of moduleCategories"
+                      [header]="getCategoryLabel(category)"
+                    >
                       <div class="category-overview">
                         <div class="category-stats">
                           <div class="stat-item">
@@ -377,14 +448,25 @@ interface PermissionControl {
                         </div>
 
                         <div class="modules-list">
-                          <div *ngFor="let module of getModulesByCategory(category)" class="module-overview-item">
+                          <div
+                            *ngFor="let module of getModulesByCategory(category)"
+                            class="module-overview-item"
+                          >
                             <i [class]="module.icon"></i>
                             <div class="module-info">
                               <h5>{{ module.name }}</h5>
                               <p>{{ module.description }}</p>
                               <div class="module-badges">
-                                <p-tag *ngIf="module.isSystem" value="Sistema" severity="info"></p-tag>
-                                <p-tag *ngIf="module.requiresAdmin" value="Solo Admin" severity="danger"></p-tag>
+                                <p-tag
+                                  *ngIf="module.isSystem"
+                                  value="Sistema"
+                                  severity="info"
+                                ></p-tag>
+                                <p-tag
+                                  *ngIf="module.requiresAdmin"
+                                  value="Solo Admin"
+                                  severity="danger"
+                                ></p-tag>
                                 <p-tag [value]="module.route" severity="secondary"></p-tag>
                               </div>
                             </div>
@@ -409,7 +491,7 @@ interface PermissionControl {
     <p-toast></p-toast>
     <p-confirmDialog></p-confirmDialog>
   `,
-  styleUrls: ['./module-access-management.component.scss']
+  styleUrls: ['./module-access-management.component.scss'],
 })
 export class ModuleAccessManagementComponent implements OnInit {
   private readonly moduleAccessService = inject(ModuleAccessService);
@@ -433,7 +515,7 @@ export class ModuleAccessManagementComponent implements OnInit {
   // UI Configuration
   breadcrumbItems = [
     { label: 'Gestión', routerLink: '/management' },
-    { label: 'Accesos a Módulos' }
+    { label: 'Accesos a Módulos' },
   ];
 
   moduleCategories = Object.values(ModuleCategory);
@@ -441,42 +523,46 @@ export class ModuleAccessManagementComponent implements OnInit {
   // Permission controls
   permissionControls: Record<ModuleCategory, PermissionControl[]> = {
     [ModuleCategory.CORE]: [
-      { action: ModuleAction.READ, label: 'Ver', description: 'Acceso de solo lectura' }
+      { action: ModuleAction.READ, label: 'Ver', description: 'Acceso de solo lectura' },
     ],
     [ModuleCategory.MANAGEMENT]: [
       { action: ModuleAction.READ, label: 'Ver', description: 'Ver registros' },
       { action: ModuleAction.CREATE, label: 'Crear', description: 'Crear nuevos registros' },
-      { action: ModuleAction.UPDATE, label: 'Editar', description: 'Modificar registros existentes' },
+      {
+        action: ModuleAction.UPDATE,
+        label: 'Editar',
+        description: 'Modificar registros existentes',
+      },
       { action: ModuleAction.DELETE, label: 'Eliminar', description: 'Eliminar registros' },
-      { action: ModuleAction.EXPORT, label: 'Exportar', description: 'Exportar datos' }
+      { action: ModuleAction.EXPORT, label: 'Exportar', description: 'Exportar datos' },
     ],
     [ModuleCategory.OPERATIONS]: [
       { action: ModuleAction.READ, label: 'Ver', description: 'Ver información' },
       { action: ModuleAction.CREATE, label: 'Crear', description: 'Crear nuevos elementos' },
       { action: ModuleAction.UPDATE, label: 'Editar', description: 'Modificar elementos' },
-      { action: ModuleAction.EXPORT, label: 'Exportar', description: 'Exportar reportes' }
+      { action: ModuleAction.EXPORT, label: 'Exportar', description: 'Exportar reportes' },
     ],
     [ModuleCategory.REPORTS]: [
       { action: ModuleAction.READ, label: 'Ver', description: 'Ver reportes' },
-      { action: ModuleAction.EXPORT, label: 'Exportar', description: 'Exportar reportes' }
+      { action: ModuleAction.EXPORT, label: 'Exportar', description: 'Exportar reportes' },
     ],
     [ModuleCategory.SETTINGS]: [
       { action: ModuleAction.READ, label: 'Ver', description: 'Ver configuraciones' },
       { action: ModuleAction.UPDATE, label: 'Editar', description: 'Modificar configuraciones' },
-      { action: ModuleAction.ADMIN, label: 'Admin', description: 'Acceso administrativo completo' }
+      { action: ModuleAction.ADMIN, label: 'Admin', description: 'Acceso administrativo completo' },
     ],
     [ModuleCategory.INTEGRATIONS]: [
       { action: ModuleAction.READ, label: 'Ver', description: 'Ver integraciones' },
       { action: ModuleAction.CREATE, label: 'Crear', description: 'Crear configuraciones' },
-      { action: ModuleAction.UPDATE, label: 'Editar', description: 'Modificar configuraciones' }
-    ]
+      { action: ModuleAction.UPDATE, label: 'Editar', description: 'Modificar configuraciones' },
+    ],
   };
 
   // Computed properties
   selectedUserName = computed(() => {
     const userId = this.selectedUser();
     if (!userId) return '';
-    const user = this.users().find(u => u.id === userId);
+    const user = this.users().find((u) => u.id === userId);
     return user?.fullName || '';
   });
 
@@ -492,22 +578,22 @@ export class ModuleAccessManagementComponent implements OnInit {
       const [users, roles, modules] = await Promise.all([
         this.moduleAccessService.getAllUsersModuleAccess().toPromise(),
         this.moduleAccessService.getAllRolesModuleAccess().toPromise(),
-        this.moduleAccessService.getModules().toPromise()
+        this.moduleAccessService.getModules().toPromise(),
       ]);
 
       // Convert UserModuleAccess[] to simple user objects for the dropdown
-      const userOptions = (users || []).map(ua => ({
+      const userOptions = (users || []).map((ua) => ({
         id: ua.userId,
         fullName: ua.userName,
         email: ua.userEmail,
-        isAdmin: ua.isAdmin
+        isAdmin: ua.isAdmin,
       }));
 
       // Convert RoleModuleAccess[] to simple role objects for the dropdown
-      const roleOptions = (roles || []).map(ra => ({
+      const roleOptions = (roles || []).map((ra) => ({
         id: ra.roleId,
         name: ra.roleName,
-        description: ra.roleDescription
+        description: ra.roleDescription,
       }));
 
       this.users.set(userOptions as any);
@@ -518,7 +604,7 @@ export class ModuleAccessManagementComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error al cargar los datos iniciales'
+        detail: 'Error al cargar los datos iniciales',
       });
     } finally {
       this.loading.set(false);
@@ -544,7 +630,7 @@ export class ModuleAccessManagementComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error al cargar los accesos del usuario'
+        detail: 'Error al cargar los accesos del usuario',
       });
     } finally {
       this.loading.set(false);
@@ -558,22 +644,21 @@ export class ModuleAccessManagementComponent implements OnInit {
     this.saving.set(true);
 
     try {
-      await this.moduleAccessService.updateUserModuleAccess(
-        userAccess.userId,
-        userAccess.modules
-      ).toPromise();
+      await this.moduleAccessService
+        .updateUserModuleAccess(userAccess.userId, userAccess.modules)
+        .toPromise();
 
       this.messageService.add({
         severity: 'success',
         summary: 'Éxito',
-        detail: 'Accesos del usuario actualizados correctamente'
+        detail: 'Accesos del usuario actualizados correctamente',
       });
     } catch (error) {
       console.error('Error saving user access:', error);
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error al guardar los accesos del usuario'
+        detail: 'Error al guardar los accesos del usuario',
       });
     } finally {
       this.saving.set(false);
@@ -599,7 +684,7 @@ export class ModuleAccessManagementComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error al cargar los accesos del rol'
+        detail: 'Error al cargar los accesos del rol',
       });
     } finally {
       this.loading.set(false);
@@ -613,22 +698,21 @@ export class ModuleAccessManagementComponent implements OnInit {
     this.saving.set(true);
 
     try {
-      await this.moduleAccessService.updateRoleModuleAccess(
-        roleAccess.roleId,
-        roleAccess.modules
-      ).toPromise();
+      await this.moduleAccessService
+        .updateRoleModuleAccess(roleAccess.roleId, roleAccess.modules)
+        .toPromise();
 
       this.messageService.add({
         severity: 'success',
         summary: 'Éxito',
-        detail: 'Accesos del rol actualizados correctamente'
+        detail: 'Accesos del rol actualizados correctamente',
       });
     } catch (error) {
       console.error('Error saving role access:', error);
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Error al guardar los accesos del rol'
+        detail: 'Error al guardar los accesos del rol',
       });
     } finally {
       this.saving.set(false);
@@ -644,17 +728,19 @@ export class ModuleAccessManagementComponent implements OnInit {
         moduleName: '',
         hasAccess: false,
         permissions: [],
-        source: AccessSource.SYSTEM
+        source: AccessSource.SYSTEM,
       };
     }
 
-    return userAccess.modules.find(m => m.moduleId === moduleId) || {
-      moduleId,
-      moduleName: '',
-      hasAccess: false,
-      permissions: [],
-      source: AccessSource.SYSTEM
-    };
+    return (
+      userAccess.modules.find((m) => m.moduleId === moduleId) || {
+        moduleId,
+        moduleName: '',
+        hasAccess: false,
+        permissions: [],
+        source: AccessSource.SYSTEM,
+      }
+    );
   }
 
   getRoleModuleAccess(moduleId: string): ModuleAccessSummary {
@@ -665,29 +751,31 @@ export class ModuleAccessManagementComponent implements OnInit {
         moduleName: '',
         hasAccess: false,
         permissions: [],
-        source: AccessSource.SYSTEM
+        source: AccessSource.SYSTEM,
       };
     }
 
-    return roleAccess.modules.find(m => m.moduleId === moduleId) || {
-      moduleId,
-      moduleName: '',
-      hasAccess: false,
-      permissions: [],
-      source: AccessSource.SYSTEM
-    };
+    return (
+      roleAccess.modules.find((m) => m.moduleId === moduleId) || {
+        moduleId,
+        moduleName: '',
+        hasAccess: false,
+        permissions: [],
+        source: AccessSource.SYSTEM,
+      }
+    );
   }
 
   onModuleAccessChanged(moduleId: string, hasAccess: boolean): void {
     const userAccess = this.selectedUserAccess();
     if (!userAccess) return;
 
-    const moduleAccess = userAccess.modules.find(m => m.moduleId === moduleId);
+    const moduleAccess = userAccess.modules.find((m) => m.moduleId === moduleId);
     if (moduleAccess) {
       moduleAccess.hasAccess = hasAccess;
       if (!hasAccess) {
         // Reset all permissions when access is disabled
-        moduleAccess.permissions.forEach(p => p.granted = false);
+        moduleAccess.permissions.forEach((p) => (p.granted = false));
       }
     }
 
@@ -698,11 +786,11 @@ export class ModuleAccessManagementComponent implements OnInit {
     const roleAccess = this.selectedRoleAccess();
     if (!roleAccess) return;
 
-    const moduleAccess = roleAccess.modules.find(m => m.moduleId === moduleId);
+    const moduleAccess = roleAccess.modules.find((m) => m.moduleId === moduleId);
     if (moduleAccess) {
       moduleAccess.hasAccess = hasAccess;
       if (!hasAccess) {
-        moduleAccess.permissions.forEach(p => p.granted = false);
+        moduleAccess.permissions.forEach((p) => (p.granted = false));
       }
     }
 
@@ -712,13 +800,13 @@ export class ModuleAccessManagementComponent implements OnInit {
   // Permission Management
   getPermissionState(moduleId: string, action: ModuleAction): boolean {
     const moduleAccess = this.getModuleAccess(moduleId);
-    const permission = moduleAccess.permissions.find(p => p.action === action);
+    const permission = moduleAccess.permissions.find((p) => p.action === action);
     return permission?.granted || false;
   }
 
   getRolePermissionState(moduleId: string, action: ModuleAction): boolean {
     const moduleAccess = this.getRoleModuleAccess(moduleId);
-    const permission = moduleAccess.permissions.find(p => p.action === action);
+    const permission = moduleAccess.permissions.find((p) => p.action === action);
     return permission?.granted || false;
   }
 
@@ -726,10 +814,10 @@ export class ModuleAccessManagementComponent implements OnInit {
     const userAccess = this.selectedUserAccess();
     if (!userAccess) return;
 
-    const moduleAccess = userAccess.modules.find(m => m.moduleId === moduleId);
+    const moduleAccess = userAccess.modules.find((m) => m.moduleId === moduleId);
     if (!moduleAccess) return;
 
-    let permission = moduleAccess.permissions.find(p => p.action === action);
+    let permission = moduleAccess.permissions.find((p) => p.action === action);
     if (!permission) {
       permission = { action, granted: false };
       moduleAccess.permissions.push(permission);
@@ -743,10 +831,10 @@ export class ModuleAccessManagementComponent implements OnInit {
     const roleAccess = this.selectedRoleAccess();
     if (!roleAccess) return;
 
-    const moduleAccess = roleAccess.modules.find(m => m.moduleId === moduleId);
+    const moduleAccess = roleAccess.modules.find((m) => m.moduleId === moduleId);
     if (!moduleAccess) return;
 
-    let permission = moduleAccess.permissions.find(p => p.action === action);
+    let permission = moduleAccess.permissions.find((p) => p.action === action);
     if (!permission) {
       permission = { action, granted: false };
       moduleAccess.permissions.push(permission);
@@ -758,15 +846,15 @@ export class ModuleAccessManagementComponent implements OnInit {
 
   // UI Helper Methods
   getModulesByCategory(category: ModuleCategory): ModuleDefinition[] {
-    return this.modules().filter(m => m.category === category && !m.parentModule);
+    return this.modules().filter((m) => m.category === category && !m.parentModule);
   }
 
   getAdminModulesByCategory(category: ModuleCategory): ModuleDefinition[] {
-    return this.getModulesByCategory(category).filter(m => m.requiresAdmin);
+    return this.getModulesByCategory(category).filter((m) => m.requiresAdmin);
   }
 
   getSystemModulesByCategory(category: ModuleCategory): ModuleDefinition[] {
-    return this.getModulesByCategory(category).filter(m => m.isSystem);
+    return this.getModulesByCategory(category).filter((m) => m.isSystem);
   }
 
   getCategoryLabel(category: ModuleCategory): string {
@@ -776,7 +864,7 @@ export class ModuleAccessManagementComponent implements OnInit {
       [ModuleCategory.OPERATIONS]: 'Operaciones',
       [ModuleCategory.REPORTS]: 'Reportes',
       [ModuleCategory.SETTINGS]: 'Configuración',
-      [ModuleCategory.INTEGRATIONS]: 'Integraciones'
+      [ModuleCategory.INTEGRATIONS]: 'Integraciones',
     };
     return labels[category] || category;
   }
@@ -788,7 +876,7 @@ export class ModuleAccessManagementComponent implements OnInit {
       [ModuleCategory.OPERATIONS]: 'warning',
       [ModuleCategory.REPORTS]: 'secondary',
       [ModuleCategory.SETTINGS]: 'danger',
-      [ModuleCategory.INTEGRATIONS]: 'contrast'
+      [ModuleCategory.INTEGRATIONS]: 'contrast',
     };
     return severities[category] || 'secondary';
   }
@@ -802,7 +890,7 @@ export class ModuleAccessManagementComponent implements OnInit {
       [AccessSource.DIRECT]: 'Directo',
       [AccessSource.ROLE]: 'Por Rol',
       [AccessSource.ADMIN]: 'Admin',
-      [AccessSource.SYSTEM]: 'Sistema'
+      [AccessSource.SYSTEM]: 'Sistema',
     };
     return labels[source] || source;
   }
@@ -810,28 +898,28 @@ export class ModuleAccessManagementComponent implements OnInit {
   getSelectedUserName(): string {
     const userId = this.selectedUser();
     if (!userId) return '';
-    const user = this.users().find(u => u.id === userId);
+    const user = this.users().find((u) => u.id === userId);
     return user?.fullName || '';
   }
 
   getSelectedUserEmail(): string {
     const userId = this.selectedUser();
     if (!userId) return '';
-    const user = this.users().find(u => u.id === userId);
+    const user = this.users().find((u) => u.id === userId);
     return user?.email || '';
   }
 
   getSelectedRoleName(): string {
     const roleId = this.selectedRole();
     if (!roleId) return '';
-    const role = this.roles().find(r => r.id === roleId);
+    const role = this.roles().find((r) => r.id === roleId);
     return role?.name || '';
   }
 
   isSelectedUserAdmin(): boolean {
     const userId = this.selectedUser();
     if (!userId) return false;
-    const user = this.users().find(u => u.id === userId);
+    const user = this.users().find((u) => u.id === userId);
     return user?.isAdmin || false;
   }
 }

@@ -9,24 +9,18 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TabViewModule } from 'primeng/tabview';
-import { TableModule } from 'primeng/table';
-import { CalendarModule } from 'primeng/calendar';
+import { OrbTableComponent } from '@orb-shared-components/orb-table/orb-table.component';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
 
 // Orb Components
-import { 
-  OrbCardComponent, 
-  OrbButtonComponent 
-} from '@orb-components';
+import { OrbCardComponent, OrbButtonComponent } from '@orb-components';
 
 // Services and Models
 import { EmailManagementStore } from '../../../../store/email-management/email-management.store';
-import { 
-  EmailMetrics, 
-  EmailStatus,
-  EmailTemplateType 
-} from '../../models/email.models';
+import { EmailMetrics, EmailStatus, EmailTemplateType } from '../../models/email.models';
 import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models';
+import { TableColumn, OrbTableFeatures } from '@orb-models';
 
 @Component({
   selector: 'app-email-dashboard',
@@ -41,11 +35,11 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
     TagModule,
     ProgressBarModule,
     TabViewModule,
-    TableModule,
-    CalendarModule,
+    OrbTableComponent,
+    DatePickerModule,
     DropdownModule,
     OrbCardComponent,
-    OrbButtonComponent
+    OrbButtonComponent,
   ],
   template: `
     <div class="email-dashboard-container">
@@ -53,21 +47,23 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
       <div class="dashboard-header">
         <h1><i class="fa fa-chart-line"></i> Dashboard de Emails</h1>
         <p>Monitoreo y análisis del sistema de correos electrónicos</p>
-        
+
         <!-- Date Range Filter -->
         <div class="date-filter">
           <label>Período:</label>
-          <p-calendar 
+          <p-datePicker
             [(ngModel)]="dateRange"
-            selectionMode="range" 
-            [readonlyInput]="true"            
-            (onSelect)="onDateRangeChange($event)">
-          </p-calendar>
-          <button 
-            type="button" 
+            selectionMode="range"
+            [readonlyInput]="true"
+            (onSelect)="onDateRangeChange($event)"
+          >
+          </p-datePicker>
+          <button
+            type="button"
             class="btn-refresh"
             (click)="refreshData()"
-            title="Actualizar datos">
+            title="Actualizar datos"
+          >
             <i class="fa fa-refresh"></i>
           </button>
         </div>
@@ -96,7 +92,9 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 <i class="fa fa-check-circle"></i>
               </div>
               <div class="metric-details">
-                <h3>{{ ((metrics | async)?.totalSent || 0) - ((metrics | async)?.totalFailed || 0) }}</h3>
+                <h3>
+                  {{ ((metrics | async)?.totalSent || 0) - ((metrics | async)?.totalFailed || 0) }}
+                </h3>
                 <span>Entregados</span>
                 <small>{{ (metrics | async)?.successRate || 0 }}% tasa</small>
               </div>
@@ -113,7 +111,7 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
               <div class="metric-details">
                 <h3>{{ (metrics | async)?.totalFailed || 0 }}</h3>
                 <span>Fallidos</span>
-                <small>{{ (100 - ((metrics | async)?.successRate || 0)) }}% rebote</small>
+                <small>{{ 100 - ((metrics | async)?.successRate || 0) }}% rebote</small>
               </div>
             </div>
           </div>
@@ -144,12 +142,13 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
               <h3>Estado de Emails</h3>
             </div>
             <div orbBody>
-              <p-chart 
-                type="doughnut" 
-                [data]="statusChartData" 
+              <p-chart
+                type="doughnut"
+                [data]="statusChartData"
                 [options]="doughnutChartOptions"
                 [width]="'300'"
-                [height]="'300'">
+                [height]="'300'"
+              >
               </p-chart>
             </div>
           </orb-card>
@@ -160,11 +159,12 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
               <h3>Tipos de Email</h3>
             </div>
             <div orbBody>
-              <p-chart 
-                type="bar" 
-                [data]="typesChartData" 
+              <p-chart
+                type="bar"
+                [data]="typesChartData"
                 [options]="barChartOptions"
-                [height]="'300'">
+                [height]="'300'"
+              >
               </p-chart>
             </div>
           </orb-card>
@@ -176,11 +176,12 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
             <h3>Evolución de Emails</h3>
           </div>
           <div orbBody>
-            <p-chart 
-              type="line" 
-              [data]="timelineChartData" 
+            <p-chart
+              type="line"
+              [data]="timelineChartData"
               [options]="lineChartOptions"
-              [height]="'250'">
+              [height]="'250'"
+            >
             </p-chart>
           </div>
         </orb-card>
@@ -197,65 +198,62 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 <p>Cargando emails recientes...</p>
               </div>
 
-              <p-table 
-*ngIf="!(loading | async)"
-[value]="(recentEmails | async) || []" 
-                [paginator]="true" 
+              <orb-table
+                *ngIf="!(loading | async)"
+                [value]="(recentEmails | async) || []"
+                [columns]="recentEmailsColumns"
+                [loading]="!!(loading | async)"
                 [rows]="10"
                 [rowsPerPageOptions]="[10, 25, 50]"
-                [sortField]="'sentAt'" 
-                [sortOrder]="-1">
-                
-                <ng-template pTemplate="header">
+                [tableFeatures]="recentEmailsTableFeatures"
+                [globalFilterFields]="['to', 'subject', 'status']"
+                dataKey="id"
+              >
+                <ng-template pTemplate="body" let-email let-columns="columns">
                   <tr>
-                    <th pSortableColumn="to">
-                      Destinatario 
-                      <p-sortIcon field="to"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="subject">
-                      Asunto
-                      <p-sortIcon field="subject"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="templateType">
-                      Tipo
-                      <p-sortIcon field="templateType"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="status">
-                      Estado
-                      <p-sortIcon field="status"></p-sortIcon>
-                    </th>
-                    <th pSortableColumn="sentAt">
-                      Enviado
-                      <p-sortIcon field="sentAt"></p-sortIcon>
-                    </th>
+                    <td *ngFor="let col of columns">
+                      <ng-container [ngSwitch]="col.field">
+                        <ng-container *ngSwitchCase="'to'">
+                          {{ email.to }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'subject'">
+                          {{ email.subject }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'templateUsed'">
+                          <p-tag
+                            [value]="getTemplateTypeLabel(email.templateUsed)"
+                            severity="info"
+                          ></p-tag>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'status'">
+                          <p-tag
+                            [value]="getStatusLabel(email.status)"
+                            [severity]="getStatusSeverity(email.status)"
+                          >
+                          </p-tag>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'sentAt'">
+                          {{ formatDate(email.sentAt) }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchDefault>
+                          {{ email[col.field] }}
+                        </ng-container>
+                      </ng-container>
+                    </td>
                   </tr>
                 </ng-template>
-                
-                <ng-template pTemplate="body" let-email>
-                  <tr>
-                    <td>{{ email.to }}</td>
-                    <td>{{ email.subject }}</td>
-                    <td>
-                      <p-tag [value]="getTemplateTypeLabel(email.templateUsed)" severity="info"></p-tag>
-                    </td>
-                    <td>
-                      <p-tag 
-                        [value]="getStatusLabel(email.status)" 
-                        [severity]="getStatusSeverity(email.status)">
-                      </p-tag>
-                    </td>
-                    <td>{{ formatDate(email.sentAt) }}</td>
-                  </tr>
-                </ng-template>
-                
+
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td colspan="5" class="empty-message">
-                      No hay emails recientes para mostrar
-                    </td>
+                    <td colspan="5" class="empty-message">No hay emails recientes para mostrar</td>
                   </tr>
                 </ng-template>
-              </p-table>
+              </orb-table>
             </div>
           </orb-card>
         </p-tabPanel>
@@ -264,49 +262,61 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
         <p-tabPanel header="Emails Fallidos" leftIcon="pi pi-times-circle">
           <orb-card>
             <div orbBody>
-              <p-table 
-[value]="(failedEmails | async) || []" 
-                [paginator]="true" 
+              <orb-table
+                [value]="(failedEmails | async) || []"
+                [columns]="failedEmailsColumns"
+                [loading]="!!(loading | async)"
                 [rows]="10"
-                [sortField]="'sentAt'" 
-                [sortOrder]="-1">
-                
-                <ng-template pTemplate="header">
+                [tableFeatures]="failedEmailsTableFeatures"
+                [globalFilterFields]="['to', 'subject', 'error']"
+                dataKey="id"
+              >
+                <ng-template pTemplate="body" let-email let-columns="columns">
                   <tr>
-                    <th>Destinatario</th>
-                    <th>Asunto</th>
-                    <th>Error</th>
-                    <th>Fecha</th>
-                    <th>Acciones</th>
-                  </tr>
-                </ng-template>
-                
-                <ng-template pTemplate="body" let-email>
-                  <tr>
-                    <td>{{ email.to }}</td>
-                    <td>{{ email.subject }}</td>
-                    <td class="error-cell">{{ email.error }}</td>
-                    <td>{{ formatDate(email.sentAt) }}</td>
-                    <td>
-                      <orb-button
-                        label="Reintentar"
-                        icon="fa fa-redo"
-                        size="small"
-                        variant="secondary"
-                        (clicked)="retryEmail(email)">
-                      </orb-button>
+                    <td *ngFor="let col of columns">
+                      <ng-container [ngSwitch]="col.field">
+                        <ng-container *ngSwitchCase="'to'">
+                          {{ email.to }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'subject'">
+                          {{ email.subject }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'error'">
+                          <span class="error-cell">{{ email.error }}</span>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'sentAt'">
+                          {{ formatDate(email.sentAt) }}
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'actions'">
+                          <orb-button
+                            label="Reintentar"
+                            icon="fa fa-redo"
+                            size="small"
+                            severity="secondary"
+                            variant="outlined"
+                            (clicked)="retryEmail(email)"
+                          >
+                          </orb-button>
+                        </ng-container>
+
+                        <ng-container *ngSwitchDefault>
+                          {{ email[col.field] }}
+                        </ng-container>
+                      </ng-container>
                     </td>
                   </tr>
                 </ng-template>
-                
+
                 <ng-template pTemplate="emptymessage">
                   <tr>
-                    <td colspan="5" class="empty-message">
-                      No hay emails fallidos 🎉
-                    </td>
+                    <td colspan="5" class="empty-message">No hay emails fallidos 🎉</td>
                   </tr>
                 </ng-template>
-              </p-table>
+              </orb-table>
             </div>
           </orb-card>
         </p-tabPanel>
@@ -317,18 +327,40 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
             <div orbBody>
               <div class="system-status">
                 <div class="status-item">
-                  <div class="status-indicator" [class.active]="(emailSystemStatus | async)?.smtpConnected">
-                    <i [class]="(emailSystemStatus | async)?.smtpConnected ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+                  <div
+                    class="status-indicator"
+                    [class.active]="(emailSystemStatus | async)?.smtpConnected"
+                  >
+                    <i
+                      [class]="
+                        (emailSystemStatus | async)?.smtpConnected
+                          ? 'fa fa-check-circle'
+                          : 'fa fa-times-circle'
+                      "
+                    ></i>
                   </div>
                   <div class="status-details">
                     <h4>Conexión SMTP</h4>
-                    <p>{{ (emailSystemStatus | async)?.smtpConnected ? 'Conectado' : 'Desconectado' }}</p>
+                    <p>
+                      {{
+                        (emailSystemStatus | async)?.smtpConnected ? 'Conectado' : 'Desconectado'
+                      }}
+                    </p>
                   </div>
                 </div>
 
                 <div class="status-item">
-                  <div class="status-indicator" [class.active]="(emailSystemStatus | async)?.templatesLoaded">
-                    <i [class]="(emailSystemStatus | async)?.templatesLoaded ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+                  <div
+                    class="status-indicator"
+                    [class.active]="(emailSystemStatus | async)?.templatesLoaded"
+                  >
+                    <i
+                      [class]="
+                        (emailSystemStatus | async)?.templatesLoaded
+                          ? 'fa fa-check-circle'
+                          : 'fa fa-times-circle'
+                      "
+                    ></i>
                   </div>
                   <div class="status-details">
                     <h4>Plantillas</h4>
@@ -337,8 +369,17 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
                 </div>
 
                 <div class="status-item">
-                  <div class="status-indicator" [class.active]="(emailSystemStatus | async)?.queueHealthy">
-                    <i [class]="(emailSystemStatus | async)?.queueHealthy ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+                  <div
+                    class="status-indicator"
+                    [class.active]="(emailSystemStatus | async)?.queueHealthy"
+                  >
+                    <i
+                      [class]="
+                        (emailSystemStatus | async)?.queueHealthy
+                          ? 'fa fa-check-circle'
+                          : 'fa fa-times-circle'
+                      "
+                    ></i>
                   </div>
                   <div class="status-details">
                     <h4>Cola de Emails</h4>
@@ -352,7 +393,7 @@ import { EmailLogResponseDto, EmailMetricsResponseDto } from 'src/app/api/models
       </p-tabView>
     </div>
   `,
-  styleUrls: ['./email-dashboard.component.scss']
+  styleUrls: ['./email-dashboard.component.scss'],
 })
 export class EmailDashboardComponent implements OnInit {
   private emailStore = inject(EmailManagementStore);
@@ -371,11 +412,38 @@ export class EmailDashboardComponent implements OnInit {
   statusChartData: any = {};
   typesChartData: any = {};
   timelineChartData: any = {};
-  
+
   // Chart options
   doughnutChartOptions: any = {};
   barChartOptions: any = {};
   lineChartOptions: any = {};
+
+  // Table columns and features
+  recentEmailsColumns: TableColumn[] = [
+    { field: 'to', header: 'Destinatario', sortable: true },
+    { field: 'subject', header: 'Asunto', sortable: true },
+    { field: 'templateUsed', header: 'Tipo', sortable: true },
+    { field: 'status', header: 'Estado', sortable: true },
+    { field: 'sentAt', header: 'Enviado', sortable: true },
+  ];
+
+  failedEmailsColumns: TableColumn[] = [
+    { field: 'to', header: 'Destinatario' },
+    { field: 'subject', header: 'Asunto' },
+    { field: 'error', header: 'Error' },
+    { field: 'sentAt', header: 'Fecha' },
+    { field: 'actions', header: 'Acciones' },
+  ];
+
+  recentEmailsTableFeatures: OrbTableFeatures = {
+    showGlobalSearch: true,
+    globalSearchPlaceholder: 'Buscar emails...',
+  };
+
+  failedEmailsTableFeatures: OrbTableFeatures = {
+    showGlobalSearch: true,
+    globalSearchPlaceholder: 'Buscar emails fallidos...',
+  };
 
   ngOnInit(): void {
     this.initializeChartOptions();
@@ -396,35 +464,35 @@ export class EmailDashboardComponent implements OnInit {
     this.doughnutChartOptions = {
       plugins: {
         legend: {
-          position: 'bottom'
-        }
+          position: 'bottom',
+        },
       },
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
     };
 
     // Bar chart options
     this.barChartOptions = {
       plugins: {
         legend: {
-          display: false
-        }
+          display: false,
+        },
       },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
         y: {
-          beginAtZero: true
-        }
-      }
+          beginAtZero: true,
+        },
+      },
     };
 
     // Line chart options
     this.lineChartOptions = {
       plugins: {
         legend: {
-          position: 'top'
-        }
+          position: 'top',
+        },
       },
       responsive: true,
       maintainAspectRatio: false,
@@ -432,13 +500,13 @@ export class EmailDashboardComponent implements OnInit {
         x: {
           type: 'time',
           time: {
-            unit: 'day'
-          }
+            unit: 'day',
+          },
         },
         y: {
-          beginAtZero: true
-        }
-      }
+          beginAtZero: true,
+        },
+      },
     };
   }
 
@@ -453,10 +521,13 @@ export class EmailDashboardComponent implements OnInit {
   }
 
   private loadDashboardData(): void {
-    const dateFilter = this.dateRange?.length === 2 ? {
-      from: this.dateRange[0].toISOString(),
-      to: this.dateRange[1].toISOString()
-    } : undefined;
+    const dateFilter =
+      this.dateRange?.length === 2
+        ? {
+            from: this.dateRange[0].toISOString(),
+            to: this.dateRange[1].toISOString(),
+          }
+        : undefined;
 
     this.emailStore.loadEmailMetrics(dateFilter || {});
     this.emailStore.loadEmailLogs({ page: 1, limit: 50 });
@@ -464,37 +535,41 @@ export class EmailDashboardComponent implements OnInit {
 
   private updateChartData(): void {
     // Chart data will be handled by subscribing to store metrics
-    this.metrics.subscribe(metrics => {
+    this.metrics.subscribe((metrics) => {
       if (metrics) {
         // Status chart data
         this.statusChartData = {
           labels: ['Entregados', 'Fallidos', 'Pendientes'],
-          datasets: [{
-            data: [
-              (metrics.totalSent || 0) - (metrics.totalFailed || 0),
-              metrics.totalFailed || 0,
-              metrics.totalPending || 0
-            ],
-            backgroundColor: [
-              '#10b981', // green
-              '#ef4444', // red
-              '#f59e0b'  // amber
-            ],
-            borderWidth: 2,
-            borderColor: '#ffffff'
-          }]
+          datasets: [
+            {
+              data: [
+                (metrics.totalSent || 0) - (metrics.totalFailed || 0),
+                metrics.totalFailed || 0,
+                metrics.totalPending || 0,
+              ],
+              backgroundColor: [
+                '#10b981', // green
+                '#ef4444', // red
+                '#f59e0b', // amber
+              ],
+              borderWidth: 2,
+              borderColor: '#ffffff',
+            },
+          ],
         };
 
         // Types chart data - mock data for now
         this.typesChartData = {
           labels: ['Bienvenida', 'Reset Password', 'Seguridad', 'Prueba'],
-          datasets: [{
-            label: 'Emails por Tipo',
-            data: [45, 30, 15, 25],
-            backgroundColor: '#3b82f6',
-            borderColor: '#1d4ed8',
-            borderWidth: 2
-          }]
+          datasets: [
+            {
+              label: 'Emails por Tipo',
+              data: [45, 30, 15, 25],
+              backgroundColor: '#3b82f6',
+              borderColor: '#1d4ed8',
+              borderWidth: 2,
+            },
+          ],
         };
 
         // Timeline chart data - mock data for now
@@ -506,16 +581,16 @@ export class EmailDashboardComponent implements OnInit {
               data: [12, 19, 15, 25, 22, 8, 5],
               borderColor: '#3b82f6',
               backgroundColor: 'rgba(59, 130, 246, 0.1)',
-              tension: 0.4
+              tension: 0.4,
             },
             {
               label: 'Entregados',
               data: [11, 18, 14, 23, 21, 7, 4],
               borderColor: '#10b981',
               backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              tension: 0.4
-            }
-          ]
+              tension: 0.4,
+            },
+          ],
         };
       }
     });
@@ -535,7 +610,7 @@ export class EmailDashboardComponent implements OnInit {
       [EmailStatus.FAILED]: 'Fallido',
       [EmailStatus.BOUNCED]: 'Rebotado',
       [EmailStatus.OPENED]: 'Abierto',
-      [EmailStatus.CLICKED]: 'Clickeado'
+      [EmailStatus.CLICKED]: 'Clickeado',
     };
     return statusMap[status] || status;
   }
@@ -548,21 +623,21 @@ export class EmailDashboardComponent implements OnInit {
       [EmailStatus.FAILED]: 'danger',
       [EmailStatus.BOUNCED]: 'danger',
       [EmailStatus.OPENED]: 'success',
-      [EmailStatus.CLICKED]: 'success'
+      [EmailStatus.CLICKED]: 'success',
     };
     return severityMap[status] || 'info';
   }
 
   getTemplateTypeLabel(type?: string): string {
     if (!type) return 'Sin plantilla';
-    
+
     const typeMap: { [key: string]: string } = {
-      'welcome': 'Bienvenida',
-      'password_reset': 'Reset Password',
-      'security_alert': 'Alerta Seguridad',
-      'password_changed': 'Password Cambiado',
-      'account_lockout': 'Cuenta Bloqueada',
-      'test': 'Prueba'
+      welcome: 'Bienvenida',
+      password_reset: 'Reset Password',
+      security_alert: 'Alerta Seguridad',
+      password_changed: 'Password Cambiado',
+      account_lockout: 'Cuenta Bloqueada',
+      test: 'Prueba',
     };
     return typeMap[type] || type;
   }
@@ -573,7 +648,7 @@ export class EmailDashboardComponent implements OnInit {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 

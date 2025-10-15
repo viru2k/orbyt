@@ -1,4 +1,4 @@
-@import '../../../../styles/_design-system.scss';
+@use '../../../../styles/_design-system.scss';
 :host {
   display: block;
   padding: var(--space-6);

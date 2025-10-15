@@ -147,14 +147,13 @@
   <div class="flex flex-column gap-3">
     <div class="field">
       <label for="scenario" class="block text-900 font-medium mb-2">Escenario del Token</label>
-      <p-dropdown 
-        id="scenario"
+      <orb-select
+        inputId="scenario"
         [(ngModel)]="selectedScenario"
         [options]="scenarioOptions"
         optionLabel="label"
-        optionValue="value"        
-        [style]="{ width: '100%' }"
-        appendTo="body">
+        optionValue="value"
+        [appendTo]="'body'">
         <ng-template pTemplate="selectedItem" let-option>
           <div *ngIf="option">
             <span>{{ option.label }}</span>
@@ -166,7 +165,7 @@
             <small class="text-gray-600">{{ option.description }}</small>
           </div>
         </ng-template>
-      </p-dropdown>
+      </orb-select>
     </div>
 
     <div *ngIf="selectedScenario" class="p-3 bg-blue-50 border-round">

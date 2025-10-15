@@ -4,7 +4,7 @@ import { ProductStore } from '@orb-stores';
 import { ProductResponseDto } from '../../../../api/models/product-response-dto';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent, OrbMainHeaderComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent, OrbMainHeaderComponent } from '@orb-components';
 import { ProductFormComponent } from '../modal/product-form.component';
 import { NotificationService } from '@orb-services';
 import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } from '@orb-models';
@@ -18,7 +18,6 @@ import { OrbActionItem, OrbTableFeatures, TableColumn, NotificationSeverity } fr
     CurrencyPipe,
     OrbTableComponent,
     ProductFormComponent,
-    OrbButtonComponent,
     OrbCardComponent,
     OrbMainHeaderComponent,
     OrbDialogComponent,
@@ -77,7 +76,9 @@ export class ProductListComponent implements OnInit {
     {
       label: 'Nuevo Producto',
       icon: 'pi pi-plus',
-      action: () => this.openProductModal()
+      action: () => this.openProductModal(),
+      severity: 'success',
+      styleType: 'outlined'
     }
   ];
 

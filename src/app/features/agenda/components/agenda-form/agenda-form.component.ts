@@ -17,6 +17,7 @@ import { ServiceSearchModalComponent } from '../../../../shared/components/servi
 import { MessageModule } from 'primeng/message';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { BadgeModule } from 'primeng/badge';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AppointmentStatus } from '../../../../api/model/appointment-status.enum';
@@ -39,6 +40,7 @@ import { Router } from '@angular/router';
     MessageModule,
     ConfirmDialogModule,
     ToastModule,
+    BadgeModule,
     ClientSearchModalComponent,
     ServiceSearchModalComponent,
   ],
@@ -70,12 +72,13 @@ export class AgendaFormComponent implements OnChanges {
 
   statusOptions = [
     { label: 'Pendiente', value: AppointmentStatus.PENDING },
-    { label: 'Confirmada', value: AppointmentStatus.CONFIRMED },
-    { label: 'Registrado', value: AppointmentStatus.CHECKED_IN },
+    { label: 'Confirmado', value: AppointmentStatus.CONFIRMED },
+    { label: 'Llegó', value: AppointmentStatus.CHECKED_IN },
     { label: 'En Progreso', value: AppointmentStatus.IN_PROGRESS },
-    { label: 'Completada', value: AppointmentStatus.COMPLETED },
-    { label: 'Cancelada', value: AppointmentStatus.CANCELLED },
-    { label: 'No Asistió', value: AppointmentStatus.NO_SHOW }
+    { label: 'Completado', value: AppointmentStatus.COMPLETED },
+    { label: 'Cancelado', value: AppointmentStatus.CANCELLED },
+    { label: 'No Asistió', value: AppointmentStatus.NO_SHOW },
+    { label: 'Reprogramado', value: AppointmentStatus.RESCHEDULED }
   ];
 
   // Validación de disponibilidad
@@ -126,14 +129,14 @@ export class AgendaFormComponent implements OnChanges {
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(() => {
-      this.onDateTimeChange();
+      this.onStartDateTimeChange();
     });
 
     this.agendaForm.get('endDateTime')?.valueChanges.pipe(
-      debounceTime(500), 
+      debounceTime(500),
       distinctUntilChanged()
     ).subscribe(() => {
-      this.onDateTimeChange();
+      this.onEndDateTimeChange();
     });
   }
 
@@ -161,8 +164,8 @@ export class AgendaFormComponent implements OnChanges {
       }
       
       // Cargar servicio si existe
-      if (this.appointment.serviceId) {
-        this.loadServiceById(this.appointment.serviceId);
+      if (this.appointment.service?.id) {
+        this.loadServiceById(this.appointment.service.id);
       }
       
       this.agendaForm.patchValue({
@@ -172,8 +175,8 @@ export class AgendaFormComponent implements OnChanges {
         endDateTime: this.appointment.end ? new Date(this.appointment.end) : null,
         clientId: this.appointment.client?.id,
         professionalId: this.appointment.professional?.id,
-        serviceId: this.appointment.serviceId,
-        roomId: this.appointment.roomId,
+        serviceId: this.appointment.service?.id,
+        roomId: this.appointment.room?.id,
         status: this.appointment.status,
       }, { emitEvent: false });
     } else {
@@ -245,16 +248,17 @@ export class AgendaFormComponent implements OnChanges {
     };
 
     if (this.appointment?.id) {
+      // Editing existing appointment - just update and close
       this.agendaStore.updateAppointment({
         id: this.appointment.id,
         dto: appointmentPayload as UpdateAppointmentDto,
       });
+      this.close.emit();
     } else {
+      // Creating new appointment - create and show invoice dialog
       this.agendaStore.createAppointment(appointmentPayload as CreateAppointmentDto);
+      this.showInvoiceCreationDialog(this.selectedClient?.id || formValue.clientId);
     }
-    
-    // Preguntar si desea crear factura después de guardar el turno
-    this.showInvoiceCreationDialog(this.selectedClient?.id || formValue.clientId);
   }
 
   onDelete(): void {
@@ -283,7 +287,7 @@ export class AgendaFormComponent implements OnChanges {
       }
       
       // Trigger availability check
-      this.onDateTimeChange();
+      this.checkAvailability();
     } else {
       this.selectedProfessionalId = null;
       this.clearClient();
@@ -291,7 +295,24 @@ export class AgendaFormComponent implements OnChanges {
     }
   }
 
-  onDateTimeChange(): void {
+  onStartDateTimeChange(): void {
+    // Limpiar timeout anterior
+    if (this.availabilityCheckTimeout) {
+      clearTimeout(this.availabilityCheckTimeout);
+    }
+
+    // Crear nuevo timeout para evitar múltiples llamadas rápidas
+    this.availabilityCheckTimeout = setTimeout(() => {
+      // Si hay un servicio seleccionado con duración, recalcular automáticamente la fecha fin
+      if (this.selectedService && this.selectedService.duration) {
+        this.calculateEndDateTimeFromService();
+      }
+
+      this.checkAvailability();
+    }, 500); // Esperar 500ms después del último cambio
+  }
+
+  onEndDateTimeChange(): void {
     // Limpiar timeout anterior
     if (this.availabilityCheckTimeout) {
       clearTimeout(this.availabilityCheckTimeout);
@@ -514,6 +535,9 @@ export class AgendaFormComponent implements OnChanges {
     }
     this.showServiceSearchModal = false;
     this.updateAppointmentTitle();
+
+    // Calcular fecha fin automáticamente basada en la duración del servicio
+    this.calculateEndDateTimeFromService();
   }
 
   onServiceSearchCancel(): void {
@@ -526,19 +550,72 @@ export class AgendaFormComponent implements OnChanges {
     this.updateAppointmentTitle();
   }
 
+  private calculateEndDateTimeFromService(): void {
+    // Solo calcular si hay un servicio seleccionado con duración
+    if (!this.selectedService || !this.selectedService.duration) {
+      console.log('🕐 CALCULATE END TIME - No service or duration available');
+      return;
+    }
+
+    const startDateTime = this.agendaForm.get('startDateTime')?.value;
+    const currentEndDateTime = this.agendaForm.get('endDateTime')?.value;
+
+    if (!startDateTime) {
+      console.log('🕐 CALCULATE END TIME - No start date available');
+      return;
+    }
+
+    // Calcular la nueva fecha fin basada en la duración del servicio
+    const serviceDurationMinutes = this.selectedService.duration;
+    const newEndDateTime = new Date(startDateTime.getTime() + (serviceDurationMinutes * 60 * 1000));
+
+    // Solo actualizar si la diferencia actual es diferente a la duración del servicio
+    if (currentEndDateTime) {
+      const currentDurationMinutes = Math.round((currentEndDateTime.getTime() - startDateTime.getTime()) / (1000 * 60));
+
+      if (currentDurationMinutes === serviceDurationMinutes) {
+        console.log('🕐 CALCULATE END TIME - Duration already matches service duration, no update needed');
+        return;
+      }
+    }
+
+    console.log('🕐 CALCULATE END TIME - Updating end time:', {
+      serviceName: this.selectedService.name,
+      serviceDuration: serviceDurationMinutes,
+      startDateTime: startDateTime,
+      newEndDateTime: newEndDateTime,
+      previousEndDateTime: currentEndDateTime
+    });
+
+    // Actualizar la fecha fin en el formulario
+    this.agendaForm.patchValue({
+      endDateTime: newEndDateTime
+    }, { emitEvent: true }); // Mantener emitEvent true para disparar validaciones
+  }
+
   private updateAppointmentTitle(): void {
+    console.log('📝 UPDATE TITLE - Updating appointment title:', {
+      hasClient: !!this.selectedClient,
+      hasService: !!this.selectedService,
+      clientName: this.selectedClient ? this.getClientDisplayName(this.selectedClient) : null,
+      serviceName: this.selectedService?.name
+    });
+
     if (this.selectedClient && this.selectedService) {
       const clientName = this.getClientDisplayName(this.selectedClient);
       const serviceName = this.selectedService.name;
       const title = `${clientName} - ${serviceName}`;
-      this.agendaForm.patchValue({ title }, { emitEvent: false });
+      this.agendaForm.patchValue({ title }, { emitEvent: true });
+      console.log('📝 UPDATE TITLE - Both client and service:', title);
     } else if (this.selectedClient) {
       const clientName = this.getClientDisplayName(this.selectedClient);
-      this.agendaForm.patchValue({ title: clientName }, { emitEvent: false });
+      this.agendaForm.patchValue({ title: clientName }, { emitEvent: true });
+      console.log('📝 UPDATE TITLE - Only client:', clientName);
     } else {
-      // Si no hay selecciones, limpiar el título para que el usuario lo ingrese manualmente
-      if (!this.appointment) { // Solo limpiar si no estamos editando
-        this.agendaForm.patchValue({ title: '' }, { emitEvent: false });
+      // Si no hay selecciones, solo limpiar si no estamos editando una cita existente
+      if (!this.appointment) {
+        this.agendaForm.patchValue({ title: '' }, { emitEvent: true });
+        console.log('📝 UPDATE TITLE - Cleared title');
       }
     }
   }
@@ -556,9 +633,9 @@ export class AgendaFormComponent implements OnChanges {
 
   formatPrice(price?: number): string {
     if (!price) return 'Sin precio';
-    return new Intl.NumberFormat('es-CO', {
+    return new Intl.NumberFormat('es-ES', {
       style: 'currency',
-      currency: 'COP',
+      currency: 'EUR',
       minimumFractionDigits: 0
     }).format(price);
   }
@@ -586,7 +663,8 @@ export class AgendaFormComponent implements OnChanges {
           type: 'service' as 'product' | 'service',
           price: service.basePrice,
           category: service.category || '',
-          status: service.status
+          status: service.status,
+          duration: service.duration
         };
       },
       error: (error) => {

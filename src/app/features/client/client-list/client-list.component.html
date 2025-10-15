@@ -36,7 +36,7 @@
                 <div class="flex align-items-center gap-3">
                   <orb-entity-avatar
                     [entity]="client"
-                    [avatar]="client.avatarUrl ? {url: client.avatarUrl, id: 0, filename: '', fileType: 'avatar', entityType: 'client', createdAt: '', updatedAt: '', isActive: true, mimeType: '', originalName: '', path: '', size: 0, uploadedBy: {}} : null"
+                    [avatar]="client.avatar || null"
                     entityType="client"
                     size="normal"
                     shape="circle"

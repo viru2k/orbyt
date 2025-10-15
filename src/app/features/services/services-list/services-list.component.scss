@@ -1,55 +1,39 @@
-@use '../../../../styles/variables';
-@use '../../../../styles/mixins';
+@use '../../../../styles/_design-system.scss';
 
 :host {
   display: block;
   padding: var(--space-6);
 }
 
-/* Service info styling */
+orb-card {
+  margin-top: 1rem; // Ejemplo: si quieres un espacio encima de la tarjeta
+  padding: 5px 5px;
+}
+
+/* Service profile column styling */
 .service-info {
   flex: 1;
-  min-width: 0;
-  
+  min-width: 0; // Permite que el texto se trunque si es necesario
+
   .service-name {
     font-weight: 600;
     color: var(--text-color);
     line-height: 1.3;
     margin-bottom: 2px;
   }
-  
+
   .service-description {
     color: var(--text-color-secondary);
     font-size: 0.875rem;
     line-height: 1.2;
-    margin-bottom: 4px;
-  }
-  
-  .service-category {
-    color: var(--text-color-secondary);
-    font-size: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    
-    i {
-      font-size: 0.7rem;
-    }
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
   }
 }
 
-.service-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: rgba(var(--primary-color-rgb), 0.1);
-  border-radius: var(--radius-lg, 0.75rem);
-  flex-shrink: 0;
-}
-
-/* Service layout in table - Force horizontal layout */
+/* Service layout en tabla - Forzar layout horizontal */
 ::ng-deep orb-table table tbody tr td {
   .flex.align-items-center {
     display: flex !important;
@@ -57,11 +41,7 @@
     align-items: center !important;
     gap: 0.75rem !important;
     width: 100% !important;
-    
-    .service-avatar {
-      flex-shrink: 0 !important;
-    }
-    
+
     .service-info {
       flex: 1 !important;
       min-width: 0 !important;
@@ -72,7 +52,7 @@
   }
 }
 
-/* Force layout in first column specifically */
+/* Forzar layout en primera columna específicamente */
 ::ng-deep orb-table table tbody tr td:first-child {
   .flex {
     display: flex !important;
@@ -82,123 +62,130 @@
   }
 }
 
-/* Status styling consistent with other components */
-::ng-deep .status-active {
-  background: rgba(34, 197, 94, 0.1) !important;
-  color: rgb(34, 197, 94) !important;
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 0.5rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  text-transform: capitalize !important;
+/* Status styling is now global in _design-system.scss */
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  .toggle-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
 }
 
-::ng-deep .status-inactive {
-  background: rgba(239, 68, 68, 0.1) !important;
-  color: rgb(239, 68, 68) !important;
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 0.5rem !important;
-  font-size: 0.75rem !important;
-  font-weight: 500 !important;
-  text-transform: capitalize !important;
-}
-
-/* Enhanced dialog styling */
-::ng-deep orb-dialog {
-  .p-dialog {
-    border-radius: var(--radius-xl, 1rem) !important;
-    box-shadow: var(--shadow-xl) !important;
-    overflow: hidden !important;
+// Service layout styles
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--surface-border);
     
-    .p-dialog-header {
-      background: var(--gradient-primary) !important;
-      color: white !important;
-      border: none !important;
-      padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem) !important;
-      
-      .p-dialog-title {
-        color: white !important;
-        font-weight: var(--font-semibold, 600) !important;
-        font-size: var(--text-xl, 1.25rem) !important;
-      }
-      
-      .p-dialog-header-close {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: none !important;
-        color: white !important;
-        border-radius: var(--radius-md, 0.5rem) !important;
-        width: 32px !important;
-        height: 32px !important;
+    .header-content {
+      .title-section {
+        .page-title {
+          margin: 0 0 0.5rem 0;
+          color: var(--text-color);
+          font-size: 1.75rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          
+          i {
+            color: var(--primary-color);
+          }
+        }
         
-        &:hover {
-          background: rgba(255, 255, 255, 0.3) !important;
+        .page-subtitle {
+          margin: 0;
+          color: var(--text-color-secondary);
+          font-size: 0.95rem;
         }
       }
     }
-    
-    .p-dialog-content {
-      background: var(--background-primary) !important;
-      border: none !important;
-      padding: var(--space-6, 1.5rem) !important;
-    }
+  }
 
-    .p-dialog-footer {
-      background: var(--background-primary) !important;
-      border: none !important;
-      padding: var(--space-4, 1rem) var(--space-6, 1.5rem) !important;
-      display: flex !important;
-      justify-content: flex-end !important;
-      gap: var(--space-3, 0.75rem) !important;
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .toolbar-right {
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .toggle-label {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+      }
     }
   }
-}
 
-/* Coming soon content styling */
-.coming-soon-content {
-  text-align: center;
-  padding: var(--space-8, 2rem);
-  color: var(--text-color-secondary);
-  
-  h3 {
+  .service-name {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 12px !important; /* Sala de Consulta 1 should be 12px */
+  }
+
+  .service-description {
+    color: var(--text-color-secondary);
+    font-size: 10px !important; /* Sala principal para consultas should be 10px */
+    max-width: 200px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .service-location {
+    display: flex;
+    align-items: center;
+    color: var(--text-color-secondary);
+    font-size: 0.9rem;
+  }
+
+  .capacity-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--surface-100);
     color: var(--text-color);
-    margin-bottom: var(--space-4, 1rem);
-    font-size: var(--text-xl, 1.25rem);
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
   }
-  
-  p {
-    margin: var(--space-3, 0.75rem) 0;
-    line-height: 1.6;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
   }
-  
-  ul {
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+
+  .empty-state {
+    padding: 2rem;
+    text-align: center;
     
-    li {
-      margin: var(--space-2, 0.5rem) 0;
-      line-height: 1.5;
+    i {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    
+    h4 {
+      margin: 0 0 0.5rem 0;
+    }
+    
+    p {
+      margin: 0 0 1.5rem 0;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
-}
 
-/* Enhanced card styling */
-::ng-deep orb-card {
-  .card-content {
-    @include mixins.orbyt-card(lg);
-  }
-}
 
-/* Mobile responsiveness */
-@include mixins.mobile {
-  :host {
-    padding: var(--space-4, 1rem);
-  }
-  
-  .coming-soon-content {
-    padding: var(--space-4, 1rem);
-  }
-}
+

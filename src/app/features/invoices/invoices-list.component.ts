@@ -11,11 +11,11 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ChartModule } from 'primeng/chart';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { OrbActionsPopoverComponent, OrbTableComponent, OrbCardComponent, OrbButtonComponent, OrbDialogComponent, OrbMainHeaderComponent } from '@orb-components';
+import { OrbActionsPopoverComponent, OrbTableComponent, OrbCardComponent, OrbDialogComponent, OrbMainHeaderComponent, OrbTagComponent, OrbTextInputComponent } from '@orb-components';
 
 import { InvoicesService } from '../../api/services/invoices.service';
 import { InvoiceResponseDto } from '../../api/models/invoice-response-dto';
-import { TableColumn, OrbActionItem } from '@orb-models';
+import { TableColumn, OrbActionItem, OrbTableFeatures } from '@orb-models';
 import { InvoicesStore } from '../../store/invoices/invoices.store';
 import { InvoiceFormComponent } from './components/invoice-form.component';
 import { InvoiceDetailsComponent } from './components/invoice-details.component';
@@ -39,76 +39,69 @@ import { PaymentFormComponent } from './components/payment-form.component';
     OrbActionsPopoverComponent,
     OrbTableComponent,
     OrbCardComponent,
-    OrbButtonComponent,
     OrbDialogComponent,
     InvoiceFormComponent,
     InvoiceDetailsComponent,
     PaymentFormComponent,
-    OrbMainHeaderComponent
+    OrbMainHeaderComponent,
+    OrbTagComponent,
+    OrbTextInputComponent
   ],
   providers: [MessageService, ConfirmationService],
   template: `
     <!-- Header Section -->
-     <orb-main-header
-  title=" Gestión de Facturas"
-  icon="fa fa-file-invoice-dollar"
-  subtitle="Control de facturación y pagos">
-</orb-main-header>
+    <orb-main-header
+      title=" Gestión de Facturas"
+      icon="fa fa-file-invoice-dollar"
+      subtitle="Control de facturación y pagos">
+    </orb-main-header>
 
-    <orb-card>
-      <div orbBody>
-        
-        <div class="stats-cards">
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon">
-                <i class="fa fa-money-bill-wave"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (invoicesStore.totalRevenue$ | async) ?? 0 | currency:'EUR':'symbol':'1.2-2' }}</h3>
-                <p>Ingresos Totales</p>
-              </div>
-            </div>
+    <!-- Metrics Grid usando el sistema global -->
+    <div class="metrics-grid">
+      <!-- Ingresos Totales -->
+      <div class="metric-card primary">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <i class="fa fa-money-bill-wave"></i>
           </div>
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon pending">
-                <i class="fa fa-clock"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (invoicesStore.pendingInvoices$ | async) ?? 0 }}</h3>
-                <p>Facturas Pendientes</p>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon overdue">
-                <i class="fa fa-exclamation-triangle"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (invoicesStore.overdueInvoices$ | async) ?? 0 }}</h3>
-                <p>Facturas Vencidas</p>
-              </div>
-            </div>
+          <div class="metric-details">
+            <h3>{{ (invoicesStore.totalRevenue$ | async) ?? 0 | currency:'EUR':'symbol':'1.2-2' }}</h3>
+            <span>Ingresos Totales</span>
           </div>
         </div>
-
-        <div class="filters-section">
-               <div class="header-actions">
-        <orb-button
-          label="Nueva Factura"
-          icon="fa fa-plus"
-          (clicked)="openNewInvoiceDialog()"
-          variant="success">
-        </orb-button>
-        <orb-button
-          label="Estadísticas"
-          icon="fa fa-chart-line"
-          (clicked)="viewStats()"
-          variant="secondary">
-        </orb-button>
       </div>
+
+      <!-- Facturas Pendientes -->
+      <div class="metric-card warning">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <i class="fa fa-clock"></i>
+          </div>
+          <div class="metric-details">
+            <h3>{{ (invoicesStore.pendingInvoices$ | async) ?? 0 }}</h3>
+            <span>Facturas Pendientes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Facturas Vencidas -->
+      <div class="metric-card danger">
+        <div class="metric-content">
+          <div class="metric-icon">
+            <i class="fa fa-exclamation-triangle"></i>
+          </div>
+          <div class="metric-details">
+            <h3>{{ (invoicesStore.overdueInvoices$ | async) ?? 0 }}</h3>
+            <span>Facturas Vencidas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de Facturas -->
+    <orb-card>
+      <div orbBody>
+        <div class="filters-section">
           <div class="filters-grid">
             <div class="filter-item">
               <label>Estado:</label>
@@ -123,23 +116,24 @@ import { PaymentFormComponent } from './components/payment-form.component';
             </div>
             <div class="filter-item">
               <label>Buscar:</label>
-              <span class="p-input-icon-left">
-                <i class="fa fa-search"></i>
-                <input 
-                  type="text" 
-                  pInputText 
-                  [(ngModel)]="searchTerm"
-                  (input)="onSearch()">
-              </span>
+              <orb-text-input
+                [(ngModel)]="searchTerm"
+                (input)="onSearch()"
+                placeholder="Buscar facturas..."
+                iconLeft="fa fa-search">
+              </orb-text-input>
             </div>
           </div>
         </div>
 
         <orb-table
-          [value]="(invoicesStore.filteredInvoices$ | async) ?? []"
+          [value]="(invoicesStore.invoices$ | async) || []"
           [columns]="columns"
           [loading]="(invoicesStore.loading$ | async) ?? false"
           [rowActions]="actions"
+          [tableHeaderActions]="invoiceTableHeaderActions"
+          [tableFeatures]="tableFeaturesConfig"
+          [globalFilterFields]="['invoiceNumber', 'client']"
           [paginator]="true"
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
@@ -161,8 +155,11 @@ import { PaymentFormComponent } from './components/payment-form.component';
                   
                   <ng-container *ngSwitchCase="'client'">
                     <div class="client-info">
-                      <strong>{{ getClientName(invoice) }}</strong>
-                      <small>{{ getClientEmail(invoice) }}</small>
+                      <div class="client-name">{{ getClientName(invoice) }}</div>
+                      <div class="client-contact">
+                        <span *ngIf="getClientEmail(invoice)">{{ getClientEmail(invoice) }}</span>
+                        <span *ngIf="getClientPhone(invoice)">{{ getClientPhone(invoice) }}</span>
+                      </div>
                     </div>
                   </ng-container>
                   
@@ -176,22 +173,23 @@ import { PaymentFormComponent } from './components/payment-form.component';
                   </ng-container>
                   
                   <ng-container *ngSwitchCase="'total'">
-                    <strong class="amount">{{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}</strong>
+                    <strong class="amount">{{ parseNumber(invoice.total) | currency:'EUR':'symbol':'1.2-2' }}</strong>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'status'">
-                    <p-tag 
-                      [value]="getStatusLabel(invoice.status)" 
-                      [severity]="getStatusSeverity(invoice.status)">
-                    </p-tag>
+                    <orb-tag
+                      [value]="getStatusLabel(invoice.status)"
+                      [severity]="getStatusSeverity(invoice.status)"
+                      size="small">
+                    </orb-tag>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'paidAmount'">
-                    <span class="amount paid">{{ invoice.paidAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    <span class="amount paid">{{ parseNumber(invoice.paidAmount) | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </ng-container>
-                  
+
                   <ng-container *ngSwitchCase="'remainingAmount'">
-                    <span class="amount pending">{{ invoice.remainingAmount | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    <span class="amount pending">{{ parseNumber(invoice.remainingAmount) | currency:'EUR':'symbol':'1.2-2' }}</span>
                   </ng-container>
                   
                   <ng-container *ngSwitchDefault>
@@ -222,14 +220,14 @@ import { PaymentFormComponent } from './components/payment-form.component';
           <div class="summary-card">
             <div class="summary-icon">💰</div>
             <div class="summary-details">
-              <h3>{{ (invoicesStore.totalRevenue$ | async) ?? 0 | currency:'EUR':'symbol':'1.2-2' }}</h3>
+              <h3>{{ (invoicesStore.selectTotalRevenue | async) ?? 0 | currency:'EUR':'symbol':'1.2-2' }}</h3>
               <p>Ingresos Totales</p>
             </div>
           </div>
           <div class="summary-card">
             <div class="summary-icon">📋</div>
             <div class="summary-details">
-              <h3>{{ (invoicesStore.totalInvoices$ | async) ?? 0 }}</h3>
+              <h3>{{ (invoicesStore.invoices$ | async)?.length ?? 0 }}</h3>
               <p>Total Facturas</p>
             </div>
           </div>
@@ -382,16 +380,44 @@ export class InvoicesListComponent implements OnInit {
     { field: 'actions', header: '', sortable: false , width: '10px' }
   ];
 
+  // Table features configuration
+  tableFeaturesConfig: OrbTableFeatures = {
+    showGlobalSearch: true,
+    globalSearchPlaceholder: 'Buscar facturas...'
+  };
+
+  // Table header actions
+  invoiceTableHeaderActions: OrbActionItem[] = [
+    {
+      label: 'Nueva Factura',
+      icon: 'fa fa-plus',
+      severity: 'success' as const,
+      styleType: 'outlined',
+      action: () => this.openNewInvoiceDialog()
+    },
+    {
+      label: 'Estadísticas',
+      icon: 'fa fa-chart-line',
+      severity: 'info' as const,
+      styleType: 'outlined',
+      action: () => this.viewStats()
+    }
+  ];
+
   // Acciones del popover
   actions: OrbActionItem<InvoiceResponseDto>[] = [
     {
       label: 'Ver Detalles',
       icon: 'fas fa-eye',
+      outlined: true,
+      severity: 'help',
       action: (item?: InvoiceResponseDto) => item && this.viewInvoice(item)
     },
     {
       label: 'Editar',
       icon: 'fas fa-edit',
+         outlined: true,
+      severity: 'secondary',
       action: (item?: InvoiceResponseDto) => item && this.editInvoice(item),
       visible: (item?: InvoiceResponseDto) => item?.status !== 'paid'
     },
@@ -436,20 +462,20 @@ export class InvoicesListComponent implements OnInit {
     }
 
     this.invoicesStore.loadInvoices(filters);
-    this.invoicesStore.loadSalesStats();
+    this.invoicesStore.loadSalesStats({});
   }
 
   onSearch() {
-    this.invoicesStore.updateFilters({ searchTerm: this.searchTerm });
-    setTimeout(() => {
-      this.loadInvoices();
-    }, 300);
+    // Note: searchTerm filtering will be handled client-side
+    this.loadInvoices();
   }
 
   openNewInvoiceDialog() {
+    console.log('🚀 INVOICE - openNewInvoiceDialog called');
     this.isEditMode = false;
     this.selectedInvoiceForEdit = undefined;
     this.displayInvoiceFormModal.set(true);
+    console.log('📋 INVOICE - Modal state set to:', this.displayInvoiceFormModal());
   }
 
   viewStats() {
@@ -491,7 +517,7 @@ export class InvoicesListComponent implements OnInit {
       acceptLabel: 'Sí, Cancelar',
       rejectLabel: 'No',
       accept: () => {
-        this.invoicesStore.cancelInvoice({ id: invoice.id.toString() });
+        this.invoicesStore.cancelInvoice({ id: invoice.id, reason: 'Cancelled by user' });
         this.messageService.add({
           severity: 'success',
           summary: 'Cancelado',
@@ -686,21 +712,28 @@ export class InvoicesListComponent implements OnInit {
   }
 
   getAverageInvoiceAmount(): number {
-    let amount = 0;
-    this.invoicesStore.averageInvoiceAmount$.subscribe(value => amount = value || 0);
-    return amount;
+    // Use observable pattern instead of direct access
+    let invoices: any[] = [];
+    this.invoicesStore.selectPaidInvoices.subscribe(paidInvoices => invoices = paidInvoices).unsubscribe();
+    if (invoices.length === 0) return 0;
+    const total = invoices.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+    return total / invoices.length;
   }
 
   getPaymentRate(): number {
-    let rate = 0;
-    this.invoicesStore.paymentRate$.subscribe(value => rate = value || 0);
-    return rate;
+    // Use observable pattern instead of direct access
+    let allInvoices: any[] = [];
+    let paidInvoices: any[] = [];
+    this.invoicesStore.invoices$.subscribe(invoices => allInvoices = invoices).unsubscribe();
+    this.invoicesStore.selectPaidInvoices.subscribe(paid => paidInvoices = paid).unsubscribe();
+    if (allInvoices.length === 0) return 0;
+    return (paidInvoices.length / allInvoices.length) * 100;
   }
 
   getAveragePaymentTime(): number {
     let paidInvoices: any[] = [];
     this.invoicesStore.invoices$.subscribe(invoices => {
-      paidInvoices = invoices?.filter(i => i.status === 'paid' && i.dueDate) || [];
+      paidInvoices = Array.isArray(invoices) ? invoices.filter(i => i.status === 'paid' && i.dueDate) : [];
     });
     if (paidInvoices.length === 0) return 0;
     
@@ -717,10 +750,28 @@ export class InvoicesListComponent implements OnInit {
 
   // Helper methods for client data
   getClientName(invoice: InvoiceResponseDto): string {
-    return (invoice.client as any)?.name || 'Cliente no encontrado';
+    const client = invoice.client as any;
+    return client?.fullname || client?.name || 'Cliente no encontrado';
   }
 
   getClientEmail(invoice: InvoiceResponseDto): string {
     return (invoice.client as any)?.email || '';
+  }
+
+  getClientPhone(invoice: InvoiceResponseDto): string {
+    return (invoice.client as any)?.phone || '';
+  }
+
+  parseNumber(value: any): number {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') return parseFloat(value) || 0;
+    return 0;
+  }
+
+  // Safe array getter for table binding
+  getInvoicesArray(): InvoiceResponseDto[] {
+    let invoices: any;
+    this.invoicesStore.invoices$.subscribe(data => invoices = data).unsubscribe();
+    return Array.isArray(invoices) ? invoices : [];
   }
 }

@@ -1,71 +1,71 @@
-      <orb-main-header
+<orb-main-header
   title="   Panel de Control"
   icon="fa fa-tachometer-alt"
-  subtitle="Gestión integral de consultas e ingresos - {{ currentMonth }}">
+  subtitle="Gestión integral de consultas e ingresos - {{ currentMonth }}"
+>
 </orb-main-header>
 <div class="dashboard" *ngIf="!isLoading()">
-  <!-- Header Section -->
-
-
-  <!-- KPI Cards Grid -->
-  <div class="kpi-grid">
-    <orb-card class="kpi-card revenue">
-      <div orbHeader>
-        <div class="kpi-icon">
+  <!-- Metrics Grid usando sistema global -->
+  <div class="metrics-grid">
+    <!-- Ingresos Totales -->
+    <div class="metric-card success">
+      <div class="metric-content">
+        <div class="metric-icon">
           <i class="fa fa-euro-sign"></i>
         </div>
-        <div class="kpi-content">
-          <h3 class="kpi-value">{{ totalRevenue() | currency:'EUR':'symbol':'1.0-0' }}</h3>
-          <p class="kpi-label">Ingresos Totales</p>
-          <div class="kpi-trend positive">
-            <i class="fa fa-arrow-up"></i>
-            <span>+{{ revenueGrowth() }}%</span>
-          </div>
+        <div class="metric-details">
+          <h3>{{ totalRevenue() | currency : 'EUR' : 'symbol' : '1.0-0' }}</h3>
+          <span>Ingresos Totales</span>
+          <small class="metric-trend positive">
+            <i class="fa fa-arrow-up"></i> +{{ revenueGrowth() }}%
+          </small>
         </div>
       </div>
-    </orb-card>
+    </div>
 
-    <orb-card class="kpi-card consultations">
-      <div orbHeader>
-        <div class="kpi-icon">
+    <!-- Consultas Totales -->
+    <div class="metric-card info">
+      <div class="metric-content">
+        <div class="metric-icon">
           <i class="fa fa-stethoscope"></i>
         </div>
-        <div class="kpi-content">
-          <h3 class="kpi-value">{{ totalConsultations() }}</h3>
-          <p class="kpi-label">Consultas Totales</p>
-          <div class="kpi-trend positive">
-            <i class="fa fa-arrow-up"></i>
-            <span>+{{ consultationGrowth() }}%</span>
-          </div>
+        <div class="metric-details">
+          <h3>{{ totalConsultations() }}</h3>
+          <span>Consultas Totales</span>
+          <small class="metric-trend positive">
+            <i class="fa fa-arrow-up"></i> +{{ consultationGrowth() }}%
+          </small>
         </div>
       </div>
-    </orb-card>
+    </div>
 
-    <orb-card class="kpi-card pending">
-      <div orbHeader>
-        <div class="kpi-icon">
+    <!-- Facturas Pendientes -->
+    <div class="metric-card warning">
+      <div class="metric-content">
+        <div class="metric-icon">
           <i class="fa fa-clock"></i>
         </div>
-        <div class="kpi-content">
-          <h3 class="kpi-value">{{ pendingInvoices() }}</h3>
-          <p class="kpi-label">Facturas Pendientes</p>
-          <div class="kpi-subtitle">{{ todayConsultations() }} consultas hoy</div>
+        <div class="metric-details">
+          <h3>{{ pendingInvoices() }}</h3>
+          <span>Facturas Pendientes</span>
+          <small>{{ todayConsultations() }} consultas hoy</small>
         </div>
       </div>
-    </orb-card>
+    </div>
 
-    <orb-card class="kpi-card satisfaction">
-      <div orbHeader>
-        <div class="kpi-icon">
+    <!-- Satisfacción -->
+    <div class="metric-card purple">
+      <div class="metric-content">
+        <div class="metric-icon">
           <i class="fa fa-heart"></i>
         </div>
-        <div class="kpi-content">
-          <h3 class="kpi-value">{{ clientSatisfaction() }}%</h3>
-          <p class="kpi-label">Satisfacción</p>
-          <div class="kpi-subtitle">{{ averageConsultationTime() }} min promedio</div>
+        <div class="metric-details">
+          <h3>{{ clientSatisfaction() }}%</h3>
+          <span>Satisfacción</span>
+          <small>{{ averageConsultationTime() }} min promedio</small>
         </div>
       </div>
-    </orb-card>
+    </div>
   </div>
 
   <!-- Charts Section -->
@@ -75,36 +75,35 @@
       <div orbHeader>
         <h3><i class="fa fa-chart-line"></i> Evolución de Ingresos</h3>
         <div class="chart-period">
-          <orb-button 
-            label="Actual" 
-            variant="text" 
+          <orb-button
+            label="Actual"
+            variant="text"
             size="small"
             [class.active]="currentPeriod() === 'current'"
-            (clicked)="currentPeriod.set('current')">
+            (clicked)="currentPeriod.set('current')"
+          >
           </orb-button>
-          <orb-button 
-            label="6M" 
-            variant="text" 
+          <orb-button
+            label="6M"
+            variant="text"
             size="small"
             [class.active]="currentPeriod() === '6months'"
-            (clicked)="currentPeriod.set('6months')">
+            (clicked)="currentPeriod.set('6months')"
+          >
           </orb-button>
-          <orb-button 
-            label="1A" 
-            variant="text" 
+          <orb-button
+            label="1A"
+            variant="text"
             size="small"
             [class.active]="currentPeriod() === '1year'"
-            (clicked)="currentPeriod.set('1year')">
+            (clicked)="currentPeriod.set('1year')"
+          >
           </orb-button>
         </div>
       </div>
       <div orbBody>
         <div class="chart-container">
-          <orb-chart 
-            type="line" 
-            [data]="revenueChartData" 
-            [options]="chartOptions"
-            [height]="300">
+          <orb-chart type="line" [data]="revenueChartData" [options]="chartOptions" [height]="300">
           </orb-chart>
         </div>
       </div>
@@ -117,11 +116,12 @@
       </div>
       <div orbBody>
         <div class="chart-container">
-          <orb-chart 
-            type="doughnut" 
-            [data]="consultationsChartData" 
+          <orb-chart
+            type="doughnut"
+            [data]="consultationsChartData"
             [options]="doughnutOptions"
-            [height]="300">
+            [height]="300"
+          >
           </orb-chart>
         </div>
       </div>
@@ -134,11 +134,7 @@
       </div>
       <div orbBody>
         <div class="chart-container">
-          <orb-chart 
-            type="bar" 
-            [data]="performanceChartData" 
-            [options]="barOptions"
-            [height]="300">
+          <orb-chart type="bar" [data]="performanceChartData" [options]="barOptions" [height]="300">
           </orb-chart>
         </div>
       </div>
@@ -154,15 +150,22 @@
       <div orbBody>
         <div class="goal-content">
           <div class="goal-amount">
-            <span class="current">{{ totalRevenue() | currency:'EUR':'symbol':'1.0-0' }}</span>
-            <span class="target">/ {{ monthlyRevenueGoal() | currency:'EUR':'symbol':'1.0-0' }}</span>
+            <span class="current">{{
+              totalRevenue() | currency : 'EUR' : 'symbol' : '1.0-0'
+            }}</span>
+            <span class="target"
+              >/ {{ monthlyRevenueGoal() | currency : 'EUR' : 'symbol' : '1.0-0' }}</span
+            >
           </div>
-          <orb-progress-bar 
-            [value]="getRevenueProgress()" 
+          <orb-progress-bar
+            [value]="getRevenueProgress()"
             [showValue]="false"
-            styleClass="revenue-progress">
+            styleClass="revenue-progress"
+          >
           </orb-progress-bar>
-          <div class="progress-label">{{ getRevenueProgress() | number:'1.0-0' }}% completado</div>
+          <div class="progress-label">
+            {{ getRevenueProgress() | number : '1.0-0' }}% completado
+          </div>
         </div>
       </div>
     </orb-card>
@@ -177,12 +180,15 @@
             <span class="current">{{ totalConsultations() }}</span>
             <span class="target">/ {{ monthlyConsultationsGoal() }}</span>
           </div>
-          <orb-progress-bar 
-            [value]="getConsultationsProgress()" 
+          <orb-progress-bar
+            [value]="getConsultationsProgress()"
             [showValue]="false"
-            styleClass="consultations-progress">
+            styleClass="consultations-progress"
+          >
           </orb-progress-bar>
-          <div class="progress-label">{{ getConsultationsProgress() | number:'1.0-0' }}% completado</div>
+          <div class="progress-label">
+            {{ getConsultationsProgress() | number : '1.0-0' }}% completado
+          </div>
         </div>
       </div>
     </orb-card>
@@ -194,19 +200,16 @@
     <orb-card class="activity-card">
       <div orbHeader>
         <h3><i class="fa fa-file-invoice"></i> Facturas Recientes</h3>
-        <orb-button 
-          label="Ver Todas" 
-          size="small" 
-          variant="text"
-          (clicked)="navigateToInvoices()">
+        <orb-button label="Ver Todas" size="small" variant="text" (clicked)="navigateToInvoices()">
         </orb-button>
       </div>
       <div orbBody>
-        <orb-table 
-          [value]="recentInvoices()" 
+        <orb-table
+          [value]="recentInvoices()"
           [columns]="invoiceColumns"
           [paginator]="false"
-          styleClass="recent-table">
+          styleClass="recent-table"
+        >
           <ng-template #body let-invoice let-columns="columns">
             <tr>
               <td *ngFor="let col of columns">
@@ -218,12 +221,13 @@
                     {{ getClientName(invoice) }}
                   </ng-container>
                   <ng-container *ngSwitchCase="'total'">
-                    {{ invoice.total | currency:'EUR':'symbol':'1.2-2' }}
+                    {{ invoice.total | currency : 'EUR' : 'symbol' : '1.2-2' }}
                   </ng-container>
                   <ng-container *ngSwitchCase="'status'">
-                    <orb-tag 
-                      [value]="getStatusLabel(invoice.status)" 
-                      [severity]="getStatusSeverity(invoice.status)">
+                    <orb-tag
+                      [value]="getStatusLabel(invoice.status)"
+                      [severity]="getStatusSeverity(invoice.status)"
+                    >
                     </orb-tag>
                   </ng-container>
                 </ng-container>
@@ -238,19 +242,21 @@
     <orb-card class="activity-card">
       <div orbHeader>
         <h3><i class="fa fa-stethoscope"></i> Consultas Recientes</h3>
-        <orb-button 
-          label="Ver Todas" 
-          size="small" 
+        <orb-button
+          label="Ver Todas"
+          size="small"
           variant="text"
-          (clicked)="navigateToConsultations()">
+          (clicked)="navigateToConsultations()"
+        >
         </orb-button>
       </div>
       <div orbBody>
-        <orb-table 
-          [value]="recentConsultations()" 
+        <orb-table
+          [value]="recentConsultations()"
           [columns]="consultationColumns"
           [paginator]="false"
-          styleClass="recent-table">
+          styleClass="recent-table"
+        >
           <ng-template #body let-consultation let-columns="columns">
             <tr>
               <td *ngFor="let col of columns">
@@ -265,9 +271,10 @@
                     {{ formatDate(consultation.createdAt) }}
                   </ng-container>
                   <ng-container *ngSwitchCase="'status'">
-                    <orb-tag 
-                      [value]="getStatusLabel(consultation.status)" 
-                      [severity]="getStatusSeverity(consultation.status)">
+                    <orb-tag
+                      [value]="getStatusLabel(consultation.status)"
+                      [severity]="getStatusSeverity(consultation.status)"
+                    >
                     </orb-tag>
                   </ng-container>
                 </ng-container>
@@ -286,19 +293,23 @@
     </div>
     <div orbBody>
       <div class="quick-actions-grid">
-        <orb-button 
-          label="Ver Agenda" 
-          icon="fa fa-calendar" 
+        <orb-button
+          label="Ver Agenda"
+          icon="fa fa-calendar"
           size="large"
-          variant="secondary"
-          (clicked)="navigateToAgenda()">
+          severity="secondary"
+          variant="outlined"
+          (clicked)="navigateToAgenda()"
+        >
         </orb-button>
-        <orb-button 
-          label="Reportes" 
-          icon="fa fa-chart-line" 
+        <orb-button
+          label="Reportes"
+          icon="fa fa-chart-line"
           size="large"
-          variant="outline"
-          (clicked)="navigateToInvoices()">
+          severity="help"
+          variant="outlined"
+          (clicked)="navigateToInvoices()"
+        >
         </orb-button>
       </div>
     </div>

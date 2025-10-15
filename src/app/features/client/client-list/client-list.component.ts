@@ -6,7 +6,7 @@ import { ClientStore } from '@orb-stores';
 import { ClientResponseDto } from '../../../api/models';
 
 // Componentes Orb y PrimeNG
-import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbButtonComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent, OrbMainHeaderComponent } from '@orb-components';
+import { OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent, OrbEntityAvatarComponent, OrbMainHeaderComponent } from '@orb-components';
 import { ClientFormComponent } from '../modal/client-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -22,7 +22,6 @@ import { NotificationSeverity, OrbActionItem, OrbTableFeatures, TableColumn } fr
     CommonModule,
     OrbCardComponent,
     OrbTableComponent,
-    OrbButtonComponent,
     OrbMainHeaderComponent,
     OrbDialogComponent,
     ClientFormComponent,
@@ -83,7 +82,9 @@ export class ClientListComponent implements OnInit {
     {
       label: 'Nuevo Cliente',
       icon: 'pi pi-plus',
-      action: () => this.openClientModal()
+      action: () => this.openClientModal(),
+      severity: 'success',
+      outlined: true
     }
   ];
   // -------------------------

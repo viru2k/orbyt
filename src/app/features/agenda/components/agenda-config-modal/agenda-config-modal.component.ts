@@ -9,10 +9,9 @@ import { OrbFormFooterComponent } from '@orb-shared-components/application/orb-f
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -40,18 +39,18 @@ import { SpecialScheduleComponent } from '../special-schedule/special-schedule.c
     OrbFormFooterComponent,
     OrbCardComponent,
     ConfirmDialogModule,
-    TooltipModule,
-    FloatLabelModule,
+    TooltipModule,    
     InputTextModule,
     InputNumberModule,
-    CalendarModule,
+    DatePickerModule,
     TableModule,
     DropdownModule,
     CheckboxModule,
     TabViewModule,
     OrbSwitchComponent,
     BlockingManagementComponent,
-    SpecialScheduleComponent
+    SpecialScheduleComponent,
+    OrbCheckboxComponent
 ],
   templateUrl: './agenda-config-modal.component.html',
   styleUrls: ['./agenda-config-modal.component.scss'],
@@ -80,7 +79,8 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
       label: 'Guardar Configuración',
       action: 'save',
       severity: 'success',
-      icon: 'pi pi-save'
+      icon: 'pi pi-save',
+      outlined: true
     }
   ];
 

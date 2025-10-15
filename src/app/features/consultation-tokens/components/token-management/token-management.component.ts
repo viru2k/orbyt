@@ -14,7 +14,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 // Orb Components
-import { OrbButtonComponent, OrbCardComponent } from '@orb-components';
+import { OrbButtonComponent, OrbCardComponent, OrbSelectComponent } from '@orb-components';
 
 // Store and Services
 import { ConsultationTokenStore } from '@orb-stores';
@@ -43,7 +43,8 @@ interface TokenScenarioOption {
     InputTextModule,
     ProgressSpinnerModule,
     OrbButtonComponent,
-    OrbCardComponent
+    OrbCardComponent,
+    OrbSelectComponent
   ],
   templateUrl: './token-management.component.html',
   styleUrls: ['./token-management.component.scss']

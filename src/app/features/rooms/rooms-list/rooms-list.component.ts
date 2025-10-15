@@ -120,6 +120,8 @@ export class RoomsListComponent implements OnInit {
     {
       label: 'Nueva Sala',
       icon: 'pi pi-plus',
+      severity: 'success',
+      outlined: true,
       action: () => this.onCreateRoom()
     }
   ];

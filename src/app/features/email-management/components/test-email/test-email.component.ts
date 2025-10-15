@@ -15,18 +15,11 @@ import { DividerModule } from 'primeng/divider';
 import { TabViewModule } from 'primeng/tabview';
 
 // Orb Components - Using orb-card and orb-button in template
-import { 
-  OrbCardComponent, 
-  OrbButtonComponent
-} from '@orb-components';
+import { OrbCardComponent, OrbButtonComponent } from '@orb-components';
 
 // Services and Models
 import { EmailManagementService } from '../../services/email-management.service';
-import { 
-  TestEmailRequest, 
-  TestEmailResponse, 
-  EmailTemplateType 
-} from '../../models/email.models';
+import { TestEmailRequest, TestEmailResponse, EmailTemplateType } from '../../models/email.models';
 import { SendEmailDto } from 'src/app/api/models';
 
 interface TestEmailTemplate {
@@ -53,7 +46,7 @@ interface TestEmailTemplate {
     DividerModule,
     TabViewModule,
     OrbCardComponent,
-    OrbButtonComponent
+    OrbButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -71,14 +64,14 @@ interface TestEmailTemplate {
             <div class="warning-content">
               <i class="fa fa-exclamation-triangle"></i>
               <h3>Configuración Requerida</h3>
-              <p>
-                Antes de poder probar el envío de emails, debes configurar el servidor SMTP.
-              </p>
+              <p>Antes de poder probar el envío de emails, debes configurar el servidor SMTP.</p>
               <orb-button
                 label="Configurar Email"
                 icon="fa fa-cog"
-                variant="primary"
-                (clicked)="navigateToSettings()">
+                severity="info"
+                variant="outlined"
+                (clicked)="navigateToSettings()"
+              >
               </orb-button>
             </div>
           </div>
@@ -91,19 +84,18 @@ interface TestEmailTemplate {
                   <div class="form-grid">
                     <div class="form-field">
                       <label for="quickTestEmail">Email de destino *</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         id="quickTestEmail"
                         formControlName="email"
                         class="form-control"
                         placeholder="test@example.com"
-                        [class.error]="isQuickFieldInvalid('email')">
+                        [class.error]="isQuickFieldInvalid('email')"
+                      />
                       <small class="field-error" *ngIf="isQuickFieldInvalid('email')">
                         Ingresa un email válido
                       </small>
-                      <small class="field-help">
-                        Email donde se enviará la prueba
-                      </small>
+                      <small class="field-help"> Email donde se enviará la prueba </small>
                     </div>
                   </div>
 
@@ -112,9 +104,11 @@ interface TestEmailTemplate {
                       type="submit"
                       label="Enviar Prueba Rápida"
                       icon="fa fa-paper-plane"
-                      variant="primary"
+                      severity="info"
+                      variant="outlined"
                       [disabled]="quickTestForm.invalid || sending()"
-                      [loading]="sending()">
+                      [loading]="sending()"
+                    >
                     </orb-button>
                   </div>
                 </form>
@@ -126,13 +120,14 @@ interface TestEmailTemplate {
                   <div class="form-grid">
                     <div class="form-field">
                       <label for="customTestEmail">Email de destino *</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         id="customTestEmail"
                         formControlName="email"
                         class="form-control"
                         placeholder="test@example.com"
-                        [class.error]="isCustomFieldInvalid('email')">
+                        [class.error]="isCustomFieldInvalid('email')"
+                      />
                       <small class="field-error" *ngIf="isCustomFieldInvalid('email')">
                         Ingresa un email válido
                       </small>
@@ -140,13 +135,14 @@ interface TestEmailTemplate {
 
                     <div class="form-field">
                       <label for="customSubject">Asunto *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         id="customSubject"
                         formControlName="subject"
                         class="form-control"
                         placeholder="Asunto del email de prueba"
-                        [class.error]="isCustomFieldInvalid('subject')">
+                        [class.error]="isCustomFieldInvalid('subject')"
+                      />
                       <small class="field-error" *ngIf="isCustomFieldInvalid('subject')">
                         El asunto es requerido
                       </small>
@@ -155,13 +151,14 @@ interface TestEmailTemplate {
 
                   <div class="form-field full-width">
                     <label for="customMessage">Mensaje *</label>
-                    <textarea 
+                    <textarea
                       id="customMessage"
                       formControlName="message"
                       class="form-control"
                       rows="6"
                       placeholder="Escribe aquí tu mensaje de prueba..."
-                      [class.error]="isCustomFieldInvalid('message')"></textarea>
+                      [class.error]="isCustomFieldInvalid('message')"
+                    ></textarea>
                     <small class="field-error" *ngIf="isCustomFieldInvalid('message')">
                       El mensaje es requerido
                     </small>
@@ -175,17 +172,21 @@ interface TestEmailTemplate {
                       type="button"
                       label="Limpiar"
                       icon="fa fa-eraser"
-                      variant="secondary"
-                      (clicked)="resetCustomForm()">
+                      severity="secondary"
+                      variant="outlined"
+                      (clicked)="resetCustomForm()"
+                    >
                     </orb-button>
-                    
+
                     <orb-button
                       type="submit"
                       label="Enviar Email Personalizado"
                       icon="fa fa-paper-plane"
-                      variant="primary"
+                      severity="info"
+                      variant="outlined"
                       [disabled]="customTestForm.invalid || sending()"
-                      [loading]="sending()">
+                      [loading]="sending()"
+                    >
                     </orb-button>
                   </div>
                 </form>
@@ -197,13 +198,14 @@ interface TestEmailTemplate {
                   <div class="form-grid">
                     <div class="form-field">
                       <label for="templateTestEmail">Email de destino *</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         id="templateTestEmail"
                         formControlName="email"
                         class="form-control"
                         placeholder="test@example.com"
-                        [class.error]="isTemplateFieldInvalid('email')">
+                        [class.error]="isTemplateFieldInvalid('email')"
+                      />
                       <small class="field-error" *ngIf="isTemplateFieldInvalid('email')">
                         Ingresa un email válido
                       </small>
@@ -211,16 +213,15 @@ interface TestEmailTemplate {
 
                     <div class="form-field">
                       <label for="templateType">Tipo de plantilla *</label>
-                      <select 
+                      <select
                         id="templateType"
                         formControlName="templateType"
                         class="form-control"
                         [class.error]="isTemplateFieldInvalid('templateType')"
-                        (change)="onTemplateChange()">
+                        (change)="onTemplateChange()"
+                      >
                         <option value="">Selecciona una plantilla</option>
-                        <option 
-                          *ngFor="let template of emailTemplates" 
-                          [value]="template.type">
+                        <option *ngFor="let template of emailTemplates" [value]="template.type">
                           {{ template.name }}
                         </option>
                       </select>
@@ -234,14 +235,20 @@ interface TestEmailTemplate {
                     <h4>Preview de la Plantilla: {{ selectedTemplate()?.name }}</h4>
                     <div class="template-info">
                       <p><strong>Asunto:</strong> {{ selectedTemplate()?.subject }}</p>
-                      <p><strong>Variables disponibles:</strong> 
-                        <code *ngFor="let variable of selectedTemplate()?.variables; let last = last">
+                      <p>
+                        <strong>Variables disponibles:</strong>
+                        <code
+                          *ngFor="let variable of selectedTemplate()?.variables; let last = last"
+                        >
                           {{ '{{' + variable + '}}' }}<span *ngIf="!last">, </span>
                         </code>
                       </p>
                       <div class="template-content">
                         <strong>Contenido:</strong>
-                        <div class="content-preview" [innerHTML]="selectedTemplate()?.defaultMessage"></div>
+                        <div
+                          class="content-preview"
+                          [innerHTML]="selectedTemplate()?.defaultMessage"
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -251,9 +258,11 @@ interface TestEmailTemplate {
                       type="submit"
                       label="Probar Plantilla"
                       icon="fa fa-file-alt"
-                      variant="primary"
+                      severity="info"
+                      variant="outlined"
                       [disabled]="templateTestForm.invalid || sending() || !selectedTemplate()"
-                      [loading]="sending()">
+                      [loading]="sending()"
+                    >
                     </orb-button>
                   </div>
                 </form>
@@ -273,19 +282,21 @@ interface TestEmailTemplate {
           <orb-button
             label="Limpiar Historial"
             icon="fa fa-trash"
-            variant="secondary"
+            severity="secondary"
+            variant="outlined"
             size="small"
-            (clicked)="clearResults()">
+            (clicked)="clearResults()"
+          >
           </orb-button>
         </div>
         <div orbBody>
           <div class="test-results-list">
-            <div 
-              *ngFor="let result of testResults(); let i = index" 
+            <div
+              *ngFor="let result of testResults(); let i = index"
               class="test-result-item"
               [class.success]="result.success"
-              [class.error]="!result.success">
-              
+              [class.error]="!result.success"
+            >
               <div class="result-header">
                 <div class="result-status">
                   <i [class]="result.success ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
@@ -302,7 +313,7 @@ interface TestEmailTemplate {
                 <p><strong>Destinatario:</strong> {{ result.to }}</p>
                 <p *ngIf="result.subject"><strong>Asunto:</strong> {{ result.subject }}</p>
                 <p *ngIf="result.messageId && result.success">
-                  <strong>ID del mensaje:</strong> 
+                  <strong>ID del mensaje:</strong>
                   <code>{{ result.messageId }}</code>
                 </p>
                 <p *ngIf="result.error && !result.success" class="error-message">
@@ -316,8 +327,10 @@ interface TestEmailTemplate {
                   label="Reintentar"
                   icon="fa fa-redo"
                   size="small"
-                  variant="secondary"
-                  (clicked)="retryTest(result)">
+                  severity="secondary"
+                  variant="outlined"
+                  (clicked)="retryTest(result)"
+                >
                 </orb-button>
               </div>
             </div>
@@ -328,7 +341,7 @@ interface TestEmailTemplate {
 
     <p-toast></p-toast>
   `,
-  styleUrls: ['./test-email.component.scss']
+  styleUrls: ['./test-email.component.scss'],
 })
 export class TestEmailComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -363,7 +376,7 @@ export class TestEmailComponent implements OnInit {
           </a>
         </div>
       `,
-      variables: ['firstName', 'email', 'tempPassword', 'loginUrl']
+      variables: ['firstName', 'email', 'tempPassword', 'loginUrl'],
     },
     {
       type: EmailTemplateType.PASSWORD_RESET,
@@ -382,7 +395,7 @@ export class TestEmailComponent implements OnInit {
           <p>Si no solicitaste este cambio, puedes ignorar este email.</p>
         </div>
       `,
-      variables: ['firstName', 'resetLink']
+      variables: ['firstName', 'resetLink'],
     },
     {
       type: EmailTemplateType.SECURITY_ALERT,
@@ -399,7 +412,7 @@ export class TestEmailComponent implements OnInit {
           <p>Si tienes problemas, contacta a nuestro soporte: {{supportEmail}}</p>
         </div>
       `,
-      variables: ['firstName', 'failedAttempts', 'timestamp', 'ipAddress', 'supportEmail']
+      variables: ['firstName', 'failedAttempts', 'timestamp', 'ipAddress', 'supportEmail'],
     },
     {
       type: EmailTemplateType.PASSWORD_CHANGED,
@@ -415,7 +428,7 @@ export class TestEmailComponent implements OnInit {
           <p><strong>Soporte:</strong> {{supportEmail}}</p>
         </div>
       `,
-      variables: ['firstName', 'changeDate', 'supportEmail']
+      variables: ['firstName', 'changeDate', 'supportEmail'],
     },
     {
       type: EmailTemplateType.ACCOUNT_LOCKOUT,
@@ -432,8 +445,8 @@ export class TestEmailComponent implements OnInit {
           <p>Para más información, contacta a soporte: {{supportEmail}}</p>
         </div>
       `,
-      variables: ['firstName', 'lockoutTime', 'unlockTime', 'failedAttempts', 'supportEmail']
-    }
+      variables: ['firstName', 'lockoutTime', 'unlockTime', 'failedAttempts', 'supportEmail'],
+    },
   ];
 
   ngOnInit(): void {
@@ -444,25 +457,28 @@ export class TestEmailComponent implements OnInit {
   private initializeForms(): void {
     // Quick test form
     this.quickTestForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
 
     // Custom test form
     this.customTestForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       subject: ['Prueba de Email - Orbyt', Validators.required],
-      message: ['Este es un email de prueba enviado desde el sistema Orbyt para verificar que la configuración SMTP funciona correctamente.', Validators.required]
+      message: [
+        'Este es un email de prueba enviado desde el sistema Orbyt para verificar que la configuración SMTP funciona correctamente.',
+        Validators.required,
+      ],
     });
 
     // Template test form
     this.templateTestForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      templateType: ['', Validators.required]
+      templateType: ['', Validators.required],
     });
   }
 
   private checkEmailSettings(): void {
-    this.emailService.emailSettings$.subscribe(settings => {
+    this.emailService.emailSettings$.subscribe((settings) => {
       // Settings loaded, component will react to this
     });
   }
@@ -477,7 +493,7 @@ export class TestEmailComponent implements OnInit {
     this.messageService.add({
       severity: 'info',
       summary: 'Navegación',
-      detail: 'Redirigiendo a configuración de email...'
+      detail: 'Redirigiendo a configuración de email...',
     });
   }
 
@@ -494,11 +510,12 @@ export class TestEmailComponent implements OnInit {
     }
 
     const email = this.quickTestForm.get('email')?.value;
-    
+
     await this.performTest({
       to: email,
       subject: 'Prueba Rápida - Orbyt',
-      message: 'Este es un email de prueba rápida enviado desde Orbyt para verificar la configuración SMTP.'
+      message:
+        'Este es un email de prueba rápida enviado desde Orbyt para verificar la configuración SMTP.',
     });
   }
 
@@ -515,11 +532,11 @@ export class TestEmailComponent implements OnInit {
     }
 
     const formValue = this.customTestForm.value;
-    
+
     await this.performTest({
       to: formValue.email,
       subject: formValue.subject,
-      message: formValue.message
+      message: formValue.message,
     });
   }
 
@@ -527,7 +544,8 @@ export class TestEmailComponent implements OnInit {
     this.customTestForm.reset({
       email: '',
       subject: 'Prueba de Email - Orbyt',
-      message: 'Este es un email de prueba enviado desde el sistema Orbyt para verificar que la configuración SMTP funciona correctamente.'
+      message:
+        'Este es un email de prueba enviado desde el sistema Orbyt para verificar que la configuración SMTP funciona correctamente.',
     });
   }
 
@@ -539,7 +557,7 @@ export class TestEmailComponent implements OnInit {
 
   onTemplateChange(): void {
     const templateType = this.templateTestForm.get('templateType')?.value;
-    const template = this.emailTemplates.find(t => t.type === templateType);
+    const template = this.emailTemplates.find((t) => t.type === templateType);
     this.selectedTemplate.set(template || null);
   }
 
@@ -551,10 +569,10 @@ export class TestEmailComponent implements OnInit {
 
     const email = this.templateTestForm.get('email')?.value;
     const template = this.selectedTemplate()!;
-    
+
     // Replace variables with sample data
     let message = template.defaultMessage;
-    template.variables.forEach(variable => {
+    template.variables.forEach((variable) => {
       const sampleValue = this.getSampleValueForVariable(variable);
       message = message.replace(new RegExp(`{{${variable}}}`, 'g'), sampleValue);
     });
@@ -562,7 +580,7 @@ export class TestEmailComponent implements OnInit {
     await this.performTest({
       to: email,
       subject: template.subject,
-      message: message
+      message: message,
     });
   }
 
@@ -579,9 +597,9 @@ export class TestEmailComponent implements OnInit {
       changeDate: new Date().toLocaleString('es-ES'),
       lockoutTime: new Date().toLocaleString('es-ES'),
       unlockTime: new Date(Date.now() + 60 * 60 * 1000).toLocaleString('es-ES'), // 1 hour later
-      failedAttempts: '5'
+      failedAttempts: '5',
     };
-    
+
     return sampleData[variable] || `[${variable}]`;
   }
 
@@ -593,52 +611,52 @@ export class TestEmailComponent implements OnInit {
       const sendRequest: SendEmailDto = {
         to: [request.to],
         subject: request.subject || 'Email de prueba - Orbyt',
-        htmlContent: request.message || 'Este es un email de prueba.'
+        htmlContent: request.message || 'Este es un email de prueba.',
       };
       const response = await this.emailService.sendTestEmail(sendRequest).toPromise();
-      
+
       if (response) {
         const resultWithContext = {
           ...response,
           to: request.to,
           subject: request.subject,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
-        
+
         // Add to results at the beginning of the array
-        this.testResults.update(results => [resultWithContext, ...results]);
+        this.testResults.update((results) => [resultWithContext, ...results]);
 
         if (response.success) {
           this.messageService.add({
             severity: 'success',
             summary: 'Email enviado',
-            detail: `Email de prueba enviado exitosamente a ${request.to}`
+            detail: `Email de prueba enviado exitosamente a ${request.to}`,
           });
         } else {
           this.messageService.add({
             severity: 'error',
             summary: 'Error al enviar',
-            detail: response.error || 'Error desconocido'
+            detail: response.error || 'Error desconocido',
           });
         }
       }
     } catch (error: any) {
       console.error('Test email error:', error);
-      
+
       const errorResult = {
         success: false,
         error: error?.message || 'Error al enviar email de prueba',
         timestamp: new Date().toISOString(),
         to: request.to,
-        subject: request.subject
+        subject: request.subject,
       };
-      
-      this.testResults.update(results => [errorResult, ...results]);
-      
+
+      this.testResults.update((results) => [errorResult, ...results]);
+
       this.messageService.add({
         severity: 'error',
         summary: 'Error de prueba',
-        detail: 'No se pudo enviar el email de prueba'
+        detail: 'No se pudo enviar el email de prueba',
       });
     } finally {
       this.sending.set(false);
@@ -651,7 +669,7 @@ export class TestEmailComponent implements OnInit {
     this.messageService.add({
       severity: 'info',
       summary: 'Historial limpiado',
-      detail: 'Se han eliminado todos los resultados de prueba'
+      detail: 'Se han eliminado todos los resultados de prueba',
     });
   }
 
@@ -659,13 +677,13 @@ export class TestEmailComponent implements OnInit {
     await this.performTest({
       to: result.to,
       subject: result.subject || 'Reenvío de Prueba - Orbyt',
-      message: 'Este es un reenvío de la prueba de email anterior.'
+      message: 'Este es un reenvío de la prueba de email anterior.',
     });
   }
 
   // Utility methods
   private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       control?.markAsTouched();
     });
@@ -678,7 +696,7 @@ export class TestEmailComponent implements OnInit {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 }

@@ -111,127 +111,23 @@
   }
 }
 
-// KPI Cards Grid
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  
-  @include mixins.mobile {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
+// Metric cards now use global styles from _design-system.scss
+// Custom trend styles for this dashboard
+.metric-trend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 
-.kpi-card {
-  position: relative;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  &.positive {
+    color: #10b981;
   }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    border-radius: 12px 12px 0 0;
+
+  &.negative {
+    color: #ef4444;
   }
-  
-  &.revenue::before {
-    background: linear-gradient(135deg, #10b981, #059669);
-  }
-  
-  &.consultations::before {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  }
-  
-  &.pending::before {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-  }
-  
-  &.satisfaction::before {
-    background: linear-gradient(135deg, #ec4899, #be185d);
-  }
-  
-  .kpi-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
-    
-    i {
-      font-size: 1.75rem;
-      color: white;
-    }
-  }
-  
-  .revenue .kpi-icon {
-    background: linear-gradient(135deg, #10b981, #059669);
-  }
-  
-  .consultations .kpi-icon {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  }
-  
-  .pending .kpi-icon {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-  }
-  
-  .satisfaction .kpi-icon {
-    background: linear-gradient(135deg, #ec4899, #be185d);
-  }
-  
-  .kpi-content {
-    .kpi-value {
-      font-size: 2.25rem;
-      font-weight: 800;
-      margin: 0 0 0.5rem 0;
-      color: #1e293b;
-      line-height: 1;
-    }
-    
-    .kpi-label {
-      font-size: 1rem;
-      color: #64748b;
-      margin: 0 0 0.75rem 0;
-      font-weight: 500;
-    }
-    
-    .kpi-trend {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      
-      &.positive {
-        color: #10b981;
-      }
-      
-      &.negative {
-        color: #ef4444;
-      }
-      
-      i {
-        font-size: 0.75rem;
-      }
-    }
-    
-    .kpi-subtitle {
-      font-size: 0.875rem;
-      color: #64748b;
-      margin-top: 0.5rem;
-    }
+
+  i {
+    font-size: 0.625rem;
   }
 }
 

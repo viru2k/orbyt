@@ -47,7 +47,7 @@ import { Store } from '@ngrx/store';
     CardModule,
     OrbButtonComponent,
     OrbCardComponent,
-    OrbDialogComponent
+    OrbDialogComponent,
   ],
   providers: [MessageService],
   template: `
@@ -55,8 +55,8 @@ import { Store } from '@ngrx/store';
       [(visible)]="visible"
       header="📋 Detalles de la Consulta"
       size="xl"
-      (onHide)="onHide()">
-      
+      (onHide)="onHide()"
+    >
       <div class="consultation-details-container" *ngIf="consultation">
         <!-- Header Section -->
         <div class="consultation-header">
@@ -65,10 +65,11 @@ import { Store } from '@ngrx/store';
               <i class="fa fa-stethoscope"></i>
               {{ consultation.consultationNumber }}
             </h2>
-            <p-tag 
-              [value]="getStatusLabel(consultation.status)" 
+            <p-tag
+              [value]="getStatusLabel(consultation.status)"
               [severity]="getStatusSeverity(consultation.status)"
-              [rounded]="true">
+              [rounded]="true"
+            >
             </p-tag>
           </div>
           <div class="header-actions">
@@ -77,34 +78,44 @@ import { Store } from '@ngrx/store';
               label="Editar"
               icon="fa fa-edit"
               (clicked)="onEdit()"
-              variant="secondary">
+              severity="secondary"
+              variant="outlined"
+            >
             </orb-button>
             <orb-button
               *ngIf="consultation.status === 'completed'"
               label="Generar Token"
               icon="fa fa-key"
               (clicked)="onGenerateToken()"
-              variant="primary">
+              severity="info"
+              variant="outlined"
+            >
             </orb-button>
             <orb-button
               *ngIf="consultation.status === 'completed'"
               label="Ver Tokens"
               icon="fa fa-list"
               (clicked)="onViewTokens()"
-              variant="secondary">
+              severity="secondary"
+              variant="outlined"
+            >
             </orb-button>
             <orb-button
               *ngIf="consultation.status === 'completed'"
               label="Generar Factura"
               icon="fa fa-file-invoice"
               (clicked)="onGenerateInvoice()"
-              variant="success">
+              severity="success"
+              variant="outlined"
+            >
             </orb-button>
             <orb-button
               label="Imprimir"
               icon="fa fa-print"
               (clicked)="onPrint()"
-              variant="info">
+              severity="info"
+              variant="outlined"
+            >
             </orb-button>
           </div>
         </div>
@@ -327,7 +338,9 @@ import { Store } from '@ngrx/store';
                 <div class="token-info">
                   <div class="token-header">
                     <span class="token-code">{{ token.token }}</span>
-                    <span class="token-status" [class]="'status-' + token.status">{{ getTokenStatusLabel(token.status || '') }}</span>
+                    <span class="token-status" [class]="'status-' + token.status">{{
+                      getTokenStatusLabel(token.status || '')
+                    }}</span>
                   </div>
                   <div class="token-details">
                     <span class="token-detail">
@@ -350,16 +363,20 @@ import { Store } from '@ngrx/store';
                     label="Copiar Link"
                     icon="fa fa-copy"
                     size="small"
-                    variant="info"
-                    (clicked)="copyTokenLink(token)">
+                    severity="info"
+                    variant="outlined"
+                    (clicked)="copyTokenLink(token)"
+                  >
                   </orb-button>
                   <orb-button
                     *ngIf="token.status === 'active'"
                     label="Revocar"
                     icon="fa fa-ban"
                     size="small"
-                    variant="danger"
-                    (clicked)="revokeToken(token)">
+                    severity="danger"
+                    variant="outlined"
+                    (clicked)="revokeToken(token)"
+                  >
                   </orb-button>
                 </div>
               </div>
@@ -371,7 +388,7 @@ import { Store } from '@ngrx/store';
       <p-toast></p-toast>
     </orb-dialog>
   `,
-  styleUrls: ['./consultation-details.component.scss']
+  styleUrls: ['./consultation-details.component.scss'],
 })
 export class ConsultationDetailsComponent implements OnInit, OnChanges {
   @Input() visible = false;
@@ -396,10 +413,9 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
     // Subscribe to tokens loading events
     // TODO: Replace with actual consultation tokens selector when available
     // this.store.select(ConsultationTokensSelectors.selectConsultationTokensForConsultation(this.consultation?.id || 0))
-    of([])
-      .subscribe(tokens => {
-        this.activeTokens = tokens;
-      });
+    of([]).subscribe((tokens) => {
+      this.activeTokens = tokens;
+    });
   }
 
   ngOnChanges(): void {
@@ -414,37 +430,39 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 
   getStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'pending': 'Pendiente',
-      'in_progress': 'En Progreso',
-      'completed': 'Completada',
-      'cancelled': 'Cancelada'
+      pending: 'Pendiente',
+      in_progress: 'En Progreso',
+      completed: 'Completada',
+      cancelled: 'Cancelada',
     };
     return statusMap[status] || status;
   }
 
   getStatusSeverity(status: string): 'success' | 'info' | 'warning' | 'danger' {
     const severityMap: { [key: string]: 'success' | 'info' | 'warning' | 'danger' } = {
-      'pending': 'warning',
-      'in_progress': 'info',
-      'completed': 'success',
-      'cancelled': 'danger'
+      pending: 'warning',
+      in_progress: 'info',
+      completed: 'success',
+      cancelled: 'danger',
     };
     return severityMap[status] || 'info';
   }
 
   hasVitalSigns(): boolean {
     if (!this.consultation) return false;
-    return !!(this.consultation.temperature || 
-              this.consultation.bloodPressure || 
-              this.consultation.heartRate || 
-              this.consultation.weight || 
-              this.consultation.height);
+    return !!(
+      this.consultation.temperature ||
+      this.consultation.bloodPressure ||
+      this.consultation.heartRate ||
+      this.consultation.weight ||
+      this.consultation.height
+    );
   }
 
   hasMedicationsOrAllergies(): boolean {
@@ -453,24 +471,24 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
 
   getMedications(): string[] {
     if (!this.consultation?.medications) return [];
-    return Array.isArray(this.consultation.medications) 
-      ? this.consultation.medications 
+    return Array.isArray(this.consultation.medications)
+      ? this.consultation.medications
       : [this.consultation.medications];
   }
 
   getAllergies(): string[] {
     if (!this.consultation?.allergies) return [];
-    return Array.isArray(this.consultation.allergies) 
-      ? this.consultation.allergies 
+    return Array.isArray(this.consultation.allergies)
+      ? this.consultation.allergies
       : [this.consultation.allergies];
   }
 
   getDuration(): number | null {
     if (!this.consultation?.startTime || !this.consultation?.endTime) return null;
-    
+
     const start = new Date(`2000-01-01 ${this.consultation.startTime}`);
     const end = new Date(`2000-01-01 ${this.consultation.endTime}`);
-    
+
     const diffMs = end.getTime() - start.getTime();
     return Math.round(diffMs / (1000 * 60)); // Convert to minutes
   }
@@ -492,7 +510,7 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
       this.messageService.add({
         severity: 'info',
         summary: 'Generando Factura',
-        detail: `Generando factura para consulta ${this.consultation.consultationNumber}...`
+        detail: `Generando factura para consulta ${this.consultation.consultationNumber}...`,
       });
     }
   }
@@ -501,7 +519,7 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
     this.messageService.add({
       severity: 'info',
       summary: 'Imprimiendo',
-      detail: 'Preparando consulta para impresión...'
+      detail: 'Preparando consulta para impresión...',
     });
     // TODO: Implementar funcionalidad de impresión
     window.print();
@@ -528,8 +546,8 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
   loadConsultationTokens(): void {
     if (this.consultation?.id) {
       // TODO: Replace with actual store dispatch when available
-      // this.store.dispatch(ConsultationTokensActions.loadTokensForConsultation({ 
-      //   consultationId: this.consultation.id 
+      // this.store.dispatch(ConsultationTokensActions.loadTokensForConsultation({
+      //   consultationId: this.consultation.id
       // }));
     }
   }
@@ -541,7 +559,7 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
       consultationId: this.consultation.id,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
       maxUses: 5,
-      scenario: 'client_access'
+      scenario: 'client_access',
     };
 
     // TODO: Replace with actual store dispatch when available
@@ -549,7 +567,7 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
     this.messageService.add({
       severity: 'success',
       summary: 'Token Generado',
-      detail: 'Token de acceso creado exitosamente'
+      detail: 'Token de acceso creado exitosamente',
     });
   }
 
@@ -561,20 +579,23 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
   copyTokenLink(token: ExtendedConsultationToken): void {
     const baseUrl = window.location.origin;
     const tokenLink = `${baseUrl}/consultation/public/${token.token || ''}`;
-    
-    navigator.clipboard.writeText(tokenLink).then(() => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Link Copiado',
-        detail: 'El enlace del token ha sido copiado al portapapeles'
+
+    navigator.clipboard
+      .writeText(tokenLink)
+      .then(() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Link Copiado',
+          detail: 'El enlace del token ha sido copiado al portapapeles',
+        });
+      })
+      .catch(() => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo copiar el enlace',
+        });
       });
-    }).catch(() => {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo copiar el enlace'
-      });
-    });
   }
 
   revokeToken(token: ExtendedConsultationToken): void {
@@ -584,17 +605,17 @@ export class ConsultationDetailsComponent implements OnInit, OnChanges {
       this.messageService.add({
         severity: 'info',
         summary: 'Token Revocado',
-        detail: 'El token ha sido revocado exitosamente'
+        detail: 'El token ha sido revocado exitosamente',
       });
     }
   }
 
   getTokenStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      'active': 'Activo',
-      'used': 'Usado',
-      'expired': 'Expirado',
-      'revoked': 'Revocado'
+      active: 'Activo',
+      used: 'Usado',
+      expired: 'Expirado',
+      revoked: 'Revocado',
     };
     return statusMap[status] || status;
   }

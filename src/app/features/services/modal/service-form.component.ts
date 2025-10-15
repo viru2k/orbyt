@@ -1,18 +1,19 @@
-import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
 import { ServiceResponseDto } from '../../../api/models/service-response-dto';
+import { ServiceCategoryResponseDto } from '../../../api/models/service-category-response-dto';
 import { CreateServiceDto } from '../../../api/models/create-service-dto';
 import { UpdateServiceDto } from '../../../api/models/update-service-dto';
 import { ServicesStore } from '@orb-stores';
+import { ServiceCategoriesService } from '../../../api/services/service-categories.service';
 import { FormButtonAction } from '@orb-models';
 import { UtilsService, NotificationService } from '@orb-services';
 import { NotificationSeverity } from '@orb-models';
 
 // PrimeNG & Orb Components
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbCurrencyInputComponent, OrbSimpleTextareaComponent, OrbCardComponent, OrbSelectComponent, OrbInputNumberComponent } from '@orb-components';
@@ -25,8 +26,7 @@ import { ToastModule } from 'primeng/toast';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    InputTextModule,
-    FloatLabelModule,
+    InputTextModule,    
     DropdownModule,
     InputNumberModule,
     TextareaModule,
@@ -67,13 +67,17 @@ import { ToastModule } from 'primeng/toast';
         </orb-form-field>
 
         <!-- Category -->
-        <orb-form-field 
-          label="Categoría del Servicio" 
+        <orb-form-field
+          label="Categoría del Servicio"
           description="Categoría o tipo de servicio"
           class="col-12 md:col-6">
-          <orb-text-input
-            formControlName="category">
-          </orb-text-input>
+          <orb-select
+            formControlName="serviceCategoryId"
+            [options]="categoryOptions()"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Seleccione una categoría">
+          </orb-select>
         </orb-form-field>
 
         <!-- Status -->
@@ -143,11 +147,13 @@ export class ServiceFormComponent implements OnInit, OnChanges {
 
   private fb = inject(FormBuilder);
   readonly servicesStore = inject(ServicesStore);
+  private serviceCategoriesService = inject(ServiceCategoriesService);
   public utilsService = inject(UtilsService);
   private notificationService = inject(NotificationService);
 
   form!: FormGroup;
   isEditMode = false;
+  categoryOptions = signal<ServiceCategoryResponseDto[]>([]);
 
   statusOptions = [
     { label: 'Activo', value: 'ACTIVE' },
@@ -155,12 +161,28 @@ export class ServiceFormComponent implements OnInit, OnChanges {
   ];
 
   footerActions: FormButtonAction[] = [
-    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text', severity: 'secondary' },
-    { label: 'Guardar', action: 'save', styleType: 'p-button-success', buttonType: 'submit', severity: 'info' },
+    { label: 'Cancelar', action: 'cancel', severity: 'secondary', styleType: 'text' },
+    { label: 'Guardar', action: 'save', severity: 'success', buttonType: 'submit', outlined: true },
   ];
 
   ngOnInit(): void {
     this.initForm();
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.serviceCategoriesService.serviceCategoryControllerFindAll().subscribe({
+      next: (categories) => {
+        this.categoryOptions.set(categories);
+      },
+      error: (error) => {
+        console.error('Error loading service categories:', error);
+        this.notificationService.show(
+          NotificationSeverity.Error,
+          'Error al cargar las categorías de servicios'
+        );
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -174,7 +196,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
-      category: [''],
+      serviceCategoryId: [null],
       basePrice: [0.01, [Validators.required, Validators.min(0.01)]],
       duration: [null],
       status: ['ACTIVE'],
@@ -195,7 +217,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
       const formData = {
         name: this.service.name || '',
         description: this.service.description || '',
-        category: this.service.category || '',
+        serviceCategoryId: (this.service as any).serviceCategoryId || null,
         basePrice: priceValue,
         duration: this.service.duration || null,
         status: this.service.status || 'ACTIVE',
@@ -209,7 +231,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         this.form.reset({
           name: '',
           description: '',
-          category: '',
+          serviceCategoryId: null,
           basePrice: 0.01,
           duration: null,
           status: 'ACTIVE',
@@ -243,7 +265,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         const updateData = {
           name: formData.name,
           description: formData.description,
-          category: formData.category,
+          serviceCategoryId: formData.serviceCategoryId,
           basePrice: basePrice,
           duration: formData.duration,
           status: formData.status,
@@ -254,7 +276,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
         const createData = {
           name: formData.name,
           description: formData.description,
-          category: formData.category,
+          serviceCategoryId: formData.serviceCategoryId,
           basePrice: basePrice,
           duration: formData.duration,
           status: formData.status || 'ACTIVE',
@@ -281,7 +303,7 @@ export class ServiceFormComponent implements OnInit, OnChanges {
       name: serviceData.name,
       description: serviceData.description || undefined,
       basePrice: serviceData.basePrice,
-      category: serviceData.category || undefined,
+      serviceCategoryId: serviceData.serviceCategoryId || undefined,
       duration: serviceData.duration || undefined,
       notes: serviceData.notes || undefined
     };
@@ -301,7 +323,6 @@ export class ServiceFormComponent implements OnInit, OnChanges {
       name: serviceData.name,
       description: serviceData.description || undefined,
       basePrice: serviceData.basePrice,
-      category: serviceData.category || undefined,
       duration: serviceData.duration || undefined,
       notes: serviceData.notes || undefined
     };

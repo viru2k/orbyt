@@ -4,7 +4,8 @@
     <div class="col-12 md:col-6">
       <orb-form-field
         label="Profesional"
-        description="Selecciona el profesional que realizará el servicio">
+        description="Selecciona el profesional que realizará el servicio"
+      >
         <orb-select
           formControlName="professionalId"
           [options]="(professionals$ | async) || []"
@@ -17,29 +18,28 @@
     </div>
     <!-- Selección de Cliente -->
     <div class="col-12">
-      <orb-form-field
-        label=""
-        description="Selecciona el cliente para la cita">
+      <orb-form-field label="" description="Selecciona el cliente para la cita">
         <div class="client-selector">
           <div *ngIf="selectedClient; else selectClientTemplate" class="selected-client">
-            <orb-entity-avatar
-              [entity]="selectedClient"
-              entityType="client"
-              size="normal">
+            <orb-entity-avatar [entity]="selectedClient" entityType="client" size="normal">
             </orb-entity-avatar>
             <div class="client-info">
-              <span class="client-name">{{ selectedClient.fullname || getClientDisplayName(selectedClient) }}</span>
+              <span class="client-name">{{
+                selectedClient.fullname || getClientDisplayName(selectedClient)
+              }}</span>
               <div class="client-details">
                 <span *ngIf="selectedClient.email" class="detail">{{ selectedClient.email }}</span>
                 <span *ngIf="selectedClient.phone" class="detail">{{ selectedClient.phone }}</span>
               </div>
             </div>
             <orb-button
-              icon="pi pi-times"
-              severity="secondary"
+              severity="danger"
+              variant="outlined"
               size="small"
               (clicked)="clearClient()"
-              tooltip="Cambiar cliente">
+              tooltip="Cambiar cliente"
+            >
+              <i class="fa-solid fa-xmark"></i>
             </orb-button>
           </div>
           <ng-template #selectClientTemplate>
@@ -47,9 +47,11 @@
               label="Seleccionar Cliente"
               icon="pi pi-user"
               severity="secondary"
+              variant="outlined"
               styleClass="w-full client-select-button"
               (clicked)="openClientSearchModal()"
-              [disabled]="!selectedProfessionalId">
+              [disabled]="!selectedProfessionalId"
+            >
             </orb-button>
             <small *ngIf="!selectedProfessionalId" class="help-text">
               Primero selecciona un profesional
@@ -58,31 +60,52 @@
         </div>
       </orb-form-field>
     </div>
-    
+
     <!-- 2. Selección de Servicio -->
     <div class="col-12">
-      <orb-form-field
-        label=""
-        description="Selecciona el servicio que se realizará en la cita">
+      <orb-form-field label="" description="Selecciona el servicio que se realizará en la cita">
         <div class="service-selector">
           <div *ngIf="selectedService; else selectServiceTemplate" class="selected-service">
             <div class="service-info">
-              <span class="service-name">{{ selectedService.name }}</span>
+              <div class="service-name">
+                <h5>{{ selectedService.name }}</h5>
+                <p-badge
+                  *ngIf="selectedService.id && selectedService.id > 1000000000000"
+                  value="Personalizado"
+                  severity="warn"
+                >
+                </p-badge>
+                <p-badge
+                  *ngIf="!selectedService.id || selectedService.id <= 1000000000000"
+                  value="Servicio"
+                  severity="success"
+                >
+                </p-badge>
+              </div>
+
               <div class="service-details">
-                <span *ngIf="getServicePrice(selectedService)" class="price">
-                  {{ formatPrice(getServicePrice(selectedService)) }}
-                </span>
                 <span *ngIf="selectedService.description" class="description">
                   {{ selectedService.description }}
                 </span>
+                <div class="service-meta">
+                  <span *ngIf="getServicePrice(selectedService)" class="price">
+                    {{ formatPrice(getServicePrice(selectedService)) }}
+                  </span>
+                  <span *ngIf="selectedService.duration" class="duration">
+                    <i class="fa fa-clock"></i>
+                    {{ selectedService.duration }} min
+                  </span>
+                </div>
               </div>
             </div>
             <orb-button
-              icon="pi pi-times"
-              severity="secondary"
+              severity="danger"
+              variant="outlined"
               size="small"
               (clicked)="clearService()"
-              tooltip="Cambiar servicio">
+              tooltip="Cambiar servicio"
+            >
+              <i class="fa-solid fa-xmark"></i>
             </orb-button>
           </div>
           <ng-template #selectServiceTemplate>
@@ -91,7 +114,8 @@
               icon="pi pi-cog"
               severity="secondary"
               styleClass="w-full service-select-button"
-              (clicked)="openServiceSearchModal()">
+              (clicked)="openServiceSearchModal()"
+            >
             </orb-button>
           </ng-template>
         </div>
@@ -102,7 +126,8 @@
     <div class="col-12">
       <orb-form-field
         label="Título"
-        description="Se completa automáticamente al seleccionar cliente y servicio">
+        description="Se completa automáticamente al seleccionar cliente y servicio"
+      >
         <orb-text-input formControlName="title"></orb-text-input>
       </orb-form-field>
     </div>
@@ -117,7 +142,7 @@
     <!-- Fechas -->
     <div class="col-12 md:col-6">
       <orb-form-field label="Fecha y Hora de Inicio">
-        <orb-datepicker 
+        <orb-datepicker
           formControlName="startDateTime"
           mode="datetime"
           [showIcon]="true"
@@ -126,17 +151,17 @@
     </div>
     <div class="col-12 md:col-6">
       <orb-form-field label="Fecha y Hora de Fin">
-        <orb-datepicker 
+        <orb-datepicker
           formControlName="endDateTime"
           mode="datetime"
           [showIcon]="true"
         ></orb-datepicker>
       </orb-form-field>
     </div>
-    
+
     <!-- Mensaje de disponibilidad de turnos -->
     <div class="col-12" *ngIf="availabilityMessage">
-      <p-message 
+      <p-message
         [severity]="availabilityMessage.severity"
         [text]="availabilityMessage.text"
         [closable]="true"
@@ -146,7 +171,7 @@
 
     <!-- Otros campos -->
     <div class="col-12 md:col-6">
-      <orb-form-field label="Sala" >
+      <orb-form-field label="Sala">
         <orb-select
           formControlName="roomId"
           [options]="(rooms$ | async) || []"
@@ -156,7 +181,7 @@
       </orb-form-field>
     </div>
     <div class="col-12 md:col-6">
-      <orb-form-field label="Estado" >
+      <orb-form-field label="Estado">
         <orb-select
           formControlName="status"
           [options]="statusOptions"
@@ -168,52 +193,53 @@
   </div>
 
   <div class="form-actions">
-    <div class="actions-row-1">
-      <orb-button
-        *ngIf="appointment?.id && appointment?.client?.id"
-        label="Crear Factura"
-        icon="pi pi-credit-card"
-        severity="success"
-        (clicked)="onCreateInvoice()"
-      ></orb-button>
-    </div>
-    
-    <div class="actions-row-2">
-      <div class="left-section">
-        <orb-button
-          *ngIf="appointment && selectedClient"
-          label="Consulta"
-          icon="pi pi-file-edit"
-          severity="info"
-          (clicked)="onOpenConsultation()"
-          tooltip="Crear consulta para este turno"
-        ></orb-button>
-        <orb-button
-          *ngIf="appointment && selectedClient"
-          label="Factura"
-          icon="pi pi-receipt"
-          severity="secondary"
-          (clicked)="onOpenInvoice()"
-          tooltip="Crear factura para este turno"
-        ></orb-button>
+    <!-- Botones de acciones relacionadas al turno -->
+    <div class="actions-row-1" *ngIf="appointment && selectedClient">
+            <div class="left-section">
         <orb-button
           *ngIf="appointment"
           label="Eliminar"
           icon="pi pi-trash"
           severity="danger"
+          variant="outlined"
+          size="small"
           (clicked)="onDelete()"
         ></orb-button>
       </div>
-      
+      <orb-button
+        label="Consulta"
+        icon="pi pi-file-edit"
+        severity="info"
+        variant="outlined"
+        size="small"
+        (clicked)="onOpenConsultation()"
+        tooltip="Crear consulta para este turno"
+      ></orb-button>
+      <orb-button
+        label="Factura"
+        icon="pi pi-receipt"
+        severity="success"
+        variant="outlined"
+        size="small"
+        (clicked)="onOpenInvoice()"
+        tooltip="Crear factura para este turno"
+      ></orb-button>
+    </div>
+
+    <!-- Botones principales del formulario -->
+    <div class="actions-row-2">
+
+
       <div class="right-section">
         <orb-button
           label="Cancelar"
           severity="secondary"
+          variant="outlined"
           (clicked)="onCancel()"
         ></orb-button>
         <orb-button
           label="{{ appointment ? 'Actualizar' : 'Guardar' }}"
-          severity="primary"
+          severity="info"
           type="submit"
           [loading]="(agendaStore.loading$ | async) || false"
           [disabled]="agendaForm.invalid"
@@ -228,14 +254,16 @@
   [(visible)]="showClientSearchModal"
   [professionalId]="selectedProfessionalId || undefined"
   (clientSelected)="onClientSelected($event)"
-  (cancel)="onClientSearchCancel()">
+  (cancel)="onClientSearchCancel()"
+>
 </orb-client-search-modal>
 
 <orb-service-search-modal
   [(visible)]="showServiceSearchModal"
   [clientId]="selectedClient?.id"
   (serviceSelected)="onServiceSelected($event)"
-  (cancel)="onServiceSearchCancel()">
+  (cancel)="onServiceSearchCancel()"
+>
 </orb-service-search-modal>
 
 <!-- PrimeNG Components -->

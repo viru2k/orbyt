@@ -9,8 +9,8 @@ import { OrbCardComponent } from '@orb-shared-components/application/orb-card/or
 
 // Store y DTOs
 import { UsersStore } from '@orb-stores';
-import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../../api/model/models';
-import { FileUploadResponseDto } from '../../../api/models/file-upload-response-dto';
+import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../../api/models';
+import { AvatarDto } from '../../../api/models/avatar-dto';
 import { AvatarEntity } from '../../../shared/models/entity-avatar.interfaces';
 
 // Interfaces temporales hasta que se actualicen los DTOs generados
@@ -29,6 +29,7 @@ interface ExtendedAdminUpdateUserDto {
   isActive?: boolean;
   isAdmin?: boolean;
   roles?: RoleResponseDto[];
+  avatarUrl?: string;
 }
 
 // Servicios y Modelos
@@ -50,7 +51,8 @@ import { ImageUploadService } from '../../../shared/services/image-upload.servic
     OrbCardComponent,
     OrbCheckboxComponent,
     OrbEntityAvatarComponent,
-    OrbSelectComponent
+    OrbSelectComponent,
+    OrbCheckboxComponent
   ],
   templateUrl: './user-edit-form.component.html',
   styleUrls: ['./user-edit-form.component.scss'],
@@ -72,7 +74,8 @@ export class UserEditFormComponent implements OnInit {
   pizza: string[] = [];
   selectedRoles: number[] = [];
   currentUserEntity: AvatarEntity | null = null;
-  currentAvatar: FileUploadResponseDto | null = null;
+  currentAvatar: AvatarDto | null = null;
+  private pendingAvatarUpload: File | null = null;
 
   statusOptions = [
     { label: 'Activo', value: true },
@@ -90,7 +93,8 @@ export class UserEditFormComponent implements OnInit {
       label: 'Guardar',
       action: 'save',
       severity: 'success',
-      buttonType: 'submit'
+      buttonType: 'submit',
+      outlined: true
     }
   ];
 
@@ -99,7 +103,7 @@ export class UserEditFormComponent implements OnInit {
     this.isEditMode = !!this.user;
     this.initForm();
     this.usersStore.loadRoles(); // Cargar roles disponibles
-    
+
     if (this.user) {
       const userRoles = this.user.roles?.map(role => role.id) || [];
       this.form.patchValue({
@@ -111,6 +115,7 @@ export class UserEditFormComponent implements OnInit {
       });
       this.selectedRoles = [...userRoles]; // Sincronizar con selectedRoles
       this.currentUserEntity = { ...this.user };
+      this.currentAvatar = this.user.avatar || null;
     } else {
       // Para modo creación, crear una entidad temporal
       this.currentUserEntity = {
@@ -172,7 +177,7 @@ export class UserEditFormComponent implements OnInit {
       // Obtener los roles completos basados en los IDs seleccionados
       const selectedRoleIds: number[] = this.selectedRoles;
       let selectedRolesFull: RoleResponseDto[] = [];
-      
+
       this.usersStore.roles$.subscribe(roles => {
         selectedRolesFull = roles.filter(role => selectedRoleIds.includes(role.id));
       }).unsubscribe();
@@ -185,13 +190,14 @@ export class UserEditFormComponent implements OnInit {
         roles: selectedRolesFull
       };
 
-      this.usersStore.updateUser({ userId: this.user.id, updateData: updateDto });
+      this.usersStore.updateUser({ id: this.user.id, userData: updateDto });
+      this.saved.emit();
     } else {
       // MODO CREACIÓN
       // Obtener los roles completos para crear
       const selectedRoleIds: number[] = this.selectedRoles;
       let selectedRolesFull: RoleResponseDto[] = [];
-      
+
       this.usersStore.roles$.subscribe(roles => {
         selectedRolesFull = roles.filter(role => selectedRoleIds.includes(role.id));
       }).unsubscribe();
@@ -206,17 +212,69 @@ export class UserEditFormComponent implements OnInit {
       };
 
       this.usersStore.createUser(createDto);
-    }
 
-    this.saved.emit();
+      // Si hay avatar pendiente, esperar a que se cree el usuario
+      if (this.pendingAvatarUpload) {
+        // Esperar un momento para que el store se actualice
+        setTimeout(() => {
+          this.usersStore.groupUsers$.pipe().subscribe((users: UserResponseDto[]) => {
+            if (users.length > 0) {
+              const latestUser = users[users.length - 1];
+
+              // Subir avatar con el ID del usuario creado
+              this.imageUploadService.uploadAvatar(
+                this.pendingAvatarUpload!,
+                'user',
+                latestUser.id,
+                { fileType: 'avatar' }
+              ).subscribe({
+                next: (result) => {
+                  console.log('Avatar uploaded after user creation:', result);
+
+                  // Actualizar el usuario con el avatarUrl
+                  if (result?.url) {
+                    const updateDto: ExtendedAdminUpdateUserDto = {
+                      avatarUrl: result.url
+                    };
+                    this.usersStore.updateUser({ id: latestUser.id, userData: updateDto });
+                  }
+
+                  this.currentAvatar = result;
+                  this.pendingAvatarUpload = null;
+                },
+                error: (error) => {
+                  console.error('Error uploading avatar after user creation:', error);
+                  this.notificationService.show(
+                    NotificationSeverity.Error,
+                    `Error al subir avatar: ${error.message || error}`
+                  );
+                }
+              });
+            }
+          }).unsubscribe();
+        }, 500);
+      }
+
+      this.saved.emit();
+    }
   }
 
   // Manejar la carga de avatar
-  onAvatarUploaded(result: any): void {    
+  onAvatarUploaded(result: any): void {
     this.currentAvatar = result;
-    
+
+    // Si estamos en modo edición, actualizar el usuario con el avatarUrl
+    if (this.isEditMode && this.user?.id && result?.url) {
+      const avatarUrl = result.url;
+      const updateDto: ExtendedAdminUpdateUserDto = {
+        avatarUrl: avatarUrl
+      };
+
+      this.usersStore.updateUser({ id: this.user.id, userData: updateDto });
+    }
+
     // Recargar los usuarios para reflejar el cambio
-    this.usersStore.loadUsers();
+    this.usersStore.loadGroupUsers();
   }
   
   // Manejar la eliminación de avatar
@@ -228,14 +286,23 @@ export class UserEditFormComponent implements OnInit {
     );
     
     // Recargar los usuarios para reflejar el cambio
-    this.usersStore.loadUsers();
+    this.usersStore.loadGroupUsers();
+  }
+
+  // Handle file selection (before upload)
+  onAvatarFileSelected(file: File): void {
+    if (!this.isEditMode) {
+      // In create mode, store the file for later upload
+      this.pendingAvatarUpload = file;
+    }
+    // In edit mode, upload immediately (existing behavior)
   }
 
   // Manejar errores de upload
   onUploadError(error: string): void {
     console.error('Upload error:', error);
     this.notificationService.show(
-      NotificationSeverity.Error, 
+      NotificationSeverity.Error,
       `Error al subir avatar: ${error}`
     );
   }

@@ -30,16 +30,16 @@
           <!-- Tipo de movimiento -->
           <div class="field col-12">
             <orb-form-field label="Tipo de Movimiento" [required]="true">
-              <p-dropdown
-                id="type"
+              <orb-select
+                inputId="type"
                 formControlName="type"
                 [options]="movementTypes"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Selecciona un tipo de movimiento"
-                styleClass="w-full"                
+                styleClass="w-full"
               />
-              
+
               @if (getSelectedTypeDescription()) {
                 <small class="text-gray-600 mt-1 block">{{ getSelectedTypeDescription() }}</small>
               }

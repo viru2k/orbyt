@@ -1,10 +1,7 @@
-import { OrbTextInputGroupComponent } from './../../../../shared/components/orb-text-input-group/orb-text-input-group.component';
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
+import { ActivatedRoute } from '@angular/router';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
@@ -14,20 +11,23 @@ import { ChartModule } from 'primeng/chart';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import {
-  OrbActionsPopoverComponent,
-  OrbTableComponent,
   OrbCardComponent,
   OrbButtonComponent,
   OrbDialogComponent,
-  OrbMainHeaderComponent,
+  OrbMainHeaderComponent
 } from '@orb-components';
 
+import { PatientHistoryComponent } from '../../shared/components/patient-history/patient-history.component';
+
 import { ConsultationsService } from '../../api/services/consultations.service';
+import { AgendaService } from '../../api/services/agenda.service';
 import { ConsultationResponseDto } from '../../api/models/consultation-response-dto';
-import { TableColumn, OrbActionItem } from '@orb-models';
-import { ConsultationFormComponent } from './components/consultation-form.component';
+import { ClientResponseDto } from '../../api/models/client-response-dto';
+import { AppointmentResponseDto } from '../../api/models/appointment-response-dto';
+import { ConsultationFormComponent } from './components/consultation-form/consultation-form.component';
 import { ConsultationDetailsComponent } from './components/consultation-details.component';
 import { ConsultationsStore } from '../../store/consultations/consultations.store';
+import { ClientSearchModalComponent } from '../../shared/components/client-search-modal/client-search-modal.component';
 
 @Component({
   selector: 'app-consultations-list',
@@ -35,195 +35,112 @@ import { ConsultationsStore } from '../../store/consultations/consultations.stor
   imports: [
     CommonModule,
     FormsModule,
-    TableModule,
-    ButtonModule,
-    InputTextModule,
     SelectModule,
     TagModule,
     DialogModule,
     ToastModule,
     ConfirmDialogModule,
     ChartModule,
-    OrbActionsPopoverComponent,
-    OrbTableComponent,
     OrbCardComponent,
     OrbButtonComponent,
     OrbDialogComponent,
     ConsultationFormComponent,
     ConsultationDetailsComponent,
-    OrbTextInputGroupComponent,
     OrbMainHeaderComponent,
+    PatientHistoryComponent,
+    ClientSearchModalComponent,
   ],
   providers: [MessageService, ConfirmationService],
   template: `
     <!-- Header Section -->
     <orb-main-header
-      title="  Gestión de Consultas"
-      icon="fa fa-stethoscope"
-      subtitle="Consultas médicas y gestión de pacientes"
+      title="Historia Clínica de Pacientes"
+      icon="fa fa-user-md"
+      subtitle="Buscar pacientes y ver su historia clínica completa"
     >
     </orb-main-header>
 
+    <!-- Search Patient Section -->
     <orb-card>
       <div orbBody>
-        <div class="stats-cards">
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon">
-                <i class="fa fa-stethoscope"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (consultationsStore.totalConsultations$ | async) ?? 0 }}</h3>
-                <p>Total Consultas</p>
+        <div class="search-section" [class.has-patient]="selectedPatient()">
+          @if (!selectedPatient()) {
+            <div class="search-header">
+              <h3>
+                <i class="fas fa-search"></i>
+                Buscar Paciente
+              </h3>
+              <p>Busca un paciente para ver su historia clínica completa</p>
+            </div>
+
+            <div class="search-actions">
+              <orb-button
+                label="Buscar Paciente"
+                icon="fas fa-search"
+                severity="info"
+                [outlined]="true"
+                size="lg"
+                (clicked)="openClientSearchModal()"
+              ></orb-button>
+            </div>
+          } @else {
+            <div class="selected-patient-card">
+              <div class="selected-patient-info">
+                <div class="patient-details">
+                  <h4>{{ getSelectedPatientName() }}</h4>
+                  @if (selectedPatient()?.email) {
+                    <p><i class="fas fa-envelope"></i> {{ selectedPatient()?.email }}</p>
+                  }
+                  @if (selectedPatient()?.phone) {
+                    <p><i class="fas fa-phone"></i> {{ selectedPatient()?.phone }}</p>
+                  }
+                </div>
+                <div class="patient-actions">
+                  <orb-button
+                    label="Cambiar"
+                    icon="fas fa-exchange-alt"
+                    severity="secondary"
+                    [outlined]="true"
+                    (clicked)="openClientSearchModal()"
+                  ></orb-button>
+                  <orb-button
+                    label="Limpiar"
+                    icon="fas fa-times"
+                    severity="danger"
+                    [outlined]="true"
+                    (clicked)="clearPatientSelection()"
+                  ></orb-button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon pending">
-                <i class="fa fa-clock"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (consultationsStore.pendingConsultations$ | async) ?? 0 }}</h3>
-                <p>Pendientes</p>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon completed">
-                <i class="fa fa-check-circle"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (consultationsStore.completedConsultations$ | async) ?? 0 }}</h3>
-                <p>Completadas</p>
-              </div>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon today">
-                <i class="fa fa-calendar-day"></i>
-              </div>
-              <div class="stat-details">
-                <h3>{{ (consultationsStore.todayConsultations$ | async) ?? 0 }}</h3>
-                <p>Hoy</p>
-              </div>
-            </div>
-          </div>
+          }
         </div>
-
-        <div class="filters-section">
-          <div class="header-actions">
-            <orb-button
-              label="Nueva Consulta"
-              icon="fa fa-plus"
-              (clicked)="openNewConsultationDialog()"
-              variant="success"
-            >
-            </orb-button>
-            <orb-button
-              label="Estadísticas"
-              icon="fa fa-chart-line"
-              (clicked)="viewStats()"
-              variant="secondary"
-            >
-            </orb-button>
-          </div>
-          <div class="filters-grid">
-            <div class="filter-item">
-              <label>Estado:</label>
-              <p-select
-                [options]="statusOptions"
-                [(ngModel)]="selectedStatus"
-                placeholder="Todos los estados"
-                optionLabel="label"
-                optionValue="value"
-                [showClear]="true"
-                (onChange)="loadConsultations()"
-              >
-              </p-select>
-            </div>
-            <div class="filter-item">
-              <label>Búsqueda:</label>
-              <orb-text-input-group
-                [icon]="'fa fa-search'"
-                type="text"
-                [(ngModel)]="searchTerm"
-                placeholder="Buscar por cliente, síntomas..."
-                (input)="onSearch()"
-              >
-              </orb-text-input-group>
-            </div>
-          </div>
-        </div>
-
-        <orb-table
-          [value]="(consultationsStore.filteredConsultations$ | async) ?? []"
-          [columns]="columns"
-          [loading]="(consultationsStore.loading$ | async) ?? false"
-          [rowActions]="actions"
-          [paginator]="true"
-          [rows]="10"
-          [rowsPerPageOptions]="[10, 25, 50]"
-        >
-          <ng-template pTemplate="body" let-consultation let-columns="columns">
-            <tr>
-              <td *ngFor="let col of columns">
-                <ng-container [ngSwitch]="col.field">
-                  <ng-container *ngSwitchCase="'actions'">
-                    <orb-actions-popover [actions]="actions" [itemData]="consultation">
-                    </orb-actions-popover>
-                  </ng-container>
-
-                  <ng-container *ngSwitchCase="'consultationNumber'">
-                    <strong>{{ consultation.consultationNumber }}</strong>
-                  </ng-container>
-
-                  <ng-container *ngSwitchCase="'client'">
-                    <div class="client-info">
-                      <strong>{{ getClientName(consultation) }}</strong>
-                      <small>{{ getClientEmail(consultation) }}</small>
-                    </div>
-                  </ng-container>
-
-                  <ng-container *ngSwitchCase="'createdAt'">
-                    <div class="date-info">
-                      <div>{{ formatDate(consultation.createdAt) }}</div>
-                      <small *ngIf="consultation.startTime">
-                        {{ formatTime(consultation.startTime) }} -
-                        {{ formatTime(consultation.endTime) }}
-                      </small>
-                    </div>
-                  </ng-container>
-
-                  <ng-container *ngSwitchCase="'symptoms'">
-                    <div class="symptoms-preview">
-                      {{ consultation.symptoms || 'Sin síntomas especificados' }}
-                    </div>
-                  </ng-container>
-
-                  <ng-container *ngSwitchCase="'status'">
-                    <p-tag
-                      [value]="getStatusLabel(consultation.status)"
-                      [severity]="getStatusSeverity(consultation.status)"
-                    >
-                    </p-tag>
-                  </ng-container>
-
-                  <ng-container *ngSwitchDefault>
-                    {{ consultation[col.field] }}
-                  </ng-container>
-                </ng-container>
-              </td>
-            </tr>
-          </ng-template>
-        </orb-table>
       </div>
     </orb-card>
 
+    <!-- Patient History -->
+    @if (selectedPatient()) {
+      <orb-patient-history
+        [patient]="selectedPatient()"
+        [consultations]="patientConsultations()"
+        [loading]="loadingPatientHistory()"
+        [showPatientInfo]="false"
+        [maxHeight]="'70vh'"
+        (newConsultation)="openNewConsultationDialog()"
+      ></orb-patient-history>
+    }
+
     <p-toast></p-toast>
     <p-confirmDialog></p-confirmDialog>
+
+    <!-- Client Search Modal -->
+    <orb-client-search-modal
+      [visible]="showClientSearchModal()"
+      (visibleChange)="showClientSearchModal.set($event)"
+      (clientSelected)="onClientSelected($event)"
+      (cancel)="onClientSearchModalClose()"
+      title="Buscar Paciente para Historia Clínica"
+    ></orb-client-search-modal>
 
     <!-- Statistics Modal -->
     <orb-dialog
@@ -324,6 +241,8 @@ import { ConsultationsStore } from '../../store/consultations/consultations.stor
       <app-consultation-form
         [visible]="displayFormModal()"
         [consultation]="selectedConsultationForEdit || null"
+        [preSelectedClient]="selectedPatient()"
+        [preSelectedAppointment]="preSelectedAppointment()"
         (consultationSaved)="onConsultationSaved($event)"
         (visibleChange)="onFormModalClose()"
       >
@@ -344,16 +263,20 @@ import { ConsultationsStore } from '../../store/consultations/consultations.stor
 })
 export class ConsultationsListComponent implements OnInit {
   selectedStatus: string | null = null;
-  searchTerm = '';
 
   // Modal states
   displayStatsModal = signal(false);
   displayFormModal = signal(false);
   displayDetailsModal = signal(false);
+  showClientSearchModal = signal(false);
 
-  // Selected consultations for modals
+  // Selected data
   selectedConsultationForEdit: ConsultationResponseDto | undefined;
   selectedConsultationForView: ConsultationResponseDto | undefined;
+  selectedPatient = signal<ClientResponseDto | null>(null);
+  patientConsultations = signal<ConsultationResponseDto[]>([]);
+  loadingPatientHistory = signal(false);
+  preSelectedAppointment = signal<AppointmentResponseDto | null>(null);
   isEditMode = false;
 
   // Chart Data
@@ -369,78 +292,122 @@ export class ConsultationsListComponent implements OnInit {
     { label: 'Cancelada', value: 'cancelled' },
   ];
 
-  // Table columns
-  columns: TableColumn[] = [
-    { field: 'consultationNumber', header: 'Número', sortable: true },
-    { field: 'client', header: 'Cliente', sortable: true },
-    { field: 'createdAt', header: 'Fecha/Hora', sortable: true },
-    { field: 'symptoms', header: 'Síntomas', sortable: false },
-    { field: 'status', header: 'Estado', sortable: true },
-    { field: 'actions', header: 'Acciones', sortable: false, width: '10px' },
-  ];
-
-  // Action items for popover
-  actions: OrbActionItem<ConsultationResponseDto>[] = [
-    {
-      label: 'Ver Detalles',
-      icon: 'fas fa-eye',
-      action: (item?: ConsultationResponseDto) => item && this.viewConsultation(item),
-    },
-    {
-      label: 'Editar',
-      icon: 'fas fa-edit',
-      action: (item?: ConsultationResponseDto) => item && this.editConsultation(item),
-      visible: (item?: ConsultationResponseDto) =>
-        item?.status !== 'completed' && item?.status !== 'cancelled',
-    },
-    {
-      label: 'Generar Factura',
-      icon: 'fas fa-file-invoice',
-      action: (item?: ConsultationResponseDto) => item && this.generateInvoice(item),
-      visible: (item?: ConsultationResponseDto) => item?.status === 'completed',
-    },
-    {
-      label: 'Cancelar',
-      icon: 'fas fa-times-circle',
-      action: (item?: ConsultationResponseDto) => item && this.confirmCancelConsultation(item),
-      visible: (item?: ConsultationResponseDto) =>
-        item?.status !== 'completed' && item?.status !== 'cancelled',
-    },
-  ];
-
   constructor(
     private consultationsService: ConsultationsService,
+    private agendaService: AgendaService,
+    private route: ActivatedRoute,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public consultationsStore: ConsultationsStore,
   ) {}
 
   ngOnInit() {
-    this.loadConsultations();
     this.initializeChartOptions();
+    this.handleAgendaIntegration();
   }
 
-  loadConsultations() {
-    const filters: any = {};
-    if (this.selectedStatus) {
-      filters.status = this.selectedStatus;
-    }
-    if (this.searchTerm) {
-      filters.searchTerm = this.searchTerm;
-    }
-
-    this.consultationsStore.loadConsultations(filters);
+  /**
+   * Handle integration from agenda when navigating to /consultation/new
+   */
+  private handleAgendaIntegration() {
+    this.route.queryParams.subscribe(params => {
+      if (params['appointmentId']) {
+        this.loadAppointmentFromAgenda(params['appointmentId']);
+      }
+    });
   }
 
-  onSearch() {
-    this.consultationsStore.updateFilters({ searchTerm: this.searchTerm || '' });
-    setTimeout(() => {
-      this.loadConsultations();
-    }, 300);
+  /**
+   * Load appointment data from agenda and pre-fill consultation form
+   */
+  private loadAppointmentFromAgenda(appointmentId: string) {
+    // Get appointments and filter by ID since there's no getById method
+    this.agendaService.agendaControllerGetAppointments().subscribe({
+      next: (appointments: AppointmentResponseDto[]) => {
+        const appointment = appointments.find(apt => apt.id === appointmentId);
+
+        if (appointment) {
+          this.preSelectedAppointment.set(appointment);
+
+          // If appointment has client data, set it as selected patient
+          if (appointment.client) {
+            // Convert AppointmentClientResponseDto to ClientResponseDto
+            const clientData = {
+              ...appointment.client,
+              createdAt: new Date().toISOString(), // Add missing properties
+              updatedAt: new Date().toISOString(),
+              isActive: true,
+              status: 'ACTIVE' as const
+            } as any as ClientResponseDto;
+
+            this.selectedPatient.set(clientData);
+          }
+
+          // Auto-open the consultation form
+          this.openNewConsultationDialog();
+        } else {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Cita no encontrada',
+            detail: 'No se pudo encontrar la cita en la agenda'
+          });
+        }
+      },
+      error: (error: any) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo cargar la información de la cita desde agenda'
+        });
+        console.error('Error loading appointment from agenda:', error);
+      }
+    });
   }
 
-  performSearch() {
-    this.loadConsultations();
+  onStatusChange() {
+    // Handle status filter change if needed
+  }
+
+  openClientSearchModal() {
+    this.showClientSearchModal.set(true);
+  }
+
+  onClientSelected(client: ClientResponseDto) {
+    this.selectedPatient.set(client);
+    this.showClientSearchModal.set(false);
+    this.loadPatientConsultations(client.id);
+  }
+
+  onClientSearchModalClose() {
+    this.showClientSearchModal.set(false);
+  }
+
+  loadPatientConsultations(clientId: number) {
+    this.loadingPatientHistory.set(true);
+    this.consultationsService.consultationControllerFindAll({
+      clientId: clientId
+    }).subscribe({
+      next: (response: any) => {
+        // Backend returns { data: [...], total, page, limit }
+        const consultations = response?.data || response || [];
+        this.patientConsultations.set(consultations);
+        this.loadingPatientHistory.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading patient consultations:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cargar las consultas del paciente'
+        });
+        this.loadingPatientHistory.set(false);
+      }
+    });
+  }
+
+  clearPatientSelection() {
+    this.selectedPatient.set(null);
+    this.patientConsultations.set([]);
   }
 
   openNewConsultationDialog() {
@@ -506,7 +473,10 @@ export class ConsultationsListComponent implements OnInit {
 
   onConsultationSaved(consultation: ConsultationResponseDto): void {
     this.onFormModalClose();
-    this.loadConsultations();
+    // Reload patient consultations if we have a selected patient
+    if (this.selectedPatient()) {
+      this.loadPatientConsultations(this.selectedPatient()!.id);
+    }
     this.messageService.add({
       severity: 'success',
       summary: 'Éxito',
@@ -648,11 +618,9 @@ export class ConsultationsListComponent implements OnInit {
   }
 
   // Helper methods for client data
-  getClientName(consultation: ConsultationResponseDto): string {
-    return (consultation.client as any)?.name || 'Cliente no encontrado';
-  }
-
-  getClientEmail(consultation: ConsultationResponseDto): string {
-    return (consultation.client as any)?.email || '';
+  getSelectedPatientName(): string {
+    const patient = this.selectedPatient();
+    if (!patient) return '';
+    return patient.name || patient.fullname || 'Paciente';
   }
 }

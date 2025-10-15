@@ -1,32 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="accept()">
   <div class="grid">
-    <!-- Avatar Section - Solo en modo edición -->
-    <div class="col-12" *ngIf="isEditMode">
-      <orb-card>
-        <div orbHeader class="flex align-items-center">
-          <i class="pi pi-image mr-2"></i>
-          <h3 class="m-0">Avatar</h3>
-        </div>
-        <div orbBody class="flex justify-content-center align-items-center">
-          <div class="avatar-section text-center" *ngIf="currentUserEntity">
-            <div class="avatar-display">
-              <orb-entity-avatar
-                [entity]="currentUserEntity"
-                entityType="user"
-                size="xlarge"
-                shape="circle"
-                [showTooltip]="false"
-                [showUploadButton]="true"
-                context="profile"
-                [avatar]="currentAvatar"
-                [autoLoad]="isEditMode"
-                (avatarUpdated)="onAvatarUploaded($event)">
-              </orb-entity-avatar>
-            </div>
-          </div>
-        </div>
-      </orb-card>
-    </div>
+
 
     <!-- Información Personal -->
     <div class="col-12 md:col-6">
@@ -37,29 +11,41 @@
         </div>
         <div orbBody class="grid">
           <div class="field col-12">
+            <div  class="avatar-section text-center align-items-start" *ngIf="currentUserEntity && isEditMode">
+              <div class="avatar-display">
+                <orb-entity-avatar
+                  [entity]="currentUserEntity"
+                  entityType="user"
+                  size="large"
+                  shape="circle"
+                  [showTooltip]="false"
+                  [showUploadButton]="true"
+                  context="profile"
+                  [avatar]="currentAvatar"
+                  [autoLoad]="isEditMode"
+                  (avatarUpdated)="onAvatarUploaded($event)"
+                >
+                </orb-entity-avatar>
+              </div>
+            </div>
             <orb-form-field label="Nombre Completo" [required]="true">
-              <orb-text-input 
-                formControlName="fullName" 
-                inputId="fullName">
-              </orb-text-input>
+              <orb-text-input formControlName="fullName" inputId="fullName"> </orb-text-input>
             </orb-form-field>
           </div>
           <div class="field col-12">
             <orb-form-field label="Email" [required]="true">
-              <orb-text-input 
-                formControlName="email" 
+              <orb-text-input
+                formControlName="email"
                 inputId="email"
                 type="email"
-                [readOnly]="isEditMode">
+                [readOnly]="isEditMode"
+              >
               </orb-text-input>
             </orb-form-field>
           </div>
           <div class="field col-12" *ngIf="!isEditMode">
             <orb-form-field label="Contraseña" [required]="true">
-              <orb-text-input 
-                formControlName="password" 
-                inputId="password"
-                type="password">
+              <orb-text-input formControlName="password" inputId="password" type="password">
               </orb-text-input>
             </orb-form-field>
           </div>
@@ -70,7 +56,9 @@
                 [options]="statusOptions"
                 optionLabel="label"
                 optionValue="value"
-                [showClear]="false">
+                [showClear]="false"
+                appendTo="body"
+              >
               </orb-select>
             </orb-form-field>
           </div>
@@ -79,7 +67,8 @@
               formControlName="isAdmin"
               inputId="isAdmin"
               label="Es Administrador"
-              [binary]="true">
+              [binary]="true"
+            >
             </orb-checkbox>
           </div>
         </div>
@@ -96,18 +85,21 @@
         <div orbBody>
           <div class="field col-12">
             <div class="roles-container">
-              <div *ngFor="let role of (availableRoles$ | async)" 
-                   class="role-item p-3 mb-3 border-1 border-round"
-                   [ngClass]="{'bg-primary-50 border-primary': isRoleSelected(role.id)}">
+              <div
+                *ngFor="let role of availableRoles$ | async"
+                class="role-item p-3 mb-3 border-1 border-round"
+                [ngClass]="{ 'bg-primary-50 border-primary': isRoleSelected(role.id) }"
+              >
                 <div class="role-header mb-2">
-                  <p-checkbox
+                  <orb-checkbox
                     [inputId]="'role-' + role.id"
                     name="roles"
                     [value]="role.id"
                     [(ngModel)]="selectedRoles"
-                    [ngModelOptions]="{standalone: true}"
-                    (ngModelChange)="onRolesChange($event)">
-                  </p-checkbox>
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="onRolesChange($event)"
+                  >
+                  </orb-checkbox>
                   <label [for]="'role-' + role.id" class="ml-2 font-semibold">
                     {{ role.name }}
                   </label>
@@ -115,11 +107,16 @@
                 <div class="role-description text-sm text-color-secondary mb-2">
                   {{ role.description }}
                 </div>
-                <div *ngIf="role.permissions && role.permissions.length > 0" class="permissions-list">
+                <div
+                  *ngIf="role.permissions && role.permissions.length > 0"
+                  class="permissions-list"
+                >
                   <span class="text-xs font-semibold text-color-secondary">Permisos:</span>
                   <div class="flex flex-wrap gap-1 mt-1">
-                    <span *ngFor="let permission of role.permissions" 
-                          class="text-xs bg-surface-100 text-color px-2 py-1 border-round">
+                    <span
+                      *ngFor="let permission of role.permissions"
+                      class="text-xs bg-surface-100 text-color px-2 py-1 border-round"
+                    >
                       {{ permission.description }}
                     </span>
                   </div>
@@ -133,8 +130,9 @@
   </div>
 </form>
 
-<orb-form-footer 
-  [buttons]="footerButtons" 
+<orb-form-footer
+  [buttons]="footerButtons"
   alignment="right"
-  (actionClicked)="handleFooterAction($event)">
+  (actionClicked)="handleFooterAction($event)"
+>
 </orb-form-footer>

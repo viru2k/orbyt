@@ -33,12 +33,13 @@
                 <div class="flex align-items-center gap-3">
                   <orb-entity-avatar
                     [entity]="product"
+                    [avatar]="product.avatar || null"
                     entityType="product"
                     size="normal"
                     shape="square"
                     [showTooltip]="true"
                     context="table"
-                    [autoLoad]="true">
+                    [autoLoad]="false">
                   </orb-entity-avatar>
                   <div class="product-info">
                     <div class="product-name font-medium text-900">{{ product.name }}</div>
@@ -69,6 +70,7 @@
                 <div class="owner-avatar-container" *ngIf="product.owner">
                   <orb-entity-avatar
                     [entity]="product.owner"
+                    [avatar]="product.owner.avatar || null"
                     entityType="user"
                     size="normal"
                     shape="circle"
@@ -76,7 +78,7 @@
                     [tooltipText]="product.owner.fullName || 'Propietario no asignado'"
                     [customTooltipText]="true"
                     context="table"
-                    [autoLoad]="true">
+                    [autoLoad]="false">
                   </orb-entity-avatar>
                 </div>
                 <span *ngIf="!product.owner" class="text-muted">Sin propietario</span>

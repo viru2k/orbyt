@@ -14,6 +14,7 @@ import { MessageModule } from 'primeng/message';
 
 // Store and Services
 import { ConsultationTokenStore } from '@orb-stores';
+import { OrbCardComponent } from '@orb-components';
 
 @Component({
   selector: 'app-public-consultation',
@@ -26,7 +27,8 @@ import { ConsultationTokenStore } from '@orb-stores';
     TagModule,
     DividerModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    OrbCardComponent
   ],
   templateUrl: './public-consultation.component.html',
   styleUrls: ['./public-consultation.component.scss']

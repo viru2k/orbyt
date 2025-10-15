@@ -3,10 +3,10 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent, OrbMainHeaderComponent, OrbButtonComponent, OrbEntityAvatarComponent } from '@orb-components';
+import { OrbTableComponent, OrbDialogComponent, OrbCardComponent, OrbActionsPopoverComponent, OrbMainHeaderComponent, OrbEntityAvatarComponent, OrbTagComponent } from '@orb-components';
 import { UsersStore } from '@orb-stores/users/users.store';
 import { AuthStore } from '@orb-stores';
-import { UserResponseDto, RoleResponseDto, PermissionResponseDto } from '../../../api/model/models';
+import { UserResponseDto, RoleResponseDto, PermissionResponseDto } from '../../../api/models';
 import { TableColumn, OrbActionItem, OrbTableFeatures } from '@orb-models';
 import { EmailManagementService } from '../../email-management/services/email-management.service';
 import { MessageModule } from 'primeng/message';
@@ -28,8 +28,8 @@ import { AgendaConfigModalComponent } from '../../agenda/components/agenda-confi
     OrbDialogComponent,
     OrbActionsPopoverComponent,
     OrbMainHeaderComponent,
-    OrbButtonComponent,
     OrbEntityAvatarComponent,
+    OrbTagComponent,
     MessageModule,
     TagModule,
     ChipModule,
@@ -41,7 +41,7 @@ import { AgendaConfigModalComponent } from '../../agenda/components/agenda-confi
   ],
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss'],
-  providers: [UsersStore, MessageService, ConfirmationService], // Provee el store a este componente y sus hijos
+  providers: [MessageService, ConfirmationService]
 })
 export class UsersListComponent implements OnInit, OnDestroy {
   public readonly usersStore = inject(UsersStore);
@@ -52,8 +52,8 @@ export class UsersListComponent implements OnInit, OnDestroy {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly destroy$ = new Subject<void>();
 
-  public users$ = this.usersStore.users$;
-  public loading$ = this.usersStore.loading$;
+  public users$ = this.usersStore.subUsers$;
+  public loading$ = this.usersStore.loadingSubUsers$;
   public error$ = this.usersStore.error$;
   
   private canManageAgendaValue = false;
@@ -80,6 +80,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
   selectedProfessionalId = signal<number | null>(null);
 
   public actions: OrbActionItem<UserResponseDto>[] = [];
+  public headerActions: OrbActionItem[] = [];
 
   tableRows = signal(15);
   tableFirst = signal(0);
@@ -95,6 +96,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeActions();
+    this.initializeHeaderActions();
     this.usersStore.loadSubUsers();
     
     // Subscribe to canManageAgenda and store the value
@@ -131,9 +133,13 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.userToEdit.set(undefined);
   }
 
-  onAgendaConfigModalClose(): void {    
+  onAgendaConfigModalClose(): void {
     this.displayAgendaConfigModal.set(false);
-    this.selectedProfessionalId.set(null);    
+    this.selectedProfessionalId.set(null);
+  }
+
+  openNewUserModal(): void {
+    this.openUserEditModal();
   }
 
   // onDeleteUser(user: UserResponseDto): void {
@@ -229,6 +235,18 @@ export class UsersListComponent implements OnInit, OnDestroy {
   // Método para el botón del toolbar, que llama a la lógica unificada
   showUserForm(): void {
     this.openUserEditModal();
+  }
+
+  private initializeHeaderActions(): void {
+    this.headerActions = [
+      {
+        label: 'Nuevo Usuario',
+        icon: 'pi pi-plus',
+        severity: 'success',
+        outlined: true,
+        action: () => this.openNewUserModal()
+      }
+    ];
   }
 
   private initializeActions(): void {

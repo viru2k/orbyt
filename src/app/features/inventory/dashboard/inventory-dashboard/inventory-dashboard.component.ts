@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProductStore } from '../../../../store/stock/product.store';
 import { MovementStore } from '../../shared/stores/movement.store';
 import { InventoryDashboardStore } from '../stores/inventory-dashboard.store';
-import { OrbCardComponent, OrbBreadcrumbComponent, OrbButtonComponent } from '@orb-components';
+import { OrbCardComponent, OrbButtonComponent, OrbMainHeaderComponent } from '@orb-components';
 import { ChartModule } from 'primeng/chart';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
@@ -26,14 +26,14 @@ interface DashboardKPI {
   imports: [
     CommonModule,
     OrbCardComponent,
-    OrbBreadcrumbComponent,
     OrbButtonComponent,
+    OrbMainHeaderComponent,
     ChartModule,
     ProgressBarModule,
     TagModule
   ],
   templateUrl: './inventory-dashboard.component.html',
-  styleUrls: ['./inventory-dashboard.component.css']
+  styleUrls: ['./inventory-dashboard.component.scss']
 })
 export class InventoryDashboardComponent implements OnInit {
   private productStore = inject(ProductStore);

@@ -22,7 +22,7 @@ import { ImageUploadService } from '../../../shared/services/image-upload.servic
 import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
-  selector: 'app-user-edit-form',
+  selector: 'app-room-edit-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,8 +33,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
     OrbFormFieldComponent,
     OrbFormFooterComponent,
     OrbCardComponent,
-    OrbCheckboxComponent,
-    OrbEntityAvatarComponent,
      InputNumberModule,
     OrbSelectComponent
   ],
@@ -76,7 +74,8 @@ export class RoomEditFormComponent implements OnInit {
       label: 'Guardar',
       action: 'save',
       severity: 'success',
-      buttonType: 'submit'
+      buttonType: 'submit',
+      outlined: true
     }
   ];
 

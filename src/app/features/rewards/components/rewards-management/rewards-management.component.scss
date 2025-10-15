@@ -50,6 +50,37 @@
   }
 }
 
+.condition-info,
+.reward-info {
+  display: flex;
+  flex-direction: column;
+
+
+  .condition-value,
+  .reward-value {
+    font-size: variables.$text-sm;
+    color: variables.$gray-700;
+    margin-top: var(--space-1, 0.25rem);
+  }
+}
+
+.dates-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 0.25rem);
+
+  small {
+    color: variables.$gray-600;
+    font-size: variables.$text-xs;
+    line-height: 1.5;
+
+    strong {
+      font-weight: variables.$font-semibold;
+      color: variables.$gray-700;
+    }
+  }
+}
+
 .dates {
   display: flex;
   flex-direction: column;
@@ -60,6 +91,10 @@
     font-size: variables.$text-xs;
     white-space: nowrap;
   }
+}
+
+.text-center {
+  text-align: center;
 }
 
 .action-buttons {

@@ -162,52 +162,42 @@ export class DashboardComponent implements OnInit {
   ];
 
   constructor() {
-    // Subscribe to store changes and update local signals for compatibility
-    effect(() => {
-      this.metrics$.pipe(take(1)).subscribe(metrics => {
-        if (metrics) {
-          this.dashboardMetrics.set(metrics);
-          setTimeout(() => this.updateChartComponents(), 0);
-        }
-      });
-    });
-
-    effect(() => {
-      this.quickStats$.pipe(take(1)).subscribe(stats => {
-        if (stats) {
-          this.quickStats.set(stats);
-        }
-      });
-    });
-
-    effect(() => {
-      this.recentActivities$.pipe(take(1)).subscribe(activities => {
-        this.recentActivity.set(activities || []);
-      });
-    });
-
-    // Sync store loading state with local signal
-    effect(() => {
-      this.loading$.pipe(take(1)).subscribe(loading => {
-        this.isLoading.set(loading);
-      });
-    });
-
-    // Effect to update charts when period changes
-    effect(() => {
-      const period = this.currentPeriod();
-      const metrics = this.dashboardMetrics();
-      if (metrics && period) {
-        this.updateChartData();
-        setTimeout(() => this.updateChartComponents(), 0);
-      }
-    });
+    // Simplified initialization - move subscriptions to ngOnInit
   }
 
   ngOnInit() {
     this.initializeCharts();
     this.loadDashboardData();
+    this.setupSubscriptions();
     this.setupPeriodicUpdates();
+  }
+
+  private setupSubscriptions(): void {
+    // Subscribe to metrics changes
+    this.metrics$.subscribe(metrics => {
+      if (metrics) {
+        this.dashboardMetrics.set(metrics);
+        this.updateChartData();
+        setTimeout(() => this.updateChartComponents(), 0);
+      }
+    });
+
+    // Subscribe to quick stats
+    this.quickStats$.subscribe(stats => {
+      if (stats) {
+        this.quickStats.set(stats);
+      }
+    });
+
+    // Subscribe to recent activities
+    this.recentActivities$.subscribe(activities => {
+      this.recentActivity.set(activities || []);
+    });
+
+    // Subscribe to loading state
+    this.loading$.subscribe(loading => {
+      this.isLoading.set(loading);
+    });
   }
 
   private loadDashboardData(): void {

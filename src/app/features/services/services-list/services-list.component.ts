@@ -8,13 +8,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 // Orb Components
-import { OrbMainHeaderComponent, OrbCardComponent, OrbButtonComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
+import { OrbMainHeaderComponent, OrbCardComponent, OrbTableComponent, OrbDialogComponent, OrbActionsPopoverComponent } from '@orb-components';
 
 // Services and Models
 import { ServiceFormComponent } from '../modal/service-form.component';
 import { ItemSelectorResponseDto } from '../../../api/models/item-selector-response-dto';
 import { ServiceResponseDto } from '../../../api/models/service-response-dto';
-import { OrbActionItem } from '@orb-models';
+import { OrbActionItem, OrbTableFeatures, TableColumn } from '@orb-models';
 import { ServicesStore } from '@orb-stores';
 
 @Component({
@@ -27,118 +27,13 @@ import { ServicesStore } from '@orb-stores';
     ConfirmDialogModule,
     OrbMainHeaderComponent,
     OrbCardComponent,
-    OrbButtonComponent,
     OrbTableComponent,
     OrbDialogComponent,
     OrbActionsPopoverComponent,
     ServiceFormComponent
   ],
   providers: [MessageService, ConfirmationService],
-  template: `
-    <!-- Header unificado como dashboard -->
-    <orb-main-header
-      title="Gestión de Servicios"
-      icon="fa fa-cog"
-      subtitle="Administra y configura los servicios disponibles">
-    </orb-main-header>
-
-    <orb-card>
-      <div class="grid" orbBody>
-        <!-- Services Table -->
-        <orb-table
-          [value]="services()"
-          [columns]="tableColumns"
-          [loading]="isLoading()"
-          [totalRecords]="services().length"
-          [rows]="tableRows()"
-          [first]="tableFirst()"
-          [tableFeatures]="tableFeaturesConfig"
-          [globalFilterFields]="['name', 'description']"
-          [rowActions]="serviceRowActions"
-          [tableHeaderActions]="serviceTableHeaderActions"
-          dataKey="id"
-          paginatorPosition="bottom"
-          [rowsPerPageOptions]="[15, 30, 50]"
-          currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} servicios">
-          
-          <ng-template pTemplate="body" let-service let-columns="columns">
-            <tr>
-              <td *ngFor="let col of columns">
-                <ng-container [ngSwitch]="col.field">
-                  
-                  <!-- Service info column -->
-                  <ng-container *ngSwitchCase="'service'">
-                    <div class="service-info">
-                      <div class="service-name font-medium text-900">{{ service.name }}</div>
-                      <div class="service-description text-600 text-sm">
-                        {{ service.description || 'Sin descripción' }}
-                      </div>
-                    </div>
-                  </ng-container>
-
-                  <!-- Base price column -->
-                  <ng-container *ngSwitchCase="'basePrice'">
-                    {{ service.formattedPrice }}
-                  </ng-container>
-
-                  <!-- Category column -->
-                  <ng-container *ngSwitchCase="'category'">
-                    <span class="category-tag">{{ service.categoryText }}</span>
-                  </ng-container>
-
-                  <!-- Duration column -->
-                  <ng-container *ngSwitchCase="'duration'">
-                    {{ service.durationText }}
-                  </ng-container>
-
-                  <!-- Status column -->
-                  <ng-container *ngSwitchCase="'status'">
-                    <span [ngClass]="service.status === 'ACTIVE' ? 'status-active' : 'status-inactive'">
-                      {{ service.statusText }}
-                    </span>
-                  </ng-container>
-
-                  <!-- Actions column -->
-                  <ng-container *ngSwitchCase="'actions'">
-                    <div class="flex gap-2">
-                      <orb-actions-popover
-                        [actions]="serviceRowActions"
-                        [itemData]="service">
-                      </orb-actions-popover>
-                    </div>
-                  </ng-container>
-
-                  <!-- Default column -->
-                  <ng-container *ngSwitchDefault>
-                    {{ service[col.field] }}
-                  </ng-container>
-                  
-                </ng-container>
-              </td>
-            </tr>
-          </ng-template>
-        </orb-table>
-      </div>
-    </orb-card>
-
-    <!-- Service Form Dialog -->
-    <orb-dialog
-      [visible]="displayServiceModal()"
-      [header]="isEditMode() ? 'Editar Servicio' : 'Nuevo Servicio'"
-      size="lg"
-      (onHide)="onCancelForm()">
-      
-      <orb-service-form
-        [service]="serviceToEdit()"
-        (saved)="onServiceSaved()"
-        (cancel)="onCancelForm()">
-      </orb-service-form>
-      
-    </orb-dialog>
-
-    <p-toast></p-toast>
-    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
-  `,
+  templateUrl: './services-list.component.html',
   styleUrls: ['./services-list.component.scss']
 })
 export class ServicesListComponent implements OnInit {
@@ -156,26 +51,28 @@ export class ServicesListComponent implements OnInit {
   serviceToEdit = signal<ServiceResponseDto | undefined>(undefined);
 
   // Table pagination signals
-  tableRows = signal(15);
+  tableRows = signal(10);
   tableFirst = signal(0);
 
 
   // Table configuration
-  tableColumns = [
-    { field: 'service', header: 'Servicio', sortable: true },
-    { field: 'basePrice', header: 'Precio Base', sortable: true },
-    { field: 'duration', header: 'Duración', sortable: true },
-    { field: 'category', header: 'Categoría', sortable: true },
-    { field: 'status', header: 'Estado', sortable: true },
+  tableColumns: TableColumn[] = [
+    { field: 'service', header: 'Servicio', sortable: false, width: '300px' },
+    { field: 'basePrice', header: 'Precio Base', sortable: true, width: '150px' },
+    { field: 'duration', header: 'Duración', sortable: true, width: '120px' },
+    { field: 'category', header: 'Categoría', sortable: true, width: '150px' },
+    { field: 'status', header: 'Estado', sortable: true, width: '120px' },
     { field: 'actions', header: '', width: '10px', sortable: false }
   ];
 
-  tableFeaturesConfig = {
+  tableFeaturesConfig: OrbTableFeatures = {
     showGlobalSearch: true,
     globalSearchPlaceholder: 'Buscar servicios...'
   };
 
-  // Acciones para cada fila de la tabla (Solo Editar)
+  serviceGlobalFilterFields: string[] = ['name', 'description', 'categoryText', 'statusText'];
+
+  // Acciones para cada fila de la tabla (Editar, Eliminar)
   serviceRowActions: OrbActionItem<ServiceResponseDto>[] = [
     {
       label: 'Editar',
@@ -183,6 +80,12 @@ export class ServicesListComponent implements OnInit {
       action: (service) => {
         if (service) this.editService(service);
       }
+    },
+    {
+      label: 'Eliminar',
+      icon: 'pi pi-trash',
+      action: (service) => this.confirmDeleteService(service),
+      styleClass: 'p-button-danger'
     }
   ];
 
@@ -191,7 +94,9 @@ export class ServicesListComponent implements OnInit {
     {
       label: 'Nuevo Servicio',
       icon: 'pi pi-plus',
-      action: () => this.showServiceForm()
+      action: () => this.showServiceForm(),
+      severity: 'success',
+      styleType: 'outlined'
     }
   ];
 
@@ -227,5 +132,47 @@ export class ServicesListComponent implements OnInit {
     this.serviceToEdit.set(undefined);
   }
 
-  // Removed conversion method - now passing ServiceResponseDto directly
+  confirmDeleteService(service: ServiceResponseDto | undefined): void {
+    if (!service) return;
+    this.confirmationService.confirm({
+      message: `¿Está seguro de que desea eliminar el servicio "${service.name}"?`,
+      header: 'Confirmar Eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.deleteService(service);
+      }
+    });
+  }
+
+  private deleteService(service: ServiceResponseDto): void {
+    if (!service.id) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se puede eliminar el servicio: ID no válido'
+      });
+      return;
+    }
+
+    // Assuming servicesStore.delete returns void or Observable
+    // For now, let's just call the store method and reload
+    try {
+      this.servicesStore.delete(service.id);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: `Servicio "${service.name}" eliminado correctamente`
+      });
+      this.servicesStore.load(); // Reload the list
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al eliminar el servicio'
+      });
+    }
+  }
 }

@@ -17,8 +17,9 @@
       [tableFeatures]="tableFeaturesConfig"
       [globalFilterFields]="['email', 'fullName']"
       [rowActions]="actions"
+      [tableHeaderActions]="headerActions"
       dataKey="id"
-      paginatorPosition="bottom"
+      paginatorPosition="both"
       [rowsPerPageOptions]="[15, 30, 50]"
       currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
     >
@@ -32,12 +33,13 @@
                 <div class="flex align-items-center gap-3">
                   <orb-entity-avatar
                     [entity]="user"
+                    [avatar]="user.avatar || null"
                     entityType="user"
                     size="normal"
                     shape="circle"
                     [showTooltip]="true"
                     context="table"
-                    [autoLoad]="true">
+                    [autoLoad]="false">
                   </orb-entity-avatar>
                   <div class="user-info">
                     <div class="user-name font-medium text-900">{{ user.fullName }}</div>
@@ -49,12 +51,12 @@
               <!-- Caso para la columna de roles: mostramos tags -->
               <ng-container *ngSwitchCase="'roles'">
                 <div class="flex gap-1 flex-wrap">
-                  <p-tag
+                  <orb-tag
                     *ngFor="let role of user.roles"
                     [value]="role.name"
                     severity="info"
-                    [style]="{ 'font-size': '0.75rem', 'padding': '0.25rem 0.5rem' }">
-                  </p-tag>
+                    size="small">
+                  </orb-tag>
                   <span *ngIf="!user.roles || user.roles.length === 0" class="text-muted">Sin roles</span>
                 </div>
               </ng-container>

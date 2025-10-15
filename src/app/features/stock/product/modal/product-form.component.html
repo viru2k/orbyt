@@ -10,6 +10,18 @@
           <h3 class="m-0">Información Básica</h3>
         </div>
         <div orbBody class="grid">
+          <!-- Avatar -->
+          <div class="field col-12">
+            <orb-entity-avatar
+              *ngIf="currentProductEntity"
+              [entity]="currentProductEntity"
+              entityType="product"
+              [showUploadButton]="true"
+              (uploadClick)="onUploadClick()"
+              (avatarUpdated)="onAvatarUploaded($event)">
+            </orb-entity-avatar>
+          </div>
+
           <!-- Nombre -->
           <div class="field col-12">
             <orb-form-field label="Nombre" [required]="utilsService.isRequired(form.get('name'))">
@@ -32,15 +44,9 @@
                 [options]="statusOptions"
                 optionLabel="label"
                 optionValue="value"
-                [showClear]="false">
+                [showClear]="false"
+                appendTo="body">
               </orb-select>
-            </orb-form-field>
-          </div>
-
-          <!-- Avatar URL (nuevo campo) -->
-          <div class="field col-12">
-            <orb-form-field label="URL de Imagen">
-              <orb-text-input formControlName="avatarUrl" inputId="avatarUrl"></orb-text-input>
             </orb-form-field>
           </div>
 

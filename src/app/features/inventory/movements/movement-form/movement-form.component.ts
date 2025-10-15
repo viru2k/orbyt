@@ -8,12 +8,11 @@ import { UtilsService } from '@orb-services';
 
 // PrimeNG & Orb Components
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { SharedModule } from 'primeng/api';
-import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTextAreaComponent } from '@orb-components';
+import { OrbFormFooterComponent, OrbFormFieldComponent, OrbTextInputComponent, OrbTextAreaComponent, OrbSelectComponent } from '@orb-components';
 import { OrbCardComponent } from '@orb-shared-components/application/orb-card/orb-card.component';
 import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
@@ -32,17 +31,18 @@ export interface MovementTypeOption {
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
-    FloatLabelModule,
+
     DropdownModule,
     InputNumberModule,
-    CalendarModule,
+    DatePickerModule,
     TextareaModule,
     SharedModule,
     OrbFormFooterComponent,
     OrbFormFieldComponent,
     OrbTextAreaComponent,
     OrbCardComponent,
-    ToastModule
+    ToastModule,
+    OrbSelectComponent
   ],
   templateUrl: './movement-form.component.html',
   styleUrls: ['./movement-form.component.scss']
@@ -89,8 +89,8 @@ export class MovementFormComponent implements OnInit {
   }
 
   footerActions: FormButtonAction[] = [
-    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text', severity: 'secondary' },
-    { label: 'Registrar Movimiento', action: 'save', styleType: 'p-button-success', buttonType: 'submit', severity: 'info' },
+    { label: 'Cancelar', action: 'cancel', severity: 'secondary', styleType: 'text' },
+    { label: 'Registrar Movimiento', action: 'save', severity: 'success', buttonType: 'submit', outlined: true },
   ];
 
   ngOnInit(): void {

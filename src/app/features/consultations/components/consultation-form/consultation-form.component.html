@@ -1,0 +1,494 @@
+<form [formGroup]="consultationForm" (ngSubmit)="onSubmit()">
+  <div class="form-grid">
+    <!-- Información del Paciente - Se muestra cuando hay cliente seleccionado o pre-seleccionado -->
+    @if (selectedClient() || preSelectedClient) {
+      <div class="form-section patient-card">
+        <div class="patient-header">
+          <h4>📋 Información del Paciente</h4>
+          @if (!preSelectedClient) {
+            <div class="patient-actions">
+              <orb-button
+                label="Cambiar"
+                severity="secondary"
+                [outlined]="true"
+                size="sm"
+                (clicked)="openClientSearchModal()"
+              >
+                <i class="fas fa-exchange-alt"></i>
+              </orb-button>
+              <orb-button
+                label="Limpiar"
+                severity="danger"
+                [outlined]="true"
+                size="sm"
+                (clicked)="clearClient()"
+              >
+                <i class="fas fa-times"></i>
+              </orb-button>
+            </div>
+          }
+        </div>
+        <div class="patient-info-display">
+          <div class="patient-avatar">
+            <p-avatar
+              [image]="(selectedClient() || preSelectedClient)?.avatar?.url || undefined"
+              [label]="!((selectedClient() || preSelectedClient)?.avatar?.url) ? ((selectedClient() || preSelectedClient)?.name ? (selectedClient() || preSelectedClient)!.name!.charAt(0) : (selectedClient() || preSelectedClient)?.fullname ? (selectedClient() || preSelectedClient)!.fullname!.charAt(0) : 'P') : undefined"
+              size="large"
+              shape="circle"
+            ></p-avatar>
+          </div>
+          <div class="patient-details">
+            <h3 class="patient-name">{{ (selectedClient() || preSelectedClient)?.name || (selectedClient() || preSelectedClient)?.fullname || 'Paciente' }}</h3>
+            <div class="patient-meta">
+              @if ((selectedClient() || preSelectedClient)?.email) {
+                <span class="patient-email">
+                  <i class="fas fa-envelope"></i>
+                  {{ (selectedClient() || preSelectedClient)?.email }}
+                </span>
+              }
+              @if ((selectedClient() || preSelectedClient)?.phone) {
+                <span class="patient-phone">
+                  <i class="fas fa-phone"></i>
+                  {{ (selectedClient() || preSelectedClient)?.phone }}
+                </span>
+              }
+              @if ((selectedClient() || preSelectedClient)?.birthDate) {
+                <span class="patient-age">
+                  <i class="fas fa-birthday-cake"></i>
+                  {{ getPatientAge((selectedClient() || preSelectedClient)!.birthDate!) }} años
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+        <!-- Hidden input for clientId -->
+        <input type="hidden" formControlName="clientId" />
+      </div>
+    } @else {
+      <!-- Selector de Cliente - Solo se muestra cuando NO hay cliente seleccionado -->
+      <div class="form-section">
+        <h4>Buscar Paciente</h4>
+        <div class="form-row">
+          <div class="form-field">
+            <orb-form-field
+              label="Cliente"
+              [required]="true"
+            >
+              <!-- Hidden input for clientId -->
+              <input type="hidden" formControlName="clientId" />
+              <div class="client-selector">
+                <orb-button
+                  label="Seleccionar Cliente"
+                  severity="info"
+                  [outlined]="true"
+                  (clicked)="openClientSearchModal()"
+                >
+                  <i class="fas fa-search"></i>
+                </orb-button>
+              </div>
+            </orb-form-field>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Tipo de Consulta -->
+    <div class="form-section">
+      <h4>Tipo de Consulta</h4>
+      <div class="form-row">
+        <div class="form-field">
+          <orb-form-field
+            label="Tipo de Consulta"
+            [required]="true"
+          >
+            <orb-select
+              formControlName="consultationTypeId"
+              [options]="consultationTypes()"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="false"
+              (selectionChange)="onConsultationTypeChange($event)"
+            ></orb-select>
+          </orb-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información de Cita (Solo si hay cliente seleccionado) -->
+    @if (selectedClient()) {
+      <div class="form-section">
+        <h4>Información de la Cita</h4>
+        <div class="form-row">
+          <div class="form-field">
+            <orb-form-field label="Cita Asociada">
+              <div class="appointment-selector">
+                @if (selectedAppointment()) {
+                  <div class="selected-appointment-display">
+                    <div class="appointment-info">
+                      <span class="appointment-title">{{ selectedAppointment()?.title }}</span>
+                      <span class="appointment-date">{{ getSelectedAppointmentInfo() }}</span>
+                      @if (selectedAppointment()?.status) {
+                        <span class="appointment-status">Estado: {{ selectedAppointment()?.status }}</span>
+                      }
+                    </div>
+                    <div class="appointment-actions">
+                      <orb-button
+                        label="Cambiar"
+                        severity="secondary"
+                        [outlined]="true"
+                        size="sm"
+                        (clicked)="openAppointmentModal()"
+                      ></orb-button>
+                      <orb-button
+                        severity="danger"
+                        [outlined]="true"
+                        size="sm"
+                        (clicked)="clearSelectedAppointment()"
+                        pTooltip="Desvincular cita"
+                      >
+                        <i class="fas fa-times"></i>
+                      </orb-button>
+                    </div>
+                  </div>
+                } @else {
+                  <orb-button
+                    label="Vincular con Cita"
+                    severity="info"
+                    [outlined]="true"
+                    (clicked)="openAppointmentModal()"
+                  >
+                    <i class="fas fa-calendar-plus"></i>
+                  </orb-button>
+                }
+              </div>
+            </orb-form-field>
+          </div>
+        </div>
+
+        <!-- Mostrar horarios actuales del formulario -->
+        @if (consultationForm.get('startTime')?.value || consultationForm.get('endTime')?.value) {
+          <div class="form-row">
+            <div class="form-field">
+              <orb-form-field label="Horarios de la Consulta">
+                <div class="consultation-times-display">
+                  @if (consultationForm.get('startTime')?.value) {
+                    <span class="time-info">
+                      <i class="fas fa-clock"></i>
+                      Inicio: {{ formatDisplayTime(consultationForm.get('startTime')?.value) }}
+                    </span>
+                  }
+                  @if (consultationForm.get('endTime')?.value) {
+                    <span class="time-info">
+                      <i class="fas fa-clock"></i>
+                      Fin: {{ formatDisplayTime(consultationForm.get('endTime')?.value) }}
+                    </span>
+                  }
+                </div>
+              </orb-form-field>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Productos y Servicios para la Consulta -->
+    <div class="form-section">
+      <h4>Productos y Servicios</h4>
+      <div class="form-row">
+        <!-- Selección de Productos -->
+        <div class="form-field">
+          <orb-form-field label="Productos Utilizados">
+            <div class="items-selector">
+              @if (selectedProducts().length > 0) {
+                <div class="selected-items-list">
+                  @for (product of selectedProducts(); track product.id) {
+                    <div class="selected-item">
+                      <div class="item-info">
+                        <span class="item-name">{{ product.name }}</span>
+                        @if (product.currentPrice) {
+                          <span class="item-price">${{ product.currentPrice }}</span>
+                        }
+                      </div>
+                      <orb-button
+                        severity="danger"
+                        [outlined]="true"
+                        size="sm"
+                        (clicked)="removeProduct(product.id)"
+                      >
+                        <i class="fas fa-times"></i>
+                      </orb-button>
+                    </div>
+                  }
+                </div>
+              }
+              <orb-button
+                label="{{ selectedProducts().length > 0 ? 'Agregar Producto' : 'Seleccionar Productos' }}"
+                severity="info"
+                [outlined]="true"
+                (clicked)="openProductSearchModal()"
+              >
+                <i class="fas fa-plus"></i>
+              </orb-button>
+            </div>
+          </orb-form-field>
+        </div>
+
+        <!-- Selección de Servicios -->
+        <div class="form-field">
+          <orb-form-field label="Servicios Aplicados">
+            <div class="items-selector">
+              @if (selectedServices().length > 0) {
+                <div class="selected-items-list">
+                  @for (service of selectedServices(); track service.id) {
+                    <div class="selected-item">
+                      <div class="item-info">
+                        <span class="item-name">{{ service.name }}</span>
+                        @if (service.price) {
+                          <span class="item-price">${{ service.price }}</span>
+                        }
+                      </div>
+                      <orb-button
+                        severity="danger"
+                        [outlined]="true"
+                        size="sm"
+                        (clicked)="removeService(service.id)"
+                      >
+                        <i class="fas fa-times"></i>
+                      </orb-button>
+                    </div>
+                  }
+                </div>
+              }
+              <orb-button
+                label="{{ selectedServices().length > 0 ? 'Agregar Servicio' : 'Seleccionar Servicios' }}"
+                severity="success"
+                [outlined]="true"
+                (clicked)="openServiceSearchModal()"
+              >
+                <i class="fas fa-plus"></i>
+              </orb-button>
+            </div>
+          </orb-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secciones dinámicas basadas en el tipo de negocio -->
+    @if (currentFormConfig()) {
+      @for (section of currentFormConfig()!.sections; track section.key) {
+        <div class="form-section">
+          <h4>{{ section.title }}</h4>
+          @if (section.fields.length > 0) {
+            <div class="form-row">
+              @for (field of section.fields; track field.key) {
+                <div class="form-field" [class.full-width]="field.type === 'textarea'">
+                  @switch (field.type) {
+                    @case ('text') {
+                      <orb-form-field
+                        [label]="field.label"
+                        [required]="field.required"
+                      >
+                        <orb-text-input
+                          [formControlName]="field.key"
+                          [placeholder]="field.placeholder || ''"
+                        ></orb-text-input>
+                      </orb-form-field>
+                    }
+                    @case ('textarea') {
+                      <orb-form-field
+                        [label]="field.label"
+                        [required]="field.required"
+                      >
+                        <orb-text-area
+                          [formControlName]="field.key"
+                          [placeholder]="field.placeholder || ''"
+                          [rows]="3"
+                        ></orb-text-area>
+                      </orb-form-field>
+                    }
+                    @case ('number') {
+                      <orb-form-field
+                        [label]="field.label + (field.suffix ? ' (' + field.suffix + ')' : '')"
+                        [required]="field.required"
+                      >
+                        <orb-input-number
+                          [formControlName]="field.key"
+                          [min]="field.min || 0"
+                          [max]="field.max"
+                          [step]="field.key === 'temperature' ? 0.1 : 1"
+                        ></orb-input-number>
+                      </orb-form-field>
+                    }
+                    @case ('time') {
+                      <orb-form-field
+                        [label]="field.label"
+                        [required]="field.required"
+                      >
+                        <orb-text-input
+                          [formControlName]="field.key"
+                          type="time"
+                        ></orb-text-input>
+                      </orb-form-field>
+                    }
+                    @case ('datetime') {
+                      <orb-form-field
+                        [label]="field.label"
+                        [required]="field.required"
+                      >
+                        <orb-datepicker
+                          [formControlName]="field.key"
+                          mode="datetime"
+                          [showTime]="true"
+                          hourFormat="24"
+                          dateFormat="dd/mm/yy"
+                          [showButtonBar]="true"
+                          [appendTo]="'body'"
+                          placeholder="Seleccionar fecha y hora"
+                        ></orb-datepicker>
+                      </orb-form-field>
+                    }
+                    @case ('checkbox') {
+                      <orb-form-field
+                        [label]="field.label"
+                        [required]="field.required"
+                      >
+                        <orb-checkbox
+                          [formControlName]="field.key"
+                          [label]="field.label"
+                        ></orb-checkbox>
+                      </orb-form-field>
+                    }
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Error de validación de rango de fechas -->
+  @if (consultationForm.hasError('dateRangeInvalid')) {
+    <div class="form-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      La fecha de finalización debe ser posterior a la fecha de inicio.
+    </div>
+  }
+
+
+</form>
+
+<div class="dialog-footer">
+  <orb-button
+    label="Cancelar"
+    severity="secondary"
+    [outlined]="true"
+    (clicked)="onCancel()">
+  </orb-button>
+  <orb-button
+    label="Guardar"
+    severity="info"
+    [outlined]="true"
+    (clicked)="onSubmit()"
+    [loading]="saving()"
+    [disabled]="consultationForm.invalid">
+  </orb-button>
+</div>
+
+<!-- Client Search Modal -->
+<orb-client-search-modal
+  [visible]="showClientSearchModal()"
+  (visibleChange)="showClientSearchModal.set($event)"
+  (clientSelected)="onClientSelected($event)"
+  (cancel)="onClientSearchModalClose()"
+  title="Seleccionar Cliente para Consulta"
+></orb-client-search-modal>
+
+<!-- Product Search Modal -->
+<orb-product-search-modal
+  [visible]="showProductSearchModal()"
+  (visibleChange)="showProductSearchModal.set($event)"
+  (productSelected)="onProductSelected($event)"
+  (cancel)="onProductSearchModalClose()"
+  title="Seleccionar Productos para Consulta"
+></orb-product-search-modal>
+
+<!-- Service Search Modal -->
+<orb-service-search-modal
+  [visible]="showServiceSearchModal()"
+  (visibleChange)="showServiceSearchModal.set($event)"
+  (serviceSelected)="onServiceSelected($event)"
+  (cancel)="onServiceSearchModalClose()"
+  title="Seleccionar Servicios para Consulta"
+></orb-service-search-modal>
+
+<!-- Appointment Selection Modal -->
+<p-dialog
+  [visible]="showAppointmentModal()"
+  (visibleChange)="showAppointmentModal.set($event)"
+  header="📅 Seleccionar Cita para Consulta"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '700px' }"
+  (onHide)="onAppointmentModalClose()"
+>
+  <div class="appointment-modal-content">
+    @if (clientAppointments().length === 0) {
+      <div class="no-appointments">
+        <div class="no-appointments-icon">
+          <i class="fas fa-calendar-times"></i>
+        </div>
+        <h3>Sin citas disponibles</h3>
+        <p>Este cliente no tiene citas registradas que puedan vincularse a la consulta.</p>
+      </div>
+    } @else {
+      <div class="appointments-header">
+        <h4>Citas disponibles para {{ selectedClient()?.name || selectedClient()?.fullname }}</h4>
+        <p>Selecciona una cita para pre-cargar las fechas y horarios en la consulta.</p>
+      </div>
+
+      <div class="appointments-list">
+        @for (appointment of clientAppointments(); track appointment.id) {
+          <div class="appointment-item" (click)="onAppointmentSelected(appointment)">
+            <div class="appointment-details">
+              <div class="appointment-main">
+                <h5>{{ appointment.title }}</h5>
+                <div class="appointment-datetime">
+                  <i class="fas fa-calendar"></i>
+                  {{ formatAppointmentDate(appointment.start) }}
+                  <i class="fas fa-clock"></i>
+                  {{ formatAppointmentTime(appointment.start) }}
+                  @if (appointment.end) {
+                    - {{ formatAppointmentTime(appointment.end) }}
+                  }
+                </div>
+                @if (appointment.notes) {
+                  <div class="appointment-notes">
+                    <i class="fas fa-sticky-note"></i>
+                    {{ appointment.notes }}
+                  </div>
+                }
+              </div>
+              <div class="appointment-status">
+                <span class="status-badge" [class]="'status-' + appointment.status">
+                  {{ getAppointmentStatusLabel(appointment.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <orb-button
+      label="Cancelar"
+      severity="secondary"
+      [outlined]="true"
+      (clicked)="onAppointmentModalClose()"
+    ></orb-button>
+  </ng-template>
+</p-dialog>

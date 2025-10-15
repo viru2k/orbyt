@@ -794,3 +794,140 @@
     gap: 0.5rem;
   }
 }
+
+// Discount container styles
+.discount-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  orb-number-input,
+  input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  orb-select {
+    flex-shrink: 0;
+    width: 80px;
+  }
+
+  ::ng-deep {
+    .p-dropdown {
+      height: 32px;
+
+      .p-dropdown-trigger {
+        width: 2rem;
+      }
+
+      .p-dropdown-label {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+// Empty items state
+.empty-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 2px dashed #e5e7eb;
+  margin-top: 1rem;
+
+  i {
+    font-size: 3rem;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #6b7280;
+    max-width: 400px;
+  }
+}
+
+// Table spacing
+.table-spacing {
+  padding-bottom: 4px;
+}
+
+// Summary container - alineado a la derecha
+.summary-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.summary-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  max-width: 800px;
+}
+
+.summary-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 280px;
+  max-width: 320px;
+
+  orb-form-field {
+    width: 100%;
+  }
+}
+
+.summary-right {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 280px;
+}
+
+.summary-totals {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 0.95rem;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.total {
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+      border-top: 2px solid #3b82f6;
+      font-size: 1.1rem;
+      color: #1f2937;
+    }
+
+    span:first-child {
+      color: #6b7280;
+    }
+
+    span:last-child {
+      color: #1f2937;
+      font-weight: 500;
+    }
+  }
+}

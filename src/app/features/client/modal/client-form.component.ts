@@ -72,8 +72,8 @@ export class ClientFormComponent implements OnInit {
 
   // Configuración para el pie de página del formulario
   footerActions: FormButtonAction[] = [
-    { label: 'Cancelar', action: 'cancel', styleType: 'p-button-text' , severity: 'secondary'},
-    { label: 'Guardar', action: 'save', styleType: 'p-button-success' , buttonType: 'submit' ,severity: 'info'},
+    { label: 'Cancelar', action: 'cancel', severity: 'secondary', styleType: 'text' },
+    { label: 'Guardar', action: 'save', severity: 'success', buttonType: 'submit', outlined: true },
   ];
 
   ngOnInit(): void {
@@ -146,23 +146,75 @@ export class ClientFormComponent implements OnInit {
       const updateDto: UpdateClientDto = formValue;
       this.clientStore.update({ id: this.client.id, clientDto: updateDto });
       this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente actualizado con éxito.');
+      this.saved.emit();
     } else {
-      // For create mode, first create the client, then upload avatar if needed
+      // Para modo creación, primero crear el cliente
       const createDto: CreateClientDto = formValue;
 
-      // Note: Avatar upload after creation will be handled separately when backend provides creation response
-
+      // Necesitamos suscribirnos al store para obtener el cliente creado
+      // y luego subir el avatar si hay uno pendiente
       this.clientStore.create(createDto);
-      this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente creado con éxito.');
-    }
 
-    this.saved.emit();
+      // Si hay avatar pendiente, esperar a que se cree el cliente
+      if (this.pendingAvatarUpload) {
+        // Esperar un momento para que el store se actualice
+        setTimeout(() => {
+          const clients = this.clientStore.clients();
+          if (clients.length > 0) {
+            const latestClient = clients[clients.length - 1];
+
+            // Subir avatar con el ID del cliente creado
+            this.imageUploadService.uploadAvatar(
+              this.pendingAvatarUpload!,
+              'client',
+              latestClient.id,
+              { fileType: 'avatar' }
+            ).subscribe({
+              next: (result) => {
+                console.log('Avatar uploaded after client creation:', result);
+
+                // Actualizar el cliente con el avatarUrl usando any cast temporalmente
+                if (result?.url) {
+                  const updateDto: any = {
+                    avatarUrl: result.url
+                  };
+                  this.clientStore.update({ id: latestClient.id, clientDto: updateDto });
+                }
+
+                this.currentAvatar = result;
+                this.pendingAvatarUpload = null;
+              },
+              error: (error) => {
+                console.error('Error uploading avatar after client creation:', error);
+                this.notificationService.showError(
+                  NotificationSeverity.Error,
+                  `Error al subir avatar: ${error.message || error}`
+                );
+              }
+            });
+          }
+        }, 500);
+      }
+
+      this.notificationService.showSuccess(NotificationSeverity.Success, 'Cliente creado con éxito.');
+      this.saved.emit();
+    }
   }
 
   // Manejar la carga de avatar
   onAvatarUploaded(result: any): void {
     console.log('Avatar uploaded:', result);
     this.currentAvatar = result;
+
+    // Si estamos en modo edición, actualizar el cliente con el avatarUrl
+    if (this.isEditMode && this.client?.id && result?.url) {
+      const avatarUrl = result.url;
+      const updateDto: any = {
+        avatarUrl: avatarUrl
+      };
+
+      this.clientStore.update({ id: this.client.id, clientDto: updateDto });
+    }
 
     // Recargar los clientes para reflejar el cambio
     this.clientStore.load();
