@@ -154,6 +154,13 @@
   --transition-base: 250ms ease;
   --transition-slow: 350ms ease;
 
+  // Component Heights (estándar de 32px para consistencia)
+  --component-height-xs: 24px;      // Botones pequeños
+  --component-height-sm: 28px;      // Inputs compactos
+  --component-height-md: 32px;      // Estándar principal (objetivo)
+  --component-height-lg: 40px;      // Botones grandes
+  --component-height-xl: 48px;      // Headers, etc.
+
   // Z-Index Scale
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -448,3 +455,321 @@ pre {
 .hover\:scale-105:hover { transform: scale(1.05) !important; }
 .hover\:scale-110:hover { transform: scale(1.1) !important; }
 .hover\:-translate-y-1:hover { transform: translateY(-0.25rem) !important; }
+
+// ============================================================================
+// 8. GLOBAL STATUS STYLES
+// ============================================================================
+
+// Global status styles to avoid duplication across components
+.status-active {
+  background: rgba(34, 197, 94, 0.1) !important;
+  color: rgb(34, 197, 94) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-inactive {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: rgb(239, 68, 68) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+// Global appointment/entity status styles with unique colors
+.status-pending {
+  background: rgba(156, 163, 175, 0.1) !important;  /* Gris claro */
+  color: rgb(107, 114, 128) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-confirmed {
+  background: rgba(59, 130, 246, 0.1) !important;   /* Azul */
+  color: rgb(37, 99, 235) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-checked-in {
+  background: rgba(6, 182, 212, 0.1) !important;    /* Cian - Llegó */
+  color: rgb(8, 145, 178) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-in-progress {
+  background: rgba(251, 191, 36, 0.1) !important;   /* Amarillo/Naranja */
+  color: rgb(217, 119, 6) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-completed {
+  background: rgba(34, 197, 94, 0.1) !important;    /* Verde */
+  color: rgb(34, 197, 94) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-cancelled {
+  background: rgba(239, 68, 68, 0.1) !important;    /* Rojo */
+  color: rgb(239, 68, 68) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-no-show {
+  background: rgba(120, 113, 108, 0.1) !important;  /* Marrón */
+  color: rgb(87, 83, 78) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-rescheduled {
+  background: rgba(168, 85, 247, 0.1) !important;   /* Púrpura */
+  color: rgb(147, 51, 234) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-arrived {
+  background: rgba(16, 185, 129, 0.1) !important;   /* Verde esmeralda */
+  color: rgb(5, 150, 105) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+.status-late {
+  background: rgba(245, 101, 101, 0.1) !important;  /* Rojo claro */
+  color: rgb(220, 38, 38) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 0.5rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: capitalize !important;
+}
+
+// ============================================================================
+// 9. METRIC CARDS - Global reusable metric card styles
+// ============================================================================
+
+// Metrics Grid Layout
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-8, 2rem);
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Base Metric Card
+.metric-card {
+  border: 2px solid transparent;
+  background: white;
+  border-radius: var(--radius-xl, 0.75rem);
+  transition: all var(--transition-fast, 150ms ease);
+  cursor: default;
+  animation: metricFadeIn 0.6s ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  // Metric Card Variants
+  &.total,
+  &.primary {
+    border-color: var(--primary-blue, #6366f1);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+
+    .metric-icon {
+      background: var(--primary-blue, #6366f1);
+    }
+  }
+
+  &.success,
+  &.delivered,
+  &.completed {
+    border-color: #10b981;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+
+    .metric-icon {
+      background: #10b981;
+    }
+  }
+
+  &.danger,
+  &.failed,
+  &.error {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.02) 100%);
+
+    .metric-icon {
+      background: #ef4444;
+    }
+  }
+
+  &.info,
+  &.opened,
+  &.pending {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
+
+    .metric-icon {
+      background: #3b82f6;
+    }
+  }
+
+  &.warning {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.02) 100%);
+
+    .metric-icon {
+      background: #f59e0b;
+    }
+  }
+
+  &.purple {
+    border-color: #a855f7;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(147, 51, 234, 0.02) 100%);
+
+    .metric-icon {
+      background: #a855f7;
+    }
+  }
+
+  &.teal {
+    border-color: #14b8a6;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(13, 148, 136, 0.02) 100%);
+
+    .metric-icon {
+      background: #14b8a6;
+    }
+  }
+
+  // Metric Card Content Layout
+  .metric-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4, 1rem);
+    padding: var(--space-4, 1rem);
+
+    .metric-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: var(--text-xl, 1.25rem);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+    }
+
+    .metric-details {
+      flex: 1;
+      min-width: 0;
+
+      h3 {
+        margin: 0;
+        font-size: var(--text-2xl, 1.5rem);
+        font-weight: var(--font-bold, 700);
+        color: var(--gray-800, #1e293b);
+        line-height: 1;
+      }
+
+      span {
+        display: block;
+        margin-top: var(--space-1, 0.25rem);
+        color: var(--gray-600, #475569);
+        font-size: var(--text-sm, 0.875rem);
+        font-weight: var(--font-medium, 500);
+      }
+
+      small {
+        display: block;
+        margin-top: var(--space-1, 0.25rem);
+        color: var(--gray-500, #64748b);
+        font-size: var(--text-xs, 0.75rem);
+      }
+    }
+  }
+}
+
+// Animation for metric cards
+@keyframes metricFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Stagger animation for multiple cards
+.metric-card {
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.3s; }
+  &:nth-child(5) { animation-delay: 0.4s; }
+  &:nth-child(6) { animation-delay: 0.5s; }
+}
+
+// Print Styles for Metrics
+@media print {
+  .metrics-grid {
+    page-break-inside: avoid;
+  }
+
+  .metric-card {
+    animation: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}

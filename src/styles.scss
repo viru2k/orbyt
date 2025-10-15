@@ -96,3 +96,125 @@ html, body {
     }
   }
 }
+
+/* ============================================
+   GLOBAL ORB-BUTTON STYLES
+   ============================================ */
+
+/* Fix para botones orb-button globalmente */
+orb-button .p-button {
+  margin: 0 !important;
+  font-family: 'Inter', sans-serif !important;
+  width: max-content !important;
+
+  // Fix span spacing issues globally
+  .p-button-label {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .p-button-icon {
+    margin-right: 0.25rem !important;
+    margin-left: 0 !important;
+  }
+
+  .p-button-icon + .p-button-label {
+    margin-left: 0 !important;
+  }
+
+  &.p-button-icon-only .p-button-icon {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* Fix específico para botones outlined */
+orb-button .p-button.p-button-outlined {
+  background: transparent !important;
+
+  &.p-button-success {
+    border-color: #22c55e !important;
+    color: #16a34a !important;
+    width: max-content !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(34, 197, 94, 0.08) !important;
+      color: #16a34a !important;
+      border-color: #22c55e !important;
+    }
+  }
+
+  &.p-button-secondary {
+    border-color: #94a3b8 !important;
+    color: #475569 !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(100, 116, 139, 0.08) !important;
+      color: #475569 !important;
+      border-color: #94a3b8 !important;
+    }
+  }
+
+  &.p-button-info {
+    border-color: #3b82f6 !important;
+    color: #2563eb !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(59, 130, 246, 0.08) !important;
+      color: #2563eb !important;
+      border-color: #3b82f6 !important;
+    }
+  }
+
+  &.p-button-primary {
+    border-color: #0ea5e9 !important;
+    color: #0284c7 !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(14, 165, 233, 0.08) !important;
+      color: #0284c7 !important;
+      border-color: #0ea5e9 !important;
+    }
+  }
+}
+
+/* Fix para botones de acción en tablas */
+.p-datatable .p-datatable-tbody > tr > td .p-button {
+  &.p-button-rounded.p-button-text {
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: #6b7280 !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(100, 116, 139, 0.08) !important;
+      border-color: transparent !important;
+      color: #374151 !important;
+    }
+
+    &:focus {
+      outline: none !important;
+      box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15) !important;
+    }
+  }
+
+  /* Remove margin from table action buttons */
+  margin: 0 !important;
+}
+
+// Global styles for p-checkbox
+.p-checkbox {
+  .p-checkbox-box {
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+
+    .p-checkbox-icon {
+      font-size: 0.75rem !important;
+    }
+  }
+
+  + label,
+  ~ label {
+    font-size: 0.75rem !important;
+    margin-left: 0.5rem;
+  }
+}

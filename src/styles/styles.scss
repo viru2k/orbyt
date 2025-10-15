@@ -2,6 +2,7 @@
 // @use './variables';
 @use './mixins';
 @use './themes';
+@use './design-system';
 
 /* Import Google Fonts for Alpino Theme - Mulish font family */
 @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@200;300;400;500;600;700;800;900&display=swap');
@@ -472,6 +473,7 @@ button, input, select, textarea, a {
   .p-inputtext,
   .p-dropdown,
   .p-multiselect,
+  .p-datepicker-input,
   .p-inputtextarea {
     font-family: 'Mulish', Arial, Tahoma, sans-serif !important;
     border: 1px solid var(--border-color) !important;

@@ -136,6 +136,13 @@ export const appRoutes: Route[] = [
           ),
       },
       {
+        path: 'consultation/new',
+        loadComponent: () =>
+          import('./features/consultations/consultations-list.component').then(
+            (m) => m.ConsultationsListComponent
+          ),
+      },
+      {
         path: 'consultations/tokens',
         loadComponent: () =>
           import('./features/consultation-tokens/components/token-management/token-management.component').then(

@@ -207,4 +207,18 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-  
+
+// Metric Card Mixin - For creating custom metric card variants
+@mixin metric-card-variant($color, $bg-gradient-start: null, $bg-gradient-end: null) {
+  border-color: $color;
+
+  @if $bg-gradient-start and $bg-gradient-end {
+    background: linear-gradient(135deg, $bg-gradient-start 0%, $bg-gradient-end 100%);
+  } @else {
+    background: linear-gradient(135deg, rgba($color, 0.05) 0%, rgba($color, 0.02) 100%);
+  }
+
+  .metric-icon {
+    background: $color;
+  }
+}
