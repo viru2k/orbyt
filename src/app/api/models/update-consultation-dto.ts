@@ -25,6 +25,11 @@ export interface UpdateConsultationDto {
   clientId?: number;
 
   /**
+   * ID del tipo de consulta
+   */
+  consultationTypeId?: number;
+
+  /**
    * Diagnóstico realizado
    */
   diagnosis?: string;

@@ -16,10 +16,14 @@ export interface CreateInvoiceItemDto {
   discountType?: 'percentage' | 'fixed';
 
   /**
-   * ID del servicio o producto
+   * ID del servicio o producto (requerido solo para itemType=product o itemType=service)
    */
-  itemId: number;
-  itemType: 'service' | 'product';
+  itemId?: number;
+
+  /**
+   * Tipo de item: product (producto del inventario), service (servicio), manual (entrada manual)
+   */
+  itemType: 'service' | 'product' | 'manual';
 
   /**
    * Notas del item

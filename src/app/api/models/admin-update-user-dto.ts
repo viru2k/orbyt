@@ -6,6 +6,11 @@ import { RoleDto } from '../models/role-dto';
 export interface AdminUpdateUserDto {
 
   /**
+   * URL del avatar del usuario
+   */
+  avatarUrl?: string;
+
+  /**
    * Email del usuario
    */
   email?: string;

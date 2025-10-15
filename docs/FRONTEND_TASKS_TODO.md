@@ -203,6 +203,63 @@ El sistema de portal de clientes está **100% implementado** en el backoffice-hu
 
 ---
 
+## 🏷️ SISTEMA DE CATEGORÍAS DE SERVICIOS - ALTA PRIORIDAD (BACKEND REQUIRED)
+
+### ⚠️ BLOQUEADOR - ENDPOINT DE BACKEND REQUERIDO
+
+**CRÍTICO:** El frontend necesita un endpoint de backend para gestionar categorías de servicios.
+
+#### **Requisitos de Backend**
+- [ ] **Crear endpoint CRUD para categorías de servicios**
+  - `GET /api/categories` - Listar categorías del perfil actual
+  - `POST /api/categories` - Crear nueva categoría
+  - `PUT /api/categories/{id}` - Actualizar categoría
+  - `DELETE /api/categories/{id}` - Eliminar categoría
+
+- [ ] **Categorías por perfil/empresa (NO GLOBALES)**
+  - Cada perfil (Peluquería Glamour, Oftalmología, etc.) tiene sus propias categorías
+  - Las categorías son específicas por empresa/organización
+  - No se comparten entre diferentes sistemas/perfiles
+
+- [ ] **Integración con creación de servicios**
+  - Permitir crear categorías al momento de crear servicios
+  - Dropdown dinámico con categorías existentes + opción "Crear nueva"
+  - Validación de categorías únicas por perfil
+
+#### **Modelo de Datos Sugerido**
+```typescript
+interface CategoryResponseDto {
+  id: number;
+  name: string;
+  description?: string;
+  color?: string; // Para visual coding
+  profileId: number; // Asociada al perfil/empresa
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface CreateCategoryDto {
+  name: string;
+  description?: string;
+  color?: string;
+}
+```
+
+#### **Tareas Frontend (BLOQUEADAS hasta completar backend)**
+- [ ] **Crear CategoryService** para integrar con endpoints backend
+- [ ] **Componente CategorySelector** reutilizable con opción crear nueva
+- [ ] **Modal CategoryForm** para crear/editar categorías
+- [ ] **Integrar en ServiceForm** para selección/creación de categorías
+- [ ] **Lista de categorías** en sección administrativa
+- [ ] **Filtros por categoría** en búsqueda de servicios
+
+### 🎯 Casos de Uso
+1. **Peluquería Glamour:** Categorías como "Corte", "Peinado", "Tratamiento", "Color"
+2. **Oftalmología:** Categorías como "Consulta", "Examen", "Cirugía", "Control"
+3. **Cada perfil mantiene sus categorías independientes**
+
+---
+
 ## 📄 SISTEMA DE FACTURAS - ALTA PRIORIDAD
 
 ### Problemas Identificados
@@ -297,8 +354,12 @@ El sistema de portal de clientes está **100% implementado** en el backoffice-hu
    - Botón habilitar portal en lista clientes
    - Modal con contraseña temporal
    - Integración con endpoint backend
-2. Sistema de búsqueda de productos (layout, imágenes, botón buscar)
-3. Correcciones de agenda (traducciones, fecha desde, botones)
+2. **⚠️ BLOQUEADOR: Categorías de Servicios Backend** (NUEVO - BACKEND REQUIRED)
+   - Endpoint CRUD para categorías por perfil
+   - Integración con creación de servicios
+   - Modelo de datos CategoryResponseDto
+3. Sistema de búsqueda de productos (layout, imágenes, botón buscar)
+4. Correcciones de agenda (traducciones, fecha desde, botones)
 
 ### **📋 Semana 2 - IMPORTANTE** 
 1. **Portal de Clientes - Indicadores visuales** (NUEVO)
@@ -365,3 +426,91 @@ personalNotes: string      // Campo editable por cliente
 ---
 
 **NOTA:** Este archivo debe ser consultado antes de cualquier trabajo de frontend. **EL PORTAL DE CLIENTES ES AHORA LA MÁXIMA PRIORIDAD** ya que el backend está 100% funcional y esperando integración frontend.
+
+
+# USUARIO
+
+en las reglas basicas del proyecto agrega que debemos intentar usar font awesome como iconos
+
+IMPORTANTE he descubierto cual es el problema de los colores que presentare mas abajo y es que no estaba bien construido el type de orb-button, he corregido eso pero hay un sitio donde no estya correcto y es nuevo servicio en  sevices-list. y al parecer no cambia los estilos por como esta confeccionado el objeto  serviceTableHeaderActions: OrbActionItem[] = [
+    {
+      label: 'Nuevo Servicio',
+      icon: 'pi pi-plus',
+      action: () => this.showServiceForm(),
+      severity: 'success',
+      styleType: 'outlined'
+    }
+  ]; 
+
+  la pregunta es, por que no mantenemos la misma forma que en productos u otro sitio, evidentemente hay un problema de coherencia cuando se lo pasas a la tabla, o lo resuelves o buscas otro enfoque.
+
+investigar por que  hay una implementacion diferente en distintos sitios, product-list.component, consultations-list.component tienen las implementaciones completas, un footer correcto, botones con outline, paddings del componente correctos, y otros como service-list.component , invoices-list.component tienen otra implementacion distinta. lo extrano ques que los dos primeros tiene los mismos atributos de lista de padding de botones , y los segundos tambien sus otros atributos como un selector de registros por pagina ocupan todo el ancho  y es incorrecto.
+
+ha ocurrido que los componentes estan detras de las cards, en agenda he tenido que agregar un append para poder mostrarlos, y ocurre en todos los componentes que estan dentro de una card comop ejemplo editar usuario -> estado se pierde dentro de la card.
+
+
+
+la agenda no muestra los turnos y tengo este mensaje waring en consola  ajaxRequestInterceptor.ps.js:1 angular-calendar Event `start` property should be a javascript date object. Do `new Date(event.start)` to fix it. 
+{id: '84', title: 'Mercedes Ramos - corte caballero', start: '2025-09-29T18:00:00.000Z', end: '2025-09-29T19:00:00.000Z', allDay: false, …}
+
+El modal para crear cita no muestra el titulo ( selecciono cliente  o servicio o  ambos ) y solo cuando doy click al campo titulo muestra el texto, no muestra titulo la modal y ni se cierra con x 
+en modal de crear turno ->  luego de haber seleccionado un cliente la X no se ve.
+en modal de crear turno ->  seleccionar cliente -> modal listado de cliente tiene una card que no se distingue. tal vez deberiamos planificar tener menos padding y espacios para que se muestren mas clientes en pantalla
+en modal de crear turno ->  seleccionar servicio  , no se ven las cards y  y esta todo en una columna un elemento debajo del otro, deberia ser como el de seleccionar cliente
+en modal de crear turno ->  seleccionar servicio - tab crear nuevo Descripción no es un componente de orb , por mas que complete los campos el boton crear y seleccionar no se habilita. no se muestra el titulo para seleccionar servicio
+
+la agenda en vista tabla muestra estado CONFIRMED ( debes mostrarlos en espanol a todos) unicamente y ademas debes tener un color y una etiqueta para cada estado , ademas tenemos este error detect-angular-for-extension-icon.ts:39 ERROR Error: Parameter "key" is required and cannot be empty
+    at _AgendaComponent.getTranslatedStatus (agenda.component.ts:429:40)
+    at AgendaComponent_div_44_ng_template_4_td_1_span_5_Template (agenda.component.html:177:21)
+
+    el boton de acciones muestra un cuadrado azul.
+
+otra cosa que corregir el error Calendar  component is deprecated as of v18, use DatePicker component instead.
+
+
+has un analisis de los componentes inputs y dropdown orb y valida que no se sobreescriban estilos de tamano y que todos esten centralizados en un sitio,  el ancho  de los componentes deberia ser 100% a excepecion que se especifique, creo que deberias investigar y homogeneizar esto.
+
+en invoices tengo este error cuiando accedo TypeError: _data.slice is not a function
+    at _Table.dataToRender (primeng-table.mjs:3668:20)
+    at Table_ng_template_9_Template (primeng-table.mjs:437:104)
+
+
+en agenda  flitros los dropdowns y los calendarios tienen distintos altos, debemos debinir un alto de 32 px para todos los componentes. 
+
+
+---
+
+## ✅ SISTEMA DE TIPOS DE CONSULTA - BACKEND COMPLETADO (2025-10-02)
+
+### 🎉 Backend 100% Implementado en backoffice-hub
+
+El sistema de tipos de consulta (Consultation Types) está **completamente funcional**.
+
+#### **✅ Backend Completado**
+- [x] CRUD Endpoints REST con JWT auth
+- [x] Aislamiento de datos por owner
+- [x] Validación de duplicados
+- [x] Seeds con 26+ plantillas para 6 tipos de negocio
+- [x] Documentación completa
+
+#### **Endpoints:** `/consultation-types` (GET, POST, PUT, DELETE)
+
+#### **Datos de Seed:**
+- Psychology: Terapia Individual, Pareja, Evaluación, Familiar
+- Veterinary: Consulta, Vacunación, Cirugía, Desparasitación, Urgencia
+- Hair Salon: Corte, Coloración, Mechas, Tratamiento, Peinado
+- Beauty Spa: Facial, Manicure, Pedicure, Corporal, Depilación
+- Medical: Consulta, Chequeo, Seguimiento, Urgencia
+- Office: Admin, Legal, Documentos
+
+**Seed:** `npm run seed:consultation-types`
+**Docs:** `CONSULTATION_TYPES_IMPLEMENTATION.md`, `frontend_task_todo.md`
+
+### 🎯 Frontend Pendiente
+
+- [ ] ConsultationTypeService (integrar endpoints)
+- [ ] Lista de tipos (tabla con CRUD)
+- [ ] Formulario crear/editar
+- [ ] Selector en formulario de consulta
+- [ ] Auto-completar duración/precio
+- [ ] Validar campos requeridos

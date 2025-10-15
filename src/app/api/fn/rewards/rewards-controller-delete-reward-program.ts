@@ -8,23 +8,24 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { RewardProgramResponseDto } from '../../models/reward-program-response-dto';
 
 export interface RewardsControllerDeleteRewardProgram$Params {
   id: number;
 }
 
-export function rewardsControllerDeleteRewardProgram(http: HttpClient, rootUrl: string, params: RewardsControllerDeleteRewardProgram$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function rewardsControllerDeleteRewardProgram(http: HttpClient, rootUrl: string, params: RewardsControllerDeleteRewardProgram$Params, context?: HttpContext): Observable<StrictHttpResponse<RewardProgramResponseDto>> {
   const rb = new RequestBuilder(rootUrl, rewardsControllerDeleteRewardProgram.PATH, 'delete');
   if (params) {
     rb.path('id', params.id, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<RewardProgramResponseDto>;
     })
   );
 }

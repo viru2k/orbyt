@@ -216,24 +216,32 @@ export class RewardsService extends BaseService {
   static readonly RewardsControllerDeleteRewardProgramPath = '/rewards/programs/{id}';
 
   /**
+   * Desactivar programa de recompensas (soft delete).
+   *
+   *
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `rewardsControllerDeleteRewardProgram()` instead.
    *
    * This method doesn't expect any request body.
    */
-  rewardsControllerDeleteRewardProgram$Response(params: RewardsControllerDeleteRewardProgram$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  rewardsControllerDeleteRewardProgram$Response(params: RewardsControllerDeleteRewardProgram$Params, context?: HttpContext): Observable<StrictHttpResponse<RewardProgramResponseDto>> {
     return rewardsControllerDeleteRewardProgram(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Desactivar programa de recompensas (soft delete).
+   *
+   *
+   *
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `rewardsControllerDeleteRewardProgram$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  rewardsControllerDeleteRewardProgram(params: RewardsControllerDeleteRewardProgram$Params, context?: HttpContext): Observable<void> {
+  rewardsControllerDeleteRewardProgram(params: RewardsControllerDeleteRewardProgram$Params, context?: HttpContext): Observable<RewardProgramResponseDto> {
     return this.rewardsControllerDeleteRewardProgram$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<RewardProgramResponseDto>): RewardProgramResponseDto => r.body)
     );
   }
 

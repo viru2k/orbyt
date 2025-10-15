@@ -5,6 +5,8 @@
 import { AppointmentClientResponseDto } from '../models/appointment-client-response-dto';
 import { AppointmentProfessionalResponseDto } from '../models/appointment-professional-response-dto';
 import { ExtendedPropsDto } from '../models/extended-props-dto';
+import { RoomResponseDto } from '../models/room-response-dto';
+import { ServiceResponseDto } from '../models/service-response-dto';
 export interface AppointmentResponseDto {
 
   /**
@@ -53,14 +55,14 @@ export interface AppointmentResponseDto {
   professional?: AppointmentProfessionalResponseDto;
 
   /**
-   * ID de la sala/recurso (si aplica)
+   * Sala/recurso asociado a la cita
    */
-  roomId?: number;
+  room?: RoomResponseDto;
 
   /**
-   * ID del servicio (si aplica)
+   * Servicio asociado a la cita
    */
-  serviceId?: number;
+  service?: ServiceResponseDto;
 
   /**
    * Fecha y hora de inicio del turno (ISO 8601)

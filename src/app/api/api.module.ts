@@ -13,6 +13,7 @@ import { RolesService } from './services/roles.service';
 import { SubscriptionService } from './services/subscription.service';
 import { ServicesService } from './services/services.service';
 import { ServiceItemsService } from './services/service-items.service';
+import { ServiceCategoriesService } from './services/service-categories.service';
 import { ProductsService } from './services/products.service';
 import { AgendaService } from './services/agenda.service';
 import { NotificationsService } from './services/notifications.service';
@@ -22,6 +23,8 @@ import { StockService } from './services/stock.service';
 import { ClientsService } from './services/clients.service';
 import { SubscriptionPlanService } from './services/subscription-plan.service';
 import { PermissionsService } from './services/permissions.service';
+import { ModulesPermissionsService } from './services/modules-permissions.service';
+import { UserPermissionsService } from './services/user-permissions.service';
 import { UploadService } from './services/upload.service';
 import { TestUploadService } from './services/test-upload.service';
 import { ConsultationsService } from './services/consultations.service';
@@ -30,6 +33,7 @@ import { InvoicesService } from './services/invoices.service';
 import { DashboardService } from './services/dashboard.service';
 import { BusinessTypesService } from './services/business-types.service';
 import { BusinessTypesPublicService } from './services/business-types-public.service';
+import { ConsultationTypesService } from './services/consultation-types.service';
 import { InventoryDashboardService } from './services/inventory-dashboard.service';
 import { RoomsService } from './services/rooms.service';
 
@@ -48,6 +52,7 @@ import { RoomsService } from './services/rooms.service';
     SubscriptionService,
     ServicesService,
     ServiceItemsService,
+    ServiceCategoriesService,
     ProductsService,
     AgendaService,
     NotificationsService,
@@ -57,6 +62,8 @@ import { RoomsService } from './services/rooms.service';
     ClientsService,
     SubscriptionPlanService,
     PermissionsService,
+    ModulesPermissionsService,
+    UserPermissionsService,
     UploadService,
     TestUploadService,
     ConsultationsService,
@@ -65,6 +72,7 @@ import { RoomsService } from './services/rooms.service';
     DashboardService,
     BusinessTypesService,
     BusinessTypesPublicService,
+    ConsultationTypesService,
     InventoryDashboardService,
     RoomsService,
     ApiConfiguration

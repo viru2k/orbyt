@@ -4,6 +4,10 @@
 
 export interface CreateServiceDto {
   basePrice: number;
+
+  /**
+   * Deprecated: use serviceCategoryId instead
+   */
   category?: string;
   description?: string;
 
@@ -13,5 +17,10 @@ export interface CreateServiceDto {
   duration?: number;
   name: string;
   notes?: string;
+
+  /**
+   * ID de la categoría de servicio
+   */
+  serviceCategoryId?: number;
   status?: 'ACTIVE' | 'INACTIVE';
 }

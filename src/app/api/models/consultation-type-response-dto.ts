@@ -5,14 +5,15 @@
 export interface ConsultationTypeResponseDto {
   businessTypeId: number;
   createdAt: string;
-  customFields?: {
+  customFields: {
 };
   defaultDuration: number;
-  defaultPrice?: number;
-  description?: string;
+  defaultPrice: number;
+  description: string;
   id: number;
   isActive: boolean;
   name: string;
-  requiredFields?: Array<string>;
+  ownerId: number;
+  requiredFields: Array<string>;
   updatedAt: string;
 }

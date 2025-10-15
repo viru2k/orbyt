@@ -4,6 +4,7 @@
 
 export interface UpdateClientDto {
   address?: string;
+  avatarUrl?: string;
   birthDate?: string;
   dniNumber?: string;
   dniType?: 'DNI' | 'NIE' | 'PASAPORTE';

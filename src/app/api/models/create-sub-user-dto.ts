@@ -4,6 +4,11 @@
 
 import { RoleDto } from '../models/role-dto';
 export interface CreateSubUserDto {
+
+  /**
+   * URL del avatar del usuario
+   */
+  avatarUrl?: string;
   email: string;
 
   /**
