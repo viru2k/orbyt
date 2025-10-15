@@ -257,6 +257,22 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     this.loadDashboardMetrics();
     this.loadQuickStats();
     this.loadRecentActivities();
+
+    // Reset loading state when all individual loading states are false
+    this.select(
+      this.loadingMetrics$,
+      this.loadingQuickStats$,
+      this.loadingActivities$,
+      (loadingMetrics, loadingQuickStats, loadingActivities) => ({
+        loadingMetrics,
+        loadingQuickStats,
+        loadingActivities
+      })
+    ).subscribe(({ loadingMetrics, loadingQuickStats, loadingActivities }) => {
+      if (!loadingMetrics && !loadingQuickStats && !loadingActivities) {
+        this.setLoading(false);
+      }
+    });
   }
 
   refreshMetrics(): void {

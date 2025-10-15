@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { exhaustMap, tap, switchMap, catchError, of } from 'rxjs';
+import { exhaustMap, tap, switchMap, catchError, of, Subject } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { linkToGlobalState } from '../component-state.reducer';
 import { Store } from '@ngrx/store';
@@ -11,7 +11,7 @@ import {
   AppointmentSummaryResponseDto,
   AppointmentProductLogResponseDto,
   AvailableSlotResponseDto,
-  CalendarConfigResponseDto,
+  AgendaConfigResponseDto,
   CalendarAvailabilityDto,
   CreateAppointmentDto,
   UpdateAppointmentDto,
@@ -28,7 +28,7 @@ export interface AppointmentsState {
 
   // Calendar and availability
   availableSlots: AvailableSlotResponseDto[];
-  calendarConfig: CalendarConfigResponseDto | null;
+  calendarConfig: AgendaConfigResponseDto | null;
   calendarAvailability: CalendarAvailabilityDto[];
 
   // Summary and statistics
@@ -117,6 +117,47 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
   readonly loadingSummary$ = this.select((state) => state.loadingSummary);
   readonly loadingProductsUsed$ = this.select((state) => state.loadingProductsUsed);
 
+  // Aliases for template compatibility
+  readonly agendaConfig$ = this.calendarConfig$;
+  readonly summary$ = this.appointmentSummary$;
+  readonly calendarEvents$ = this.select(
+    this.appointments$,
+    (appointments) => appointments.map(appointment => {
+      const statusColor = this.getStatusColor(appointment.status || 'PENDING');
+
+      // Build title: nombre - servicio
+      let title = appointment.title || '';
+
+      if (appointment.service?.name) {
+        title = `${title} - ${appointment.service.name}`;
+      }
+
+      return {
+        id: appointment.id?.toString() || '',
+        title: title,
+        start: appointment.start ? new Date(appointment.start) : new Date(),
+        end: appointment.end ? new Date(appointment.end) : new Date(),
+        color: {
+          primary: statusColor,
+          secondary: statusColor + '20'  // Add transparency for secondary
+        },
+        extendedProps: {
+          originalAppointment: appointment,
+          roomName: appointment.room?.name || null,
+          serviceName: appointment.service?.name || null
+        },
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true
+        }
+      };
+    })
+  );
+
+  // Event observables for component interaction
+  readonly appointmentUpdated$ = new Subject<{ appointment: AppointmentResponseDto; wasDragDrop?: boolean }>();
+
   // Computed selectors
   readonly selectAppointmentsByStatus = (status: string) =>
     this.select(
@@ -127,14 +168,14 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
   readonly selectAppointmentsByClient = (clientId: number) =>
     this.select(
       this.appointments$,
-      (appointments) => appointments.filter(a => a.clientId === clientId)
+      (appointments) => appointments.filter(a => a.client?.id === clientId)
     );
 
   readonly selectAppointmentsByDate = (date: string) =>
     this.select(
       this.appointments$,
       (appointments) => appointments.filter(a => {
-        const appointmentDate = new Date(a.startTime).toDateString();
+        const appointmentDate = new Date(a.start || a.createdAt).toDateString();
         const targetDate = new Date(date).toDateString();
         return appointmentDate === targetDate;
       })
@@ -144,7 +185,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     this.appointments$,
     (appointments) => {
       const now = new Date();
-      return appointments.filter(a => new Date(a.startTime) > now);
+      return appointments.filter(a => new Date(a.start || a.createdAt) > now);
     }
   );
 
@@ -152,7 +193,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     this.appointments$,
     (appointments) => {
       const now = new Date();
-      return appointments.filter(a => new Date(a.startTime) < now);
+      return appointments.filter(a => new Date(a.start || a.createdAt) < now);
     }
   );
 
@@ -221,7 +262,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     loadingAvailability: false
   }));
 
-  private readonly setCalendarConfig = this.updater((state, calendarConfig: CalendarConfigResponseDto) => ({
+  private readonly setCalendarConfig = this.updater((state, calendarConfig: AgendaConfigResponseDto) => ({
     ...state,
     calendarConfig,
     loadingConfig: false
@@ -265,7 +306,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     appointments: [appointment, ...state.appointments]
   }));
 
-  private readonly updateAppointment = this.updater((state, appointment: AppointmentResponseDto) => ({
+  private readonly updateAppointmentState = this.updater((state, appointment: AppointmentResponseDto) => ({
     ...state,
     appointments: state.appointments.map(a => a.id === appointment.id ? appointment : a),
     todayAppointments: state.todayAppointments.map(a => a.id === appointment.id ? appointment : a),
@@ -275,10 +316,10 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
 
   private readonly removeAppointment = this.updater((state, appointmentId: number) => ({
     ...state,
-    appointments: state.appointments.filter(a => a.id !== appointmentId),
-    todayAppointments: state.todayAppointments.filter(a => a.id !== appointmentId),
-    weekAppointments: state.weekAppointments.filter(a => a.id !== appointmentId),
-    selectedAppointment: state.selectedAppointment?.id === appointmentId ? null : state.selectedAppointment
+    appointments: state.appointments.filter(a => Number(a.id) !== appointmentId),
+    todayAppointments: state.todayAppointments.filter(a => Number(a.id) !== appointmentId),
+    weekAppointments: state.weekAppointments.filter(a => Number(a.id) !== appointmentId),
+    selectedAppointment: Number(state.selectedAppointment?.id) === appointmentId ? null : state.selectedAppointment
   }));
 
   private readonly setError = this.updater((state, error: any) => ({
@@ -304,7 +345,11 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
         const currentFilters = this.get().filters;
         const finalParams = { ...currentFilters, ...params };
 
-        return this.agendaService.agendaControllerGetAppointments(finalParams).pipe(
+        return this.agendaService.agendaControllerGetAppointments({
+          from: finalParams.from,
+          to: finalParams.to,
+          status: finalParams.status as any
+        }).pipe(
           tapResponse(
             (appointments: AppointmentResponseDto[]) => {
               this.setAppointments(appointments);
@@ -373,10 +418,12 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     params$.pipe(
       tap(() => this.setLoadingAvailability(true)),
       exhaustMap((params) =>
-        this.agendaService.agendaControllerGetAvailableSlots(params).pipe(
+        this.agendaService.agendaControllerGetAvailable({ date: params.from }).pipe(
           tapResponse(
-            (slots: AvailableSlotResponseDto[]) => {
-              this.setAvailableSlots(slots);
+            (slots: AvailableSlotResponseDto) => {
+              // Convert single object to array if needed
+              const slotsArray = Array.isArray(slots) ? slots : [slots];
+              this.setAvailableSlots(slotsArray);
             },
             (error: any) => {
               console.error('Error loading available slots:', error);
@@ -396,9 +443,9 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     trigger$.pipe(
       tap(() => this.setLoadingConfig(true)),
       exhaustMap(() =>
-        this.agendaService.agendaControllerGetCalendarConfig().pipe(
+        this.agendaService.agendaControllerGetConfig().pipe(
           tapResponse(
-            (config: CalendarConfigResponseDto) => {
+            (config: AgendaConfigResponseDto) => {
               this.setCalendarConfig(config);
             },
             (error: any) => {
@@ -442,7 +489,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
     appointmentId$.pipe(
       tap(() => this.setLoadingProductsUsed(true)),
       exhaustMap((appointmentId) =>
-        this.agendaService.agendaControllerGetProductsUsed({ appointmentId }).pipe(
+        this.agendaService.agendaControllerGetProductsUsed({ id: appointmentId }).pipe(
           tapResponse(
             (products: AppointmentProductLogResponseDto[]) => {
               this.setProductsUsed(products);
@@ -495,7 +542,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
         this.agendaService.agendaControllerUpdate({ id, body: appointmentData }).pipe(
           tapResponse(
             (appointment: AppointmentResponseDto) => {
-              this.updateAppointment(appointment);
+              this.updateAppointmentState(appointment);
               this.setLoading(false);
               this.notificationService.showSuccess(
                 NotificationSeverity.Success,
@@ -622,7 +669,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
   selectAppointment(appointment: AppointmentResponseDto): void {
     this.setSelectedAppointment(appointment);
     // Load products used for selected appointment
-    this.loadProductsUsed(appointment.id);
+    this.loadProductsUsed(Number(appointment.id));
   }
 
   clearSelectedAppointment(): void {
@@ -630,7 +677,7 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
   }
 
   getAppointmentById(id: number): AppointmentResponseDto | undefined {
-    return this.get().appointments.find(appointment => appointment.id === id);
+    return this.get().appointments.find(appointment => appointment.id === String(id));
   }
 
   getAppointmentsByStatus(status: string): AppointmentResponseDto[] {
@@ -638,17 +685,17 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
   }
 
   getAppointmentsByClient(clientId: number): AppointmentResponseDto[] {
-    return this.get().appointments.filter(appointment => appointment.clientId === clientId);
+    return this.get().appointments.filter(appointment => appointment.client?.id === clientId);
   }
 
   getUpcomingAppointments(): AppointmentResponseDto[] {
     const now = new Date();
-    return this.get().appointments.filter(appointment => new Date(appointment.startTime) > now);
+    return this.get().appointments.filter(appointment => new Date(appointment.start) > now);
   }
 
   getPastAppointments(): AppointmentResponseDto[] {
     const now = new Date();
-    return this.get().appointments.filter(appointment => new Date(appointment.startTime) < now);
+    return this.get().appointments.filter(appointment => new Date(appointment.start) < now);
   }
 
   getTodayAppointmentsCount(): number {
@@ -673,5 +720,37 @@ export class AppointmentsStore extends ComponentStore<AppointmentsState> {
 
   getCancelledAppointments(): AppointmentResponseDto[] {
     return this.getAppointmentsByStatus('cancelled');
+  }
+
+  // Helper method for calendar event colors
+  private getStatusColor(status: string): string {
+    const colorMap: { [key: string]: string } = {
+      // Handle both uppercase and lowercase formats
+      'PENDING': '#9ca3af',        // Gris claro
+      'pending': '#9ca3af',
+      'CONFIRMED': '#3b82f6',      // Azul
+      'confirmed': '#3b82f6',
+      'CHECKED_IN': '#06b6d4',     // Cian
+      'checked_in': '#06b6d4',
+      'IN_PROGRESS': '#fbbf24',    // Amarillo/Naranja
+      'in_progress': '#fbbf24',
+      'COMPLETED': '#22c55e',      // Verde
+      'completed': '#22c55e',
+      'CANCELLED': '#ef4444',      // Rojo
+      'cancelled': '#ef4444',
+      'NO_SHOW': '#78716c',        // Marrón
+      'no_show': '#78716c',
+      'RESCHEDULED': '#a855f7',    // Púrpura
+      'rescheduled': '#a855f7'
+    };
+    return colorMap[status] || colorMap['PENDING'];
+  }
+
+  // Method aliases for template compatibility
+  loadAvailabilitySlots = this.loadAvailableSlots;
+
+  loadSummary(params: any): void {
+    // Implementation would depend on your API
+    console.warn('loadSummary method called - implementation needed');
   }
 }

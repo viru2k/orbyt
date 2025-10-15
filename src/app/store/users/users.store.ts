@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../api/model/models';
+import { UserResponseDto, AdminUpdateUserDto, RoleDto, CreateSubUserDto, RoleResponseDto } from '../../api/models';
 
 // Interfaces extendidas para nuevos endpoints
 interface ExtendedCreateSubUserDto {
@@ -127,6 +127,9 @@ export class UsersStore extends ComponentStore<UsersState> {
   readonly creatingSubUser$ = this.select((state) => state.creatingSubUser);
   readonly updatingUser$ = this.select((state) => state.updatingUser);
   readonly stats$ = this.select((state) => state.stats);
+
+  // Additional selectors for compatibility
+  readonly users$ = this.subUsers$;
   readonly error$ = this.select((state) => state.error);
 
   // Computed selectors
@@ -144,7 +147,7 @@ export class UsersStore extends ComponentStore<UsersState> {
 
   readonly isCurrentUserAdmin$ = this.select(
     this.currentUser$,
-    (user) => user?.role === 'admin' || user?.isAdmin === true
+    (user) => user?.isAdmin === true
   );
 
   // Updaters
@@ -196,8 +199,8 @@ export class UsersStore extends ComponentStore<UsersState> {
     stats: {
       ...state.stats,
       totalUsers: groupUsers.length,
-      activeUsers: groupUsers.filter(user => user.status === 'active').length,
-      adminUsers: groupUsers.filter(user => user.role === 'admin' || user.isAdmin).length
+      activeUsers: groupUsers.filter(user => user.active === true).length,
+      adminUsers: groupUsers.filter(user => user.isAdmin === true).length
     }
   }));
 
@@ -239,7 +242,7 @@ export class UsersStore extends ComponentStore<UsersState> {
       ...state.stats,
       totalUsers: state.stats.totalUsers + 1,
       subUsers: state.stats.subUsers + 1,
-      activeUsers: newUser.status === 'active' ? state.stats.activeUsers + 1 : state.stats.activeUsers
+      activeUsers: newUser.active === true ? state.stats.activeUsers + 1 : state.stats.activeUsers
     }
   }));
 
@@ -337,7 +340,7 @@ export class UsersStore extends ComponentStore<UsersState> {
       exhaustMap(() =>
         this.rolesService.rolesControllerFindAll().pipe(
           tapResponse(
-            (roles: RoleResponseDto[]) => {
+            (roles: any[]) => {
               this.setRoles(roles || []);
             },
             (error: any) => {
@@ -378,7 +381,7 @@ export class UsersStore extends ComponentStore<UsersState> {
     params$.pipe(
       tap(() => this.setUpdatingUser(true)),
       exhaustMap(({ id, userData }) =>
-        this.usersService.userControllerUpdateSubUser({ id, body: userData as any }).pipe(
+        this.usersService.userControllerUpdateSubUser({ id: Number(id), body: userData as any }).pipe(
           tapResponse(
             (updatedUser: UserResponseDto) => {
               this.updateSubUser(updatedUser);
@@ -469,8 +472,7 @@ export class UsersStore extends ComponentStore<UsersState> {
       const term = filters.searchTerm.toLowerCase();
       filtered = filtered.filter(user =>
         (user.fullName?.toLowerCase().includes(term)) ||
-        (user.email?.toLowerCase().includes(term)) ||
-        (user.username?.toLowerCase().includes(term))
+        (user.email?.toLowerCase().includes(term))
       );
     }
 
@@ -485,7 +487,7 @@ export class UsersStore extends ComponentStore<UsersState> {
     // Status filter
     if (filters.status) {
       const isActive = filters.status === 'active';
-      filtered = filtered.filter(user => user.isActive === isActive);
+      filtered = filtered.filter(user => user.active === isActive);
     }
 
     // Sort
@@ -507,8 +509,8 @@ export class UsersStore extends ComponentStore<UsersState> {
           bValue = b.isAdmin ? 'admin' : b.roles?.[0]?.name || '';
           break;
         case 'status':
-          aValue = a.isActive ? 'active' : 'inactive';
-          bValue = b.isActive ? 'active' : 'inactive';
+          aValue = a.active ? 'active' : 'inactive';
+          bValue = b.active ? 'active' : 'inactive';
           break;
         case 'createdAt':
           aValue = new Date(a.createdAt || '').getTime();
@@ -540,7 +542,7 @@ export class UsersStore extends ComponentStore<UsersState> {
   }
 
   isUserActive(user: UserResponseDto): boolean {
-    return user?.isActive === true;
+    return user?.active === true;
   }
 
   canEditUser(user: UserResponseDto): boolean {
@@ -561,8 +563,8 @@ export class UsersStore extends ComponentStore<UsersState> {
     const state = this.get();
     return {
       totalUsers: state.groupUsers.length,
-      activeUsers: state.groupUsers.filter(user => user.isActive === true).length,
-      inactiveUsers: state.groupUsers.filter(user => user.isActive !== true).length,
+      activeUsers: state.groupUsers.filter(user => user.active === true).length,
+      inactiveUsers: state.groupUsers.filter(user => user.active !== true).length,
       adminUsers: state.groupUsers.filter(user => this.isUserAdmin(user)).length,
       subUsers: state.subUsers.length,
       recentlyCreated: state.groupUsers.filter(user => {

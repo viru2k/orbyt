@@ -37,6 +37,7 @@ export interface ConsultationsState {
     dateTo?: string;
     page?: number;
     limit?: number;
+    searchTerm?: string;
   };
 
   // UI state
@@ -93,8 +94,64 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
   readonly selectConsultationsByStatus = (status: string) =>
     this.select(
       this.consultations$,
-      (consultations) => consultations.filter(c => c.status === status)
+      (consultations) => Array.isArray(consultations) ? consultations.filter(c => c.status === status) : []
     );
+
+  // Status-specific observables
+  readonly pendingConsultations$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations.filter(c => c.status === 'pending') : []
+  );
+
+  readonly inProgressConsultations$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations.filter(c => c.status === 'in_progress') : []
+  );
+
+  readonly completedConsultations$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations.filter(c => c.status === 'completed') : []
+  );
+
+  readonly cancelledConsultations$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations.filter(c => c.status === 'cancelled') : []
+  );
+
+  // Additional computed observables needed by components
+  readonly totalConsultations$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations.length : 0
+  );
+
+  readonly filteredConsultations$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations : []
+  );
+
+  readonly consultationsWithFollowUp$ = this.select(
+    this.consultations$,
+    (consultations) => Array.isArray(consultations) ? consultations.filter(c => c.status === 'pending' && c.followUpRequired) : []
+  );
+
+  readonly averageConsultationDuration$ = this.select(
+    this.consultations$,
+    (consultations) => {
+      if (!Array.isArray(consultations) || !consultations.length) return 0;
+      const durationsInMinutes = consultations
+        .filter(c => c.startTime && c.endTime)
+        .map(c => {
+          const start = new Date(c.startTime!).getTime();
+          const end = new Date(c.endTime!).getTime();
+          return (end - start) / (1000 * 60); // Convert to minutes
+        });
+
+      if (durationsInMinutes.length === 0) return 0;
+
+      const total = durationsInMinutes.reduce((sum, duration) => sum + duration, 0);
+      return Math.round(total / durationsInMinutes.length);
+    }
+  );
 
   readonly selectClientHistory = (clientId: number) =>
     this.select((state) => state.clientHistory[clientId] || []);
@@ -106,6 +163,7 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
     this.consultations$,
     this.filters$,
     (consultations, filters) => {
+      if (!Array.isArray(consultations) || !consultations.length) return [];
       const startIndex = ((filters.page || 1) - 1) * (filters.limit || 20);
       const endIndex = startIndex + (filters.limit || 20);
       return consultations.slice(startIndex, endIndex);
@@ -189,7 +247,7 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
     consultations: [consultation, ...state.consultations]
   }));
 
-  private readonly updateConsultation = this.updater((state, consultation: ConsultationResponseDto) => ({
+  private readonly updateConsultationInState = this.updater((state, consultation: ConsultationResponseDto) => ({
     ...state,
     consultations: state.consultations.map(c => c.id === consultation.id ? consultation : c),
     selectedConsultation: state.selectedConsultation?.id === consultation.id ? consultation : state.selectedConsultation,
@@ -223,7 +281,7 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
     ...state,
     consultationTokens: {
       ...state.consultationTokens,
-      [consultationId]: (state.consultationTokens[consultationId] || []).filter(t => t.id !== tokenId)
+      [consultationId]: (state.consultationTokens[consultationId] || []).filter((_, index) => index !== tokenId)
     }
   }));
 
@@ -248,7 +306,20 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
         const currentFilters = this.get().filters;
         const finalParams = { ...currentFilters, ...params };
 
-        return this.consultationsService.consultationControllerFindAll(finalParams).pipe(
+        // Ensure status parameter is properly typed
+        if (finalParams.status && typeof finalParams.status === 'string') {
+          const validStatuses = ['pending', 'in_progress', 'completed', 'cancelled'];
+          if (!validStatuses.includes(finalParams.status)) {
+            delete finalParams.status;
+          }
+        }
+
+        return this.consultationsService.consultationControllerFindAll({
+          status: finalParams.status as any,
+          clientId: finalParams.clientId,
+          page: finalParams.page,
+          limit: finalParams.limit
+        }).pipe(
           tapResponse(
             (consultations: ConsultationResponseDto[]) => {
               this.setConsultations(consultations);
@@ -417,7 +488,7 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
         this.consultationsService.consultationControllerUpdate({ id, body: consultationData }).pipe(
           tapResponse(
             (consultation: ConsultationResponseDto) => {
-              this.updateConsultation(consultation);
+              this.updateConsultationInState(consultation);
               this.setLoading(false);
               this.notificationService.showSuccess(
                 NotificationSeverity.Success,
@@ -441,10 +512,10 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(({ id, status }) =>
-        this.consultationsService.consultationControllerUpdateStatus({ id, status }).pipe(
+        this.consultationsService.consultationControllerUpdateStatus({ id }).pipe(
           tapResponse(
             (consultation: ConsultationResponseDto) => {
-              this.updateConsultation(consultation);
+              this.updateConsultationInState(consultation);
               this.setLoading(false);
               this.notificationService.showSuccess(
                 NotificationSeverity.Success,
@@ -576,7 +647,7 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(({ consultationId, file }) =>
-        this.consultationsService.consultationControllerUploadFile({ id: consultationId, body: { file } }).pipe(
+        this.consultationsService.consultationControllerUploadFile({ id: consultationId }).pipe(
           tapResponse(
             () => {
               this.setLoading(false);
@@ -665,5 +736,47 @@ export class ConsultationsStore extends ComponentStore<ConsultationsState> {
 
   getInProgressConsultations(): ConsultationResponseDto[] {
     return this.getConsultationsByStatus('in_progress');
+  }
+
+  getCancelledConsultations(): ConsultationResponseDto[] {
+    return this.getConsultationsByStatus('cancelled');
+  }
+
+  getMonthlyConsultationStats(months: number = 6): any {
+    const consultations = this.get().consultations;
+    const now = new Date();
+    const monthsData: any[] = [];
+    const labels: string[] = [];
+    const data: number[] = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+      const monthConsultations = consultations.filter(consultation => {
+        if (!consultation.createdAt) return false;
+        const consultationDate = new Date(consultation.createdAt);
+        return consultationDate >= monthStart && consultationDate <= monthEnd;
+      });
+
+      const monthLabel = date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+      labels.push(monthLabel);
+      data.push(monthConsultations.length);
+
+      monthsData.push({
+        month: monthLabel,
+        total: monthConsultations.length,
+        completed: monthConsultations.filter(c => c.status === 'completed').length,
+        pending: monthConsultations.filter(c => c.status === 'pending').length,
+        cancelled: monthConsultations.filter(c => c.status === 'cancelled').length
+      });
+    }
+
+    return {
+      labels,
+      data,
+      monthsData
+    };
   }
 }

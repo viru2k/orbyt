@@ -9,7 +9,6 @@ import { NotificationSeverity } from '@orb-models';
 import {
   InvoiceResponseDto,
   InvoiceItemResponseDto,
-  SalesStatsResponseDto,
   CreateInvoiceDto,
   UpdateInvoiceDto,
   ProcessPaymentDto
@@ -24,7 +23,7 @@ export interface InvoicesState {
   selectedInvoice: InvoiceResponseDto | null;
 
   // Sales and statistics
-  salesStats: SalesStatsResponseDto | null;
+  salesStats: any | null;
   todaySales: any | null;
 
   // Filters
@@ -80,7 +79,7 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
   }
 
   // Selectors
-  readonly invoices$ = this.select((state) => state.invoices);
+  readonly invoices$ = this.select((state) => state.invoices || []);
   readonly pendingInvoices$ = this.select((state) => state.pendingInvoices);
   readonly overdueInvoices$ = this.select((state) => state.overdueInvoices);
   readonly selectedInvoice$ = this.select((state) => state.selectedInvoice);
@@ -98,59 +97,91 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
   readonly selectInvoicesByStatus = (status: string) =>
     this.select(
       this.invoices$,
-      (invoices) => invoices.filter(i => i.status === status)
+      (invoices) => {
+        const invoicesArray = Array.isArray(invoices) ? invoices : [];
+        return invoicesArray.filter(i => i.status === status);
+      }
     );
 
   readonly selectInvoicesByClient = (clientId: number) =>
     this.select(
       this.invoices$,
-      (invoices) => invoices.filter(i => i.clientId === clientId)
+      (invoices) => {
+        const invoicesArray = Array.isArray(invoices) ? invoices : [];
+        return invoicesArray.filter(i => i.clientId === clientId);
+      }
     );
 
   readonly selectPaidInvoices = this.select(
     this.invoices$,
-    (invoices) => invoices.filter(i => i.status === 'paid')
+    (invoices) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      return invoicesArray.filter(i => i.status === 'paid');
+    }
   );
 
   readonly selectDraftInvoices = this.select(
     this.invoices$,
-    (invoices) => invoices.filter(i => i.status === 'draft')
+    (invoices) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      return invoicesArray.filter(i => i.status === 'draft');
+    }
   );
 
   readonly selectCancelledInvoices = this.select(
     this.invoices$,
-    (invoices) => invoices.filter(i => i.status === 'cancelled')
+    (invoices) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      return invoicesArray.filter(i => i.status === 'cancelled');
+    }
   );
 
   readonly selectTotalRevenue = this.select(
     this.invoices$,
-    (invoices) => invoices
-      .filter(i => i.status === 'paid')
-      .reduce((sum, invoice) => sum + (invoice.total || 0), 0)
+    (invoices) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      return invoicesArray
+        .filter(i => i.status === 'paid')
+        .reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+    }
   );
 
   readonly selectPendingRevenue = this.select(
     this.pendingInvoices$,
-    (invoices) => invoices.reduce((sum, invoice) => sum + (invoice.total || 0), 0)
+    (invoices) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      return invoicesArray.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+    }
   );
 
   readonly selectOverdueRevenue = this.select(
     this.overdueInvoices$,
-    (invoices) => invoices.reduce((sum, invoice) => sum + (invoice.total || 0), 0)
+    (invoices) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      return invoicesArray.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+    }
   );
+
+  // Revenue observables
+  readonly totalRevenue$ = this.selectTotalRevenue;
 
   readonly selectInvoicesSummary = this.select(
     this.invoices$,
     this.pendingInvoices$,
     this.overdueInvoices$,
-    (invoices, pending, overdue) => ({
-      total: invoices.length,
-      pending: pending.length,
-      overdue: overdue.length,
-      paid: invoices.filter(i => i.status === 'paid').length,
-      draft: invoices.filter(i => i.status === 'draft').length,
-      cancelled: invoices.filter(i => i.status === 'cancelled').length
-    })
+    (invoices, pending, overdue) => {
+      const invoicesArray = Array.isArray(invoices) ? invoices : [];
+      const pendingArray = Array.isArray(pending) ? pending : [];
+      const overdueArray = Array.isArray(overdue) ? overdue : [];
+      return {
+        total: invoicesArray.length,
+        pending: pendingArray.length,
+        overdue: overdueArray.length,
+        paid: invoicesArray.filter(i => i.status === 'paid').length,
+        draft: invoicesArray.filter(i => i.status === 'draft').length,
+        cancelled: invoicesArray.filter(i => i.status === 'cancelled').length
+      };
+    }
   );
 
   // Updaters
@@ -186,19 +217,19 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
 
   private readonly setInvoices = this.updater((state, invoices: InvoiceResponseDto[]) => ({
     ...state,
-    invoices,
+    invoices: Array.isArray(invoices) ? invoices : [],
     loading: false
   }));
 
   private readonly setPendingInvoices = this.updater((state, pendingInvoices: InvoiceResponseDto[]) => ({
     ...state,
-    pendingInvoices,
+    pendingInvoices: Array.isArray(pendingInvoices) ? pendingInvoices : [],
     loadingPending: false
   }));
 
   private readonly setOverdueInvoices = this.updater((state, overdueInvoices: InvoiceResponseDto[]) => ({
     ...state,
-    overdueInvoices,
+    overdueInvoices: Array.isArray(overdueInvoices) ? overdueInvoices : [],
     loadingOverdue: false
   }));
 
@@ -207,7 +238,7 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
     selectedInvoice: invoice
   }));
 
-  private readonly setSalesStats = this.updater((state, salesStats: SalesStatsResponseDto) => ({
+  private readonly setSalesStats = this.updater((state, salesStats: any) => ({
     ...state,
     salesStats,
     loadingStats: false
@@ -226,22 +257,22 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
 
   private readonly addInvoice = this.updater((state, invoice: InvoiceResponseDto) => ({
     ...state,
-    invoices: [invoice, ...state.invoices]
+    invoices: [invoice, ...(Array.isArray(state.invoices) ? state.invoices : [])]
   }));
 
-  private readonly updateInvoice = this.updater((state, invoice: InvoiceResponseDto) => ({
+  private readonly updateInvoiceInState = this.updater((state, invoice: InvoiceResponseDto) => ({
     ...state,
-    invoices: state.invoices.map(i => i.id === invoice.id ? invoice : i),
-    pendingInvoices: state.pendingInvoices.map(i => i.id === invoice.id ? invoice : i),
-    overdueInvoices: state.overdueInvoices.map(i => i.id === invoice.id ? invoice : i),
+    invoices: (Array.isArray(state.invoices) ? state.invoices : []).map(i => i.id === invoice.id ? invoice : i),
+    pendingInvoices: (Array.isArray(state.pendingInvoices) ? state.pendingInvoices : []).map(i => i.id === invoice.id ? invoice : i),
+    overdueInvoices: (Array.isArray(state.overdueInvoices) ? state.overdueInvoices : []).map(i => i.id === invoice.id ? invoice : i),
     selectedInvoice: state.selectedInvoice?.id === invoice.id ? invoice : state.selectedInvoice
   }));
 
   private readonly removeInvoice = this.updater((state, invoiceId: number) => ({
     ...state,
-    invoices: state.invoices.filter(i => i.id !== invoiceId),
-    pendingInvoices: state.pendingInvoices.filter(i => i.id !== invoiceId),
-    overdueInvoices: state.overdueInvoices.filter(i => i.id !== invoiceId),
+    invoices: (Array.isArray(state.invoices) ? state.invoices : []).filter(i => i.id !== invoiceId),
+    pendingInvoices: (Array.isArray(state.pendingInvoices) ? state.pendingInvoices : []).filter(i => i.id !== invoiceId),
+    overdueInvoices: (Array.isArray(state.overdueInvoices) ? state.overdueInvoices : []).filter(i => i.id !== invoiceId),
     selectedInvoice: state.selectedInvoice?.id === invoiceId ? null : state.selectedInvoice
   }));
 
@@ -267,10 +298,17 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
         const currentFilters = this.get().filters;
         const finalParams = { ...currentFilters, ...params };
 
-        return this.invoicesService.invoiceControllerFindAll(finalParams).pipe(
+        return this.invoicesService.invoiceControllerFindAll({
+          status: finalParams.status,
+          page: String(finalParams.page || 1),
+          limit: String(finalParams.limit || 20),
+          clientId: finalParams.clientId ? String(finalParams.clientId) : undefined
+        }).pipe(
           tapResponse(
-            (invoices: InvoiceResponseDto[]) => {
-              this.setInvoices(invoices);
+            (response: any) => {
+              // Handle paginated response: extract data array from response
+              const invoices = response?.data || response || [];
+              this.setInvoices(Array.isArray(invoices) ? invoices : []);
             },
             (error: any) => {
               console.error('Error loading invoices:', error);
@@ -360,9 +398,9 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
     params$.pipe(
       tap(() => this.setLoadingStats(true)),
       exhaustMap((params) =>
-        this.invoicesService.invoiceControllerGetSalesStats(params).pipe(
+        this.invoicesService.invoiceControllerGetSalesStats({}).pipe(
           tapResponse(
-            (stats: SalesStatsResponseDto) => {
+            (stats: any) => {
               this.setSalesStats(stats);
             },
             (error: any) => {
@@ -436,7 +474,7 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
         this.invoicesService.invoiceControllerUpdate({ id, body: invoiceData }).pipe(
           tapResponse(
             (invoice: InvoiceResponseDto) => {
-              this.updateInvoice(invoice);
+              this.updateInvoiceInState(invoice);
               this.setLoading(false);
               this.notificationService.showSuccess(
                 NotificationSeverity.Success,
@@ -487,10 +525,10 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
     params$.pipe(
       tap(() => this.setLoading(true)),
       exhaustMap(({ id, reason }) =>
-        this.invoicesService.invoiceControllerCancel({ id, body: { reason } }).pipe(
+        this.invoicesService.invoiceControllerCancel({ id }).pipe(
           tapResponse(
             (invoice: InvoiceResponseDto) => {
-              this.updateInvoice(invoice);
+              this.updateInvoiceInState(invoice);
               this.setLoading(false);
               this.notificationService.showSuccess(
                 NotificationSeverity.Success,
@@ -517,7 +555,7 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
         this.invoicesService.invoiceControllerProcessPayment({ id, body: paymentData }).pipe(
           tapResponse(
             (invoice: InvoiceResponseDto) => {
-              this.updateInvoice(invoice);
+              this.updateInvoiceInState(invoice);
               this.setProcessing(false);
               this.notificationService.showSuccess(
                 NotificationSeverity.Success,
@@ -590,19 +628,27 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
   }
 
   getInvoiceById(id: number): InvoiceResponseDto | undefined {
-    return this.get().invoices.find(invoice => invoice.id === id);
+    const invoices = this.get().invoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray.find(invoice => invoice.id === id);
   }
 
   getInvoicesByStatus(status: string): InvoiceResponseDto[] {
-    return this.get().invoices.filter(invoice => invoice.status === status);
+    const invoices = this.get().invoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray.filter(invoice => invoice.status === status);
   }
 
   getInvoicesByClient(clientId: number): InvoiceResponseDto[] {
-    return this.get().invoices.filter(invoice => invoice.clientId === clientId);
+    const invoices = this.get().invoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray.filter(invoice => invoice.clientId === clientId);
   }
 
   getTotalInvoices(): number {
-    return this.get().invoices.length;
+    const invoices = this.get().invoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray.length;
   }
 
   getPaidInvoices(): InvoiceResponseDto[] {
@@ -618,28 +664,38 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
   }
 
   getTotalRevenue(): number {
-    return this.get().invoices
+    const invoices = this.get().invoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray
       .filter(i => i.status === 'paid')
       .reduce((sum, invoice) => sum + (invoice.total || 0), 0);
   }
 
   getPendingRevenue(): number {
-    return this.get().pendingInvoices.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+    const invoices = this.get().pendingInvoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
   }
 
   getOverdueRevenue(): number {
-    return this.get().overdueInvoices.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
+    const invoices = this.get().overdueInvoices;
+    const invoicesArray = Array.isArray(invoices) ? invoices : [];
+    return invoicesArray.reduce((sum, invoice) => sum + (invoice.total || 0), 0);
   }
 
   getInvoicesSummary() {
     const state = this.get();
+    const invoicesArray = Array.isArray(state.invoices) ? state.invoices : [];
+    const pendingArray = Array.isArray(state.pendingInvoices) ? state.pendingInvoices : [];
+    const overdueArray = Array.isArray(state.overdueInvoices) ? state.overdueInvoices : [];
+
     return {
-      total: state.invoices.length,
-      pending: state.pendingInvoices.length,
-      overdue: state.overdueInvoices.length,
-      paid: state.invoices.filter(i => i.status === 'paid').length,
-      draft: state.invoices.filter(i => i.status === 'draft').length,
-      cancelled: state.invoices.filter(i => i.status === 'cancelled').length,
+      total: invoicesArray.length,
+      pending: pendingArray.length,
+      overdue: overdueArray.length,
+      paid: invoicesArray.filter(i => i.status === 'paid').length,
+      draft: invoicesArray.filter(i => i.status === 'draft').length,
+      cancelled: invoicesArray.filter(i => i.status === 'cancelled').length,
       totalRevenue: this.getTotalRevenue(),
       pendingRevenue: this.getPendingRevenue(),
       overdueRevenue: this.getOverdueRevenue()
@@ -653,7 +709,7 @@ export class InvoicesStore extends ComponentStore<InvoicesState> {
       sum + (item.quantity * item.unitPrice), 0
     );
     const taxes = subtotal * (invoice.taxRate || 0) / 100;
-    const discount = subtotal * (invoice.discountRate || 0) / 100;
+    const discount = subtotal * (invoice.discount || 0) / 100;
     return subtotal + taxes - discount;
   }
 
