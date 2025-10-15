@@ -11,13 +11,14 @@ import { OrbImageUploadModalComponent } from '../orb-image-upload-modal/orb-imag
 import { EntityType } from '../../../src/app/shared/models/image-upload.interfaces';
 
 import { FileUploadResponseDto } from '../../../src/app/api/models/file-upload-response-dto';
-import { 
-  AvatarEntity, 
-  AvatarSize, 
+import { AvatarDto } from '../../../src/app/api/models/avatar-dto';
+import {
+  AvatarEntity,
+  AvatarSize,
   AvatarShape,
   EntityWithAvatar,
   AVATAR_SIZE_MAPPING,
-  AVATAR_CONTEXT_CLASSES 
+  AVATAR_CONTEXT_CLASSES
 } from '../../../src/app/shared/models/entity-avatar.interfaces';
 import { AvatarUtilsService } from '../../../src/app/shared/services/avatar-utils.service';
 
@@ -39,7 +40,7 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() entity!: AvatarEntity;
   @Input() entityType?: 'user' | 'client' | 'product';
-  @Input() avatar?: FileUploadResponseDto | null;
+  @Input() avatar?: FileUploadResponseDto | AvatarDto | null;
   @Input() size: AvatarSize = 'normal';
   @Input() shape: AvatarShape = 'circle';
   @Input() showUploadButton = false;
@@ -101,8 +102,8 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
     this.initials = this.avatarUtils.generateInitials(this.displayName);
     this.backgroundColor = this.avatarUtils.getInitialsBackgroundColor(this.entity);
 
-    // URL del avatar
-    this.avatarUrl = this.avatarUtils.getAvatarUrl(this.entity, this.avatar || undefined);
+    // URL del avatar - pasar contexto para optimización de imagen
+    this.avatarUrl = this.avatarUtils.getAvatarUrl(this.entity, this.avatar || undefined, this.context);
 
     // Tooltip - usar personalizado si no está establecido customTooltipText
     if (!this.customTooltipText) {
@@ -139,8 +140,8 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
           if (avatar) {            
             this.avatar = avatar;
             
-            const newAvatarUrl = this.avatarUtils.getAvatarUrl(this.entity, avatar);                        
-            
+            const newAvatarUrl = this.avatarUtils.getAvatarUrl(this.entity, avatar, this.context);
+
             this.avatarUrl = newAvatarUrl;            
             
             this.tooltipText = this.avatarUtils.getAvatarTooltip(this.entity, avatar);
@@ -214,6 +215,22 @@ export class OrbEntityAvatarComponent implements OnInit, OnDestroy, OnChanges {
    */
   onImageError() {
     this.avatarUrl = null;
+  }
+
+  /**
+   * Obtener icono de fallback según el tipo de entidad
+   */
+  getFallbackIcon(): string {
+    switch (this.entityType) {
+      case 'user':
+        return 'account_box';
+      case 'product':
+        return 'package_2';
+      case 'client':
+        return 'contacts_product';
+      default:
+        return 'account_box';
+    }
   }
 
   /**

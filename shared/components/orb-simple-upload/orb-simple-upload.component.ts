@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 
 import { ImageUploadService } from '../../../src/app/shared/services/image-upload.service';
 import { FileUploadResponseDto } from '../../../src/app/api/models/file-upload-response-dto';
+import { AvatarDto } from '../../../src/app/api/models/avatar-dto';
 import { EntityType } from '../../../src/app/shared/models/image-upload.interfaces';
 
 @Component({
@@ -112,7 +113,7 @@ import { EntityType } from '../../../src/app/shared/models/image-upload.interfac
 export class OrbSimpleUploadComponent {
   @Input() entityType!: EntityType;
   @Input() entityId?: number;
-  @Input() currentFile?: FileUploadResponseDto | null;
+  @Input() currentFile?: FileUploadResponseDto | AvatarDto | null;
   @Input() acceptTypes: string = 'image/*';
   @Input() uploadText: string = 'Selecciona o arrastra una imagen';
   @Input() disabled: boolean = false;
@@ -327,9 +328,9 @@ export class OrbSimpleUploadComponent {
     if (this.selectedFile) {
       name = this.selectedFile.name;
     } else if (this.currentFile) {
-      name = this.currentFile.originalName || this.currentFile.filename;
+      name = this.currentFile.originalName || (this.currentFile as any).filename || '';
     }
-    
+
     return this.getDisplayFileName(name);
   }
 

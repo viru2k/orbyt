@@ -3,9 +3,9 @@
     <orb-button
       [type]="button.buttonType ?? 'button'"
       [label]="button.label"
-      [severity]="button.severity ?? 'primary'"
-      [styleType]="button.styleType"
-      [icon]="button.icon || ''"
+      [severity]="getButtonSeverity(button)"
+      [variant]="getButtonVariant(button)"
+      [icon]="button.icon ?? ''"
       [loading]="button.loading || false"
       [disabled]="button.disabled || false"
       (click)="onButtonClick(button.action)"

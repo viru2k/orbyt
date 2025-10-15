@@ -1,11 +1,10 @@
-export * from './application/orb-form-footer/orb-form-footer.component';
+export * from './application/orb-card/orb-card.component';
+export * from './orb-button/orb-button.component';
 export * from './application/orb-theme-toggle/orb-theme-toggle.component';
 export * from './application/orb-sidebar/orb-sidebar.component';
 export * from './application/orb-topbar/orb-topbar.component';
 export * from './application/orb-form-field/orb-form-field.component';
 export * from './application/orb-toolbar/orb-toolbar.component' ;
-export * from './application/orb-card/orb-card.component';
-export * from './orb-button/orb-button.component';
 export * from './orb-breadcrumb/orb-breadcrumb.component';
 export * from './orb-language-selector/orb-language-selector.component';
 export * from './orb-label/orb-label.component';
@@ -26,7 +25,6 @@ export * from './orb-select/orb-select.component' ;
 export * from './orb-datepicker/orb-datepicker.component' ;
 export * from './orb-fullcalendar/orb-fullcalendar.component' ;
 export * from './orb-modern-calendar/orb-modern-calendar.component' ;
-// DevExtreme scheduler removed - using Angular Calendar instead
 export * from './orb-actions-popover/orb-actions-popover.component' ;
 export * from './orb-switch/orb-switch.component';
 export * from './orb-input-number/orb-input-number.component';
@@ -40,3 +38,4 @@ export * from './orb-file-upload/orb-file-upload.component';
 export * from './orb-simple-upload/orb-simple-upload.component';
 export * from './orb-main-header/orb-main-header.component';
 export * from './layout/orb-container.component';
+export * from './application/orb-form-footer/orb-form-footer.component';

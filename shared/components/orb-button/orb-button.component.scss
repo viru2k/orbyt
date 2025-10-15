@@ -1,335 +1,307 @@
-@import '../../../src/styles/_design-system.scss';
+@use '../../../src/styles/_design-system.scss';
 
-.orb-btn {
-  // Base button styles
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-family);
-  font-weight: var(--font-weight-medium);
-  text-decoration: none;
-  border: 2px solid transparent;
-  outline: none;
-  cursor: pointer;
-  transition: var(--transition-base);
-  position: relative;
-  overflow: hidden;
+// Base orb-button styles - targeting the p-button directly
+.p-button {
+  // Override global margin that might be causing issues
+  margin: 0 !important;
 
-  // Remove default button styles
-  background: none;
-  appearance: none;
-  -webkit-appearance: none;
+  // Ensure consistent font family
+  font-family: var(--font-family-sans, 'Inter', sans-serif) !important;
 
-  // Focus styles
-  &:focus {
-    outline: 2px solid var(--color-primary-300);
-    outline-offset: 2px;
+  // Remove any conflicting borders from global styles
+  border-style: solid !important;
+
+  // Fix span spacing issues
+  .p-button-label {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
-  // Hover effect
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.1);
-    opacity: 0;
-    transition: var(--transition-base);
-    pointer-events: none;
+  // Fix icon spacing when icon is present
+  &.p-button-icon-only .p-button-icon {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
   }
 
-  &:hover::before {
-    opacity: 1;
+  // Fix spacing when both icon and label are present
+  .p-button-icon {
+    margin-right: 0.25rem !important;
   }
 
-  // Size variants
-  &--xs {
-    padding: var(--space-1) var(--space-2);
-    font-size: var(--text-xs);
-    line-height: 1.25;
-    border-radius: var(--border-radius-sm);
+  .p-button-icon + .p-button-label {
+    margin-left: 0 !important;
   }
 
-  &--sm {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--text-sm);
-    line-height: 1.375;
-    border-radius: var(--border-radius-md);
+  // Hide empty icon spans completely but not in table buttons
+  &:not(.p-button-rounded) .p-button-icon:empty {
+    display: none !important;
   }
 
-  &--md {
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--text-base);
-    line-height: 1.5;
-    border-radius: var(--border-radius-md);
+  // When no icon, ensure label has no left margin
+  .p-button-label:first-child {
+    margin-left: 0 !important;
   }
 
-  &--lg {
-    padding: var(--space-4) var(--space-6);
-    font-size: var(--text-lg);
-    line-height: 1.625;
-    border-radius: var(--border-radius-lg);
+  // Custom modifiers
+  &.orb-btn--block {
+    width: 100% !important;
+    display: flex !important;
   }
 
-  &--xl {
-    padding: var(--space-5) var(--space-8);
-    font-size: var(--text-xl);
-    line-height: 1.75;
-    border-radius: var(--border-radius-lg);
+  &.orb-btn--rounded {
+    border-radius: var(--border-radius-full, 50px) !important;
   }
 
-  // Primary variant
-  &--primary {
-    background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
+  &.orb-btn--icon-only {
+    aspect-ratio: 1 !important;
+    min-width: auto !important;
+    width: auto !important;
+    height: auto !important;
 
-    &:hover {
-      background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-700));
-      box-shadow: var(--shadow-md);
-      transform: translateY(-1px);
-    }
-
-    &:active {
-      transform: translateY(0);
-      box-shadow: var(--shadow-sm);
+    .p-button-label {
+      display: none !important;
     }
   }
 
-  // Secondary variant
-  &--secondary {
-    background: linear-gradient(135deg, var(--color-gray-100), var(--color-gray-200));
-    color: var(--color-gray-700);
-    border-color: var(--color-gray-300);
+  // Ensure circular buttons are perfectly circular
+  &.p-button-rounded {
+    border-radius: 50% !important;
+    aspect-ratio: 1 !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    &:hover {
-      background: linear-gradient(135deg, var(--color-gray-200), var(--color-gray-300));
-      border-color: var(--color-gray-400);
-      transform: translateY(-1px);
+    .p-button-icon {
+      margin: 0 !important;
+      font-size: 0.75rem !important;
+    }
+
+    .p-button-label {
+      display: none !important;
     }
   }
 
-  // Success variant
-  &--success {
-    background: linear-gradient(135deg, var(--color-success-500), var(--color-success-600));
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
+  // Enhanced outlined styles with proper specificity
+  &.p-button-outlined {
+    background: transparent !important;
+    width: max-content !important;
 
-    &:hover {
-      background: linear-gradient(135deg, var(--color-success-600), var(--color-success-700));
-      transform: translateY(-1px);
+    // Primary outlined
+    &.p-button-primary {
+      border-color: var(--primary-500, #0ea5e9) !important;
+      color: var(--primary-600, #0284c7) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(14, 165, 233, 0.08) !important;
+        color: var(--primary-600, #0284c7) !important;
+        border-color: var(--primary-500, #0ea5e9) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2) !important;
+      }
+    }
+
+    // Secondary outlined
+    &.p-button-secondary {
+      border-color: var(--gray-400, #94a3b8) !important;
+      color: var(--gray-600, #475569) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(100, 116, 139, 0.08) !important;
+        color: var(--gray-600, #475569) !important;
+        border-color: var(--gray-400, #94a3b8) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2) !important;
+      }
+    }
+
+    // Success outlined
+/*     &.p-button-success {
+      border-color: var(--success-500, #22c55e) !important;
+      color: var(--success-600, #16a34a) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(34, 197, 94, 0.08) !important;
+        color: var(--success-600, #16a34a) !important;
+        border-color: var(--success-500, #22c55e) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2) !important;
+      }
+    } */
+
+    // Info outlined
+    &.p-button-info {
+      border-color: var(--info-500, #3b82f6) !important;
+      color: var(--info-600, #2563eb) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(59, 130, 246, 0.08) !important;
+        color: var(--info-600, #2563eb) !important;
+        border-color: var(--info-500, #3b82f6) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+      }
+    }
+
+    // Warning outlined
+    &.p-button-warning {
+      border-color: var(--warning-500, #f59e0b) !important;
+      color: var(--warning-600, #d97706) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(245, 158, 11, 0.08) !important;
+        color: var(--warning-600, #d97706) !important;
+        border-color: var(--warning-500, #f59e0b) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2) !important;
+      }
+    }
+
+    // Danger outlined
+    &.p-button-danger {
+      border-color: var(--error-500, #ef4444) !important;
+      color: var(--error-600, #dc2626) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.08) !important;
+        color: var(--error-600, #dc2626) !important;
+        border-color: var(--error-500, #ef4444) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+      }
+    }
+
+    // Help outlined
+    &.p-button-help {
+      border-color: #8b5cf6 !important;
+      color: #8b5cf6 !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(139, 92, 246, 0.08) !important;
+        color: #8b5cf6 !important;
+        border-color: #8b5cf6 !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2) !important;
+      }
+    }
+
+    // Contrast outlined
+    &.p-button-contrast {
+      border-color: var(--gray-700, #334155) !important;
+      color: var(--gray-800, #1e293b) !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(30, 41, 59, 0.08) !important;
+        color: var(--gray-800, #1e293b) !important;
+        border-color: var(--gray-700, #334155) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(75, 85, 99, 0.2) !important;
+      }
     }
   }
 
-  // Danger variant
-  &--danger {
-    background: linear-gradient(135deg, var(--color-danger-500), var(--color-danger-600));
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
-
-    &:hover {
-      background: linear-gradient(135deg, var(--color-danger-600), var(--color-danger-700));
-      transform: translateY(-1px);
-    }
-  }
-
-  // Warning variant
-  &--warning {
-    background: linear-gradient(135deg, var(--color-warning-500), var(--color-warning-600));
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
-
-    &:hover {
-      background: linear-gradient(135deg, var(--color-warning-600), var(--color-warning-700));
-      transform: translateY(-1px);
-    }
-  }
-
-  // Info variant
-  &--info {
-    background: linear-gradient(135deg, var(--color-info-500), var(--color-info-600));
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
-
-    &:hover {
-      background: linear-gradient(135deg, var(--color-info-600), var(--color-info-700));
-      transform: translateY(-1px);
-    }
-  }
-
-  // Light variant
-  &--light {
-    background: var(--color-white);
-    color: var(--color-gray-700);
-    border-color: var(--color-gray-300);
-    box-shadow: var(--shadow-sm);
-
-    &:hover {
-      background: var(--color-gray-50);
-      border-color: var(--color-gray-400);
-      transform: translateY(-1px);
-    }
-  }
-
-  // Dark variant
-  &--dark {
-    background: linear-gradient(135deg, var(--color-gray-800), var(--color-gray-900));
-    color: var(--color-white);
-    box-shadow: var(--shadow-sm);
-
-    &:hover {
-      background: linear-gradient(135deg, var(--color-gray-700), var(--color-gray-800));
-      transform: translateY(-1px);
-    }
-  }
-
-  // Outline variant
-  &--outline {
-    background: transparent;
-    color: var(--color-primary-600);
-    border-color: var(--color-primary-500);
-
-    &:hover {
-      background: var(--color-primary-50);
-      border-color: var(--color-primary-600);
-      color: var(--color-primary-700);
-    }
-  }
-
-  // Ghost variant
-  &--ghost {
-    background: transparent;
-    color: var(--color-gray-600);
-    border-color: transparent;
-
-    &:hover {
-      background: var(--color-gray-100);
-      color: var(--color-gray-800);
-    }
-  }
-
-  // Text variant (legacy compatibility)
-  &--text {
-    background: transparent;
-    color: var(--color-primary-600);
-    border-color: transparent;
-    box-shadow: none;
-
-    &:hover {
-      background: var(--color-primary-50);
-      color: var(--color-primary-700);
-    }
-  }
-
-  // Block modifier
-  &--block {
-    width: 100%;
-    display: flex;
-  }
-
-  // Rounded modifier
-  &--rounded {
-    border-radius: var(--border-radius-full);
-  }
-
-  // Icon only modifier
-  &--icon-only {
-    aspect-ratio: 1;
-    padding: var(--space-3);
-
-    &.orb-btn--xs {
-      padding: var(--space-1);
+  // Fix for regular (non-outlined) buttons
+  &:not(.p-button-outlined) {
+    // Ensure filled buttons have proper background
+    &.p-button-primary {
+      background: var(--primary-500, #0ea5e9) !important;
+      border-color: var(--primary-500, #0ea5e9) !important;
+      color: white !important;
     }
 
-    &.orb-btn--sm {
-      padding: var(--space-2);
+    &.p-button-secondary {
+      background: var(--gray-500, #64748b) !important;
+      border-color: var(--gray-500, #64748b) !important;
+      color: white !important;
     }
 
-    &.orb-btn--lg {
-      padding: var(--space-4);
+    &.p-button-success {
+      background: var(--success-500, #22c55e) !important;
+      border-color: var(--success-500, #22c55e) !important;
+      color: white !important;
     }
 
-    &.orb-btn--xl {
-      padding: var(--space-5);
+    &.p-button-info {
+      background: var(--info-500, #3b82f6) !important;
+      border-color: var(--info-500, #3b82f6) !important;
+      color: white !important;
+    }
+
+    &.p-button-warning {
+      background: var(--warning-500, #f59e0b) !important;
+      border-color: var(--warning-500, #f59e0b) !important;
+      color: white !important;
+    }
+
+    &.p-button-danger {
+      background: var(--error-500, #ef4444) !important;
+      border-color: var(--error-500, #ef4444) !important;
+      color: white !important;
     }
   }
 
   // Disabled state
-  &--disabled,
   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    pointer-events: none;
-    transform: none !important;
-    box-shadow: none !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
 
-    &::before {
-      opacity: 0 !important;
+    &:hover {
+      transform: none !important;
     }
   }
 
   // Loading state
-  &--loading {
-    cursor: wait;
-
-    .fa-spinner {
-      animation: spin 1s linear infinite;
-    }
+  &.p-button-loading {
+    pointer-events: none !important;
   }
 }
 
-// Button groups
-.orb-btn-group {
-  display: inline-flex;
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
+// Fix for table action buttons specifically
+.p-datatable .p-datatable-tbody > tr > td {
+  .p-button {
+    &.p-button-rounded.p-button-text {
+      border: 1px solid transparent !important;
+      background: transparent !important;
+      color: var(--gray-600, #475569) !important;
 
-  .orb-btn {
-    border-radius: 0;
-    border-right-width: 1px;
+      &:hover:not(:disabled) {
+        background: rgba(100, 116, 139, 0.08) !important;
+        border-color: transparent !important;
+        color: var(--gray-700, #374151) !important;
+      }
 
-    &:first-child {
-      border-top-left-radius: var(--border-radius-md);
-      border-bottom-left-radius: var(--border-radius-md);
+      &:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15) !important;
+      }
     }
 
-    &:last-child {
-      border-top-right-radius: var(--border-radius-md);
-      border-bottom-right-radius: var(--border-radius-md);
-      border-right-width: 2px;
+    // Fix for secondary outlined action buttons - remove border
+    &.p-button-outlined.p-button-secondary {
+      border-color: transparent !important;
     }
 
-    &:hover {
-      transform: none;
-      z-index: 1;
-      position: relative;
-    }
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .orb-btn {
-    &--lg {
-      padding: var(--space-3) var(--space-5);
-      font-size: var(--text-base);
-    }
-
-    &--xl {
-      padding: var(--space-4) var(--space-6);
-      font-size: var(--text-lg);
-    }
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+    // Remove margin from table action buttons
+    margin: 0 !important;
   }
 }

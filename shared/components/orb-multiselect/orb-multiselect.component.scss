@@ -15,6 +15,7 @@
     transition: var(--transition-fast, #{vars.$transition-fast}) !important;
     background: var(--background-primary, #{vars.$background-primary}) !important;
     width: 100% !important;
+    height: var(--project-input-height) !important;
     
     &:not(.p-disabled):hover {
       border-color: var(--primary-blue, #{vars.$primary-blue}) !important;
@@ -31,7 +32,8 @@
       display: flex !important;
       align-items: center !important;
       height: 100% !important;
-      line-height: normal !important;
+      font-size: 0.75rem !important;
+      line-height: 1.2 !important;
       
       &.p-placeholder {
         color: var(--text-muted, #{vars.$text-muted}) !important;
@@ -55,7 +57,7 @@
       margin: 2px !important;
       
       .p-multiselect-token-label {
-        font-size: var(--text-sm, #{vars.$text-sm}) !important;
+        font-size: 0.75rem !important;
         font-weight: var(--font-medium, #{vars.$font-medium}) !important;
       }
       

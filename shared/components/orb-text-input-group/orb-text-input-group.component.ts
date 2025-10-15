@@ -2,7 +2,6 @@
 import { Component, forwardRef, Input, OnInit, Optional, Self, Injector } from '@angular/core'; 
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { SelectModule } from 'primeng/select';
@@ -14,7 +13,7 @@ let nextId = 0;
 @Component({
   selector: 'orb-text-input-group',
   standalone: true,
-  imports: [CommonModule, InputTextModule, FloatLabelModule, InputGroupModule, InputGroupAddonModule, SelectModule, InputNumberModule],
+  imports: [CommonModule, InputTextModule, InputGroupModule, InputGroupAddonModule, SelectModule, InputNumberModule],
   templateUrl: './orb-text-input-group.component.html',
   styleUrls: ['./orb-text-input-group.component.scss'],
   providers: [

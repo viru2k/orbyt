@@ -56,18 +56,20 @@ export interface AdaptedDatesSetArg {
   ],
   templateUrl: './orb-modern-calendar.component.html',
   styleUrls: ['./orb-modern-calendar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,   
   encapsulation: ViewEncapsulation.None
-})
+}) 
+
+  
 export class OrbModernCalendarComponent implements OnInit, OnChanges {
   @Input() events: any[] = [];
-  @Input() view: CalendarView = CalendarView.Week;
+  @Input() view: CalendarView = CalendarView.Week; 
   @Input() viewDate: Date = new Date();
-  @Input() locale: string = 'es';
+  @Input() locale: string = 'es';  
   @Input() weekStartsOn: number = 1; // Monday
-  @Input() excludeDays: number[] = []; // Days to exclude (0 = Sunday, 6 = Saturday)
+  @Input() excludeDays: number[] = []; // Days to exclude (0 = Sunday, 6 = Saturday) 
   @Input() slotDuration: number = 30;
-  
+    
   @Output() eventClick = new EventEmitter<AdaptedEventClickArg>();
   @Output() dayClick = new EventEmitter<{ date: Date; events: ModernCalendarEvent[] }>();
   @Output() eventTimesChanged = new EventEmitter<CalendarEventTimesChangedEvent>();
@@ -106,10 +108,12 @@ export class OrbModernCalendarComponent implements OnInit, OnChanges {
   // Event handlers
   handleEventClick({ event }: { event: CalendarEvent }): void {
     // Adapt to match orb-fullcalendar API
+    // Try both meta and extendedProps for compatibility
+    const extendedProps = (event as any).extendedProps || event.meta || {};
     const adaptedEvent: AdaptedEventClickArg = {
       event: {
         id: event.id?.toString() || '',
-        extendedProps: event.meta || {}
+        extendedProps: extendedProps
       }
     };
     this.eventClick.emit(adaptedEvent);
@@ -154,6 +158,7 @@ export class OrbModernCalendarComponent implements OnInit, OnChanges {
   }
 
   handleEventTimesChanged(event: CalendarEventTimesChangedEvent): void {
+    console.log('Event times changed:', event);
     this.eventTimesChanged.emit(event);
     this.eventDrop.emit(event);
   }

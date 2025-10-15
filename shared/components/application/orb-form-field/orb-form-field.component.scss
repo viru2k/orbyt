@@ -1,10 +1,20 @@
 .container{
   flex: auto;
   //padding: 4px 4px;
-padding-top: 32px;
+padding-top: 8px;
+padding-right: 8px;
 }
 
 
 .text-red{
     color: red;
+}
+
+.field-label{
+  font-weight: 500;
+  color: var(--text-color);
+  transition: color 0.3s;
+  margin: 0;
+  line-height: 1.4;
+  font-size: 14px;
 }

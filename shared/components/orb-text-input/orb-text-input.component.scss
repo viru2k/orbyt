@@ -1,4 +1,4 @@
-@import '../../../src/styles/_design-system.scss';
+@use '../../../src/styles/_design-system.scss';
 
 .orb-input {
   display: flex;
@@ -52,13 +52,16 @@
     }
 
     &--md {
+      height: var(--project-input-height);
+
       .orb-input__field {
         padding: var(--space-3) var(--space-4);
-        font-size: var(--text-base);
+        font-size: 14px;
+        line-height: 1.2;
       }
 
       .orb-input__icon {
-        font-size: var(--text-base);
+        font-size: 14px;
       }
     }
 

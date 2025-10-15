@@ -2,7 +2,6 @@ import { Component, forwardRef, Input, OnInit, Injector, LOCALE_ID, inject } fro
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
 import { getCurrencySymbol } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
 
@@ -11,7 +10,7 @@ let nextId = 0;
 @Component({
   selector: 'orb-currency-input',
   standalone: true,
-  imports: [CommonModule, InputTextModule, FloatLabelModule, 
+  imports: [CommonModule, InputTextModule,
     InputNumberModule
   ],
   templateUrl: './orb-currency-input.component.html',

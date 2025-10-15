@@ -2,17 +2,67 @@
   <button (click)="toggleMenu()" class="menu-toggle">
     <i class="pi pi-bars"></i>
   </button>
-@if(isMenuOpen){ 
-<p-panelMenu
-[model]="items"
-[style]="{ width: '100%' }"
-[multiple]="false"
-></p-panelMenu>
-}
+
+  <div class="topbar-right">
     <orb-theme-toggle></orb-theme-toggle>
     <orb-language-selector></orb-language-selector>
-<div class="topbar-user">
-  <img class="avatar" src="assets/logo/orbyt-logo-icon.png" alt="User" />
-  <button (click)="logout()">Salir</button>
-</div>
+    <div class="topbar-user">
+      <img class="avatar" src="assets/logo/orbyt-logo-icon.png" alt="User" />
+      <button (click)="logout()">Salir</button>
+    </div>
+  </div>
 </header>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" [class.active]="isMenuOpen" (click)="toggleMenu()"></div>
+
+<!-- Mobile Menu Sidebar -->
+<aside class="mobile-menu" [class.active]="isMenuOpen">
+  <!-- Header with user info -->
+  <div class="mobile-menu-header">
+    <div class="user-info">
+      <div class="user-avatar">
+        <span class="user-initials">{{ authStore.userInitials$ | async }}</span>
+      </div>
+      <div class="user-details">
+        <p class="user-name">{{ authStore.userFullName$ | async }}</p>
+        <p class="user-role">Profesional</p>
+      </div>
+    </div>
+    <button class="close-btn" (click)="toggleMenu()">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <!-- Menu with custom template -->
+  <nav class="mobile-menu-nav">
+    <p-menu [model]="items" styleClass="mobile-custom-menu">
+      <ng-template pTemplate="item" let-item>
+        <a class="menu-item" (click)="onMenuItemClick($event, item)" [class.has-submenu]="item.items && item.items.length > 0">
+          <i [class]="item.icon" class="menu-icon"></i>
+          <span class="menu-label">{{ item.label }}</span>
+          <i *ngIf="item.items && item.items.length > 0"
+             class="pi pi-chevron-down submenu-icon"
+             [class.expanded]="isItemExpanded(item)"></i>
+        </a>
+        <!-- Submenu -->
+        <ul *ngIf="item.items && item.items.length > 0 && isItemExpanded(item)" class="submenu">
+          <li *ngFor="let subItem of item.items">
+            <a class="submenu-item" (click)="onSubMenuItemClick($event, subItem)">
+              <i [class]="subItem.icon" class="submenu-icon"></i>
+              <span class="submenu-label">{{ subItem.label }}</span>
+            </a>
+          </li>
+        </ul>
+      </ng-template>
+    </p-menu>
+  </nav>
+
+  <!-- Footer with logout -->
+  <div class="mobile-menu-footer">
+    <button class="logout-btn" (click)="logout()">
+      <i class="pi pi-sign-out"></i>
+      <span>Cerrar sesión</span>
+    </button>
+  </div>
+</aside>

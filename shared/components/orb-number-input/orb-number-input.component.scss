@@ -3,18 +3,17 @@
   width: 100%;
 }
 
-.currency-input-wrapper {
+.number-input-wrapper {
   position: relative;
   display: block;
 
   input {
     height: 32px !important;
     padding: 0 0.75rem !important;
-    padding-right: 2.5rem !important;
     width: 100%;
     border: 1px solid var(--gray-300);
     border-radius: 4px;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     transition: all 0.2s;
 
     &:focus {
@@ -28,20 +27,23 @@
       cursor: not-allowed;
     }
 
+    &:read-only {
+      background-color: var(--gray-50);
+    }
+
     &.ng-invalid.ng-dirty {
       border-color: var(--red-500);
     }
-  }
 
-  .currency-symbol {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray-600);
-    font-weight: 500;
-    font-size: 0.875rem;
-    pointer-events: none;
-    z-index: 2;
+    // Remove default number input spinners
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type="number"] {
+      -moz-appearance: textfield;
+    }
   }
 }

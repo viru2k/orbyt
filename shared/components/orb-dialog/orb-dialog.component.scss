@@ -1,0 +1,140 @@
+@use '../../../src/styles/_design-system.scss';
+
+// Dialog base styles
+:host ::ng-deep .p-dialog {
+  font-family: var(--font-family-sans);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+
+  // Header styles
+  .p-dialog-header {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    padding: var(--space-4) var(--space-6);
+
+    .p-dialog-title {
+      font-size: var(--text-lg);
+      font-weight: var(--font-semibold);
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .p-dialog-header-icons {
+      .p-dialog-header-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-500);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+
+        &:hover {
+          background: var(--gray-100);
+          color: var(--gray-700);
+        }
+
+        &:active {
+          background: var(--gray-200);
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--primary-500);
+          outline-offset: 2px;
+        }
+      }
+    }
+  }
+
+  // Content styles
+  .p-dialog-content {
+    background: white;
+    padding: var(--space-6);
+    color: var(--text-secondary);
+    line-height: var(--leading-relaxed);
+  }
+
+  // Footer styles
+  .p-dialog-footer {
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    padding: var(--space-4) var(--space-6);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+}
+
+// Size-specific adjustments
+:host ::ng-deep .p-dialog {
+  &[style*="width: 400px"] {
+    .p-dialog-header,
+    .p-dialog-content,
+    .p-dialog-footer {
+      padding-left: var(--space-4);
+      padding-right: var(--space-4);
+    }
+  }
+
+  &[style*="width: 1200px"] {
+    .p-dialog-content {
+      padding: var(--space-8);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  :host ::ng-deep .p-dialog {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: var(--space-2);
+
+    .p-dialog-header,
+    .p-dialog-content,
+    .p-dialog-footer {
+      padding-left: var(--space-4);
+      padding-right: var(--space-4);
+    }
+
+    .p-dialog-content {
+      padding-top: var(--space-4);
+      padding-bottom: var(--space-4);
+    }
+  }
+}
+
+// Backdrop styles
+:host ::ng-deep .p-dialog-mask {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+}
+
+// Z-index management for stacked modals
+:host ::ng-deep {
+  .p-dialog-mask.p-dialog-mask-enter {
+    z-index: calc(var(--p-dialog-base-z-index, 1000) + var(--p-dialog-index, 0) * 10);
+  }
+
+  .p-dialog {
+    z-index: calc(var(--p-dialog-base-z-index, 1000) + var(--p-dialog-index, 0) * 10 + 1);
+  }
+
+  // Ensure service and client search modals have higher z-index
+  .service-search-modal,
+  .client-search-modal {
+    .p-dialog-mask {
+      z-index: 1100;
+    }
+
+    .p-dialog {
+      z-index: 1101;
+    }
+  }
+}

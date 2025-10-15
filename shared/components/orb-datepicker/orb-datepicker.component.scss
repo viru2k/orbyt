@@ -36,9 +36,11 @@
     // Asegurar que el input tenga el ancho correcto
     .p-inputtext {
       text-align: center;
-      font-size: var(--project-font-size, 14px);
+      font-size: 12px !important;
+      height: var(--project-input-height) !important;
+      line-height: 1.2 !important;
     }
-    
+
     // Para rangos, centrar el contenido
     &.p-datepicker-range {
       .p-inputtext {
@@ -46,6 +48,63 @@
       }
     }
   }
+
+  // Reducir tamaño del calendario - selectores más específicos
+  .p-datepicker-panel {
+    .p-datepicker-header {
+      padding: 0.25rem !important;
+
+      .p-datepicker-title {
+        .p-datepicker-select-month,
+        .p-datepicker-select-year {
+          font-size: 0.875rem !important;
+          padding: 0.25rem 0.5rem !important;
+        }
+      }
+
+      .p-datepicker-prev,
+      .p-datepicker-next {
+        width: 1.75rem !important;
+        height: 1.75rem !important;
+
+        svg {
+          width: 0.875rem !important;
+          height: 0.875rem !important;
+        }
+      }
+    }
+
+    .p-datepicker-calendar-container {
+      table {
+        font-size: 0.75rem !important;
+
+        thead tr th {
+          padding: 0.25rem !important;
+
+          > span {
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+          }
+        }
+
+        tbody tr td {
+          padding: 0.125rem !important;
+
+          > span {
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+            font-size: 0.75rem !important;
+            line-height: 1.75rem !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+        }
+      }
+    }
+  }
+
+
   
   // Asegurar que no se desborde en pantallas pequeñas
   @media (max-width: 768px) {

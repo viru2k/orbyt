@@ -1,0 +1,15 @@
+<div class="number-input-wrapper">
+  <input
+    type="text"
+    inputmode="numeric"
+    pInputText
+    [id]="inputId"
+    [disabled]="_disabled"
+    [readonly]="readOnly"
+    [value]="_displayValue"
+    (input)="onInputChange($event)"
+    (blur)="onInputBlur($event)"
+    [ngClass]="{'ng-invalid ng-dirty': isInvalid}"
+    [placeholder]="placeholder"
+  />
+</div>

@@ -6,8 +6,7 @@
 // Arreglar alineación del ícono con el input - usando !important para sobrescribir estilos globales
 :host ::ng-deep {
   .p-inputgroup {
-    display: flex !important;
-    align-items: center !important;
+    display: flex !important;   
     width: 100% !important;
     height: var(--project-input-height, 32px) !important;
   }

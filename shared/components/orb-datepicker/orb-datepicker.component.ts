@@ -66,9 +66,6 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   _onTouched: () => void = () => {};
   public ngControl: NgControl | null = null;
 
-  // Configuración de idiomas para PrimeNG DatePicker
-  localeConfig: any = {};
-  
   // Ancho dinámico calculado
   get dynamicWidth(): string {
     return this.calculateWidth();
@@ -77,9 +74,7 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
   constructor(
     private injector: Injector,
     @Inject(LOCALE_ID) private locale: string
-  ) {
-    this.setupLocale();
-  }
+  ) {}
 
   ngOnInit(): void {
     try {
@@ -90,39 +85,9 @@ export class OrbDatepickerComponent implements ControlValueAccessor, OnInit {
     } catch (e) {
       console.warn('OrbDatepickerComponent: NgControl could not be found. Form binding might not work.', e);
     }
-    
+
     // Configurar propiedades basadas en el modo
     this.setupModeProperties();
-  }
-
-  private setupLocale(): void {
-    if (this.locale.startsWith('es')) {
-      this.localeConfig = {
-        firstDayOfWeek: 1,
-        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
-        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-                         'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        today: 'Hoy',
-        clear: 'Limpiar'
-      };
-    } else {
-      this.localeConfig = {
-        firstDayOfWeek: 0,
-        dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        dayNamesMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-        monthNames: ['January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'],
-        monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        today: 'Today',
-        clear: 'Clear'
-      };
-    }
   }
 
   private setupModeProperties(): void {

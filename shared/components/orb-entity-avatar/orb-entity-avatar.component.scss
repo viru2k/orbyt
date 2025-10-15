@@ -289,16 +289,37 @@
   &.clickable {
     p-avatar {
       cursor: pointer;
-      
+
       &:focus {
         outline: 2px solid #3b82f6;
         outline-offset: 2px;
       }
     }
   }
-  
+
   .upload-button:focus {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
+  }
+}
+
+// Material Symbols fallback icon styles
+::ng-deep .p-avatar {
+  .avatar-fallback-icon {
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: currentColor;
+  }
+
+  &.p-avatar-lg .avatar-fallback-icon {
+    font-size: 2em;
+  }
+
+  &.p-avatar-xl .avatar-fallback-icon {
+    font-size: 2.5em;
   }
 }

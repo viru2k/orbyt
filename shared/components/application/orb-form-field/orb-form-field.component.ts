@@ -3,23 +3,22 @@ import { CommonModule } from '@angular/common';
 import { Component, ContentChild, Input, inject } from '@angular/core';
 import { AbstractControl, FormControlName, ReactiveFormsModule } from '@angular/forms';
 import { UtilsService } from '@orb-services';
-import { FloatLabelModule } from 'primeng/floatlabel';
 
 @Component({
   selector: 'orb-form-field',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FloatLabelModule],
+  imports: [ReactiveFormsModule, CommonModule],
   styleUrls: ['./orb-form-field.component.scss'],
   template: `
     <div class="container">
-      <p-floatLabel variant="on">
-        <ng-content></ng-content>
+  
+       
 
-        <label [for]="inputId">
+        <label class="field-label" [for]="inputId">
           {{ label }}
           <span *ngIf="showRequiredAsterisk()" class="text-red">*</span>
         </label>
-      </p-floatLabel>
+         <ng-content></ng-content>
       @if (description && errorMessages().length === 0) {
       <small class="field-description text-600 block mt-1">
         {{ description }}

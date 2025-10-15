@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrbButtonComponent } from '../../orb-button/orb-button.component'; // Asumiendo que orb-button está en esta ruta
 import { TooltipModule } from 'primeng/tooltip'; // Si usas tooltips
-import { FooterAlignment, FormButtonAction } from '@orb-models';
+import { FooterAlignment, FormButtonAction, ButtonSeverity, ButtonStyleType } from '@orb-models';
 
 // Importa las interfaces definidas arriba si están en un archivo separado
 // import { FormButtonAction, FooterAlignment, ButtonSeverity, ButtonStyleType, ButtonType } from '@orb-types';
@@ -52,5 +52,33 @@ export class OrbFormFooterComponent {
 
   onButtonClick(action: string): void {
     this.actionClicked.emit(action);
+  }
+
+  /**
+   * Determina la severity por defecto basado en la acción
+   */
+  getButtonSeverity(button: FormButtonAction): ButtonSeverity {
+    if (button.severity) return button.severity;
+
+    // Defaults según la especificación
+    switch (button.action.toLowerCase()) {
+      case 'cancel':
+      case 'cancelar':
+        return 'secondary';
+      case 'accept':
+      case 'aceptar':
+      case 'save':
+      case 'guardar':
+        return 'info';
+      default:
+        return 'secondary'; // actions por defecto
+    }
+  }
+
+  /**
+   * Determina el variant del botón (por defecto outlined)
+   */
+  getButtonVariant(button: FormButtonAction): ButtonStyleType {
+    return button.styleType || 'outlined';
   }
 }

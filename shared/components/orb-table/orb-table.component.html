@@ -1,4 +1,5 @@
 <p-table #dt
+stripedRows 
   [value]="value"
   [columns]="columns"
   [loading]="loading"
@@ -10,7 +11,7 @@
   [showCurrentPageReport]="true"
   [currentPageReportTemplate]="currentPageReportTemplate"
   [rowHover]="true"
-  styleClass="p-datatable-sm orb-table"
+  styleClass="p-datatable-sm p-datatable-striped orb-table"
   [dataKey]="dataKey"
   [selectionMode]="selectionMode"
   [(selection)]="selection"
@@ -27,15 +28,33 @@
         @if (caption) {
           <h5 class="m-0 mr-3">{{ caption }}</h5>
         }
-         @if (tableFeatures.showGlobalSearch) {
-            <div class="ml-auto table-search-container">
-              <orb-text-input-group 
-                [icon]="'fa fa-search'"
-                type="text"
-                [(ngModel)]="globalFilterValue"
-                [placeholder]="tableFeatures.globalSearchPlaceholder || 'Buscar'"
-                (input)="onSearchInput()">
-              </orb-text-input-group>
+         @if (tableFeatures.showGlobalSearch || tableHeaderActions.length > 0) {
+            <div class="ml-auto flex align-items-center gap-2">
+              @if (tableFeatures.showGlobalSearch) {
+                <orb-text-input-group
+                class="input-group"
+                  [icon]="'fa fa-search'"
+                  type="text"
+                  [(ngModel)]="globalFilterValue"
+                  [placeholder]="tableFeatures.globalSearchPlaceholder || 'Buscar'"
+                  (input)="onSearchInput()">
+                </orb-text-input-group>
+              }
+              @if (tableHeaderActions.length > 0) {
+                <div class="flex align-items-center gap-2">
+                  @for (action of tableHeaderActions; track action.label) {
+                    <orb-button
+                      [label]="action.label"
+                      [icon]="action.icon || ''"
+                      [severity]="action.severity || 'info'"
+                      [size]="action.size || 'sm'"
+                      [styleType]="action.styleType || 'outlined'"
+                      (click)="executeHeaderAction(action)"
+                      [disabled]="getActionDisabled(action)">
+                    </orb-button>
+                  }
+                </div>
+              }
             </div>
         }
       </div>

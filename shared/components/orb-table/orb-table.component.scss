@@ -1,4 +1,4 @@
-@import '../../../src/styles/_design-system.scss';
+@use '../../../src/styles/_design-system.scss';
 
 :host {
   display: block;
@@ -15,22 +15,21 @@
 :host ::ng-deep {
   // Main table container
   .p-datatable {
-    background: var(--color-white);
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--border-radius-lg);
+    background: white;
+    border: none;
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
 
     // Table wrapper
     .p-datatable-wrapper {
-      border-radius: var(--border-radius-lg);
+      border-radius: var(--radius-lg);
       overflow: hidden;
     }
 
     // Caption/Header area
     .p-datatable-header {
-      background: var(--color-white);
-      border-bottom: 1px solid var(--color-gray-200);
+      background: white;    
       padding: var(--space-6);
 
       .flex {
@@ -41,8 +40,8 @@
 
         h5 {
           font-size: var(--text-lg);
-          font-weight: var(--font-weight-semibold);
-          color: var(--color-gray-900);
+          font-weight: var(--font-semibold);
+          color: var(--gray-900);
           margin: 0;
         }
       }
@@ -55,12 +54,12 @@
 
       // Header styling
       .p-datatable-thead > tr > th {
-        background: var(--color-gray-50);
-        border-bottom: 1px solid var(--color-gray-200);
+        background: var(--gray-50);
+        border: none;
         padding: var(--space-3) var(--space-4);
         font-size: var(--text-sm);
-        font-weight: var(--font-weight-semibold);
-        color: var(--color-gray-700);
+        font-weight: var(--font-semibold);
+        color: var(--gray-700);
         text-align: left;
 
         &:first-child {
@@ -84,7 +83,7 @@
 
       // Body rows
       .p-datatable-tbody > tr {
-        border-bottom: 1px solid var(--color-gray-100);
+        border: none;
         transition: var(--transition-base);
 
         &:hover {
@@ -100,7 +99,7 @@
           padding: var(--space-4);
           font-size: var(--text-sm);
           color: var(--color-gray-900);
-          border-bottom: 1px solid var(--color-gray-100);
+          border: none;
 
           &.text-center {
             text-align: center;
@@ -112,10 +111,21 @@
             text-align: center;
           }
         }
+      }
 
-        &:last-child > td {
-          border-bottom: none;
+      // Striped rows
+      &.p-datatable-striped .p-datatable-tbody > tr:nth-child(odd) {
+        background: var(--color-gray-25);
+
+        &:hover {
+          background: var(--color-gray-50);
         }
+      }
+
+      // Remove all vertical borders
+      th, td {
+        border-left: none !important;
+        border-right: none !important;
       }
     }
 
@@ -339,7 +349,8 @@
 
       .p-datatable-header {
         background: var(--color-gray-800);
-        border-bottom-color: var(--color-gray-700);
+        border-bottom-color: #e2e8f0;
+        border-top-color: transparent;
 
         h5 {
           color: var(--color-gray-100);
@@ -378,5 +389,9 @@
       }
     }
   }
+}
+
+input-group{
+  padding: 32px;
 }
   

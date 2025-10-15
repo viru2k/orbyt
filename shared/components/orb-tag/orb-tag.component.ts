@@ -24,11 +24,15 @@ export class OrbTagComponent {
   @Input() backgroundColor?: string;
   @Input() textColor?: string;
   @Input() size: 'small' | 'normal' | 'large' = 'normal';
+  @Input() outlined: boolean = false;
 
   getTagClasses(): string {
     let classes = `orb-tag--${this.severity}`;
     if (this.size !== 'normal') {
       classes += ` orb-tag--${this.size}`;
+    }
+    if (this.outlined) {
+      classes += ` orb-tag--outlined`;
     }
     return classes;
   }

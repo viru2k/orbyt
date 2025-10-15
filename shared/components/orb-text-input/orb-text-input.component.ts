@@ -1,5 +1,5 @@
 
-import { Component, forwardRef, Input, OnInit, Injector, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import { Component, forwardRef, Input, OnInit, Injector, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -60,7 +60,8 @@ export class OrbTextInputComponent implements ControlValueAccessor, OnInit {
   public ngControl: NgControl | null = null;
 
   constructor(
-    private injector: Injector // Inyecta el Injector de Angular
+    private injector: Injector, // Inyecta el Injector de Angular
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +82,7 @@ export class OrbTextInputComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: any): void {
     this._value = value ?? '';
+    this.cdr.markForCheck(); // Forzar detección de cambios
   }
 
   registerOnChange(fn: any): void {

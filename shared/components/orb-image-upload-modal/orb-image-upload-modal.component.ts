@@ -7,6 +7,7 @@ import { OrbButtonComponent } from '../orb-button/orb-button.component';
 import { OrbSimpleUploadComponent } from '../orb-simple-upload/orb-simple-upload.component';
 
 import { FileUploadResponseDto } from '../../../src/app/api/models/file-upload-response-dto';
+import { AvatarDto } from '../../../src/app/api/models/avatar-dto';
 import { EntityType } from '../../../src/app/shared/models/image-upload.interfaces';
 
 @Component({
@@ -63,7 +64,7 @@ export class OrbImageUploadModalComponent implements OnInit, OnDestroy {
   @Input() visible = false;
   @Input() entityType!: EntityType;
   @Input() entityId?: number;
-  @Input() currentImage?: FileUploadResponseDto | null;
+  @Input() currentImage?: FileUploadResponseDto | AvatarDto | null;
   @Input() modalTitle = 'Subir Imagen';
 
   @Output() visibleChange = new EventEmitter<boolean>();

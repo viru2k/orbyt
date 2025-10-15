@@ -1,14 +1,14 @@
-<button
+<p-button
   [type]="type"
   [disabled]="disabled || loading"
-  [class]="buttonClasses"
-  (click)="handleClick($event)"
+  [label]="iconOnly ? '' : label"
+  [icon]="getIconClass()"
+  [loading]="loading"
+  [severity]="severity"
+  [outlined]="outlined"
+  [size]="getPrimeSize()"
+  (onClick)="handleClick($event)"
+  [variant]="variant"
 >
-  <i *ngIf="loading" class="fa fa-spinner fa-spin mr-2"></i>
-  <i *ngIf="icon && !loading"
-     [class]="'fa fa-' + icon + (iconPosition === 'left' ? ' mr-2' : ' ml-2')"
-     [ngClass]="{'order-last': iconPosition === 'right'}"></i>
-  <span *ngIf="!iconOnly && (label || !icon)" [ngClass]="{'sr-only': loading}">
-    <ng-content>{{ label }}</ng-content>
-  </span>
-</button>
+  <ng-content></ng-content>
+</p-button>

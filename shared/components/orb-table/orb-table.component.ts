@@ -12,7 +12,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { PrimeTemplate, MenuItem, SortEvent, SortMeta } from 'primeng/api';
-// import { OrbButtonComponent } from '../orb-button/orb-button.component'; // No longer needed
+import { OrbButtonComponent } from '../orb-button/orb-button.component';
 import { OrbTextInputGroupComponent } from '../orb-text-input-group/orb-text-input-group.component';
 import { OrbActionItem, OrbTableFeatures, TableColumn } from '@orb-models';
 
@@ -30,7 +30,7 @@ import { OrbActionItem, OrbTableFeatures, TableColumn } from '@orb-models';
     TooltipModule,
     InputIconModule,
     IconFieldModule,
-    // OrbButtonComponent, // No longer needed
+    OrbButtonComponent,
     OrbTextInputGroupComponent
   ],
   templateUrl: './orb-table.component.html',
@@ -163,6 +163,15 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
     event.stopPropagation();
   }
 
+  executeHeaderAction(action: OrbActionItem) {
+    const isVisible = typeof action.visible === 'function' ? action.visible() : action.visible;
+    const isDisabled = typeof action.disabled === 'function' ? action.disabled() : action.disabled;
+
+    if (isVisible !== false && !isDisabled && action.action) {
+      action.action();
+    }
+  }
+
   isActionsColumn(col: TableColumn): boolean {
     return col.field === 'actions';
   }
@@ -178,5 +187,12 @@ export class OrbTableComponent<T extends Record<string, any>> implements OnInit,
     if (this.dataTable) {
       this.dataTable.filterGlobal(this.globalFilterValue, 'contains');
     }
+  }
+
+  getActionDisabled(action: OrbActionItem): boolean {
+    if (typeof action.disabled === 'function') {
+      return action.disabled();
+    }
+    return action.disabled || false;
   }
 }

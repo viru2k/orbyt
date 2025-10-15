@@ -11,7 +11,6 @@
   <p-avatar
     *ngIf="!loading && !(isLoading && autoLoad)"
     [image]="hasImage ? (avatarUrl || undefined) : undefined"
-    [label]="!hasImage ? initials : undefined"
     [size]="size"
     [shape]="shape"
     [style]="avatarStyles"
@@ -20,6 +19,10 @@
     [class]="contextClass"
     (click)="onAvatarClick()"
     (imageError)="onImageError()">
+    <!-- Material Symbol icon fallback when no image -->
+    <span *ngIf="!hasImage" class="material-symbols-outlined avatar-fallback-icon">
+      {{ getFallbackIcon() }}
+    </span>
   </p-avatar>
 
   <!-- Botón de editar (superpuesto) -->
