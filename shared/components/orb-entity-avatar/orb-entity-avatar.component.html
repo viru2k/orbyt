@@ -31,31 +31,32 @@
     type="button"
     class="edit-button"
     pButton
-    icon="pi pi-pencil"
+    icon="fas fa-pen"
     [size]="size === 'xlarge' ? 'small' : 'small'"
     severity="secondary"
     [rounded]="true"
     pTooltip="Editar imagen"
     tooltipPosition="top"
+    aria-label="Editar imagen"
     (click)="onEditClick($event)">
   </button>
 
   <!-- Indicator de imagen nueva o estado -->
-  <div 
-    *ngIf="avatar && !hasImage" 
+  <div
+    *ngIf="avatar && !hasImage"
     class="status-indicator error"
     pTooltip="Error al cargar imagen"
     tooltipPosition="top">
-    <i class="pi pi-exclamation-triangle"></i>
+    <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
   </div>
 
   <!-- Loading indicator pequeño para carga automática -->
-  <div 
-    *ngIf="isLoading && autoLoad && !loading" 
+  <div
+    *ngIf="isLoading && autoLoad && !loading"
     class="loading-indicator"
     pTooltip="Cargando imagen..."
     tooltipPosition="top">
-    <i class="pi pi-spinner pi-spin"></i>
+    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
   </div>
 
 </div>

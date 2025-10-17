@@ -99,9 +99,10 @@ stripedRows
             @switch (true) {
               @case (isActionsColumn(col)) {
                 @if (rowActions.length > 0) {
-                  <p-button type="button" icon="pi pi-ellipsis-v" styleClass="p-button-rounded p-button-text p-button-sm"
+                  <p-button type="button" icon="fas fa-ellipsis-vertical" styleClass="p-button-rounded p-button-text p-button-sm"
                             (click)="toggleRowMenu(rowActionMenuRef, $event, rowData)"
-                            pTooltip="Acciones" tooltipPosition="left"></p-button>
+                            pTooltip="Acciones" tooltipPosition="left"
+                            aria-label="Menú de acciones"></p-button>
                 }
               }
               @default {

@@ -8,7 +8,7 @@
   <!-- Input Container -->
   <div [class]="inputContainerClasses">
     <!-- Left Icon -->
-    <i *ngIf="leftIcon" [class]="'fa fa-' + leftIcon + ' orb-input__icon orb-input__icon--left'"></i>
+    <i *ngIf="leftIcon" [class]="'fas fa-' + leftIcon + ' orb-input__icon orb-input__icon--left'" aria-hidden="true"></i>
 
     <!-- Input Field -->
     <input
@@ -26,7 +26,7 @@
     />
 
     <!-- Right Icon -->
-    <i *ngIf="rightIcon" [class]="'fa fa-' + rightIcon + ' orb-input__icon orb-input__icon--right'"></i>
+    <i *ngIf="rightIcon" [class]="'fas fa-' + rightIcon + ' orb-input__icon orb-input__icon--right'" aria-hidden="true"></i>
 
     <!-- Clear Button -->
     <button
@@ -35,8 +35,9 @@
       class="orb-input__clear"
       (click)="clearValue()"
       tabindex="-1"
+      aria-label="Limpiar campo"
     >
-      <i class="fa fa-times"></i>
+      <i class="fas fa-xmark" aria-hidden="true"></i>
     </button>
   </div>
 

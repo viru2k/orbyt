@@ -1,6 +1,6 @@
 <orb-card styleClass="image-upload-card">
   <div orbHeader *ngIf="!currentImage">
-    <h4><i class="pi pi-cloud-upload"></i> Subir Imagen</h4>
+    <h4><i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Subir Imagen</h4>
   </div>
 
   <div orbBody>
@@ -16,13 +16,13 @@
         <!-- Overlay de carga -->
         <div class="upload-overlay" *ngIf="isUploading">
           <div class="upload-spinner">
-            <i class="pi pi-spinner pi-spin"></i>
+            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
           </div>
         </div>
 
         <!-- Badge para imagen nueva -->
         <div class="new-image-badge" *ngIf="hasNewImage && !isUploading">
-          <i class="pi pi-exclamation-triangle"></i>
+          <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
           Pendiente de subir
         </div>
       </div>
@@ -30,7 +30,7 @@
       <!-- Información de la imagen -->
       <div class="image-info" *ngIf="currentImage">
         <small class="text-muted">
-          <i class="pi pi-file"></i>
+          <i class="fas fa-file" aria-hidden="true"></i>
           {{ getDisplayFileName(currentImage.originalName) }}
           ({{ imageUploadService.formatFileSize(currentImage.size) }})
         </small>
@@ -39,7 +39,7 @@
       <!-- Información del archivo seleccionado -->
       <div class="file-info" *ngIf="selectedFile && !currentImage">
         <small class="text-muted">
-          <i class="pi pi-file"></i>
+          <i class="fas fa-file" aria-hidden="true"></i>
           {{ getDisplayFileName(selectedFile.name) }}
           ({{ imageUploadService.formatFileSize(selectedFile.size) }})
         </small>
@@ -60,7 +60,7 @@
       
       <!-- Icono y texto principal -->
       <div class="drop-zone-content">
-        <i class="pi pi-cloud-upload drop-icon"></i>
+        <i class="fas fa-cloud-arrow-up drop-icon" aria-hidden="true"></i>
         
         <div class="drop-text">
           <p class="primary-text">
@@ -96,7 +96,7 @@
         [showValue]="true">
       </p-progressBar>
       <small class="upload-text">
-        <i class="pi pi-spinner pi-spin"></i>
+        <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
         Subiendo imagen...
       </small>
     </div>
@@ -119,16 +119,16 @@
         <ng-container *ngIf="hasNewImage">
           <orb-button
             label="Subir"
-            icon="pi pi-check"
+            icon="fas fa-check"
             severity="success"
             [disabled]="!canUpload"
             [loading]="isUploading"
             (onClick)="uploadImage()">
           </orb-button>
-          
+
           <orb-button
             label="Cancelar"
-            icon="pi pi-times"
+            icon="fas fa-xmark"
             severity="secondary"
             styleType="text"
             [disabled]="isUploading"
@@ -140,7 +140,7 @@
         <orb-button
           *ngIf="canDelete && !hasNewImage"
           label="Eliminar"
-          icon="pi pi-trash"
+          icon="fas fa-trash"
           severity="danger"
           styleType="text"
           [disabled]="isUploading"
@@ -154,7 +154,7 @@
     <!-- Estado sin imagen -->
     <div class="no-image-state" *ngIf="!hasImage && !disabled">
       <div class="empty-state">
-        <i class="pi pi-image empty-icon"></i>
+        <i class="fas fa-image empty-icon" aria-hidden="true"></i>
         <p class="empty-text">No hay imagen</p>
         <small class="empty-subtext">
           Sube una imagen para personalizar este {{ entityType }}
@@ -165,7 +165,7 @@
     <!-- Estado deshabilitado -->
     <div class="disabled-state" *ngIf="disabled">
       <div class="empty-state">
-        <i class="pi pi-lock empty-icon"></i>
+        <i class="fas fa-lock empty-icon" aria-hidden="true"></i>
         <p class="empty-text">Carga de imágenes deshabilitada</p>
       </div>
     </div>

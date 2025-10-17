@@ -1,13 +1,12 @@
 <!-- Este es el botón que siempre está visible en la tabla -->
 <orb-button
-  icon="pi pi-ellipsis-v"
-
+  icon="fas fa-ellipsis-vertical"
   pTooltip="Más acciones"
   tooltipPosition="top"
   styleClass="p-button-text p-button-secondary p-button-sm">
 </orb-button>
-<p-button icon="pi pi-ellipsis-v" [rounded]="true" severity="secondary" [outlined]="true"     (click)="popover.toggle($event)"
-  tooltipPosition="top" />
+<p-button icon="fas fa-ellipsis-vertical" [rounded]="true" severity="secondary" [outlined]="true" (click)="popover.toggle($event)"
+  tooltipPosition="top" aria-label="Más acciones" />
 <!-- El popover que se muestra al hacer clic -->
 <p-popover #popover >
   <div class="flex flex-column gap-2 p-2">

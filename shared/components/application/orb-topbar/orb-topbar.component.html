@@ -1,6 +1,6 @@
 <header class="orb-topbar">
-  <button (click)="toggleMenu()" class="menu-toggle">
-    <i class="pi pi-bars"></i>
+  <button (click)="toggleMenu()" class="menu-toggle" aria-label="Abrir menú">
+    <i class="fas fa-bars" aria-hidden="true"></i>
   </button>
 
   <div class="topbar-right">
@@ -29,8 +29,8 @@
         <p class="user-role">Profesional</p>
       </div>
     </div>
-    <button class="close-btn" (click)="toggleMenu()">
-      <i class="pi pi-times"></i>
+    <button class="close-btn" (click)="toggleMenu()" aria-label="Cerrar menú">
+      <i class="fas fa-xmark" aria-hidden="true"></i>
     </button>
   </div>
 
@@ -42,8 +42,9 @@
           <i [class]="item.icon" class="menu-icon"></i>
           <span class="menu-label">{{ item.label }}</span>
           <i *ngIf="item.items && item.items.length > 0"
-             class="pi pi-chevron-down submenu-icon"
-             [class.expanded]="isItemExpanded(item)"></i>
+             class="fas fa-chevron-down submenu-icon"
+             [class.expanded]="isItemExpanded(item)"
+             aria-hidden="true"></i>
         </a>
         <!-- Submenu -->
         <ul *ngIf="item.items && item.items.length > 0 && isItemExpanded(item)" class="submenu">
@@ -60,8 +61,8 @@
 
   <!-- Footer with logout -->
   <div class="mobile-menu-footer">
-    <button class="logout-btn" (click)="logout()">
-      <i class="pi pi-sign-out"></i>
+    <button class="logout-btn" (click)="logout()" aria-label="Cerrar sesión">
+      <i class="fas fa-right-from-bracket" aria-hidden="true"></i>
       <span>Cerrar sesión</span>
     </button>
   </div>

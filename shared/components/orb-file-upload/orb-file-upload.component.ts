@@ -63,7 +63,7 @@ export interface FileUploadConfig {
         
         <ng-template pTemplate="empty" #emptyTemplate>
           <div class="empty-upload-area">
-            <i class="pi pi-cloud-upload" style="font-size: 3rem; color: #ccc;"></i>
+            <i class="fas fa-cloud-arrow-up" style="font-size: 3rem; color: #ccc;" aria-hidden="true"></i>
             <p>Arrastra y suelta archivos aquí para subirlos</p>
           </div>
         </ng-template>

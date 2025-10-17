@@ -40,12 +40,12 @@ import { EntityType } from '../../../src/app/shared/models/image-upload.interfac
       <!-- Upload area -->
       <div class="upload-area" *ngIf="!selectedFile && !currentFile">
         <div class="upload-content">
-          <i class="pi pi-cloud-upload upload-icon"></i>
+          <i class="fas fa-cloud-arrow-up upload-icon" aria-hidden="true"></i>
           <p class="upload-text">{{ uploadText }}</p>
           <p class="upload-hint">o arrastra y suelta aquí</p>
-          <p-button 
-            label="Seleccionar archivo" 
-            icon="pi pi-folder-open"
+          <p-button
+            label="Seleccionar archivo"
+            icon="fas fa-folder-open"
             [disabled]="isUploading"
             (onClick)="openFileSelector()">
           </p-button>
@@ -55,11 +55,11 @@ import { EntityType } from '../../../src/app/shared/models/image-upload.interfac
       <!-- File preview -->
       <div class="file-preview" *ngIf="selectedFile || currentFile">
         <div class="preview-content">
-          <img *ngIf="previewUrl && isImage" 
-               [src]="previewUrl" 
+          <img *ngIf="previewUrl && isImage"
+               [src]="previewUrl"
                [alt]="fileName"
                class="preview-image">
-          <i *ngIf="!isImage" class="pi pi-file preview-file-icon"></i>
+          <i *ngIf="!isImage" class="fas fa-file preview-file-icon" aria-hidden="true"></i>
           
           <div class="file-info">
             <p class="file-name">{{ fileName }}</p>
@@ -67,32 +67,32 @@ import { EntityType } from '../../../src/app/shared/models/image-upload.interfac
           </div>
           
           <div class="file-actions">
-            <p-button *ngIf="selectedFile && !isUploading" 
-                      label="Subir" 
-                      icon="pi pi-upload" 
+            <p-button *ngIf="selectedFile && !isUploading"
+                      label="Subir"
+                      icon="fas fa-upload"
                       severity="success"
                       (onClick)="uploadFile()">
             </p-button>
-            
-            <p-button *ngIf="selectedFile" 
-                      label="Cancelar" 
-                      icon="pi pi-times" 
+
+            <p-button *ngIf="selectedFile"
+                      label="Cancelar"
+                      icon="fas fa-xmark"
                       severity="secondary"
                       [disabled]="isUploading"
                       (onClick)="cancelUpload()">
             </p-button>
-            
-            <p-button *ngIf="currentFile" 
-                      label="Cambiar" 
-                      icon="pi pi-pencil" 
+
+            <p-button *ngIf="currentFile"
+                      label="Cambiar"
+                      icon="fas fa-pen"
                       severity="info"
                       [disabled]="isUploading"
                       (onClick)="openFileSelector()">
             </p-button>
-            
-            <p-button *ngIf="currentFile" 
-                      label="Eliminar" 
-                      icon="pi pi-trash" 
+
+            <p-button *ngIf="currentFile"
+                      label="Eliminar"
+                      icon="fas fa-trash"
                       severity="danger"
                       [disabled]="isUploading"
                       (onClick)="deleteFile()">

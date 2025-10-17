@@ -12,8 +12,8 @@ import { MenuItem } from 'primeng/api';
 })
 export class OrbBreadcrumbComponent {
   @Input() items: MenuItem[] = [];
-  @Input() home: MenuItem | undefined = { 
-    icon: 'pi pi-home', 
-    routerLink: '/home' 
+  @Input() home: MenuItem | undefined = {
+    icon: 'fas fa-home',
+    routerLink: '/home'
   };
 }

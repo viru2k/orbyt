@@ -10,9 +10,9 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, InputSwitchModule, FormsModule],
   template: `
     <div class="theme-toggle-container flex align-items-center gap-2">
-      <i class="pi pi-sun"></i>
-      <p-inputSwitch [(ngModel)]="isDarkMode" (onChange)="onThemeChange()"></p-inputSwitch>
-      <i class="pi pi-moon"></i>
+      <i class="fas fa-sun" aria-hidden="true"></i>
+      <p-inputSwitch [(ngModel)]="isDarkMode" (onChange)="onThemeChange()" aria-label="Cambiar tema"></p-inputSwitch>
+      <i class="fas fa-moon" aria-hidden="true"></i>
     </div>
   `,
   styles: [`
