@@ -52,17 +52,37 @@ export class OrbButtonComponent {
     }
   }
 
+  /**
+   * Get icon class for Font Awesome icons
+   * @deprecated PrimeIcons support is deprecated. Use Font Awesome icons only.
+   * @example
+   * // Correct usage with Font Awesome:
+   * icon="fa-plus"        // Returns: "fa fa-plus"
+   * icon="fas fa-plus"    // Returns: "fas fa-plus"
+   * icon="plus"           // Returns: "fa fa-plus"
+   */
   getIconClass(): string {
     if (!this.icon || this.icon.trim() === '') return '';
-    // Convert font awesome icons to PrimeNG format
-    if (this.icon.startsWith('fa-')) {
-      return `fa ${this.icon}`;
+
+    // Support Font Awesome with explicit prefix (fas, far, fal, fab)
+    if (this.icon.startsWith('fas ') || this.icon.startsWith('far ') ||
+        this.icon.startsWith('fal ') || this.icon.startsWith('fab ')) {
+      return this.icon;
     }
+
+    // Support Font Awesome with fa- prefix
+    if (this.icon.startsWith('fa-')) {
+      return `fas ${this.icon}`;
+    }
+
+    // DEPRECATED: PrimeIcons support (will be removed in future versions)
     if (this.icon.startsWith('pi-')) {
+      console.warn(`[orb-button] PrimeIcons (${this.icon}) are deprecated. Please use Font Awesome icons instead.`);
       return `pi ${this.icon}`;
     }
-    // Default to font awesome
-    return `fa fa-${this.icon}`;
+
+    // Default to Font Awesome solid
+    return `fas fa-${this.icon}`;
   }
 
   getCustomClasses(): string {
