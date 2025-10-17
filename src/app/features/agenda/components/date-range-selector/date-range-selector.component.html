@@ -1,6 +1,6 @@
 <orb-card>
   <div orbHeader>
-    <h4><i class="pi pi-calendar-plus"></i> {{ title }}</h4>
+    <h4><i class="fas fa-calendar-plus" aria-hidden="true"></i> {{ title }}</h4>
   </div>
   <div orbBody>
     <form [formGroup]="form" class="date-selector-form">
@@ -66,7 +66,7 @@
       <!-- Lista de Fechas Seleccionadas -->
       <div class="selected-dates" *ngIf="hasSelectedDates()">
         <h5>
-          <i class="pi pi-check-circle"></i>
+          <i class="fas fa-circle-check" aria-hidden="true"></i>
           Fechas Seleccionadas ({{ getSelectedDatesCount() }})
         </h5>
         <div class="dates-list">
@@ -91,7 +91,7 @@
       <div class="form-actions" *ngIf="hasSelectedDates()">
         <orb-button
           label="Limpiar Selección"
-          icon="pi pi-times"
+          icon="fas fa-xmark"
           severity="secondary"
           styleType="text"
           (onClick)="clearAllDates()">

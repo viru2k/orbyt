@@ -17,7 +17,7 @@
         <orb-button
           label="Nuevo Feriado"
           severity="success"
-          icon="pi pi-plus"
+          icon="fas fa-plus"
           size="small"
           (click)="onShowAddForm()"
         />
@@ -33,11 +33,12 @@
             <span class="holiday-reason">{{ holiday.description || 'Sin descripción' }}</span>
           </div>
           <orb-button
-            icon="pi pi-trash"
+            icon="fas fa-trash"
             severity="danger"
             size="small"
             [disabled]="true"
             pTooltip="Funcionalidad en desarrollo"
+            aria-label="Eliminar feriado"
             (click)="onDeleteHoliday(holiday)"
           />
         </div>
@@ -110,7 +111,7 @@
       <orb-button
         label="Agregar Feriado"
         severity="success"
-        icon="pi pi-plus"
+        icon="fas fa-plus"
         size="small"
         (click)="onAddHoliday()"
         [loading]="!!(agendaStore.holidaysLoading$ | async)"

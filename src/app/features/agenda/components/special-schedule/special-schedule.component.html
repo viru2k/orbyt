@@ -2,7 +2,7 @@
   <!-- Sección de Creación de Horarios Especiales -->
   <orb-card>
     <div orbHeader>
-      <h4><i class="pi pi-clock"></i> Configurar Horario Especial</h4>
+      <h4><i class="fas fa-clock" aria-hidden="true"></i> Configurar Horario Especial</h4>
     </div>
     <div orbBody>
       <form [formGroup]="form" class="schedule-form">
@@ -80,7 +80,7 @@
               !validateTimeRange() && form.get('startTime')?.value && form.get('endTime')?.value
             "
           >
-            <i class="pi pi-exclamation-triangle"></i>
+            <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
             La hora de fin debe ser mayor que la hora de inicio
           </div>
         </div>
@@ -96,7 +96,7 @@
         <div class="form-actions">
           <orb-button
             label="Crear Configuración"
-            icon="pi pi-plus"
+            icon="fas fa-plus"
             severity="info"
             variant="outlined"
             [disabled]="!form.valid || !validateTimeRange() || loading"
@@ -107,7 +107,7 @@
 
           <orb-button
             label="Limpiar"
-            icon="pi pi-times"
+            icon="fas fa-xmark"
             severity="secondary"
             styleType="text"
             [disabled]="loading"
@@ -123,11 +123,11 @@
   <orb-card>
     <div orbHeader>
       <div class="header-with-actions">
-        <h4><i class="pi pi-list"></i> Configuraciones Especiales</h4>
+        <h4><i class="fas fa-list" aria-hidden="true"></i> Configuraciones Especiales</h4>
         <div class="header-actions">
           <orb-button
             label="Eliminar Seleccionadas"
-            icon="pi pi-trash"
+            icon="fas fa-trash"
             severity="danger"
             styleType="text"
             [disabled]="!hasSelectedOverrides() || loading"
@@ -138,7 +138,7 @@
 
           <orb-button
             label="Actualizar"
-            icon="pi pi-refresh"
+            icon="fas fa-arrows-rotate"
             severity="secondary"
             styleType="text"
             [disabled]="loading"
@@ -205,7 +205,7 @@
                 <span class="schedule-time">{{ formatScheduleDisplay(rowData) }}</span>
                 <div *ngIf="rowData.slotDuration && !rowData.blocked" class="slot-duration">
                   <small>
-                    <i class="pi pi-clock"></i>
+                    <i class="fas fa-clock" aria-hidden="true"></i>
                     {{ rowData.slotDuration }} min/turno
                   </small>
                 </div>
@@ -226,7 +226,7 @@
             <td>
               <div class="action-buttons">
                 <orb-button
-                  icon="pi pi-trash"
+                  icon="fas fa-trash"
                   severity="danger"
                   styleType="text"
                   size="small"
@@ -234,6 +234,7 @@
                   [loading]="loading"
                   pTooltip="Eliminar configuración"
                   tooltipPosition="top"
+                  aria-label="Eliminar configuración"
                   (onClick)="deleteOverride(rowData)"
                 >
                 </orb-button>
@@ -247,7 +248,7 @@
           <tr>
             <td colspan="6" class="text-center">
               <div class="empty-state">
-                <i class="pi pi-calendar-times" style="font-size: 3rem; color: #ccc"></i>
+                <i class="fas fa-calendar-xmark" style="font-size: 3rem; color: #ccc" aria-hidden="true"></i>
                 <p>No hay configuraciones especiales</p>
                 <small class="text-muted"
                   >Las configuraciones de horarios especiales aparecerán aquí</small

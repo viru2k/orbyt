@@ -2,7 +2,7 @@
   <!-- Sección de Bloqueo de Fechas -->
   <orb-card>
     <div orbHeader>
-      <h4><i class="pi pi-ban"></i> Bloquear Fechas</h4>
+      <h4><i class="fas fa-ban" aria-hidden="true"></i> Bloquear Fechas</h4>
     </div>
     <div orbBody>
       <!-- Selector de fechas -->
@@ -54,7 +54,7 @@
         <div class="form-actions">
           <orb-button
             label="Bloquear Fechas"
-            icon="pi pi-ban"
+            icon="fas fa-ban"
             severity="danger"
             [disabled]="!hasSelectedDatesToBlock() || loading"
             [loading]="loading"
@@ -63,7 +63,7 @@
           
           <orb-button
             label="Limpiar"
-            icon="pi pi-times"
+            icon="fas fa-xmark"
             severity="secondary"
             styleType="text"
             [disabled]="loading"
@@ -78,11 +78,11 @@
   <orb-card>
     <div orbHeader>
       <div class="header-with-actions">
-        <h4><i class="pi pi-list"></i> Fechas Bloqueadas</h4>
+        <h4><i class="fas fa-list" aria-hidden="true"></i> Fechas Bloqueadas</h4>
         <div class="header-actions">
           <orb-button
             label="Desbloquear Seleccionadas"
-            icon="pi pi-check"
+            icon="fas fa-check"
             severity="success"
             styleType="text"
             [disabled]="!hasSelectedDatesToUnblock() || loading"
@@ -92,7 +92,7 @@
           
           <orb-button
             label="Actualizar"
-            icon="pi pi-refresh"
+            icon="fas fa-arrows-rotate"
             severity="secondary"
             styleType="text"
             [disabled]="loading"
@@ -176,7 +176,7 @@
             <td>
               <div class="action-buttons">
                 <orb-button
-                  icon="pi pi-times"
+                  icon="fas fa-xmark"
                   severity="danger"
                   styleType="text"
                   size="small"
@@ -184,6 +184,7 @@
                   [loading]="loading"
                   pTooltip="Desbloquear fecha"
                   tooltipPosition="top"
+                  aria-label="Desbloquear fecha"
                   (onClick)="unblockDate(rowData)">
                 </orb-button>
               </div>
@@ -195,7 +196,7 @@
           <tr>
             <td colspan="6" class="text-center">
               <div class="empty-state">
-                <i class="pi pi-calendar-times" style="font-size: 3rem; color: #ccc;"></i>
+                <i class="fas fa-calendar-xmark" style="font-size: 3rem; color: #ccc;" aria-hidden="true"></i>
                 <p>No hay fechas bloqueadas</p>
                 <small class="text-muted">Las fechas que bloquees aparecerán aquí</small>
               </div>

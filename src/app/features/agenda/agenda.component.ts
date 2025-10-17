@@ -336,7 +336,7 @@ export class AgendaComponent implements OnInit {
     this.confirmationService.confirm({
       header: this.translate.instant('CONSULTATION.TITLE'),
       message: this.translate.instant('CONSULTATION.CONSULTATION_QUESTION'),
-      icon: 'pi pi-question-circle',
+      icon: 'fas fa-circle-question',
       acceptButtonStyleClass: 'p-button-primary',
       rejectButtonStyleClass: 'p-button-secondary',
       acceptLabel: this.translate.instant('COMMON.YES'),
@@ -393,7 +393,7 @@ export class AgendaComponent implements OnInit {
     this.confirmationService.confirm({
       header: this.translate.instant('WORKING_DAYS.NOT_WORKING_TITLE'),
       message: message,
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'fas fa-triangle-exclamation',
       acceptButtonStyleClass: 'p-button-warning',
       rejectButtonStyleClass: 'p-button-secondary',
       acceptLabel: this.translate.instant('COMMON.CONTINUE'),
@@ -585,7 +585,7 @@ export class AgendaComponent implements OnInit {
     this.confirmationService.confirm({
       header: 'Notificar cambios al cliente',
       message: `¿Desea notificar a ${appointment.client?.name || 'el cliente'} sobre los cambios en el horario de su turno?`,
-      icon: 'pi pi-question-circle',
+      icon: 'fas fa-circle-question',
       acceptButtonStyleClass: 'p-button-primary',
       rejectButtonStyleClass: 'p-button-secondary',
       acceptLabel: 'Sí, notificar',

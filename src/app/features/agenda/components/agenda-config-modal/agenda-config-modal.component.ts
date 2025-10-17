@@ -79,7 +79,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
       label: 'Guardar Configuración',
       action: 'save',
       severity: 'success',
-      icon: 'pi pi-save',
+      icon: 'fas fa-floppy-disk',
       outlined: true
     }
   ];
@@ -292,7 +292,7 @@ export class AgendaConfigModalComponent implements OnInit, OnDestroy, OnChanges 
     this.confirmationService.confirm({
       message: `¿Estás seguro de que quieres eliminar el feriado del ${this.formatDisplayDate(holiday.date)}?`,
       header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
+      icon: 'fas fa-triangle-exclamation',
       accept: () => {
         this.agendaStore.deleteHolidayEffect({ holidayId: holiday.id });
       },
